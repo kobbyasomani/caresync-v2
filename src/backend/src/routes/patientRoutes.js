@@ -10,5 +10,7 @@ patientRouter.route("/").post(protect, createPatient);
 
 patientRouter.route("/:id").put(protect, updatePatient).delete(protect, deletePatient);
 
+patientRouter.route("/carer").post(protect, addCarer)
+
 
 module.exports = patientRouter;
