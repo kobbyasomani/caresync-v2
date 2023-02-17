@@ -16,13 +16,13 @@ const patientSchema = mongoose.Schema({
   },
   carers: [{ 
     type: mongoose.Schema.Types.ObjectId, 
+    default: null,
     ref: "User" 
 }],
   shifts: [{ 
     type: mongoose.Schema.Types.ObjectId, 
+    default: null,
     ref: "Shifts", 
-    start_date: dateTime, 
-    end_date: dateTime 
 }]
 });
 
