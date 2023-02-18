@@ -109,72 +109,10 @@ const deletePatient = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Deleted patient ${req.params.id}` });
 });
 
-//----- New Route Function------//
-// @desc Sends email invitation to carer to add to team
-// @route post
-// @access private
-const sendCarerInvite = asyncHandler(async (req, res) => {
-  // Find patient with ID
-  const patient = await Patient.findById(req.params.id);
-  // Find carer with email
-  const carer = await User.findOne({ email: req.body.email });
-  // Current user
-  const user = await User.findById(req.user.id);
-    // Patient full name for email
-  const patientFullName = `${patient.firstName} ${patient.lastName}`;
-    // Email address for carer to send invitation
-  const carerID= carer.id
- 
 
-
-  // Patient Check
-  if (!patient) {
-    res.status(400);
-    throw new Error("Patient not found");
-  }
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
-  // Carer Check
-  if (!carer) {
-    res.status(401);
-    throw new Error("Carer has not made an account yet");
-  }
-
-  // Make sure logged in user matches the coordinator user
-  if (patient.coordinator.toString() !== user.id) {
-    res.status(401);
-    throw new Error("User is not authorized");
-  }
-
-  // Generates JWT token for adding patient
-  const emailToken = jwt.sign({ carerID }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
-  const decode = jwt_decode(emailToken);
-  console.log(decode)
-  
-
-  // Sends verification email to user
-  emails.addCarerEmail(carer.firstName, req.body.email, patientFullName, emailToken);
-
-  const updatedPatient = await Patient.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-    }
-  );
-  res.status(200).json(updatedPatient);
-});
 
 module.exports = {
   createPatient,
   updatePatient,
   deletePatient,
-  sendCarerInvite,
 };
