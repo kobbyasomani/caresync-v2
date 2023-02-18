@@ -15,7 +15,7 @@ userRouter.post("/register", registerUser);
 
 // Sets "isConfirmed" to true. 
 // @param :token variable.  Needs to be sliced from the url on the front end.  Example: const confirmation = window.location.search.slice(1);
-userRouter.post("/emailVerification/:token", emailVerification);
+userRouter.post("/verification/:token", emailVerification);
 
 // Logs in user and returns JWT token
 // @param {email, password}
