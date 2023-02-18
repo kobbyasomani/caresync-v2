@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
-const private = asyncHandler(async (req, res, next) => {
+const protect = asyncHandler(async (req, res, next) => {
   const token = req.cookies.access_token;
   if (!token) {
     res.status(401);
@@ -18,7 +18,7 @@ const private = asyncHandler(async (req, res, next) => {
     throw new Error("Not authorized");
   }
 })
-  module.exports = { private };
+  module.exports = { protect };
 
 
 //   let token

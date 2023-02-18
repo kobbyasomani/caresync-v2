@@ -97,6 +97,12 @@ const loginUser = asyncHandler(async (req, res) => {
   // Current user ID
   const id = user.id;
 
+  //Ensure all fields are filled out
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Please fill out all fields");
+  }
+
   // Check if the account has been confirmed yet
   if (!user.isConfirmed) {
     res.status(400);
@@ -120,7 +126,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   res.json({
-    message: "Login User",
+    message: "success",
   });
 });
 
