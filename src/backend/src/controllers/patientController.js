@@ -1,6 +1,9 @@
 const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const jwt_decode = require("jwt-decode");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
+const emails = require("../services/email");
 const { request } = require("express");
 
 //----- New Route Function------//
@@ -107,17 +110,22 @@ const deletePatient = asyncHandler(async (req, res) => {
 });
 
 //----- New Route Function------//
-// @desc Add carer
+// @desc Sends email invitation to carer to add to team
 // @route post
 // @access private
-const addCarer = asyncHandler(async (req, res) => {
+const sendCarerInvite = asyncHandler(async (req, res) => {
   // Find patient with ID
   const patient = await Patient.findById(req.params.id);
   // Find carer with email
   const carer = await User.findOne({ email: req.body.email });
   // Current user
   const user = await User.findById(req.user.id);
-  console.log(req)
+    // Patient full name for email
+  const patientFullName = `${patient.firstName} ${patient.lastName}`;
+    // Email address for carer to send invitation
+  const carerID= carer.id
+ 
+
 
   // Patient Check
   if (!patient) {
@@ -125,8 +133,8 @@ const addCarer = asyncHandler(async (req, res) => {
     throw new Error("Patient not found");
   }
 
-   // Carer Check
-   if (!user) {
+  // User Check
+  if (!user) {
     res.status(401);
     throw new Error("User not found");
   }
@@ -134,7 +142,7 @@ const addCarer = asyncHandler(async (req, res) => {
   // Carer Check
   if (!carer) {
     res.status(401);
-    throw new Error("Carer has nto made an account yet");
+    throw new Error("Carer has not made an account yet");
   }
 
   // Make sure logged in user matches the coordinator user
@@ -142,6 +150,17 @@ const addCarer = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("User is not authorized");
   }
+
+  // Generates JWT token for adding patient
+  const emailToken = jwt.sign({ carerID }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+  const decode = jwt_decode(emailToken);
+  console.log(decode)
+  
+
+  // Sends verification email to user
+  emails.addCarerEmail(carer.firstName, req.body.email, patientFullName, emailToken);
 
   const updatedPatient = await Patient.findByIdAndUpdate(
     req.params.id,
@@ -157,5 +176,5 @@ module.exports = {
   createPatient,
   updatePatient,
   deletePatient,
-  addCarer,
+  sendCarerInvite,
 };
