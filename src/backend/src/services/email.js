@@ -20,11 +20,23 @@ module.exports = {
             let info = await transporter.sendMail({
                 from: process.env.EMAIL_ADDRESS,
                 to: email,
-                subject: "Hello " + name + " please verify your email by clicking the link",
+                subject: `Hello ${name}, please verify your email by clicking the link`,
                 html: process.env.BASE_URL + "/emailVerification"+`?${token}`
             })
         } catch (error) {
             console.log(error)
         }
-    }
+    }, 
+    addCarerEmail: async function addCarerEmail(name, email, patientName, token) {
+        try{
+            let info = await transporter.sendMail({
+                from: process.env.EMAIL_ADDRESS,
+                to: email,
+                subject: `Hello ${name}, you have been invited to be a carer for ${patientName}`,
+                html: process.env.BASE_URL + `/addCarer?${token}`
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
 }
