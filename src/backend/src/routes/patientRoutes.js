@@ -1,7 +1,7 @@
 const express = require("express");
 const patientRouter = express.Router();
 const {
-  createPatient, deletePatient, updatePatient, sendCarerInvite
+  createPatient, deletePatient, updatePatient
 } = require("../controllers/patientController");
 
 const { private } = require("../middleware/authMiddleware");
@@ -15,10 +15,6 @@ patientRouter.route("/").post(private, createPatient);
 // @param :id(Id of the patient). Id of the patient
 patientRouter.route("/:id").put(private, updatePatient).delete(private, deletePatient);
 
-
-// Sends invitation email to carer
-// @param :id(Id of the patient) {email}
-patientRouter.route("/:id/carer").post(private, sendCarerInvite)
 
 
 module.exports = patientRouter;

@@ -2,6 +2,7 @@ var dotenv = require("dotenv")
 dotenv.config()
 const nodemailer = require("nodemailer")
 
+// Setting up node mailer information
 let transporter = nodemailer.createTransport({
     service:"gmail",
     host: "smtp.gmail.com",
@@ -13,8 +14,9 @@ let transporter = nodemailer.createTransport({
 })
 
 
-
+// Exporting types of mail functions
 module.exports = {
+    // Email for verifying user
     verifyUserEmail: async function verifyUserEmail(name, email, token) {
         try{
             let info = await transporter.sendMail({
@@ -27,6 +29,7 @@ module.exports = {
             console.log(error)
         }
     }, 
+    //Email for adding a carer
     addCarerEmail: async function addCarerEmail(name, email, patientName, token) {
         try{
             let info = await transporter.sendMail({

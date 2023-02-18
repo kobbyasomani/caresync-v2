@@ -15,6 +15,7 @@ app.use(express.urlencoded({extended: false}))
 
 app.use('/user', require('./routes/userRoutes'))
 app.use('/patient', require('./routes/patientRoutes'))
+app.use('/carer', require('./routes/carerRoutes'))
 
 app.use(errorHandler)
 
