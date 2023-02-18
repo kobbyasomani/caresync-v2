@@ -23,3 +23,5 @@ app.use(errorHandler)
 app.listen(PORT, () => {
   console.log("Server Started");
 });
+
+module.exports = app;
