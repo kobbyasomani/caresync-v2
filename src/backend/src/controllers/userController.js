@@ -6,6 +6,7 @@ const User = require("../models/userModel");
 const express = require("express");
 const emails = require("../services/email");
 
+//----NEW ROUTE----//
 // @desc Register User
 // @route POST /user/register
 // @access public
@@ -37,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
-  // Generates JWT token for login
+  // Generates JWT token for verification
   const emailToken = jwt.sign({ email }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
@@ -58,6 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+//----NEW ROUTE----//
 // @desc Verify Email
 // @route POST /user/emailVerification
 // @access public
@@ -82,21 +84,35 @@ const emailVerification = asyncHandler(async (req, res) => {
   console.log(user.id);
 });
 
+//----NEW ROUTE----//
 // @desc Login User
 // @route POST /user/login
 // @access public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  // Find user by email
   const user = await User.findOne({ email });
 
+  // Current user ID
+  const id = user.id;
+
+  // Check if the account has been confirmed yet
+  if (!user.isConfirmed) {
+    res.status(400);
+    throw new Error("Please confirm your email");
+  }
+
+  // Create a login JWT token
+  const loginToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  // Compare entered password with stored password and return a cookie
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({
-      _id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      token: generateJWT(user._id),
+    res.cookie("access_token", loginToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
     });
   } else {
     res.status(400);
@@ -108,6 +124,7 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 });
 
+//----NEW ROUTE----//
 // @desc Get user data
 // @route POST /user/me
 // @access private

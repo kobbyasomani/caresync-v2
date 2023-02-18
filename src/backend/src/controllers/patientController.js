@@ -67,10 +67,12 @@ const updatePatient = asyncHandler(async (req, res) => {
 
   const updatedPatient = await Patient.findByIdAndUpdate(
     req.params.id,
-    req.body,{ 
-        new: true 
-    });
-    res.status(200).json(updatedPatient);
+    req.body,
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(updatedPatient);
 });
 
 //----- New Route Function------//
@@ -105,37 +107,51 @@ const deletePatient = asyncHandler(async (req, res) => {
 });
 
 //----- New Route Function------//
-// New Route Function
+// @desc Add carer
+// @route post
+// @access private
 const addCarer = asyncHandler(async (req, res) => {
-    const patient = await Patient.findById(req.params.id);
+  // Find patient with ID
+  const patient = await Patient.findById(req.params.id);
+  // Find carer with email
+  const carer = await User.findOne({ email: req.body.email });
+  // Current user
+  const user = await User.findById(req.user.id);
+  console.log(req)
 
-    // Patient Check
-    if (!patient) {
-      res.status(400);
-      throw new Error("Patient not found");
+  // Patient Check
+  if (!patient) {
+    res.status(400);
+    throw new Error("Patient not found");
+  }
+
+   // Carer Check
+   if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Carer Check
+  if (!carer) {
+    res.status(401);
+    throw new Error("Carer has nto made an account yet");
+  }
+
+  // Make sure logged in user matches the coordinator user
+  if (patient.coordinator.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  const updatedPatient = await Patient.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
     }
-  
-    const user = await User.findById(req.user.id);
-  
-    // User Check
-    if (!user) {
-      res.status(401);
-      throw new Error("User not found");
-    }
-  
-    // Make sure logged in user matches the coordinator user
-    if (patient.coordinator.toString() !== user.id) {
-      res.status(401);
-      throw new Error("User is not authorized");
-    }
-  
-    const updatedPatient = await Patient.findByIdAndUpdate(
-      req.params.id,
-      req.body,{ 
-          new: true 
-      });
-      res.status(200).json(updatedPatient);
-  });
+  );
+  res.status(200).json(updatedPatient);
+});
 
 module.exports = {
   createPatient,
