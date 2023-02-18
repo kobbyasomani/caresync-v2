@@ -6,11 +6,19 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 
+
+// Creates patient
+// @param {firstName, lastName}
 patientRouter.route("/").post(protect, createPatient);
 
+// Updates/deletes patient
+// @param :id(Id of the patient). Id of the patient
 patientRouter.route("/:id").put(protect, updatePatient).delete(protect, deletePatient);
 
-patientRouter.route("/carer").post(protect, addCarer)
+
+// Sends invitation email to carer
+// @param :id(Id of the patient) {email}
+patientRouter.route("/:id/carer").post(protect, addCarer)
 
 
 module.exports = patientRouter;
