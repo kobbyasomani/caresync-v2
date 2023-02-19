@@ -1,0 +1,107 @@
+$padding-h: 1rem;
+$padding-v: 1rem;
+$rounded-corners: 3rem;
+$section-margin: 1.5rem;
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+// Standard margin for all sections in main
+main>section:first-of-type,
+main>section+* {
+    margin-top: $section-margin;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-weight: 500;
+}
+
+p {
+    margin-top: 1rem;
+    line-height: 1.5;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+
+    main {
+        height: 100%;
+        padding: 1rem $padding-h;
+    }
+
+    footer {
+        padding: 0 $padding-h;
+        text-align: center;
+    }
+}
+
+#nav-main {
+    padding: $padding-v $padding-h;
+
+    ul {
+        display: flex;
+        list-style: none;
+
+        li {
+            margin-right: 1rem;
+        }
+    }
+}
+
+form {
+    fieldset {
+        padding: $padding-v $padding-h;
+
+        label:not(label:first-of-type) {
+            display: block;
+            margin-top: 1rem;
+        }
+
+        input {
+            margin-top: 0.25rem;
+        }
+    }
+
+    input {
+        display: block;
+        border-radius: $rounded-corners;
+        border: 1px solid #999;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+button {
+    margin-top: $section-margin;
+    padding: 0.5rem 1.5rem;
+    border-radius: $rounded-corners;
+    border: 2px solid #999;
+    font-size: 1rem;
+    font-weight: 600;
+
+    &:hover, &:focus {
+        background-color: purple;
+        color: white;
+    }
+}

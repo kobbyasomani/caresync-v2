@@ -1,9 +1,39 @@
+import {
+  createBrowserRouter,
+  RouterProvider
+} from "react-router-dom";
+import Root from "./components/Root";
+import Home from "./components/Home";
+import About from "./components/About";
+import Help from "./components/Help";
+import Error from "./components/Error";
+
+// Create the router
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    errorElement: <Error />,
+    children: [
+      {
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/about",
+        element: <About />
+      },
+      {
+        path: "/help",
+        element: <Help />
+      },
+    ]
+  }
+])
+
 function App() {
   return (
-    <>
-      <h1>CareSync</h1>
-      <h2>Easy care work scheduling and shift notes.</h2>
-    </>
+    <RouterProvider router={router} />
   );
 }
 
