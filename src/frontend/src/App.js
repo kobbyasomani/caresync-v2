@@ -31,12 +31,12 @@ const router = createBrowserRouter([
         element: <Help />
       },
     ]
-  }
-])
+  },
+]);
 
 function App() {
   const initialState = {
-    user: "test user"
+    user: null,
   }
 
   const [store, dispatch] = useReducer(globalReducer, initialState);

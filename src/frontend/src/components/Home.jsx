@@ -1,11 +1,17 @@
 import { useState } from "react";
+import axios from "axios";
+import { useGlobalState } from "../utils/globalStateContext";
 
 export default function Home() {
+    // Get the global state
+    const { store, dispatch } = useGlobalState();
+    
+    // Set the form state
     const [form, setForm] = useState({
         email: "",
         password: "",
-        errors: []
     });
+    const [errors, setErrors] = useState([]);
 
     /**
      * Handle controlled form input.
@@ -15,7 +21,6 @@ export default function Home() {
             return {
                 ...prev,
                 [event.target.name]: event.target.value,
-                errors: []
             }
         });
     }
@@ -25,27 +30,42 @@ export default function Home() {
      */
     function handleLogin(event) {
         event.preventDefault();
+        setErrors([]);
+        let errors = [];
         // Make sure fields are not empty
         ["email", "password"].forEach(fieldValue => {
             if (!form[fieldValue]) {
-                setForm(prev => {
-                    return {
-                        ...prev,
-                        errors: [`${fieldValue} cannot be blank.\n`]
-                    }
-                });
+                errors.push(`${fieldValue} cannot be blank.\n`);
             }
         });
-        if (form.errors) return;
+
+        // If there are errors, cancel form submission and set them
+        if (errors.length > 0) {
+            return setErrors(errors);
+        } else {
+            setErrors([]);
+        }
+
         // If there are no errors submit the form
+        axios.post("/user/login", form)
+            .then(response => {
+                if (response.data.message !== "success") {
+                    return setErrors(["Login failed. Check your username and password."]);
+                }
+                // Set the user if auth succeeds
+                dispatch({
+                    type: "setUser",
+                    data: form.email
+                });
+            });
     }
 
-    return (
+    return !store.user ? (
         <>
             <h1>CareSync</h1>
             <h2>Easy care work scheduling and shift notes.</h2>
             <section>
-                <form onSubmit={handleLogin}>
+                <form>
                     <fieldset>
                         <legend>Sign in</legend>
                         <label>Email address
@@ -68,13 +88,24 @@ export default function Home() {
                                 value={form.password}
                                 onChange={handleInput} />
                         </label>
-                        <button>
+                        <button onClick={handleLogin}>
                             Log in
                         </button>
                     </fieldset>
                 </form>
-                <div id="form-error">{form.errors}</div>
+                <div id="form-errors">
+                    <ul>
+                        {errors.map((error, index) => {
+                            return <li key={index}>{error}</li>
+                        })}
+                    </ul>
+                </div>
             </section>
+        </>
+    ) : (
+        <>
+            <h1>Hi {store.user},</h1>
+            <h2>Let's get started!</h2>
         </>
     )
 }
