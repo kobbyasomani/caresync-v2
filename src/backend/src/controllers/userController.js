@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const Patient = require("../models/patientModel");
 const express = require("express");
 const emails = require("../services/email");
 
@@ -43,7 +44,6 @@ const registerUser = asyncHandler(async (req, res) => {
     expiresIn: "30d",
   });
 
- 
   // Sends verification email to user
   emails.verifyUserEmail(firstName, email, emailToken);
 
@@ -67,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailVerification = asyncHandler(async (req, res) => {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-console.log(decode)
+  console.log(decode);
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 
@@ -133,22 +133,33 @@ const loginUser = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Get user data
-// @route POST /user/me
+// @route GET /user
 // @access private
-const getUser = asyncHandler(async (req, res) => {
-  res.json({
-    message: "User data",
-  });
-});
+const getUserPatients = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
 
-// Generates JWT token for login
-const generateJWT = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-};
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  const userCoordinator = await Patient.find({})
+    .where({ coordinator: user.id })
+    .select("-shifts");
+
+  const userCarer = await Patient.find({})
+    .where({ carers: user.id })
+    .select("-shifts");
+
+  res
+    .status(200)
+    .json([{ coordinator: userCoordinator }, { carer: userCarer }]);
+});
 
 module.exports = {
   registerUser,
   loginUser,
-  getUser,
+  getUserPatients,
   emailVerification,
 };

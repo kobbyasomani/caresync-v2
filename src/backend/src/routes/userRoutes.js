@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const {
   registerUser,
   loginUser,
-  getUser,
+  getUserPatients,
   emailVerification
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
@@ -20,6 +20,10 @@ userRouter.post("/verification/:token", emailVerification);
 // Logs in user and returns JWT token
 // @param {email, password}
 userRouter.post("/login", loginUser);
+
+// Finds all user patients (both coordinator and carer)
+// @param none  (pulls user id from jwt token)
+userRouter.get("/", protect, getUserPatients); 
 
 
 

@@ -115,6 +115,26 @@ describe("POST /user/login", () => {
   });
 });
 
+//---------User Info----------//
+describe("GET /user/login", () => {
+  describe("Given user ID from cookie", () => {
+    test("should respond with 200 status", async () => {
+      const response = await request(app).get("/user").set("Cookie", cookie).send({
+      });
+      expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe("Not given user ID from cookie", () => {
+    test("should respond with 401 status", async () => {
+      const response = await request(app).get("/user").send({
+      });
+      expect(response.statusCode).toBe(401);
+    });
+  });
+});
+
+
 //---------Create Patient----------//
 describe("POST /patient", () => {
   describe("When first and last name are given", () => {
@@ -149,6 +169,24 @@ describe("POST /patient", () => {
         lastName: "Stevens",
       });
       expect(response.statusCode).toBe(401);
+    });
+  });
+});
+
+//---------Get Patient Info----------//
+describe("GET /patient/:id", () => {
+  describe("When valid patient ID is given in URL", () => {
+    test("Should respond with 200 status", async () => {
+      const response = await request(app)
+        .get("/patient/63f01efe3b5704fa0aa3ddc2")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(200);
+      expect(response.body.firstName).toBe("Henry")
+      expect(response.body.firstName).toBe("Donaldson")
+      expect(response.body.coordinator).toBe("63f0b95a0098e28d58f7a25d")
+      expect(response.body.carers).toBe(["63f0b95a0098e28d58f7a2d5"])
+
     });
   });
 });
@@ -225,7 +263,9 @@ describe("DELETE /patient/:id", () => {
   });
 });
 
-//---------Inv Carer----------//
+
+
+//---------Invite Carer----------//
 describe("POST /carer/invite/:id", () => {
   describe("When a valid carer email/id is provided", () => {
     test("Should respond with 200 status", async () => {
