@@ -43,6 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
     expiresIn: "30d",
   });
 
+ 
   // Sends verification email to user
   emails.verifyUserEmail(firstName, email, emailToken);
 
@@ -66,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailVerification = asyncHandler(async (req, res) => {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-
+console.log(decode)
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 

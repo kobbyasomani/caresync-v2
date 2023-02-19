@@ -40,6 +40,14 @@ const seedUsers = [
     password: "$2a$10$dolHmb4kEF9Edp.EEzdvRu2mpuV0f95dD.cL1L4PoCwWZB4bJZHQe",
     isConfirmed: true,
   },
+  {
+    _id: "63f0b95a0098e28d58f7a2d1",
+    firstName: "David",
+    lastName: "Tjomsland",
+    email: "david.tjomsland@gmail.com",
+    password: "$2a$10$dolHmb4kEF9Edp.EEzdvRu2mpuV0f95dD.cL1L4PoCwWZB4bJZHQe",
+    isConfirmed: true,
+  },
 ];
 
 const seedPatients = [
@@ -49,6 +57,12 @@ const seedPatients = [
     lastName: "Donaldson",
     coordinator: "63f0b95a0098e28d58f7a25d",
     carers: ["63f0b95a0098e28d58f7a2d5"],
+  },
+  {
+    _id: "63f01efe3b5704fa0aa3ddc4",
+    firstName: "Jerry",
+    lastName: "Hendricks",
+    coordinator: "63f0b95a0098e28d58f7a25d",
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc5",
