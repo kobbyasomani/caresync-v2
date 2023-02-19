@@ -89,6 +89,7 @@ form {
         border: 1px solid #999;
         padding: 0.5rem 1rem;
         font-size: 1rem;
+        width: 100%;
     }
 }
 
@@ -100,8 +101,13 @@ button {
     font-size: 1rem;
     font-weight: 600;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: purple;
         color: white;
     }
+}
+
+#form-error {
+    color: red;
 }

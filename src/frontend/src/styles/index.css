@@ -75,6 +75,7 @@ form input {
   border: 1px solid #999;
   padding: 0.5rem 1rem;
   font-size: 1rem;
+  width: 100%;
 }
 
 button {
@@ -88,6 +89,10 @@ button {
 button:hover, button:focus {
   background-color: purple;
   color: white;
+}
+
+#form-error {
+  color: red;
 }
 
 /*# sourceMappingURL=index.css.map */
