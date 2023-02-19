@@ -25,7 +25,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
 
   // Carer Check
   if (!carer) {
-    res.status(401);
+    res.status(400);
     throw new Error("Carer has not made an account yet");
   }
 
@@ -34,7 +34,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
 
   // User Check
   if (!user) {
-    res.status(401);
+    res.status(400);
     throw new Error("User not found");
   }
 
@@ -48,7 +48,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   const patientFullName = `${patient.firstName} ${patient.lastName}`;
 
   // ID for carer (email token)
-  const carerID = number(carer.id);
+  const carerID = carer.id;
 
   // ID for patient (email token)
   const patientID = patient.id;
@@ -57,7 +57,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   const emailToken = jwt.sign({ carerID, patientID }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
-  const decode = jwt_decode(emailToken);
+  
 
   // Sends verification email to user
   emails.addCarerEmail(
@@ -98,7 +98,7 @@ const addCarer = asyncHandler(async (req, res) => {
 
   // Carer Check
   if (!carer) {
-    res.status(401);
+    res.status(400);
     throw new Error("Carer has not made an account yet");
   }
 
