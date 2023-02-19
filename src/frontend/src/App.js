@@ -7,6 +7,9 @@ import Home from "./components/Home";
 import About from "./components/About";
 import Help from "./components/Help";
 import Error from "./components/Error";
+import { GlobalStateContext } from "./utils/globalStateContext";
+import { useReducer } from "react"
+import globalReducer from "./utils/globalReducer";
 
 // Create the router
 const router = createBrowserRouter([
@@ -32,8 +35,16 @@ const router = createBrowserRouter([
 ])
 
 function App() {
+  const initialState = {
+    user: "test user"
+  }
+
+  const [store, dispatch] = useReducer(globalReducer, initialState);
+
   return (
-    <RouterProvider router={router} />
+    <GlobalStateContext.Provider value={{ store, dispatch }}>
+      <RouterProvider router={router} />
+    </GlobalStateContext.Provider>
   );
 }
 
