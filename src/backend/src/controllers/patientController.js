@@ -109,10 +109,54 @@ const deletePatient = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Deleted patient ${req.params.id}` });
 });
 
+const getPatientInfo = asyncHandler(async (req, res) => {
+  const patient = await Patient.findById(req.params.id);
 
+  // Patient Check
+  if (!patient) {
+    res.status(400);
+    throw new Error("Patient not found");
+  }
+
+  // Find user by id
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Make sure logged in user matches the coordinator user
+  if (
+    patient.coordinator.toString() !== user.id &&
+    !patient.carers.includes(user.id)
+  ) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // If there are carers, find there first and last name and stick them in the patient object for display
+  if (patient.carers) {
+
+
+    
+    const carers = await User.find()
+      .where("_id")
+      .in(patient.carers)
+      .select("firstName")
+      .select("lastName")
+      .exec();
+
+    patient.carers = carers;
+  }
+
+  res.status(200).json({ patient });
+});
 
 module.exports = {
   createPatient,
   updatePatient,
   deletePatient,
+  getPatientInfo,
 };

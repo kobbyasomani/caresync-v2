@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.28% </span>
+                <span class="strong">90.16% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>50/56</span>
+                <span class='fraction'>55/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.9% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>20/22</span>
+                <span class='fraction'>21/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/5</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.28% </span>
+                <span class="strong">90.16% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>50/56</span>
+                <span class='fraction'>55/61</span>
             </div>
         
             
@@ -217,7 +217,19 @@
 <a name='L152'></a><a href='#L152'>152</a>
 <a name='L153'></a><a href='#L153'>153</a>
 <a name='L154'></a><a href='#L154'>154</a>
-<a name='L155'></a><a href='#L155'>155</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -259,7 +271,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -355,14 +366,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -376,6 +398,7 @@ const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const Patient = require("../models/patientModel");
 const express = require("express");
 const emails = require("../services/email");
 &nbsp;
@@ -416,7 +439,6 @@ const registerUser = asyncHandler(async (req, res) =&gt; {
     expiresIn: "30d",
   });
 &nbsp;
- 
   // Sends verification email to user
   emails.verifyUserEmail(firstName, email, emailToken);
 &nbsp;
@@ -440,7 +462,7 @@ const registerUser = asyncHandler(async (req, res) =&gt; {
 const emailVerification = asyncHandler(async (req, res) =&gt; {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-console.log(decode)
+  console.log(decode);
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 &nbsp;
@@ -506,23 +528,34 @@ const loginUser = asyncHandler(async (req, res) =&gt; {
 &nbsp;
 //----NEW ROUTE----//
 // @desc Get user data
-// @route POST /user/me
+// @route GET /user
 // @access private
-const getUser = asyncHandler(<span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >  res.json({</span>
-    message: "User data",
-  });
-});
+const getUserPatients = asyncHandler(async (req, res) =&gt; {
+  const user = await User.findById(req.user.id);
 &nbsp;
-// Generates JWT token for login
-const generateJWT = <span class="fstat-no" title="function not covered" >(i</span>d) =&gt; {
-<span class="cstat-no" title="statement not covered" >  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });</span>
-};
+  // User Check
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!user) {
+<span class="cstat-no" title="statement not covered" >    res.status(401);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error("User not found");</span>
+  }
+&nbsp;
+  const userCoordinator = await Patient.find({})
+    .where({ coordinator: user.id })
+    .select("-shifts");
+&nbsp;
+  const userCarer = await Patient.find({})
+    .where({ carers: user.id })
+    .select("-shifts");
+&nbsp;
+  res
+    .status(200)
+    .json([{ coordinator: userCoordinator }, { carer: userCarer }]);
+});
 &nbsp;
 module.exports = {
   registerUser,
   loginUser,
-  getUser,
+  getUserPatients,
   emailVerification,
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -532,7 +565,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-02-19T05:19:38.674Z
+                at 2023-02-19T08:03:00.679Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
