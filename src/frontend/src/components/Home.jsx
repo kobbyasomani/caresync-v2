@@ -5,12 +5,13 @@ import { useGlobalState } from "../utils/globalStateContext";
 export default function Home() {
     // Get the global state
     const { store, dispatch } = useGlobalState();
-    
+
     // Set the form state
-    const [form, setForm] = useState({
+    const initialState = {
         email: "",
         password: "",
-    });
+    }
+    const [form, setForm] = useState(initialState);
     const [errors, setErrors] = useState([]);
 
     /**
@@ -57,6 +58,8 @@ export default function Home() {
                     type: "setUser",
                     data: form.email
                 });
+                // Clear the form
+                setForm(initialState);
             });
     }
 
