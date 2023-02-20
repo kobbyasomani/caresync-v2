@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalState();
@@ -9,7 +9,7 @@ const Patient = ({ patient }) => {
 
     function selectPatient(event) {
         dispatch({
-            type: "setSelectedPatient",
+            type: "setSelectedPatientById",
             data: event.currentTarget.id
         });
         // Redirect to calendar after selecting a patient
@@ -21,7 +21,6 @@ const Patient = ({ patient }) => {
             <div className="icon">👤</div>
             <div className="name">{firstName} {lastName}</div>
             <div className="shift">Upcoming shift: dd/mm/yyyy</div>
-            <div className="shift">Last shift: dd/mm/yyyy</div>
         </div>
     );
 }
@@ -44,21 +43,33 @@ const SelectPatient = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        // Don't fetch patients if already populated
-        if (store.patients) return;
         getPatients();
-    }, [getPatients, store.patients]);
+    }, [getPatients]);
 
     return (
         <>
             <h1>Hi, {store.user}</h1>
             <h2>Select a patient</h2>
-            {store.patients ? (
-                store.patients.coordinator.map(patient => (
-                    <Patient patient={patient} key={patient._id} />
-                ))
+            {store.patients && store.patients.carer.length > 0 ? (
+                <section>
+                    <h3>Caring for</h3>
+                    {store.patients.carer.map(patient => (
+                        <Patient patient={patient} key={patient._id} />
+                    ))}
+                </section>
             ) : null}
-            <button className="button-action">Add patient</button>
+            {store.patients && store.patients.coordinator.length > 0 ? (
+                <section>
+                    <h3>Coordinating for</h3>
+                    {store.patients.coordinator.map(patient => (
+                        <Patient patient={patient} key={patient._id} />
+                    ))}
+                </section>
+            ) : null}
+
+            <Link to={"/add-patient"}><button className="button-action">
+                Add patient
+            </button></Link>
         </>
     );
 }
