@@ -152,7 +152,9 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .where({ carers: user.id })
     .select("-shifts");
 
-  res.status(200).json({ coordinator: userCoordinator, carer: userCarer });
+  res
+    .status(200)
+    .json({ coordinator: userCoordinator, carer: userCarer });
 });
 
 module.exports = {

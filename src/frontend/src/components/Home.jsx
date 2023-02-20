@@ -1,10 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import { useGlobalState } from "../utils/globalStateContext";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Home() {
     // Get the global state
     const { store, dispatch } = useGlobalState();
+    const navigate = useNavigate();
 
     // Set the form state
     const initialState = {
@@ -60,6 +62,8 @@ export default function Home() {
                 });
                 // Clear the form
                 setForm(initialState);
+                // Navigate to patient selection
+                navigate("/select-patient");
             });
     }
 
@@ -107,8 +111,7 @@ export default function Home() {
         </>
     ) : (
         <>
-            <h1>Hi {store.user},</h1>
-            <h2>Let's get started!</h2>
+            <Outlet />
         </>
     )
 }
