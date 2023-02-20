@@ -14,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
     return next();
   } catch {
     console.log(error);
-    res.status(401);
+    res.status(401).clearCookie("access_token");
     throw new Error("Not authorized");
   }
 })

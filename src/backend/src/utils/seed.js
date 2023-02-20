@@ -110,6 +110,15 @@ const seedShifts = [
     shiftEndTime: "2023-03-01T15:00:00Z",
   },
   {
+    _id: "63f01f0a3b5704fa0aa3ddd8",
+    patient: "63f01f0a3b5704fa0aa3ddc5",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-02-25T09:00:00Z",
+    shiftEndTime: "2023-02-25T15:00:00Z",
+  },
+  {
     _id: "63f01f0a3b5704fa0aa3ddc7",
     patient: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
