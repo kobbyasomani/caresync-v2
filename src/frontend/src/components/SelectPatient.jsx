@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalState();
@@ -58,7 +58,9 @@ const SelectPatient = () => {
                     <Patient patient={patient} key={patient._id} />
                 ))
             ) : null}
-            <button className="button-action">Add patient</button>
+            <Link to={"/add-patient"}><button className="button-action">
+                Add patient
+            </button></Link>
         </>
     );
 }
