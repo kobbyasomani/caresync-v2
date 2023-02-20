@@ -10,6 +10,8 @@ import Error from "./components/Error";
 import { GlobalStateContext } from "./utils/globalStateContext";
 import { useReducer } from "react"
 import globalReducer from "./utils/globalReducer";
+import SelectPatient from "./components/SelectPatient";
+import Calendar from "./components/Calendar";
 
 // Create the router
 const router = createBrowserRouter([
@@ -20,7 +22,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />
+        element: <Home />,
+        children: [
+          {
+            path: "/select-patient",
+            element: <SelectPatient />
+          },
+          {
+            path: "/calendar",
+            element: <Calendar />
+          }
+        ]
       },
       {
         path: "/about",
@@ -36,7 +48,9 @@ const router = createBrowserRouter([
 
 function App() {
   const initialState = {
-    user: null,
+    user: "",
+    patients: null,
+    selectedPatient: ""
   }
 
   const [store, dispatch] = useReducer(globalReducer, initialState);
