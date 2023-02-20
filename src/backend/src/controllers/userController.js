@@ -154,7 +154,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json([{ coordinator: userCoordinator }, { carer: userCarer }]);
+    .json({ coordinator: userCoordinator, carer: userCarer });
 });
 
 module.exports = {
