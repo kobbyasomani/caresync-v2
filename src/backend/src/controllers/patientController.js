@@ -110,7 +110,7 @@ const deletePatient = asyncHandler(async (req, res) => {
 });
 
 const getPatientInfo = asyncHandler(async (req, res) => {
-  const patient = await Patient.findById(req.params.id);
+  const patient = await Patient.findById(req.params.id).select("-shifts").lean();
 
   // Patient Check
   if (!patient) {
@@ -126,30 +126,38 @@ const getPatientInfo = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("User not found");
   }
-
+  
   // Make sure logged in user matches the coordinator user
   if (
     patient.coordinator.toString() !== user.id &&
-    !patient.carers.includes(user.id)
+    !patient.carers.toString().includes(user.id)
   ) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
+  // Create and set a value for isCoordinator fo use in setting state on the front end
+  if (patient.coordinator.toString() == user.id) {
+    patient["isCoordinator"] = true  
+  } else {
+    patient["isCoordinator"] = false  
+  }
+
+
   // If there are carers, find there first and last name and stick them in the patient object for display
   if (patient.carers) {
-
-
-    
     const carers = await User.find()
       .where("_id")
       .in(patient.carers)
       .select("firstName")
       .select("lastName")
-      .exec();
-
     patient.carers = carers;
   }
+  // Find coordinator first and last name and stick them in the patient object for display
+  const coordinator = await User.find({ _id: patient.coordinator })
+    .select("firstName")
+    .select("lastName");
+  patient.coordinator = coordinator[0];
 
   res.status(200).json({ patient });
 });
