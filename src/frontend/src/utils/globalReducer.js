@@ -17,6 +17,11 @@ export default function globalReducer(state, action) {
                 patients: action.data
             }
         case "setSelectedPatient":
+            return {
+                ...state,
+                selectedPatient: action.data
+            }
+        case "setSelectedPatientById":
             function getPatientById(id) {
                 if (!id) return "";
                 let foundPatient;
