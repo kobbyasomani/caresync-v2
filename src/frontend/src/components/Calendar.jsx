@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 
 export const Calendar = () => {
@@ -15,12 +15,23 @@ export const Calendar = () => {
     }
 
     return (
-        <>
-            <div className="patient small"
-                onClick={switchPatient}>👤 {patient.firstName} {patient.lastName}
-            </div>
-            <p>Calendar goes here</p>
-        </>
+        patient ? (
+            <>
+                <div className="patient small"
+                    onClick={switchPatient}>👤 {patient.firstName} {patient.lastName}
+                </div>
+                <p>Calendar goes here</p>
+            </>
+        ) : (
+            <>
+                <h1>It looks like there's no patient selected...</h1>
+                <Link
+                    to="/select-patient">
+                    Select Patient
+                </Link>
+            </>
+
+        )
     );
 }
 

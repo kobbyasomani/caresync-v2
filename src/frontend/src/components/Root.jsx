@@ -28,10 +28,9 @@ export default function Root() {
                     <li><NavLink to="/about">About</NavLink></li>
                     <li><NavLink to="/help">Help</NavLink></li>
                     {store.user ?
-                        <li><button id="logout" onClick={handleLogout}>Log out</button></li>
+                        <li id="logout"><button onClick={handleLogout}>Log out</button></li>
                         : null
                     }
-
                 </ul>
             </nav>
             <main>

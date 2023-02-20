@@ -95,18 +95,18 @@ export default function Home() {
                                 value={form.password}
                                 onChange={handleInput} />
                         </label>
+                        <div id="form-errors">
+                            <ul>
+                                {errors.map((error, index) => {
+                                    return <li key={index}>{error}</li>
+                                })}
+                            </ul>
+                        </div>
                         <button onClick={handleLogin}>
                             Log in
                         </button>
                     </fieldset>
                 </form>
-                <div id="form-errors">
-                    <ul>
-                        {errors.map((error, index) => {
-                            return <li key={index}>{error}</li>
-                        })}
-                    </ul>
-                </div>
             </section>
         </>
     ) : (
