@@ -130,6 +130,15 @@ const seedShifts = [
     handoverNotes: "Client took panadol at 5:00pm. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     incidentReports: ["Around 10am: Injured face by slapping himself in frustration.", "Around 11am: Escaped through the front door and ran towards the street."]
   },
+  {
+    _id: "63f01f0a3b5704fa0aa3ddc6",
+    patient: "63f01efe3b5704fa0aa3ddc2",
+    coordinator: "63f0b95a0098e28d58f7a25d",
+    coordinatorNotes: "Client has been feeling sick over the last few days and may have covid.  Please bring a mask and proceed with caution",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-02-25T09:00:00Z",
+    shiftEndTime: "2023-02-25T15:00:00Z",
+  },
   
 ];
 

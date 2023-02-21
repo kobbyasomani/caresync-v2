@@ -92,6 +92,7 @@ const emailVerification = asyncHandler(async (req, res) => {
 // @access public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  
 
   // Find user by email
   const user = await User.findOne({ email });
@@ -156,21 +157,10 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .select("-shifts")
     .lean();
 
-  // const nextCarerShift = await Shift.aggregate([
-  //   { $match: { carer: user._id, shiftStartTime: { $gte: new Date() } } },
-  //   { $sort: { shiftStartTime: 1 } },
-  //   { $limit: 10 },
-  // ]);
 
-  // const nextCoordinatorShift = await Shift.aggregate([
-  //   { $match: { coordinator: user._id, shiftStartTime: { $gte: new Date() } } },
-  //   { $sort: { shiftStartTime: 1 } },
-  //   { $limit: 10 },
-  // ]);
-
-  // Loop through all patients user is coordinator for
-  // Find next shift for that patient and return nextShift info added to patient object
-  const coordinatorShift = await Promise.all(
+  // Loop through all patients the user is coordinator for
+  // Find next shift for that patient and return nextShift(date/carer name) added to patient object
+  const patientCoordinatorShift = await Promise.all(
     patientCoordinator.map(async (patient) => {
       const nextCoordinatorShift = await Shift.aggregate([
         {
@@ -183,19 +173,27 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $sort: { shiftStartTime: 1 } },
         { $limit: 1 },
       ]);
+      
+      // If there is a shift scheduled for the patient, get the information for it
+      // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
-        patient["nextShift"] = nextCoordinatorShift[0].shiftStartTime;
+        const carerName = await User.find({_id : nextCoordinatorShift[0].carer}).select('firstName')
+        // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
+        // Else, add the next shift with the carer name 
+        if(patient.carer == user.id){
+        patient["nextShift"] =   [{time: nextCoordinatorShift[0].shiftStartTime, carerName:"You"}]
+        }
+        else{patient["nextShift"] =  {time: nextCoordinatorShift[0].shiftStartTime, carerName: carerName[0].firstName};}
       } else {
         patient["nextShift"] = null;
       }
-      console.log(patient);
       return patient;
     })
   );
 
-  // Loop through all patients user is coordinator for
-  // Find next shift for that patient and return  nextShift added to patient object
-  const carerShift = await Promise.all(
+  // Loop through all patients the user is carer for
+  // Find next shift for that patient and return nextShift added to patient object
+  const patientCarerShift = await Promise.all(
     patientCarer.map(async (patient) => {
       const nextCarerShift = await Shift.aggregate([
         {
@@ -213,12 +211,11 @@ const getUserPatients = asyncHandler(async (req, res) => {
       } else {
         patient["nextShift"] = null;
       }
-      console.log(patient);
       return patient;
     })
   );
-
-  res.status(200).json({ coordinator: coordinatorShift, carer: carerShift });
+  
+  res.status(200).json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
 module.exports = {
