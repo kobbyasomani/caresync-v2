@@ -1,5 +1,5 @@
 import { GlobalStateContext } from "./utils/globalStateContext";
-import { useReducer } from "react"
+import { useReducer, useEffect, useCallback } from "react"
 import globalReducer from "./utils/globalReducer";
 
 import {
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Root from "./components/Root";
 import Home from "./components/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
 import About from "./components/About";
 import Help from "./components/Help";
 import Error from "./components/Error";
@@ -27,16 +28,21 @@ const router = createBrowserRouter([
         element: <Home />,
         children: [
           {
-            path: "/select-patient",
-            element: <SelectPatient />
-          },
-          {
-            path: "/add-patient",
-            element: <AddPatient />
-          },
-          {
-            path: "/calendar",
-            element: <Calendar />
+            element: <ProtectedRoute />,
+            children: [
+              {
+                path: "/",
+                element: <SelectPatient />
+              },
+              {
+                path: "/add-patient",
+                element: <AddPatient />
+              },
+              {
+                path: "/calendar",
+                element: <Calendar />
+              }
+            ]
           }
         ]
       },
@@ -49,17 +55,44 @@ const router = createBrowserRouter([
         element: <Help />
       },
     ]
-  },
+  }
 ]);
 
 function App() {
-  const initialState = {
-    user: "",
-    patients: null,
-    selectedPatient: ""
-  }
+  /* FOR SECURITY: 
+  Refactor these hooks to fetch authenticated
+  session data from backend-server */
 
-  const [store, dispatch] = useReducer(globalReducer, initialState);
+  const initialState = useCallback(() => {
+    // Get global state values from localStorage on load if available
+    const localStorage = window.localStorage.careSync ?
+      JSON.parse(window.localStorage.getItem("careSync")) : null;
+    // Set the global state values from localStorage
+    if (localStorage) {
+      return {
+        isAuth: localStorage.isAuth,
+        user: localStorage.user,
+        selectedPatient: localStorage.selectedPatient
+      };
+      // Set global state to defaults if not in localStorage
+    } else {
+      return {
+        isAuth: false,
+        user: "",
+        selectedPatient: ""
+      };
+    }
+  }, []);
+
+  const [store, dispatch] = useReducer(globalReducer, initialState());
+
+  // Set required global state values in localStorage any time their state changes
+  useEffect(() => {
+    // console.log("updating localStorage from store...");
+    window.localStorage.setItem("careSync", JSON.stringify({
+      ...store,
+    }));
+  }, [store]);
 
   return (
     <GlobalStateContext.Provider value={{ store, dispatch }}>

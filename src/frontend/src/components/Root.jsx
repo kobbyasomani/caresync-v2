@@ -1,33 +1,40 @@
 import {
     NavLink,
     Outlet,
-    useNavigate
+    useNavigate,
 } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
+import { useCallback } from "react";
+import baseURL from "../utils/baseUrl";
 
 export default function Root() {
+    // console.log("rendering Root");
+
     const { store, dispatch } = useGlobalState();
     const navigate = useNavigate();
 
-    function handleLogout() {
+    const handleLogout = useCallback(async () => {
+        // console.log("logging out...");
+
+        fetch(`${baseURL}/user/auth?logout=true`, {
+            credentials: "include"
+        });
         dispatch({
-            type: "resetStore",
-            data: null
+            type: "logout",
         });
         navigate("/");
-    }
+    }, [dispatch, navigate]);
 
     return (
         <>
             <nav id="nav-main">
                 <ul>
                     <li><NavLink
-                        to={store.patients && !store.selectedPatient ? "/select-patient"
-                            : store.selectedPatient ? "/calendar"
-                                : "/"}>Home</NavLink></li>
+                        to={store.isAuth && store.selectedPatient ? "/calendar"
+                            : "/"}>Home</NavLink></li>
                     <li><NavLink to="/about">About</NavLink></li>
                     <li><NavLink to="/help">Help</NavLink></li>
-                    {store.user ?
+                    {store.isAuth ?
                         <li id="logout"><button onClick={handleLogout}>Log out</button></li>
                         : null
                     }

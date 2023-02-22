@@ -157,9 +157,36 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .json({ coordinator: userCoordinator, carer: userCarer });
 });
 
+//----NEW ROUTE----//
+// @desc Authenticate the user during client-side routing
+// @route GET /auth
+// @access private
+const authUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Clear cookie if the logout flag is set to true
+  if (req.query.logout === "true") {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "logged out" });
+  } else {
+    res
+      .status(200)
+      .json({ message: "success" });
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getUserPatients,
   emailVerification,
+  authUser,
 };

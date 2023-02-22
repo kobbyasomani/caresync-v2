@@ -4,6 +4,8 @@ import { useGlobalState } from "../utils/globalStateContext";
 import axios from "axios";
 
 export const AddPatient = () => {
+    // console.log("rendering AddPatient");
+
     const { dispatch } = useGlobalState();
 
     // Set the form state
