@@ -2,6 +2,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 
 export const Calendar = () => {
+    // console.log("rendering Calendar");
+
     const { store, dispatch } = useGlobalState();
     const navigate = useNavigate();
     const patient = store.selectedPatient;
@@ -11,7 +13,7 @@ export const Calendar = () => {
             type: "setSelectedPatient",
             data: ""
         });
-        navigate("/select-patient");
+        navigate("/");
     }
 
     return (

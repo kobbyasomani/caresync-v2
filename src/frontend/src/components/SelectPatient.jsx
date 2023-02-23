@@ -1,13 +1,14 @@
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
+import baseURL from "../utils/baseUrl";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalState();
     const { _id, firstName, lastName } = patient;
     const navigate = useNavigate();
 
-    function selectPatient(event) {
+    const selectPatient = (event) => {
         dispatch({
             type: "setSelectedPatientById",
             data: event.currentTarget.id
@@ -26,27 +27,26 @@ const Patient = ({ patient }) => {
 }
 
 const SelectPatient = () => {
+    // console.log("rendering SelectPatient");
+
     const { store, dispatch } = useGlobalState();
 
     // Fetch the list of patients for the logged-in user
-    const getPatients = useCallback(async () => {
-        // console.log(`fetching patients...`);
-        fetch("http://localhost:4000/user", {
-            credentials: "include"
-        }).then(response => response.json())
-            .then(patients => {
-                dispatch({
-                    type: "setPatients",
-                    data: patients
-                });
-            }).catch(error => console.error(error.message));;
-    }, [dispatch]);
-
     useEffect(() => {
-        getPatients();
-    }, [getPatients]);
+        if (store.isAuth) {
+            fetch(`${baseURL}/user`, {
+                credentials: "include"
+            }).then(response => response.json())
+                .then(patients => {
+                    dispatch({
+                        type: "setPatients",
+                        data: patients
+                    });
+                }).catch(error => console.error(error.message));
+        }
+    }, [dispatch, store.isAuth]);
 
-    return (
+    return store.isAuth ? (
         <>
             <h1>Hi, {store.user}</h1>
             <h2>Select a patient</h2>
@@ -65,13 +65,17 @@ const SelectPatient = () => {
                         <Patient patient={patient} key={patient._id} />
                     ))}
                 </section>
-            ) : null}
+            ) : (
+                <p>Add a patient to get started.</p>
+            )}
 
             <Link to={"/add-patient"}><button className="button-action">
                 Add patient
             </button></Link>
         </>
-    );
+    ) : (
+        <Navigate to="/" />
+    )
 }
 
 export default SelectPatient

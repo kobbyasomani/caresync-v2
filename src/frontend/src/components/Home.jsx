@@ -1,40 +1,46 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { useGlobalState } from "../utils/globalStateContext";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-export default function Home() {
+export default function Login() {
+    // console.log("rendering Home");
+
     // Get the global state
     const { store, dispatch } = useGlobalState();
-    const navigate = useNavigate();
 
-    // Set the form state
-    const initialState = {
-        email: "",
-        password: "",
-    }
+    // Set the initial form state
+    const initialState = useMemo(() => {
+        return {
+            email: "",
+            password: "",
+        }
+    }, [])
     const [form, setForm] = useState(initialState);
     const [errors, setErrors] = useState([]);
 
     /**
      * Handle controlled form input.
      */
-    function handleInput(event) {
+    const handleInput = useCallback((event) => {
         setForm(prev => {
             return {
                 ...prev,
                 [event.target.name]: event.target.value,
             }
         });
-    }
+    }, []);
 
     /**
      * Validate and submit the login form.
      */
-    function handleLogin(event) {
+    const handleLogin = useCallback((event) => {
+        console.log("logging in...");
+
         event.preventDefault();
         setErrors([]);
         let errors = [];
+
         // Make sure fields are not empty
         ["email", "password"].forEach(fieldValue => {
             if (!form[fieldValue]) {
@@ -49,25 +55,23 @@ export default function Home() {
             setErrors([]);
         }
 
-        // If there are no errors submit the form
+        // If there are no errors submit the form and navigate to /select-patient
         axios.post("/user/login", form)
-            .then(response => {
-                if (response.data.message !== "success") {
-                    return setErrors(["Login failed. Check your username and password."]);
-                }
-                // Set the user if auth succeeds
+            .then(() => {
                 dispatch({
-                    type: "setUser",
+                    type: "login",
                     data: form.email
                 });
-                // Clear the form
-                setForm(initialState);
-                // Navigate to patient selection
-                navigate("/select-patient");
-            });
-    }
+            })
+            .catch(error => {
+                setErrors([`Login error: ${error.response.data.message}`]);
+            })
 
-    return !store.user ? (
+    }, [dispatch, form]);
+
+    return store.isAuth ? (
+        <Outlet />
+    ) : (
         <>
             <h1>CareSync</h1>
             <h2>Easy care work scheduling and shift notes.</h2>
@@ -95,23 +99,26 @@ export default function Home() {
                                 value={form.password}
                                 onChange={handleInput} />
                         </label>
-                        <div id="form-errors">
+                        {errors.length > 0 ? (<div id="form-errors">
                             <ul>
                                 {errors.map((error, index) => {
                                     return <li key={index}>{error}</li>
                                 })}
                             </ul>
-                        </div>
-                        <button onClick={handleLogin}>
+                        </div>) : null
+                        }
+                        <button className="button-action" onClick={handleLogin}>
                             Log in
                         </button>
                     </fieldset>
                 </form>
             </section>
-        </>
-    ) : (
-        <>
-            <Outlet />
+            <section>
+                <h2 style={{ textAlign: "center" }}>No account?</h2>
+                <button className="button-action">
+                    Sign up
+                </button>
+            </section>
         </>
     )
 }

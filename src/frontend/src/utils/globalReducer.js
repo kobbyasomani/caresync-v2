@@ -1,10 +1,24 @@
 export default function globalReducer(state, action) {
+    // console.log(`GLOBAL STATE CHANGED: ${action.type}`);
     switch (action.type) {
-        case "resetStore":
+        case "login":
             return {
+                ...state,
+                isAuth: true,
+                user: action.data
+            }
+        case "logout":
+            const emptyStore = {
+                isAuth: false,
                 user: "",
-                patients: null,
                 selectedPatient: ""
+            }
+            window.localStorage.setItem("careSync", JSON.stringify(emptyStore));
+            return emptyStore;
+        case "setIsAuth":
+            return {
+                ...state,
+                isAuth: action.data
             }
         case "setUser":
             return {
