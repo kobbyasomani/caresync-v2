@@ -24,8 +24,12 @@ export default function formReducer(state, action) {
                 errors: action.errors
             }
         case "clearForm":
+            let emptyForm = {};
+            for (const name in state.inputs) {
+                emptyForm[name] = "";
+            }
             return {
-                inputs: {},
+                inputs: emptyForm,
                 errors: []
             }
         default:
@@ -37,7 +41,10 @@ export default function formReducer(state, action) {
 
 /**
  * Passes the initial form state to the form state handler (a reducer function)
- * @param {object} initialState The initial state of form inputs in name-value pairs.
+ * @param {object} initialState The initial state of the form.
+ * Pass as an object with two props: `inputs` and `errors`. 
+ * `inputs: {}` is an object containing input name-value pairs. 
+ * `errors: []` is an array of error message strings.
  * @returns The form state value and updater function — the result of passing 
  * the form reducer function and the intial state to the `useReducer` hook.
  */

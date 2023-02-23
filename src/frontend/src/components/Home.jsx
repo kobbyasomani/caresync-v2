@@ -23,9 +23,10 @@ export default function Login() {
     const [form, setForm] = useHandleForm(initialState);
 
     const setUser = () => {
+        // console.log(`setting user ${form.inputs.email}...`)
         dispatch({
             type: "login",
-            data: form.email
+            data: form.inputs.email
         });
     }
 
@@ -35,14 +36,15 @@ export default function Login() {
         <>
             <h1>CareSync</h1>
             <h2>Easy care work scheduling and shift notes.</h2>
-            <section>
+            <div>
                 <Form
                     form={form}
                     setForm={setForm}
                     legend="Sign in"
                     submitButtonText="Log in"
                     postURL="/user/login"
-                    callback={setUser}>
+                    callback={setUser}
+                >
                     <label htmlFor="email">Email address</label>
                     <input
                         id="email"
@@ -58,13 +60,13 @@ export default function Login() {
                         placeholder="**********"
                         required />
                 </Form>
-            </section>
-            <section>
+            </div>
+            <div>
                 <h2 style={{ textAlign: "center" }}>No account?</h2>
                 <button className="button-action">
                     Sign up
                 </button>
-            </section>
+            </div>
         </>
-    )
+    );
 }
