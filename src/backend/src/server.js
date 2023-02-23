@@ -24,6 +24,7 @@ app.use(cors(corsOptions));
 app.use('/user', require('./routes/userRoutes'))
 app.use('/patient', require('./routes/patientRoutes'))
 app.use('/carer', require('./routes/carerRoutes'))
+app.use('/shift', require('./routes/shiftRoutes'))
 
 app.use(errorHandler)
 
