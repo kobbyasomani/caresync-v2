@@ -75,7 +75,7 @@ const Form = ({
             })
             .catch(error => {
                 // Render validation error messages
-                handleErrors([`Error: ${error.response.data.message}.`]);
+                handleErrors([`Error: ${error.response.data.message}`]);
             });
 
     }, [postURL, form, setForm, handleErrors, callback]);

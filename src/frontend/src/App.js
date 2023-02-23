@@ -9,6 +9,8 @@ import {
 import Root from "./components/Root";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Register from "./components/Register";
+import Verification from "./components/Verification";
 import About from "./components/About";
 import Help from "./components/Help";
 import Error from "./components/Error";
@@ -45,6 +47,14 @@ const router = createBrowserRouter([
             ]
           }
         ]
+      },
+      {
+        path: "/register",
+        element: <Register />
+      },
+      {
+        path: "/emailVerification/:token",
+        element: <Verification />,
       },
       {
         path: "/about",

@@ -1,4 +1,4 @@
-import { useState, navigate } from "react";
+import { useState, useCallback, navigate } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 import { useHandleForm } from "../utils/formUtils";
@@ -22,7 +22,7 @@ export const AddPatient = () => {
     // Notification state
     const [notifications, setNotifications] = useState([]);
 
-    const setNewPatient = (patient) => {
+    const setNewPatient = useCallback((patient) => {
         // console.log("setting new patient...");
         // Show success notification
         setNotifications(prev => [...prev, `Patient ${patient.firstName} ${patient.lastName} 
@@ -33,15 +33,15 @@ export const AddPatient = () => {
             type: "setSelectedPatient",
             data: patient
         });
-    }
+    }, [dispatch]);
 
-    function switchPatient() {
+    const switchPatient = useCallback(() => {
         dispatch({
             type: "setSelectedPatient",
             data: ""
         });
         navigate("/");
-    }
+    }, [dispatch]);
 
     return (
         <>
@@ -71,24 +71,23 @@ export const AddPatient = () => {
                         required />
                 </Form>
             </div>
+            {/* Display notifications */}
             {notifications.length > 0 ? (
-                <>
-                    <div>
-                        <h2>Success!</h2>
-                        {notifications.map((notification, index) => {
-                            return <p key={index}>✅ {notification}</p>
-                        })}
-                        < br />
-                        <div className="journey-options">
-                            <Link to="/" onClick={switchPatient}>
-                                ← Return to patients
-                            </Link>
-                            <Link to="/calendar">
-                                View calendar →
-                            </Link>
-                        </div>
+                <div>
+                    <h2>Success!</h2>
+                    {notifications.map((notification, index) => {
+                        return <p key={index}>✅ {notification}</p>
+                    })}
+                    < br />
+                    <div className="journey-options">
+                        <Link to="/" onClick={switchPatient}>
+                            ← Return to patients
+                        </Link>
+                        <Link to="/calendar">
+                            View calendar →
+                        </Link>
                     </div>
-                </>
+                </div>
             ) : null}
         </>
     )

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import Form from "./Form";
 import { useHandleForm } from "../utils/formUtils";
 
@@ -63,9 +63,11 @@ export default function Login() {
             </div>
             <div>
                 <h2 style={{ textAlign: "center" }}>No account?</h2>
-                <button className="button-action">
-                    Sign up
-                </button>
+                <Link to="/register">
+                    <button className="button-action">
+                        Sign up
+                    </button>
+                </Link>
             </div>
         </>
     );
