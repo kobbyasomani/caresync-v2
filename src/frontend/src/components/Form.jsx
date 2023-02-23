@@ -1,14 +1,12 @@
 import {
     useCallback,
     cloneElement,
-    Children
+    Children,
 } from "react";
 import {
-    useHandleForm,
     useHandleFormInput,
     useHandleFormErrors
 } from "../utils/formUtils";
-import { useGlobalState } from "../utils/globalStateContext";
 import axios from "axios";
 
 /**
@@ -16,11 +14,17 @@ import axios from "axios";
  * @param {string} postURL The API endpoint to submit the form to.
  * @returns 
  */
-const Form = ({ initialState, legend, submitButtonText, postURL, children }) => {
-    const { dispatch } = useGlobalState();
+const Form = ({
+    form,
+    setForm,
+    legend,
+    submitButtonText,
+    postURL,
+    callback,
+    children
+}) => {
 
-    // Handle form state and controlled inputs. 
-    const [form, setForm] = useHandleForm(initialState);
+    // Handle form state and controlled inputs.
     const handleInput = useHandleFormInput(setForm);
     const handleErrors = useHandleFormErrors(setForm);
 
@@ -33,7 +37,8 @@ const Form = ({ initialState, legend, submitButtonText, postURL, children }) => 
 
         // Make sure form fields are not empty
         for (const [name, value] of Object.entries(form.inputs)) {
-            const inputLabel = document.querySelector(`input[name=${name}]`).labels[0].textContent;
+            const inputLabel = document.querySelector(
+                `input[name=${name}]`).labels[0].textContent;
             if (!value) {
                 errors.push(`${inputLabel} cannot be blank.\n`);
             }
@@ -50,18 +55,19 @@ const Form = ({ initialState, legend, submitButtonText, postURL, children }) => 
         // If there are no errors submit the form
         axios.post(postURL, form.inputs)
             .then(() => {
-                dispatch({
-                    type: "login",
-                    data: form.email
+                // Clear the form after successful submission
+                setForm({
+                    type: "clearForm"
                 });
+                // If a callback is passed, execute it
+                return callback ? callback() : "";
             })
             .catch(error => {
-                // Render server-side validation error messages
-                handleErrors([`Login error: ${error.response.data.message}. 
-                Please make sure the email address and password entered are correct.`]);
-            })
+                // Render validation error messages
+                handleErrors([`Error: ${error.response.data.message}.`]);
+            });
 
-    }, [postURL, form, dispatch, handleErrors]);
+    }, [postURL, form, setForm, handleErrors, callback]);
 
     return (
         <form>
@@ -95,4 +101,5 @@ const Form = ({ initialState, legend, submitButtonText, postURL, children }) => 
     );
 }
 
-export default Form
+export default Form;
+

@@ -2,7 +2,9 @@ import { useCallback, useReducer } from "react";
 
 /**
  * Manages form state using.
- * @param {object} state The form input fields in name-value pairs.
+ * @param {object|array} state An object with two props: inputs and errors. 
+ * These are the form input fields in name-value pairs (object),
+ * and a list of error message strings (array) respectively.
  * @param {string} action The form action to take.
  * @returns 
  */
@@ -20,6 +22,11 @@ export default function formReducer(state, action) {
             return {
                 ...state,
                 errors: action.errors
+            }
+        case "clearForm":
+            return {
+                inputs: {},
+                errors: []
             }
         default:
             return {
@@ -69,5 +76,5 @@ export {
     formReducer,
     useHandleForm,
     useHandleFormInput,
-    useHandleFormErrors
+    useHandleFormErrors,
 }

@@ -2,12 +2,13 @@ import { useMemo } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
 import { Outlet } from "react-router-dom";
 import Form from "./Form";
+import { useHandleForm } from "../utils/formUtils";
 
 export default function Login() {
     // console.log("rendering Home");
 
-    // Get the global state
-    const { store } = useGlobalState();
+    // Get the global state and set form state
+    const { store, dispatch } = useGlobalState();
 
     // Set the initial form state
     const initialState = useMemo(() => {
@@ -19,6 +20,14 @@ export default function Login() {
             errors: []
         }
     }, [])
+    const [form, setForm] = useHandleForm(initialState);
+
+    const setUser = () => {
+        dispatch({
+            type: "login",
+            data: form.email
+        });
+    }
 
     return store.isAuth ? (
         <Outlet />
@@ -27,10 +36,13 @@ export default function Login() {
             <h1>CareSync</h1>
             <h2>Easy care work scheduling and shift notes.</h2>
             <section>
-                <Form initialState={initialState}
+                <Form
+                    form={form}
+                    setForm={setForm}
                     legend="Sign in"
                     submitButtonText="Log in"
-                    postURL="/user/login">
+                    postURL="/user/login"
+                    callback={setUser}>
                     <label htmlFor="email">Email address</label>
                     <input
                         id="email"
