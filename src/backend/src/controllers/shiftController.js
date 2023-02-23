@@ -65,8 +65,7 @@ const getPatientShifts = asyncHandler(async (req, res) => {
 });
 
 const createShift = asyncHandler(async (req, res) => {
-  const { startTime, endTime, coordinatorNotes } = req.body;
-  console.log(startTime, endTime, coordinatorNotes);
+  const { carerID, shiftStartTime, shiftEndTime, coordinatorNotes } = req.body;
 
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
@@ -87,7 +86,7 @@ const createShift = asyncHandler(async (req, res) => {
   }
 
   // Search for patient with URL variable
-  const carer = await User.findById(req.params.carerID);
+  const carer = await User.findById(carerID);
 
   // Patient Check
   if (!carer) {
@@ -95,23 +94,23 @@ const createShift = asyncHandler(async (req, res) => {
     throw new Error("Carer not found");
   }
 
-  // Make sure logged in user matches the coordinator or carer
+  // Make sure logged in user matches the coordinator
   if (patient.coordinator.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
-  // Create Patient
+  // Create shift
   const shift = await Shift.create({
     patient: patient._id,
     coordinator: user.id,
     coordinatorNotes,
     carer: carer.id,
-    shiftStartTime: startTime,
-    shiftEndTime: endTime,
+    shiftStartTime: shiftStartTime,
+    shiftEndTime: shiftEndTime,
   });
 
-  // Return patient info
+  // Return shift info
   if (shift) {
     res.status(201).json({
       _id: shift.id,
@@ -119,8 +118,8 @@ const createShift = asyncHandler(async (req, res) => {
       coordinator: user.id,
       coordinatorNotes,
       carer: carer.id,
-      shiftStartTime: startTime,
-      shiftEndTime: endTime,
+      shiftStartTime: shiftStartTime,
+      shiftEndTime: shiftEndTime,
     });
   } else {
     res.status(400);
@@ -128,9 +127,58 @@ const createShift = asyncHandler(async (req, res) => {
   }
 });
 
-const updateShift = asyncHandler(async (req, res) => {});
+const updateShift = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
 
-const deleteShift = asyncHandler(async (req, res) => {});
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+  // Make sure logged in user matches the coordinator
+  if (shift.coordinator.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  const updatedShift = await Shift.findByIdAndUpdate(
+    req.params.shiftID,
+    req.body,
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(updatedShift);
+});
+
+const deleteShift = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+  // Make sure logged in user matches the coordinator
+  if (shift.coordinator.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // Delete shift
+  await shift.remove();
+  res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
+});
 
 module.exports = {
   getUserShifts,
