@@ -127,7 +127,7 @@ const getPatientInfo = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
   
-  // Make sure logged in user matches the coordinator user
+  // Make sure logged in user matches the coordinator or carer
   if (
     patient.coordinator.toString() !== user.id &&
     !patient.carers.toString().includes(user.id)

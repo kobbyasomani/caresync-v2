@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailVerification = asyncHandler(async (req, res) => {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-  console.log(decode);
+  
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 
@@ -83,7 +83,7 @@ const emailVerification = asyncHandler(async (req, res) => {
   });
   res.status(200).json(verifyUser);
 
-  console.log(user.id);
+
 });
 
 //----NEW ROUTE----//
@@ -158,7 +158,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .lean();
 
 
-  // Loop through all patients the user is coordinator for
+  // Loop through all patients the current user is coordinator for
   // Find next shift for that patient and return nextShift(date/carer name) added to patient object
   const patientCoordinatorShift = await Promise.all(
     patientCoordinator.map(async (patient) => {
@@ -174,6 +174,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $limit: 1 },
       ]);
       
+    
       // If there is a shift scheduled for the patient, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
@@ -191,7 +192,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
     })
   );
 
-  // Loop through all patients the user is carer for
+  // Loop through all patients the current user is carer for
   // Find next shift for that patient and return nextShift added to patient object
   const patientCarerShift = await Promise.all(
     patientCarer.map(async (patient) => {
