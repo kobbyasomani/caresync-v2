@@ -15,14 +15,14 @@ const { protect } = require("../middleware/authMiddleware");
 // @param JWT token identity
 shiftRouter.route("/").get(protect, getUserShifts)
 
-// Get all shifts for specific patient
-// @param {firstName, lastName}
+// Get all shifts for specific patient/create a shift
+// @param :patientID url variable
 shiftRouter.route("/:patientID").get(protect, getPatientShifts).post(protect, createShift)
 
-// Create a shift 
-// @param :patientID variable
-shiftRouter.route("/:patientID").post(protect, createShift)
-
+// Update a shift 
+// @param :shiftID url variable + input key(s): carerID, shiftStartTime, shiftEndTime, coordinatorNotes (will update only what you send)
+// Delete a shift 
+// @param :shiftID url variable
 shiftRouter.route("/:shiftID").put(protect, updateShift).delete(protect, deleteShift)
 
 

@@ -9,7 +9,7 @@ const { request } = require("express");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
-// @route GET /
+// @route GET /shift
 // @access private
 const getUserShifts = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
@@ -29,7 +29,7 @@ const getUserShifts = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Get shifts for specified patient
-// @route GET /shifts/:patientID
+// @route GET /shift/:patientID
 // @access private
 const getPatientShifts = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
@@ -64,6 +64,11 @@ const getPatientShifts = asyncHandler(async (req, res) => {
   res.status(200).json(patientShifts);
 });
 
+
+//----NEW ROUTE----//
+// @desc Create shift for specified patient
+// @route Post /shift/:patientID
+// @access private
 const createShift = asyncHandler(async (req, res) => {
   const { carerID, shiftStartTime, shiftEndTime, coordinatorNotes } = req.body;
 
@@ -127,6 +132,10 @@ const createShift = asyncHandler(async (req, res) => {
   }
 });
 
+//----NEW ROUTE----//
+// @desc Update shift 
+// @route PUT /shift/:shiftID
+// @access private
 const updateShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
@@ -146,6 +155,7 @@ const updateShift = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
+  // Update shift
   const updatedShift = await Shift.findByIdAndUpdate(
     req.params.shiftID,
     req.body,
@@ -156,6 +166,10 @@ const updateShift = asyncHandler(async (req, res) => {
   res.status(200).json(updatedShift);
 });
 
+//----NEW ROUTE----//
+// @desc Update shift 
+// @route DELETE /shift/:shiftID
+// @access private
 const deleteShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
