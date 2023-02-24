@@ -1,11 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
-const jwt_decode = require("jwt-decode");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const emails = require("../services/email");
-const { request } = require("express");
+const PDFDocument = require("pdfkit");
+const getStream = require("get-stream");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
@@ -63,7 +61,6 @@ const getPatientShifts = asyncHandler(async (req, res) => {
   ]);
   res.status(200).json(patientShifts);
 });
-
 
 //----NEW ROUTE----//
 // @desc Create shift for specified patient
@@ -133,7 +130,7 @@ const createShift = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
-// @desc Update shift 
+// @desc Update shift
 // @route PUT /shift/:shiftID
 // @access private
 const updateShift = asyncHandler(async (req, res) => {
@@ -167,7 +164,7 @@ const updateShift = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
-// @desc Update shift 
+// @desc Update shift
 // @route DELETE /shift/:shiftID
 // @access private
 const deleteShift = asyncHandler(async (req, res) => {
@@ -194,10 +191,68 @@ const deleteShift = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
 });
 
+//----NEW ROUTE----//
+// @desc Create Shift Notes
+// @route POST /shift/notes:shiftID
+// @access private
+const createShiftNotes = asyncHandler(async (req, res) => {
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+// Get the patient name for the pdf document
+  const patientName = await Patient.findById(shift.patient)
+    .select("firstName")
+    .select("lastName");
+
+// Get the carer name for the pdf document
+  const carerName = await User.findById(shift.carer)
+    .select("firstName")
+    .select("lastName");
+
+  // Retrieve shift notes from form
+  const shiftNotes = req.body.shiftNotes;
+
+  //Create a pdf from the entered information
+  const pdf = async () => {
+    const doc = new PDFDocument();
+    doc
+      .font("Helvetica")
+      .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
+    doc
+      .font("Helvetica")
+      .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
+    doc
+      .font("Helvetica")
+      .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
+    doc.font("Helvetica").fontSize(25).moveDown(2).text(`Shift Notes`, {
+      width: 410,
+      align: "center",
+    });
+    doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);
+    doc.end();
+    return await getStream.buffer(doc);
+  };
+
+  // Convert pdf to string
+  const pdfBuffer = await pdf();
+  const pdfBase64string = pdfBuffer.toString("base64");
+
+  // Update shift
+  const updatedShift = await Shift.findByIdAndUpdate(
+    req.params.shiftID,
+    { shiftNotes: pdfBase64string },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(updatedShift);
+});
+
 module.exports = {
   getUserShifts,
   getPatientShifts,
   createShift,
   updateShift,
   deleteShift,
+  createShiftNotes,
 };
