@@ -2,8 +2,6 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const Handlebars = require("handlebars");
-const fs = require("fs");
 const PDFDocument = require("pdfkit");
 const getStream = require("get-stream");
 
