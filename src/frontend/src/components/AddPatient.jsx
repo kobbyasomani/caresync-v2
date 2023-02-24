@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback, navigate } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
-import axios from "axios";
+import { useHandleForm } from "../utils/formUtils";
+import Form from "./Form";
 
 export const AddPatient = () => {
     // console.log("rendering AddPatient");
@@ -10,125 +11,83 @@ export const AddPatient = () => {
 
     // Set the form state
     const initialState = {
-        firstName: "",
-        lastName: "",
+        inputs: {
+            firstName: "",
+            lastName: "",
+        },
+        errors: []
     }
-    const [form, setForm] = useState(initialState);
-    const [errors, setErrors] = useState([]);
+    const [form, setForm] = useHandleForm(initialState);
+
+    // Notification state
     const [notifications, setNotifications] = useState([]);
 
-    // Handle controlled form input
-    function handleInput(event) {
-        setForm(prev => {
-            return {
-                ...prev,
-                [event.target.name]: event.target.value,
-            }
+    const setNewPatient = useCallback((patient) => {
+        // console.log("setting new patient...");
+        // Show success notification
+        setNotifications(prev => [...prev, `Patient ${patient.firstName} ${patient.lastName} 
+    was added. You can now coordinate their care using the calendar.`]);
+
+        // Set the selectedPatient to newly created patient
+        dispatch({
+            type: "setSelectedPatient",
+            data: patient
         });
-    }
+    }, [dispatch]);
 
-    // Validate and submit the form
-    function addPatient(event) {
-        event.preventDefault();
-        setErrors([]);
-        let errors = [];
-        // Make sure fields are not empty
-        ["firstName", "lastName"].forEach(fieldValue => {
-            if (!form[fieldValue]) {
-                errors.push(`${fieldValue} cannot be blank.\n`);
-            }
+    const switchPatient = useCallback(() => {
+        dispatch({
+            type: "setSelectedPatient",
+            data: ""
         });
-
-        // If there are errors, cancel form submission and set them
-        if (errors.length > 0) {
-            return setErrors(errors);
-        } else {
-            setErrors([]);
-        }
-
-        // If there are no errors submit the form
-        axios.post("/patient", form)
-            .then(response => {
-                if (response.status !== 201) {
-                    return setErrors(["Patient creation unsuccessful. Please try again."]);
-                }
-                const patient = response.data;
-
-                // Show success notification
-                setNotifications(prev => [...prev, `Patient ${patient.firstName} ${patient.lastName} 
-                was added. You can now coordinate their care using the calendar.`]);
-
-                // Set the selectedPatient to newly created patient
-                dispatch({
-                    type: "setSelectedPatient",
-                    data: patient
-                });
-
-                // Clear the form
-                setForm(initialState);
-                // Navigate to patient selection
-                // navigate("/select-patient");
-            });
-    }
+        navigate("/");
+    }, [dispatch]);
 
     return (
         <>
             <h1>Add a patient</h1>
-            <section>
-                <form>
-                    <fieldset>
-                        <legend>Patient details</legend>
-                        <label>First name
-                            <input
-                                id="first-name"
-                                type="text"
-                                name="firstName"
-                                placeholder="Jane"
-                                required
-                                value={form.firstName}
-                                onChange={handleInput} />
-                        </label>
-                        <label>Last name
-                            <input
-                                id="last-name"
-                                type="text"
-                                name="lastName"
-                                placeholder="Doe"
-                                required
-                                value={form.lastName}
-                                onChange={handleInput} />
-                        </label>
-                        <div id="form-errors">
-                            <ul>
-                                {errors.map((error, index) => {
-                                    return <li key={index}>{error}</li>
-                                })}
-                            </ul>
-                        </div>
-                    </fieldset>
-                    <button className="button-action" onClick={addPatient}>
-                        Add patient
-                    </button>
-                </form>
-            </section>
+            <div>
+                <Form
+                    form={form}
+                    setForm={setForm}
+                    legend="Add a new patient"
+                    submitButtonText="Add patient"
+                    postURL="/patient"
+                    callback={setNewPatient}
+                >
+                    <label htmlFor="first-name">First name</label>
+                    <input
+                        id="first-name"
+                        type="text"
+                        name="firstName"
+                        placeholder="Jane"
+                        required />
+                    <label htmlFor="last-name">Last name</label>
+                    <input
+                        id="last-name"
+                        type="text"
+                        name="lastName"
+                        placeholder="Doe"
+                        required />
+                </Form>
+            </div>
+            {/* Display notifications */}
             {notifications.length > 0 ? (
-                <>
-                    <section>
-                        <h2>Success!</h2>
-                        {notifications.map((notification, index) => {
-                            return <p key={index}>✅ {notification}</p>
-                        })}
-                        < br />
-                        <div className="journey-options">
-                            <Link to="/select-patient">
-                                ← Return to patients
-                            </Link>
-                            <Link to="/calendar">
-                                View calendar →
-                            </Link>
-                        </div>
-                    </section>
-                </>
+                <div>
+                    <h2>Success!</h2>
+                    {notifications.map((notification, index) => {
+                        return <p key={index}>✅ {notification}</p>
+                    })}
+                    < br />
+                    <div className="journey-options">
+                        <Link to="/" onClick={switchPatient}>
+                            ← Return to patients
+                        </Link>
+                        <Link to="/calendar">
+                            View calendar →
+                        </Link>
+                    </div>
+                </div>
             ) : null}
         </>
     )

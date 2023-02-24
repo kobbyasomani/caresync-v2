@@ -69,9 +69,11 @@ const SelectPatient = () => {
                 <p>Add a patient to get started.</p>
             )}
 
-            <Link to={"/add-patient"}><button className="button-action">
-                Add patient
-            </button></Link>
+            <Link to={"/add-patient"}>
+                <button className="button-action">
+                    Add patient
+                </button>
+            </Link>
         </>
     ) : (
         <Navigate to="/" />

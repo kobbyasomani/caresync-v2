@@ -6,7 +6,6 @@ const {
   getUserPatients,
   emailVerification,
   authUser,
-  logoutUser
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 

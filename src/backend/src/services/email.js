@@ -23,7 +23,7 @@ module.exports = {
                 from: process.env.EMAIL_ADDRESS,
                 to: email,
                 subject: `Hello ${name}, please verify your email by clicking the link`,
-                html: process.env.BASE_URL + "/emailVerification"+`?${token}`
+                html: process.env.BASE_URL + "/emailVerification/"+`${token}`
             })
         } catch (error) {
             console.log(error)
