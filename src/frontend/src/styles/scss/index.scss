@@ -121,6 +121,18 @@ p {
     @include margin-center-h;
 }
 
+.link-action {
+    @include button;
+    @include margin-center-h;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+
+    &::before {
+        content: "← ";
+    }
+}
+
 form {
     fieldset {
         padding: $padding-v $padding-h;

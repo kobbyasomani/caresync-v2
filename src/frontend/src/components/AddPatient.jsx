@@ -88,7 +88,11 @@ export const AddPatient = () => {
                         </Link>
                     </div>
                 </div>
-            ) : null}
+            ) : (
+                <Link to={"/"} className="link-action">
+                    Return to patient list
+                </Link>
+            )}
         </>
     )
 }

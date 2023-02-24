@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
@@ -101,6 +102,29 @@ p {
   background-color: purple;
   color: white;
   cursor: pointer;
+}
+
+.link-action {
+  margin-top: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 3rem;
+  border: 2px solid #999;
+  font-size: 1rem;
+  font-weight: 600;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  background-color: transparent;
+  text-align: center;
+}
+.link-action:hover, .link-action:focus {
+  background-color: purple;
+  color: white;
+  cursor: pointer;
+}
+.link-action::before {
+  content: "← ";
 }
 
 form fieldset {
