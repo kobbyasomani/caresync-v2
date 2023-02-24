@@ -5,7 +5,9 @@ const {
   getPatientShifts,
   createShift,
   updateShift,
-  deleteShift
+  deleteShift,
+  createShiftNotes
+
 } = require("../controllers/shiftController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -24,6 +26,11 @@ shiftRouter.route("/:patientID").get(protect, getPatientShifts).post(protect, cr
 // Delete a shift 
 // @param :shiftID url variable
 shiftRouter.route("/:shiftID").put(protect, updateShift).delete(protect, deleteShift)
+
+
+// Delete a shift 
+// @param :shiftID url variable
+shiftRouter.route("/notes/:shiftID").post(protect, createShiftNotes)
 
 
 

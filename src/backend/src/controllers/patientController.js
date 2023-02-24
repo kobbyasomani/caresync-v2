@@ -1,10 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
-const jwt_decode = require("jwt-decode");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
-const emails = require("../services/email");
-const { request } = require("express");
+
 
 //----- New Route Function------//
 // @desc Create patient
