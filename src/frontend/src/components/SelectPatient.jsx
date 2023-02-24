@@ -1,12 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalState } from "../utils/globalStateContext";
-import { useNavigate, Link, Navigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import baseURL from "../utils/baseUrl";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalState();
-    const { _id, firstName, lastName } = patient;
+    const { _id, firstName, lastName, nextShift } = patient;
     const navigate = useNavigate();
+
+    let caringFor;
+    let nextShiftDate = () => {
+        if (nextShift) {
+            if (typeof nextShift === "string") {
+                return new Date(nextShift).toLocaleString();
+            }
+            caringFor = true;
+            return new Date(nextShift[0].time).toLocaleString();
+        }
+        return "No upcoming shift";
+    }
 
     const selectPatient = (event) => {
         dispatch({
@@ -21,7 +33,9 @@ const Patient = ({ patient }) => {
         <div id={_id} className="patient" onClick={selectPatient}>
             <div className="icon">👤</div>
             <div className="name">{firstName} {lastName}</div>
-            <div className="shift">Upcoming shift: dd/mm/yyyy</div>
+            <div className="shift">
+                Next shift: {nextShiftDate()}
+                {caringFor ? <div className="caring-for">You are the carer for this shift.</div> : null}</div>
         </div>
     );
 }
@@ -30,38 +44,45 @@ const SelectPatient = () => {
     // console.log("rendering SelectPatient");
 
     const { store, dispatch } = useGlobalState();
+    const [isLoading, setIsLoading] = useState(true);
+    const [patients, setPatients] = useState([]);
 
     // Fetch the list of patients for the logged-in user
     useEffect(() => {
-        if (store.isAuth) {
-            fetch(`${baseURL}/user`, {
-                credentials: "include"
-            }).then(response => response.json())
-                .then(patients => {
-                    dispatch({
-                        type: "setPatients",
-                        data: patients
-                    });
-                }).catch(error => console.error(error.message));
-        }
-    }, [dispatch, store.isAuth]);
+        fetch(`${baseURL}/user`, {
+            credentials: "include"
+        }).then(response => response.json())
+            .then(patients => {
+                dispatch({
+                    type: "setPatients",
+                    data: patients
+                });
+                setPatients(patients);
+                setIsLoading(false);
+            }).catch(error => console.error(error.message));
+    }, [dispatch]);
 
-    return store.isAuth ? (
+    return isLoading ? (
+        <>
+            <h1>Hi, {store.user}</h1>
+            <h2>Fetching patients...</h2>
+        </>
+    ) : (
         <>
             <h1>Hi, {store.user}</h1>
             <h2>Select a patient</h2>
-            {store.patients && store.patients.carer.length > 0 ? (
+            {patients && patients.carer.length > 0 ? (
                 <section>
                     <h3>Caring for</h3>
-                    {store.patients.carer.map(patient => (
+                    {patients.carer.map(patient => (
                         <Patient patient={patient} key={patient._id} />
                     ))}
                 </section>
             ) : null}
-            {store.patients && store.patients.coordinator.length > 0 ? (
+            {patients && patients.coordinator.length > 0 ? (
                 <section>
                     <h3>Coordinating for</h3>
-                    {store.patients.coordinator.map(patient => (
+                    {patients.coordinator.map(patient => (
                         <Patient patient={patient} key={patient._id} />
                     ))}
                 </section>
@@ -75,8 +96,6 @@ const SelectPatient = () => {
                 </button>
             </Link>
         </>
-    ) : (
-        <Navigate to="/" />
     )
 }
 

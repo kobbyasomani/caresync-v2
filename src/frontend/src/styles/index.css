@@ -135,21 +135,26 @@ form input {
   border: 1px solid #999;
   border-radius: 0.5rem;
   display: grid;
-  grid-template: repeat(2, 1fr)/repeat(2, auto);
+  grid-template: repeat(2, auto)/1fr 4fr;
   column-gap: 1rem;
   align-items: center;
 }
 .patient .icon {
-  grid-area: 1/1/span 3/span 1;
+  grid-area: 1/1/span 3/auto;
   justify-self: center;
   align-self: center;
   font-size: 1.5rem;
 }
 .patient .name {
   font-size: 1.1rem;
+  justify-self: start;
 }
 .patient .shift {
   color: #555;
+  justify-self: start;
+}
+.patient .shift .caring-for {
+  color: blue;
 }
 .patient:hover {
   background-color: powderblue;

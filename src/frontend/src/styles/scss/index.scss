@@ -159,12 +159,12 @@ form {
     border: 1px solid $outline;
     border-radius: $rounded-corners;
     display: grid;
-    grid-template: repeat(2, 1fr) / repeat(2, auto);
+    grid-template: repeat(2, auto) / 1fr 4fr;
     column-gap: 1rem;
     align-items: center;
 
     .icon {
-        grid-area: 1 / 1 / span 3 / span 1;
+        grid-area: 1 / 1 / span 3 / auto;
         justify-self: center;
         align-self: center;
         font-size: 1.5rem;
@@ -172,10 +172,16 @@ form {
 
     .name {
         font-size: 1.1rem;
+        justify-self: start;
     }
 
     .shift {
         color: #555;
+        justify-self: start;
+
+        .caring-for {
+            color: blue;
+        }
     }
 
     &:hover {
