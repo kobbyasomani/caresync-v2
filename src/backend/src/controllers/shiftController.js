@@ -2,8 +2,8 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-
 const { cloudinaryUpload, createPDF } = require("../middleware/pdfMiddleware");
+
 //----NEW ROUTE----//
 // @desc Get shifts for current user
 // @route GET /shift
@@ -195,6 +195,15 @@ const deleteShift = asyncHandler(async (req, res) => {
 // @route POST /shift/notes/:shiftID
 // @access private
 const createShiftNotes = asyncHandler(async (req, res) => {
+  // create variable for entered shift notes
+  const shiftNotes = req.body.shiftNotes;
+
+  // Ensure all fields are filled out
+  if (!shiftNotes) {
+    res.status(400);
+    throw new Error("Please fill out all fields");
+  }
+
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
@@ -252,6 +261,15 @@ const createShiftNotes = asyncHandler(async (req, res) => {
 // @route POST /shift/reports/:shiftID
 // @access private
 const createIncidentReport = asyncHandler(async (req, res) => {
+  // create variable for entered shift notes
+  const incidentReport = req.body.incidentReport;
+
+  // Ensure all fields are filled out
+  if (!incidentReport) {
+    res.status(400);
+    throw new Error("Please fill out all fields");
+  }
+
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
@@ -287,7 +305,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
     patient.lastName,
     carer.firstName,
     carer.lastName,
-    req.body.incidentReport
+    incidentReport
   );
 
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to

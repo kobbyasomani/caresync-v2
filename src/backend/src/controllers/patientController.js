@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 
-
 //----- New Route Function------//
 // @desc Create patient
 // @route POST /patient/
@@ -107,7 +106,9 @@ const deletePatient = asyncHandler(async (req, res) => {
 });
 
 const getPatientInfo = asyncHandler(async (req, res) => {
-  const patient = await Patient.findById(req.params.id).select("-shifts").lean();
+  const patient = await Patient.findById(req.params.id)
+    .select("-shifts")
+    .lean();
 
   // Patient Check
   if (!patient) {
@@ -123,7 +124,7 @@ const getPatientInfo = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("User not found");
   }
-  
+
   // Make sure logged in user matches the coordinator or carer
   if (
     patient.coordinator.toString() !== user.id &&
@@ -135,11 +136,10 @@ const getPatientInfo = asyncHandler(async (req, res) => {
 
   // Create and set a value for isCoordinator fo use in setting state on the front end
   if (patient.coordinator.toString() == user.id) {
-    patient["isCoordinator"] = true  
+    patient["isCoordinator"] = true;
   } else {
-    patient["isCoordinator"] = false  
+    patient["isCoordinator"] = false;
   }
-
 
   // If there are carers, find there first and last name and stick them in the patient object for display
   if (patient.carers) {
@@ -147,7 +147,7 @@ const getPatientInfo = asyncHandler(async (req, res) => {
       .where("_id")
       .in(patient.carers)
       .select("firstName")
-      .select("lastName")
+      .select("lastName");
     patient.carers = carers;
   }
   // Find coordinator first and last name and stick them in the patient object for display
