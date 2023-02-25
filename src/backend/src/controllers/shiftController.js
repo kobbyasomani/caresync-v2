@@ -4,6 +4,7 @@ const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
 const PDFDocument = require("pdfkit");
 const getStream = require("get-stream");
+const { currentLineHeight } = require("pdfkit");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
@@ -196,15 +197,30 @@ const deleteShift = asyncHandler(async (req, res) => {
 // @route POST /shift/notes/:shiftID
 // @access private
 const createShiftNotes = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
 
-// Get the patient name for the pdf document
+  // Make sure logged in user matches the carer for the shift
+  if (!shift.carer.toString().includes(user.id)) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // Get the patient name for the pdf document
   const patientName = await Patient.findById(shift.patient)
     .select("firstName")
     .select("lastName");
 
-// Get the carer name for the pdf document
+  // Get the carer name for the pdf document
   const carerName = await User.findById(shift.carer)
     .select("firstName")
     .select("lastName");
@@ -248,63 +264,77 @@ const createShiftNotes = asyncHandler(async (req, res) => {
   res.status(200).json(updatedShift);
 });
 
-
 //----NEW ROUTE----//
 // @desc Create Incident Report
-// @route POST /shift/report/:shiftID
+// @route POST /shift/reports/:shiftID
 // @access private
 const createIncidentReport = asyncHandler(async (req, res) => {
-    // Find shift
-    const shift = await Shift.findById(req.params.shiftID);
-  
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+  // Make sure logged in user matches the carer for the shift
+  if (!shift.carer.toString().includes(user.id)) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
   // Get the patient name for the pdf document
-    const patientName = await Patient.findById(shift.patient)
-      .select("firstName")
-      .select("lastName");
-  
+  const patientName = await Patient.findById(shift.patient)
+    .select("firstName")
+    .select("lastName");
+
   // Get the carer name for the pdf document
-    const carerName = await User.findById(shift.carer)
-      .select("firstName")
-      .select("lastName");
-  
-    // Retrieve shift notes from form
-    const incidentReport = req.body.shiftNotes;
-  
-    // Create a pdf from the entered information
-    const pdf = async () => {
-      const doc = new PDFDocument();
-      doc
-        .font("Helvetica")
-        .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
-      doc
-        .font("Helvetica")
-        .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
-      doc
-        .font("Helvetica")
-        .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-      doc.font("Helvetica").fontSize(25).moveDown(2).text(`Incident Report`, {
-        width: 410,
-        align: "center",
-      });
-      doc.font("Helvetica").fontSize(12).moveDown(1).text(`${incidentReport}`);
-      doc.end();
-      return await getStream.buffer(doc);
-    };
-  
-    // Convert pdf to string
-    const reportPDF = await pdf();
-    const reportPDFBase64string = reportPDF.toString("base64");
-  
-    // Update shift
-    const updatedShift = await Shift.findByIdAndUpdate(
-      req.params.shiftID,
-      { shiftNotes: reportPDFBase64string },
-      {
-        new: true,
-      }
-    );
-    res.status(200).json(updatedShift);
-  });
+  const carerName = await User.findById(shift.carer)
+    .select("firstName")
+    .select("lastName");
+
+  // Retrieve shift notes from form
+  const incidentReport = req.body.incidentReport;
+
+  // Create a pdf from the entered information
+  const pdf = async () => {
+    const doc = new PDFDocument();
+    doc
+      .font("Helvetica")
+      .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
+    doc
+      .font("Helvetica")
+      .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
+    doc
+      .font("Helvetica")
+      .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
+    doc.font("Helvetica").fontSize(25).moveDown(2).text(`Incident Report`, {
+      width: 410,
+      align: "center",
+    });
+    doc.font("Helvetica").fontSize(12).moveDown(1).text(`${incidentReport}`);
+    doc.end();
+    return await getStream.buffer(doc);
+  };
+
+  // Convert pdf to string
+  const reportPDF = await pdf();
+  const reportPDFBase64string = reportPDF.toString("base64");
+
+  // Add new incident report to incident reports array.
+  const addIncidentReport = await Shift.findByIdAndUpdate(
+    req.params.shiftID,
+    { $push: { incidentReports: { incidentReport: reportPDFBase64string } } },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(addIncidentReport);
+});
 
 module.exports = {
   getUserShifts,
@@ -313,5 +343,5 @@ module.exports = {
   updateShift,
   deleteShift,
   createShiftNotes,
-  createIncidentReport 
+  createIncidentReport,
 };
