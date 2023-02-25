@@ -2,9 +2,8 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const PDFDocument = require("pdfkit");
-const getStream = require("get-stream");
 
+const { cloudinaryUpload, createPDF } = require("../middleware/pdfMiddleware");
 //----NEW ROUTE----//
 // @desc Get shifts for current user
 // @route GET /shift
@@ -193,59 +192,116 @@ const deleteShift = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Create Shift Notes
-// @route POST /shift/notes:shiftID
+// @route POST /shift/notes/:shiftID
 // @access private
 const createShiftNotes = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
 
-// Get the patient name for the pdf document
-  const patientName = await Patient.findById(shift.patient)
+  // Make sure logged in user matches the carer for the shift
+  if (!shift.carer.toString().includes(user.id)) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // Get the patient name for the pdf document
+  const patient = await Patient.findById(shift.patient)
     .select("firstName")
     .select("lastName");
 
-// Get the carer name for the pdf document
-  const carerName = await User.findById(shift.carer)
+  // Get the carer name for the pdf document
+  const carer = await User.findById(shift.carer)
     .select("firstName")
     .select("lastName");
 
-  // Retrieve shift notes from form
-  const shiftNotes = req.body.shiftNotes;
+  // Create a pdf from the entered information
+  const notesPDF = await createPDF(
+    "Shift Notes",
+    patient.firstName,
+    patient.lastName,
+    carer.firstName,
+    carer.lastName,
+    req.body.shiftNotes
+  );
 
-  //Create a pdf from the entered information
-  const pdf = async () => {
-    const doc = new PDFDocument();
-    doc
-      .font("Helvetica")
-      .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-    doc.font("Helvetica").fontSize(25).moveDown(2).text(`Shift Notes`, {
-      width: 410,
-      align: "center",
-    });
-    doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);
-    doc.end();
-    return await getStream.buffer(doc);
-  };
+  // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
+  const result = await cloudinaryUpload(notesPDF, "shiftNotes");
 
-  // Convert pdf to string
-  const pdfBuffer = await pdf();
-  const pdfBase64string = pdfBuffer.toString("base64");
-
-  // Update shift
+  // Update shift with Cloudinary URL
   const updatedShift = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { shiftNotes: pdfBase64string },
+    { shiftNotes: result.secure_url },
     {
       new: true,
     }
   );
   res.status(200).json(updatedShift);
+});
+
+//----NEW ROUTE----//
+// @desc Create Incident Report
+// @route POST /shift/reports/:shiftID
+// @access private
+const createIncidentReport = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // User Check
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+  // Make sure logged in user matches the carer for the shift
+  if (!shift.carer.toString().includes(user.id)) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // Get the patient name for the pdf document
+  const patient = await Patient.findById(shift.patient)
+    .select("firstName")
+    .select("lastName");
+
+  // Get the carer name for the pdf document
+  const carer = await User.findById(shift.carer)
+    .select("firstName")
+    .select("lastName");
+
+  // Create a pdf from the entered information
+  const incidentPDF = await createPDF(
+    "Incident Report",
+    patient.firstName,
+    patient.lastName,
+    carer.firstName,
+    carer.lastName,
+    req.body.incidentReport
+  );
+
+  // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
+  const result = await cloudinaryUpload(incidentPDF, "incidentReports");
+
+  // Add new incident report to incident reports array.
+  const addIncidentReport = await Shift.findByIdAndUpdate(
+    req.params.shiftID,
+    { $push: { incidentReports: { incidentReport: result.secure_url } } },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(addIncidentReport);
 });
 
 module.exports = {
@@ -255,4 +311,5 @@ module.exports = {
   updateShift,
   deleteShift,
   createShiftNotes,
+  createIncidentReport,
 };
