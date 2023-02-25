@@ -5,6 +5,8 @@ const connectDB = require('./config/db')
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 5000;
 const cors = require("cors");
+const cloudinary = require('cloudinary').v2;
+
 
 connectDB()
 
@@ -13,6 +15,10 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+
+cloudinary.config({
+  secure: true
+});
 
 const corsOptions = {
   // Valid front-end server origins

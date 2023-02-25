@@ -2,10 +2,8 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const PDFDocument = require("pdfkit");
-const getStream = require("get-stream");
-const { currentLineHeight } = require("pdfkit");
 
+const { cloudinaryUpload, createPDF } = require("../middleware/pdfMiddleware");
 //----NEW ROUTE----//
 // @desc Get shifts for current user
 // @route GET /shift
@@ -216,47 +214,32 @@ const createShiftNotes = asyncHandler(async (req, res) => {
   }
 
   // Get the patient name for the pdf document
-  const patientName = await Patient.findById(shift.patient)
+  const patient = await Patient.findById(shift.patient)
     .select("firstName")
     .select("lastName");
 
   // Get the carer name for the pdf document
-  const carerName = await User.findById(shift.carer)
+  const carer = await User.findById(shift.carer)
     .select("firstName")
     .select("lastName");
 
-  // Retrieve shift notes from form
-  const shiftNotes = req.body.shiftNotes;
-
   // Create a pdf from the entered information
-  const pdf = async () => {
-    const doc = new PDFDocument();
-    doc
-      .font("Helvetica")
-      .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-    doc.font("Helvetica").fontSize(25).moveDown(2).text(`Shift Notes`, {
-      width: 410,
-      align: "center",
-    });
-    doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);
-    doc.end();
-    return await getStream.buffer(doc);
-  };
+  const notesPDF = await createPDF(
+    "Shift Notes",
+    patient.firstName,
+    patient.lastName,
+    carer.firstName,
+    carer.lastName,
+    req.body.shiftNotes
+  );
 
-  // Convert pdf to string
-  const notesPDF = await pdf();
-  const notesPDFBase64string = notesPDF.toString("base64");
+  // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
+  const result = await cloudinaryUpload(notesPDF, "shiftNotes");
 
-  // Update shift
+  // Update shift with Cloudinary URL
   const updatedShift = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { shiftNotes: notesPDFBase64string },
+    { shiftNotes: result.secure_url },
     {
       new: true,
     }
@@ -288,47 +271,32 @@ const createIncidentReport = asyncHandler(async (req, res) => {
   }
 
   // Get the patient name for the pdf document
-  const patientName = await Patient.findById(shift.patient)
+  const patient = await Patient.findById(shift.patient)
     .select("firstName")
     .select("lastName");
 
   // Get the carer name for the pdf document
-  const carerName = await User.findById(shift.carer)
+  const carer = await User.findById(shift.carer)
     .select("firstName")
     .select("lastName");
 
-  // Retrieve shift notes from form
-  const incidentReport = req.body.incidentReport;
-
   // Create a pdf from the entered information
-  const pdf = async () => {
-    const doc = new PDFDocument();
-    doc
-      .font("Helvetica")
-      .text(`Client: ${patientName.firstName} ${patientName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Carer: ${carerName.firstName} ${carerName.lastName}`);
-    doc
-      .font("Helvetica")
-      .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-    doc.font("Helvetica").fontSize(25).moveDown(2).text(`Incident Report`, {
-      width: 410,
-      align: "center",
-    });
-    doc.font("Helvetica").fontSize(12).moveDown(1).text(`${incidentReport}`);
-    doc.end();
-    return await getStream.buffer(doc);
-  };
+  const incidentPDF = await createPDF(
+    "Incident Report",
+    patient.firstName,
+    patient.lastName,
+    carer.firstName,
+    carer.lastName,
+    req.body.incidentReport
+  );
 
-  // Convert pdf to string
-  const reportPDF = await pdf();
-  const reportPDFBase64string = reportPDF.toString("base64");
+  // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
+  const result = await cloudinaryUpload(incidentPDF, "incidentReports");
 
   // Add new incident report to incident reports array.
   const addIncidentReport = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { $push: { incidentReports: { incidentReport: reportPDFBase64string } } },
+    { $push: { incidentReports: { incidentReport: result.secure_url } } },
     {
       new: true,
     }
