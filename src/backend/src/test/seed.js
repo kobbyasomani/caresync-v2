@@ -4,12 +4,14 @@ const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
 const dotenv = require("dotenv").config();
 
+mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
+    
     console.log("Connected to MongoDB");
   })
   .catch((error) => {
@@ -49,6 +51,14 @@ const seedUsers = [
     password: "$2a$10$dolHmb4kEF9Edp.EEzdvRu2mpuV0f95dD.cL1L4PoCwWZB4bJZHQe",
     isConfirmed: true,
   },
+  {
+    _id: "63f0b95a0098e28d58f7a2d9",
+    firstName: "Kobby",
+    lastName: "Asomani",
+    email: "kobby@gmail.com",
+    password: "$2a$10$dolHmb4kEF9Edp.EEzdvRu2mpuV0f95dD.cL1L4PoCwWZB4bJZHQe",
+    isConfirmed: false,
+  },
 ];
 
 const seedPatients = [
@@ -56,6 +66,14 @@ const seedPatients = [
     _id: "63f01efe3b5704fa0aa3ddc2",
     firstName: "Henry",
     lastName: "Donaldson",
+    coordinator: "63f0b95a0098e28d58f7a25d",
+    carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
+    shifts: ["63f01f0a3b5704fa0aa3ddc9", "63f01f0a3b5704fa0aa3ddc1", "63f01f0a3b5704fa0aa3ddc8", "63f01f0a3b5704fa0aa3ddc7", "63f01f0a3b5704fa0aa3ddc6"]
+  },
+  {
+    _id: "63f01efe3b5704fa0aa3ddc8",
+    firstName: "Sandra",
+    lastName: "Frank",
     coordinator: "63f0b95a0098e28d58f7a25d",
     carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
     shifts: ["63f01f0a3b5704fa0aa3ddc9", "63f01f0a3b5704fa0aa3ddc1", "63f01f0a3b5704fa0aa3ddc8", "63f01f0a3b5704fa0aa3ddc7", "63f01f0a3b5704fa0aa3ddc6"]

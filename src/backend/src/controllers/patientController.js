@@ -52,11 +52,7 @@ const updatePatient = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
+ 
 
   // Make sure logged in user matches the coordinator user
   if (patient.coordinator.toString() !== user.id) {
@@ -89,12 +85,6 @@ const deletePatient = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
   // Make sure logged in user matches the coordinator user
   if (patient.coordinator.toString() !== user.id) {
     res.status(401);
@@ -118,12 +108,6 @@ const getPatientInfo = asyncHandler(async (req, res) => {
 
   // Find user by id
   const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
 
   // Make sure logged in user matches the coordinator or carer
   if (

@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const { cloudinaryUpload, createPDF } = require("../middleware/pdfMiddleware");
+const { cloudinaryUpload, createPDF } = require("../utils/helper.utils");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
@@ -12,15 +12,10 @@ const getUserShifts = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
-  //Find all shifts for the current logged in user
+  // Find all shifts for the current logged in user
   const userShifts = await Shift.find({ carer: user.id });
 
+  // Return all shifts for current user
   res.status(200).json(userShifts);
 });
 
@@ -49,7 +44,7 @@ const getPatientShifts = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  //Find all shifts for the current logged in user/ order them from oldest to newest
+  // Find all shifts for the current logged in user/ order them from oldest to newest
   const patientShifts = await Shift.aggregate([
     {
       $match: {
@@ -71,12 +66,6 @@ const createShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
   // Search for patient with URL variable
   const patient = await Patient.findById(req.params.patientID);
 
@@ -89,11 +78,6 @@ const createShift = asyncHandler(async (req, res) => {
   // Search for patient with URL variable
   const carer = await User.findById(carerID);
 
-  // Patient Check
-  if (!carer) {
-    res.status(400);
-    throw new Error("Carer not found");
-  }
 
   // Make sure logged in user matches the coordinator
   if (patient.coordinator.toString() !== user.id) {
@@ -136,12 +120,6 @@ const updateShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
 
@@ -159,7 +137,7 @@ const updateShift = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  res.status(200).json(updatedShift);
+  res.status(201).json(updatedShift);
 });
 
 //----NEW ROUTE----//
@@ -169,12 +147,6 @@ const updateShift = asyncHandler(async (req, res) => {
 const deleteShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
 
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
@@ -206,12 +178,6 @@ const createShiftNotes = asyncHandler(async (req, res) => {
 
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
 
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
@@ -272,12 +238,6 @@ const createIncidentReport = asyncHandler(async (req, res) => {
 
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
 
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);

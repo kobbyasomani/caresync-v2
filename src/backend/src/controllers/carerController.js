@@ -32,12 +32,6 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   // Current user
   const user = await User.findById(req.user.id);
 
-  // User Check
-  if (!user) {
-    res.status(400);
-    throw new Error("User not found");
-  }
-
   // Make sure logged in user matches the coordinator user
   if (patient.coordinator.toString() !== user.id) {
     res.status(401);
@@ -133,12 +127,6 @@ const removeCarer = asyncHandler(async (req, res) => {
 
   // Find current user
   const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
 
   // Make sure logged in user matches the coordinator user
   if (patient.coordinator.toString() !== user.id) {

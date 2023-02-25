@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const express = require("express");
 const emails = require("../services/email");
 
 //----NEW ROUTE----//
@@ -81,7 +80,8 @@ const emailVerification = asyncHandler(async (req, res) => {
   const verifyUser = await User.findByIdAndUpdate(user.id, {
     isConfirmed: true,
   });
-  res.status(200).json(verifyUser);
+
+  res.status(200).json({message: "Email successfully confirmed."});
 
 
 });
@@ -117,6 +117,7 @@ const loginUser = asyncHandler(async (req, res) => {
     expiresIn: "30d",
   });
 
+
   // Compare entered password with stored password and return a cookie
   if (user && (await bcrypt.compare(password, user.password))) {
     res.cookie("access_token", loginToken, {
@@ -128,8 +129,8 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  res.json({
-    message: "success",
+  res.status(200).json({
+    message: "Logged in Successfully",
   });
 });
 
@@ -140,11 +141,6 @@ const loginUser = asyncHandler(async (req, res) => {
 const getUserPatients = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).lean();
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
   // Gets all patients user is a coordinator for
   const patientCoordinator = await Patient.find({})
     .where({ coordinator: user._id })
@@ -219,36 +215,29 @@ const getUserPatients = asyncHandler(async (req, res) => {
   res.status(200).json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
-//----NEW ROUTE----//
-// @desc Authenticate the user during client-side routing
-// @route GET /auth
-// @access private
-const authUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
-  // Clear cookie if the logout flag is set to true
-  if (req.query.logout === "true") {
-    res
-      .clearCookie("access_token")
-      .status(200)
-      .json({ message: "logged out" });
-  } else {
-    res
-      .status(200)
-      .json({ message: "success" });
-  }
-});
+// //----NEW ROUTE----//
+// // @desc Authenticate the user during client-side routing
+// // @route GET /auth
+// // @access private
+// const authUser = asyncHandler(async (req, res) => {
+// console.log(req)
+//   // Clear cookie if the logout flag is set to true
+//   if (req.query.logout === "true") {
+//     res
+//       .clearCookie("access_token")
+//       .status(200)
+//       .json({ message: "logged out" });
+//   } else {
+//     res
+//       .status(200)
+//       .json({ message: "success" });
+//   }
+// });
 
 module.exports = {
   registerUser,
   loginUser,
   getUserPatients,
   emailVerification,
-  authUser,
+  // authUser,
 };

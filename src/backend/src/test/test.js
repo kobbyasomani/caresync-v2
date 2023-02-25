@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 
 let cookie;
+let fakeCookie;
 
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGO_URI);
@@ -14,7 +15,6 @@ beforeAll(async () => {
   });
 
   cookie = response.get("Set-Cookie");
-  console.log(cookie);
 });
 
 afterAll(async () => {
@@ -24,13 +24,16 @@ afterAll(async () => {
 //---------User Creation----------//
 describe("POST /user/register", () => {
   describe("Given firstName, lastName, email and password", () => {
-    test("Should respond with 200 status", async () => {
+    test("Should respond with 201 status", async () => {
       const response = await request(app).post("/user/register").send({
         firstName: "John",
         lastName: "Daniels",
         email: "sickemail@gmail.com",
         password: "password",
       });
+      expect(response.body.firstName).toBe("John");
+      expect(response.body.lastName).toBe("Daniels");
+      expect(response.body.email).toBe("sickemail@gmail.com");
       expect(response.statusCode).toBe(201);
     });
   });
@@ -43,6 +46,9 @@ describe("POST /user/register", () => {
         email: "john@example.com",
         password: "password",
       });
+      expect(response.body.message).toBe(
+        "This email is associated with an account already."
+      );
       expect(response.statusCode).toBe(400);
     });
   });
@@ -53,6 +59,7 @@ describe("POST /user/register", () => {
         firstName: "John",
         lastName: "Daniels",
       });
+      expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
     });
   });
@@ -67,6 +74,7 @@ describe("POST /verification/:token", () => {
           "/user/verification/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJpYXQiOjE2NzY3Njg5Nzh9.qCjcQ_xMutz35bDd8_olh36e5Z11thoPnXR0hrrbUUg"
         )
         .send({});
+      expect(response.body.message).toBe("Email successfully confirmed.");
       expect(response.statusCode).toBe(200);
     });
   });
@@ -78,6 +86,7 @@ describe("POST /verification/:token", () => {
           "/user/verification/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImR0am9tc2xhbmRqckBnbWFpbC5jb20iLCJpYXQiOjE2NzY3NzAzMDMsImV4cCI6MTY3OTM2MjMwM30.j6uaGEE5t3rAdSj-o2YJyFQHfBzBD_mzTXY_0JVYf8g"
         )
         .send({});
+      expect(response.body.message).toBe("User not found");
       expect(response.statusCode).toBe(401);
     });
   });
@@ -91,6 +100,7 @@ describe("POST /user/login", () => {
         email: "john@example.com",
         password: "password",
       });
+      expect(response.body.message).toBe("Logged in Successfully");
       expect(response.statusCode).toBe(200);
     });
   });
@@ -100,6 +110,7 @@ describe("POST /user/login", () => {
       const response = await request(app).post("/user/login").send({
         email: "john@example.com",
       });
+      expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
     });
   });
@@ -110,35 +121,48 @@ describe("POST /user/login", () => {
         email: "john@example.com",
         password: "password2",
       });
+      expect(response.body.message).toBe("Invalid credentials");
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe("When user is unconfirmed", () => {
+    test("Should respond with 400 status", async () => {
+      const response = await request(app).post("/user/login").send({
+        email: "kobby@gmail.com",
+        password: "password",
+      });
+      expect(response.body.message).toBe("Please confirm your email");
       expect(response.statusCode).toBe(400);
     });
   });
 });
 
 //---------User Info----------//
-describe("GET /user/login", () => {
+describe("GET /user", () => {
   describe("Given user ID from cookie", () => {
     test("should respond with 200 status", async () => {
-      const response = await request(app).get("/user").set("Cookie", cookie).send({
-      });
+      const response = await request(app)
+        .get("/user")
+        .set("Cookie", cookie)
+        .send({});
       expect(response.statusCode).toBe(200);
     });
   });
 
   describe("Not given user ID from cookie", () => {
     test("should respond with 401 status", async () => {
-      const response = await request(app).get("/user").send({
-      });
+      const response = await request(app).get("/user").send({});
+      expect(response.body.message).toBe("No authorization token found");
       expect(response.statusCode).toBe(401);
     });
   });
 });
 
-
 //---------Create Patient----------//
 describe("POST /patient", () => {
   describe("When first and last name are given", () => {
-    test("Should respond with 200 status", async () => {
+    test("Should respond with 201 status", async () => {
       const response = await request(app)
         .post("/patient")
         .set("Cookie", cookie)
@@ -146,6 +170,8 @@ describe("POST /patient", () => {
           firstName: "John",
           lastName: "Stevens",
         });
+      expect(response.body.firstName).toBe("John");
+      expect(response.body.lastName).toBe("Stevens");
       expect(response.statusCode).toBe(201);
     });
   });
@@ -158,6 +184,7 @@ describe("POST /patient", () => {
         .send({
           firstName: "john",
         });
+      expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
     });
   });
@@ -168,6 +195,7 @@ describe("POST /patient", () => {
         firstName: "john",
         lastName: "Stevens",
       });
+      expect(response.body.message).toBe("No authorization token found");
       expect(response.statusCode).toBe(401);
     });
   });
@@ -182,6 +210,26 @@ describe("GET /patient/:id", () => {
         .set("Cookie", cookie)
         .send({});
       expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe("When invalid patient ID is given in URL", () => {
+    test("Should respond with 400 status", async () => {
+      const response = await request(app)
+        .get("/patient/63f01efe3b5704fa0aa3ddc9")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe("When user is not affiliated with patient", () => {
+    test("Should respond with 401 status", async () => {
+      const response = await request(app)
+        .get("/patient/63f01f0a3b5704fa0aa3ddc3")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(401);
     });
   });
 });
@@ -258,8 +306,6 @@ describe("DELETE /patient/:id", () => {
   });
 });
 
-
-
 //---------Invite Carer----------//
 describe("POST /carer/invite/:id", () => {
   describe("When a valid carer email/id is provided", () => {
@@ -301,7 +347,7 @@ describe("POST /carer/invite/:id", () => {
   describe("When user does not have coordinator privileges", () => {
     test("Should respond with 401 status", async () => {
       const response = await request(app)
-        .post("/carer/invite/63f01f0a3b5704fa0aa3ddc3")
+        .post("/carer/invite/63f01f0a3b5704fa0aa3ddc5")
         .set("Cookie", cookie)
         .send({
           email: "frank@example.com",
@@ -329,6 +375,16 @@ describe("POST /carer/add/:token", () => {
       const response = await request(app)
         .post(
           "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQxIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc2NzgzMDI2LCJleHAiOjE2NzkzNzUwMjZ9.4aHTxtrEiPk62PqF75G8OnNMDCGvHmPMKgVCXW04bqA"
+        )
+        .send({});
+      expect(response.statusCode).toBe(400);
+    });
+  });
+  describe("When carer does not have account yet", () => {
+    test("Should respond with 400 status", async () => {
+      const response = await request(app)
+        .post(
+          "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQzIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc3MzM0MDk0LCJleHAiOjE2Nzk5MjYwOTR9.MGfr86okT7CfxIPTizaV91U0wzT0b8VcCxBXNg3fCq0"
         )
         .send({});
       expect(response.statusCode).toBe(400);
@@ -382,6 +438,147 @@ describe("DELETE carer/remove/:patientID/:carerID", () => {
         )
         .set("Cookie", cookie)
         .send({});
+      expect(response.statusCode).toBe(401);
+    });
+  });
+});
+
+//---------Get User Shifts----------//
+describe("GET /shift", () => {
+  describe("When user is logged in", () => {
+    test("Should respond with 200 status", async () => {
+      const response = await request(app)
+        .get("/shift")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(200);
+    });
+  });
+});
+
+//---------Get Patient Shifts----------//
+describe("GET /shift/:patientID", () => {
+  describe("When the user is associated with the patient", () => {
+    test("Should respond with 200 status", async () => {
+      const response = await request(app)
+        .get("/shift/63f01efe3b5704fa0aa3ddc4")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(200);
+    });
+  });
+  describe("When the user isn't associated with the patient", () => {
+    test("Should respond with 401 status", async () => {
+      const response = await request(app)
+        .get("/shift/63f01f0a3b5704fa0aa3ddc3")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(401);
+    });
+  });
+  describe("When the patient doesn't exist", () => {
+    test("Should respond with 400 status", async () => {
+      const response = await request(app)
+        .get("/shift/63f01f0a3b5704fa0aa3ddc7")
+        .set("Cookie", cookie)
+        .send({});
+      expect(response.statusCode).toBe(400);
+    });
+  });
+});
+
+//---------Create Shifts----------//
+describe("POST /shift/:patientID", () => {
+  describe("When the coordinator creates a shift for the patient", () => {
+    test("Should respond with 201 status", async () => {
+      const response = await request(app)
+        .post("/shift/63f01efe3b5704fa0aa3ddc8")
+        .set("Cookie", cookie)
+        .send({
+          carerID: "63f0b95a0098e28d58f7a2d5",
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "Please take notes on erratic behaviors for the psychologist",
+        });
+      expect(response.statusCode).toBe(201);
+    });
+  });
+  describe("When the patient does not exist", () => {
+    test("Should respond with 400 status", async () => {
+      const response = await request(app)
+        .post("/shift/63f01efe3b5704fa0aa3ddc6")
+        .set("Cookie", cookie)
+        .send({
+          carerID: "63f0b95a0098e28d58f7a2d5",
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "Please take notes on erratic behaviors for the psychologist",
+        });
+      expect(response.statusCode).toBe(400);
+    });
+  });
+  describe("When the user is not the coordinator for the patient", () => {
+    test("Should respond with 401 status", async () => {
+      const response = await request(app)
+        .post("/shift/63f01f0a3b5704fa0aa3ddc5")
+        .set("Cookie", cookie)
+        .send({
+          carerID: "63f0b95a0098e28d58f7a2d5",
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "Please take notes on erratic behaviors for the psychologist",
+        });
+      expect(response.statusCode).toBe(401);
+    });
+  });
+});
+
+
+//---------Update Shift----------//
+describe("POST /shift/:shiftID", () => {
+  describe("When the coordinator updates a shift for the patient", () => {
+    test("Should respond with 201 status", async () => {
+      const response = await request(app)
+        .put("/shift/63f01f0a3b5704fa0aa3ddc9")
+        .set("Cookie", cookie)
+        .send({
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "New coordinator notes",
+        });
+      expect(response.statusCode).toBe(201);
+    });
+  });
+  describe("When the user is not the coordinator for the patient", () => {
+    test("Should respond with 401 status", async () => {
+      const response = await request(app)
+        .put("/shift/63f01f0a3b5704fa0aa3ddd8")
+        .set("Cookie", cookie)
+        .send({
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "Please take notes on erratic behaviors for the psychologist",
+        });
+      expect(response.statusCode).toBe(401);
+    });
+  });
+  describe("When the user is not the coordinator for the patient", () => {
+    test("Should respond with 401 status", async () => {
+      const response = await request(app)
+        .post("/shift/63f01f0a3b5704fa0aa3ddc5")
+        .set("Cookie", cookie)
+        .send({
+          carerID: "63f0b95a0098e28d58f7a2d5",
+          shiftStartTime: "2023-03-02T09:00:00.000+00:00",
+          shiftEndTime: "2023-03-02T12:00:00.000+00:00",
+          coordinatorNotes:
+            "Please take notes on erratic behaviors for the psychologist",
+        });
       expect(response.statusCode).toBe(401);
     });
   });
