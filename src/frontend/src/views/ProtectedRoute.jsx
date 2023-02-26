@@ -33,13 +33,13 @@ const ProtectedRoute = () => {
             dispatch({
                 type: "resetStore"
             });
-            navigate("/login");
+            navigate("/");
         }
     }, [dispatch, store.isAuth, navigate,]);
 
-    useEffect(() => {
-        authUser();
-    }, [authUser]);
+    // useEffect(() => {
+    //     authUser();
+    // }, [authUser]);
 
     return store.isAuth ? (
         <>

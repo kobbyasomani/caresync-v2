@@ -15,7 +15,7 @@ const CalendarDayGrid = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSelect = (info) => {
-        console.log(info);
+        // console.log(info);
         setDateInfo(info);
         setIsOpen(true);
     }

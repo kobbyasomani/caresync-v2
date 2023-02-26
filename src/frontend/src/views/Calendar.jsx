@@ -25,7 +25,7 @@ export const Calendar = () => {
             .then((shifts) => setPatientShifts(shifts));
     }, [patient._id]);
 
-    console.log(patientShifts);
+    // console.log(patientShifts);
 
     return (
         patient ? (
