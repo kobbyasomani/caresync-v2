@@ -51,7 +51,6 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   const emailToken = jwt.sign({ carerID, patientID }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
-  
 
   // Sends verification email to user
   emails.addCarerEmail(
@@ -151,8 +150,6 @@ const removeCarer = asyncHandler(async (req, res) => {
     throw new Error("Carer does not exist");
   }
 });
-
-
 
 module.exports = {
   sendCarerInvite,

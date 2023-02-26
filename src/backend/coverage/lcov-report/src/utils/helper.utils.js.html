@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">95.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/21</span>
+                <span class='fraction'>20/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">95.23% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/21</span>
+                <span class='fraction'>20/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -126,37 +126,37 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -167,7 +167,7 @@ const PDFDocument = require("pdfkit");
 const getStream = require("get-stream");
 &nbsp;
 // Creates a pdf doc out of user input/information
-const createPDF = <span class="fstat-no" title="function not covered" >as</span>ync (
+const createPDF = async (
   reportType,
   patientFirst,
   patientLast,
@@ -175,37 +175,37 @@ const createPDF = <span class="fstat-no" title="function not covered" >as</span>
   carerLast,
   shiftNotes
 ) =&gt; {
-  const doc = <span class="cstat-no" title="statement not covered" >new PDFDocument();</span>
-<span class="cstat-no" title="statement not covered" >  doc.font("Helvetica").text(`Client: ${patientFirst} ${patientLast}`);</span>
-<span class="cstat-no" title="statement not covered" >  doc.font("Helvetica").text(`Carer: ${carerFirst} ${carerLast}`);</span>
-<span class="cstat-no" title="statement not covered" >  doc</span>
+  const doc = new PDFDocument();
+  doc.font("Helvetica").text(`Client: ${patientFirst} ${patientLast}`);
+  doc.font("Helvetica").text(`Carer: ${carerFirst} ${carerLast}`);
+  doc
     .font("Helvetica")
     .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-<span class="cstat-no" title="statement not covered" >  doc.font("Helvetica").fontSize(25).moveDown(2).text(`${reportType}`, {</span>
+  doc.font("Helvetica").fontSize(25).moveDown(2).text(`${reportType}`, {
     width: 410,
     align: "center",
   });
-<span class="cstat-no" title="statement not covered" >  doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);</span>
-<span class="cstat-no" title="statement not covered" >  doc.end();</span>
-<span class="cstat-no" title="statement not covered" >  return await getStream.buffer(doc);</span>
+  doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);
+  doc.end();
+  return await getStream.buffer(doc);
 };
 &nbsp;
 // Uploads a PDf document to Cloudinary
-const cloudinaryUpload = <span class="fstat-no" title="function not covered" >(b</span>uffer, folder) =&gt; {
-<span class="cstat-no" title="statement not covered" >  return new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
-    let cld_upload_stream = <span class="cstat-no" title="statement not covered" >cloudinary.uploader.upload_stream(</span>
+const cloudinaryUpload = (buffer, folder) =&gt; {
+  return new Promise((resolve, reject) =&gt; {
+    let cld_upload_stream = cloudinary.uploader.upload_stream(
       {
         folder: `CareSync/${folder}`,
       },
-<span class="fstat-no" title="function not covered" >      (e</span>rror, result) =&gt; {
-<span class="cstat-no" title="statement not covered" >        if (result) {</span>
-<span class="cstat-no" title="statement not covered" >          resolve(result);</span>
-        } else {
+      (error, result) =&gt; {
+        if (result) {
+          resolve(result);
+        } else <span class="missing-if-branch" title="else path not taken" >E</span>{
 <span class="cstat-no" title="statement not covered" >          reject(error);</span>
         }
       }
     );
-<span class="cstat-no" title="statement not covered" >    streamifier.createReadStream(buffer).pipe(cld_upload_stream);</span>
+    streamifier.createReadStream(buffer).pipe(cld_upload_stream);
   });
 };
 &nbsp;
@@ -217,7 +217,7 @@ module.exports = { createPDF, cloudinaryUpload };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-02-25T14:57:03.196Z
+                at 2023-02-26T01:31:09.630Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -76,7 +76,6 @@ const seedPatients = [
     lastName: "Frank",
     coordinator: "63f0b95a0098e28d58f7a25d",
     carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
-    shifts: ["63f01f0a3b5704fa0aa3ddc9", "63f01f0a3b5704fa0aa3ddc1", "63f01f0a3b5704fa0aa3ddc8", "63f01f0a3b5704fa0aa3ddc7", "63f01f0a3b5704fa0aa3ddc6"]
   },
   {
     _id: "63f01efe3b5704fa0aa3ddc4",
@@ -88,6 +87,13 @@ const seedPatients = [
     _id: "63f01f0a3b5704fa0aa3ddc5",
     firstName: "Hank",
     lastName: "Ballard",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a25d"],
+  },
+  {
+    _id: "63f01efe3b5704fa0aa3ddd1",
+    firstName: "Fran",
+    lastName: "Tark",
     coordinator: "63f0b95a0098e28d58f7a25e",
     carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a25d"],
   },
@@ -151,7 +157,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc6",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    patient: "63f01efe3b5704fa0aa3ddd1",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Client has been feeling sick over the last few days and may have covid.  Please bring a mask and proceed with caution",
     carer: "63f0b95a0098e28d58f7a25d",
