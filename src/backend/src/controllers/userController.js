@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const express = require("express");
 const emails = require("../services/email");
 
 //----NEW ROUTE----//
@@ -68,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailVerification = asyncHandler(async (req, res) => {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-  console.log(decode);
+  
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 
@@ -81,9 +80,10 @@ const emailVerification = asyncHandler(async (req, res) => {
   const verifyUser = await User.findByIdAndUpdate(user.id, {
     isConfirmed: true,
   });
-  res.status(200).json(verifyUser);
 
-  console.log(user.id);
+  res.status(200).json({message: "Email successfully confirmed."});
+
+
 });
 
 //----NEW ROUTE----//
@@ -117,6 +117,7 @@ const loginUser = asyncHandler(async (req, res) => {
     expiresIn: "30d",
   });
 
+
   // Compare entered password with stored password and return a cookie
   if (user && (await bcrypt.compare(password, user.password))) {
     res.cookie("access_token", loginToken, {
@@ -128,8 +129,8 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  res.json({
-    message: "success",
+  res.status(200).json({
+    message: "Logged in Successfully",
   });
 });
 
@@ -140,11 +141,6 @@ const loginUser = asyncHandler(async (req, res) => {
 const getUserPatients = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).lean();
 
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
   // Gets all patients user is a coordinator for
   const patientCoordinator = await Patient.find({})
     .where({ coordinator: user._id })
@@ -158,7 +154,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .lean();
 
 
-  // Loop through all patients the user is coordinator for
+  // Loop through all patients the current user is coordinator for
   // Find next shift for that patient and return nextShift(date/carer name) added to patient object
   const patientCoordinatorShift = await Promise.all(
     patientCoordinator.map(async (patient) => {
@@ -174,6 +170,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $limit: 1 },
       ]);
       
+    
       // If there is a shift scheduled for the patient, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
@@ -191,7 +188,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
     })
   );
 
-  // Loop through all patients the user is carer for
+  // Loop through all patients the current user is carer for
   // Find next shift for that patient and return nextShift added to patient object
   const patientCarerShift = await Promise.all(
     patientCarer.map(async (patient) => {
@@ -218,36 +215,29 @@ const getUserPatients = asyncHandler(async (req, res) => {
   res.status(200).json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
-//----NEW ROUTE----//
-// @desc Authenticate the user during client-side routing
-// @route GET /auth
-// @access private
-const authUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-
-  // User Check
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-
-  // Clear cookie if the logout flag is set to true
-  if (req.query.logout === "true") {
-    res
-      .clearCookie("access_token")
-      .status(200)
-      .json({ message: "logged out" });
-  } else {
-    res
-      .status(200)
-      .json({ message: "success" });
-  }
-});
+// //----NEW ROUTE----//
+// // @desc Authenticate the user during client-side routing
+// // @route GET /auth
+// // @access private
+// const authUser = asyncHandler(async (req, res) => {
+// console.log(req)
+//   // Clear cookie if the logout flag is set to true
+//   if (req.query.logout === "true") {
+//     res
+//       .clearCookie("access_token")
+//       .status(200)
+//       .json({ message: "logged out" });
+//   } else {
+//     res
+//       .status(200)
+//       .json({ message: "success" });
+//   }
+// });
 
 module.exports = {
   registerUser,
   loginUser,
   getUserPatients,
   emailVerification,
-  authUser,
+  // authUser,
 };

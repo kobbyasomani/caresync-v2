@@ -5,7 +5,7 @@ const {
   loginUser,
   getUserPatients,
   emailVerification,
-  authUser,
+  // authUser,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -29,7 +29,7 @@ userRouter.get("/", protect, getUserPatients);
 // Authenticates the user when accessing protected client-side routes
 // @param none (pulls user id from jwt token)
 // @queryParam set logout to true to log out the user
-userRouter.get("/auth", protect, authUser);
+// userRouter.get("/auth", protect, authUser);
 
 
 module.exports = userRouter;

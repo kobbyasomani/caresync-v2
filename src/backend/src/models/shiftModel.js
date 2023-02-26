@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+const incidentReportSchema = mongoose.Schema({
+  incidentReport: {
+    type: String,
+  } 
+});
+
 const shiftSchema = mongoose.Schema({
   patient: {
     type: mongoose.Schema.Types.ObjectId,
@@ -31,9 +37,7 @@ const shiftSchema = mongoose.Schema({
   handoverNotes: {
     type: String,
   },
-  incidentReports: [{
-     type: String,
-  }]
+  incidentReports: [incidentReportSchema]
 },
 {
   timestamps: true,
