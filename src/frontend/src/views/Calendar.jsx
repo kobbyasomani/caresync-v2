@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 import baseURL from "../utils/baseUrl";
 
@@ -10,7 +10,7 @@ import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 
 export const Calendar = () => {
-    const { store, dispatch } = useGlobalState();
+    const { store } = useGlobalState();
     const patient = store.selectedPatient;
     const [patientShifts, setPatientShifts] = useState([]);
 
@@ -18,12 +18,14 @@ export const Calendar = () => {
 
     // Fetch all patient shifts
     useEffect(() => {
-        fetch(`${baseURL}/patient/${patient._id}`)
+        fetch(`${baseURL}/patient/${patient._id}`, {
+            credentials: "include"
+        })
             .then(response => response.json())
             .then((shifts) => setPatientShifts(shifts));
     }, [patient._id]);
 
-    // console.log(patientShifts);
+    console.log(patientShifts);
 
     return (
         patient ? (
@@ -34,6 +36,7 @@ export const Calendar = () => {
                     <CalendarDayGrid />
                 </Box>
 
+                {/* Render shift details panel (and sub-panels) as <Outlet /> in a modal */}
 
                 <section>
                     <Typography variant="h3">Upcoming Shift</Typography>
