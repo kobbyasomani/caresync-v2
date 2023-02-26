@@ -244,3 +244,26 @@ h3~div.patient {
         }
     }
 }
+
+#calendar {
+    background-color: $outline;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    display: none;
+    position: absolute;
+    width: 80vw;
+    aspect-ratio: 1 / 1;
+    border: 1px solid $outline;
+    background-color: white;
+    padding: 1rem;
+    margin: 0 auto;
+
+    &.open {
+        display: block;
+    }
+}

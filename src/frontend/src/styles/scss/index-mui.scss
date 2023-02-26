@@ -1,0 +1,68 @@
+$outline: #999;
+$highlight: powderblue;
+
+html,
+body {
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+
+    main {
+        flex-grow: 1;
+        padding-top: 1rem;
+
+        // Standard margin for all sections in main
+        section:first-of-type,
+        &>section+* {
+            margin-top: 1rem;
+        }
+    }
+
+    footer {
+        p {
+            text-align: center;
+        }
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    word-wrap: break-word;
+}
+
+a.button-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+fieldset {
+    legend {
+        font-weight: bold;
+    }
+
+    border: 1px solid #eee;
+    border-radius: 0.5rem;
+    padding: 0 1rem;
+}
+
+form {
+    // max-width: 500px;
+
+    .form-errors {
+        color: red;
+    }
+}
+
+#calendar {
+    background-color: $outline;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
