@@ -6,6 +6,7 @@ import baseURL from "../utils/baseUrl";
 import { Typography, Stack } from "@mui/material"
 import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
+import CalendarDayGrid from "../components/CalendarDayGrid";
 
 export const Calendar = () => {
     // console.log("rendering Calendar");
@@ -30,15 +31,15 @@ export const Calendar = () => {
             <>
                 <SelectedPatient patient={patient} />
 
-                <div id="calendar">Calendar goes here</div>
+                <CalendarDayGrid />
 
                 <section>
-                    <Typography variant="h2">Upcoming Shift</Typography>
+                    <Typography variant="h3">Upcoming Shift</Typography>
                     <Shift featured />
                 </section>
 
                 <section>
-                    <Typography variant="h2">Recent Shifts</Typography>
+                    <Typography variant="h3">Recent Shifts</Typography>
                     <Stack spacing={2}>
                         <Shift />
                         <Shift />
