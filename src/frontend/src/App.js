@@ -6,17 +6,20 @@ import {
   createBrowserRouter,
   RouterProvider
 } from "react-router-dom";
-import Root from "./components/Root";
-import Home from "./components/Home";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Register from "./components/Register";
-import Verification from "./components/Verification";
-import About from "./components/About";
-import Help from "./components/Help";
-import Error from "./components/Error";
-import SelectPatient from "./components/SelectPatient";
-import Calendar from "./components/Calendar";
-import AddPatient from "./components/AddPatient";
+import Root from "./views/Root";
+import Home from "./views/Home";
+import ProtectedRoute from "./views/ProtectedRoute";
+import Register from "./views/Register";
+import Verification from "./views/Verification";
+import About from "./views/About";
+import Help from "./views/Help";
+import Error from "./views/Error";
+import SelectPatient from "./views/SelectPatient";
+import Calendar from "./views/Calendar";
+
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import DefaultTheme from "./styles/DefaultTheme";
+const theme = DefaultTheme;
 
 // Create the router
 const router = createBrowserRouter([
@@ -35,10 +38,6 @@ const router = createBrowserRouter([
               {
                 path: "/",
                 element: <SelectPatient />
-              },
-              {
-                path: "/add-patient",
-                element: <AddPatient />
               },
               {
                 path: "/calendar",
@@ -106,8 +105,11 @@ function App() {
 
   return (
     <GlobalStateContext.Provider value={{ store, dispatch }}>
-      <RouterProvider router={router} />
-    </GlobalStateContext.Provider>
+      <ThemeProvider theme={DefaultTheme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </GlobalStateContext.Provider >
   );
 }
 

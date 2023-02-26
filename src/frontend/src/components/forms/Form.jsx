@@ -6,15 +6,18 @@ import {
 import {
     useHandleFormInput,
     useHandleFormErrors
-} from "../utils/formUtils";
+} from "../../utils/formUtils";
 import axios from "axios";
+
+import { Box } from "@mui/material";
+import { ButtonPrimary } from "../root/Buttons";
 
 /**
  * A resuable controlled form component that manages inputs with a reducer function.
  * @param {object} form The current form state object.
  * @param {function} setForm The form reducer update function.
  * @param {string} legend [optional] A legend to display at the top of the form fieldset.
- * @param {string} submitButtonText Text for the form submit button.
+ * @param {string} buttonText Text for the form submit button.
  * @param {string} postURL The API endpoint to submit the form to.
  * @param {function} callback [optional] A function to be called after form submission
  * that takes the API json response as an argument.
@@ -25,7 +28,8 @@ const Form = ({
     form,
     setForm,
     legend,
-    submitButtonText,
+    buttonText,
+    buttonVariant,
     postURL,
     callback,
     children
@@ -81,35 +85,41 @@ const Form = ({
     }, [postURL, form, setForm, handleErrors, callback]);
 
     return (
-        <form>
-            <fieldset>
-                {legend ? <legend>{legend}</legend> : null}
-                {/* Pass the input handler and state value to form input elements */}
-                {Children.map(children, (child) => {
-                    if (child.type === "input") {
-                        return cloneElement(child, {
-                            onChange: handleInput,
-                            value: form.inputs[child.props.name]
-                        });
-                    } else {
-                        return child;
+        <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
+            <form>
+                <fieldset>
+                    {legend ? <legend>{legend}</legend> : null}
+                    {/* Pass the input handler and state value to form input elements */}
+                    {Children.map(children, (child) => {
+                        if (child.props.mui === "TextField") {
+                            return cloneElement(child, {
+                                size: "small",
+                                margin: "normal",
+                                fullWidth: true,
+                                inputProps: {
+                                    onChange: handleInput,
+                                    value: form.inputs[child.props.name]
+                                }
+                            });
+                        } else {
+                            return child;
+                        }
+                    })}
+                    {/* Render form errors if any exist */}
+                    {form.errors.length > 0 ? (<div className="form-errors">
+                        <ul>
+                            {form.errors.map((error, index) => {
+                                return <li key={index}>{error}</li>
+                            })}
+                        </ul>
+                    </div>) : null
                     }
-                })}
-                {/* Render form errors if any exist */}
-                {form.errors.length > 0 ? (<div id="form-errors">
-                    <ul>
-                        {form.errors.map((error, index) => {
-                            return <li key={index}>{error}</li>
-                        })}
-                    </ul>
-                </div>) : null
-                }
-                <button className="button-action"
-                    onClick={handleSubmit}>
-                    {submitButtonText}
-                </button>
-            </fieldset>
-        </form>
+                    <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
+                        {buttonText}
+                    </ButtonPrimary>
+                </fieldset>
+            </form>
+        </Box>
     );
 }
 

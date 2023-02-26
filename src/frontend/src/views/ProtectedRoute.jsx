@@ -1,10 +1,11 @@
 import { useCallback, useEffect } from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useNavigate } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 import baseURL from "../utils/baseUrl";
 
 const ProtectedRoute = () => {
     const { store, dispatch } = useGlobalState();
+    const navigate = useNavigate();
 
     /**
      * Authenticates the user when attempting to access protected routes.
@@ -32,20 +33,21 @@ const ProtectedRoute = () => {
             dispatch({
                 type: "resetStore"
             });
+            navigate("/login");
         }
-    }, [dispatch, store.isAuth]);
+    }, [dispatch, store.isAuth, navigate,]);
 
     useEffect(() => {
         authUser();
-    });
+    }, [authUser]);
 
     return store.isAuth ? (
         <>
             <p style={{
                 color: "red",
-                position: "absolute",
-                top: 0,
-                marginTop: 0
+                // position: "absolute",
+                margin: "0",
+                padding: "0",
             }}><small>&lt;ProtectedRoute &#92;&gt;</small></p>
             <Outlet />
         </>

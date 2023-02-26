@@ -121,6 +121,18 @@ p {
     @include margin-center-h;
 }
 
+.link-action {
+    @include button;
+    @include margin-center-h;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+
+    &::before {
+        content: "← ";
+    }
+}
+
 form {
     fieldset {
         padding: $padding-v $padding-h;
@@ -159,12 +171,12 @@ form {
     border: 1px solid $outline;
     border-radius: $rounded-corners;
     display: grid;
-    grid-template: repeat(2, 1fr) / repeat(2, auto);
+    grid-template: repeat(2, auto) / 1fr 4fr;
     column-gap: 1rem;
     align-items: center;
 
     .icon {
-        grid-area: 1 / 1 / span 3 / span 1;
+        grid-area: 1 / 1 / span 3 / auto;
         justify-self: center;
         align-self: center;
         font-size: 1.5rem;
@@ -172,10 +184,16 @@ form {
 
     .name {
         font-size: 1.1rem;
+        justify-self: start;
     }
 
     .shift {
         color: #555;
+        justify-self: start;
+
+        .caring-for {
+            color: blue;
+        }
     }
 
     &:hover {
@@ -224,5 +242,28 @@ h3~div.patient {
         &:last-child {
             text-align: left;
         }
+    }
+}
+
+#calendar {
+    background-color: $outline;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    display: none;
+    position: absolute;
+    width: 80vw;
+    aspect-ratio: 1 / 1;
+    border: 1px solid $outline;
+    background-color: white;
+    padding: 1rem;
+    margin: 0 auto;
+
+    &.open {
+        display: block;
     }
 }
