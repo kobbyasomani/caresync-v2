@@ -4,7 +4,7 @@ import { Outlet, Link } from "react-router-dom";
 import Form from "../components/forms/Form";
 import { useHandleForm } from "../utils/formUtils";
 
-import { TextField } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
@@ -38,8 +38,8 @@ export default function Login() {
         <Outlet />
     ) : (
         <>
-            <h1>CareSync</h1>
-            <h2>Easy care work scheduling and shift notes.</h2>
+            <Typography variant="h1">CareSync</Typography>
+            <Typography variant="h2">Easy care work scheduling and shift notes.</Typography>
             <Form
                 form={form}
                 setForm={setForm}
@@ -68,7 +68,7 @@ export default function Login() {
                     required
                     mui="TextField" />
             </Form>
-            <h2 style={{ textAlign: "center" }}>Need an account?</h2>
+            <Typography variant="h2" style={{ textAlign: "center" }}>Need an account?</Typography>
             <Link to="/register" className="button-link">
                 <ButtonPrimary>
                     Sign up

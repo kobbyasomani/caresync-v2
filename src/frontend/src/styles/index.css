@@ -45,11 +45,7 @@ form .form-errors {
 }
 
 #calendar {
-  background-color: #999;
-  aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding-top: 1rem;
 }
 
 /*# sourceMappingURL=index.css.map */

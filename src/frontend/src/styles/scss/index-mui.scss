@@ -60,9 +60,5 @@ form {
 }
 
 #calendar {
-    background-color: $outline;
-    aspect-ratio: 1 / 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding-top: 1rem;
 }

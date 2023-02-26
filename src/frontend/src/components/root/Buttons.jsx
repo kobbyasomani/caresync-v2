@@ -14,7 +14,7 @@ export const ButtonPrimary = ({ children, variant, ...rest }) => {
         sx={{
             my: 2,
             mx: "auto",
-            display: "block"
+            display: "flex"
         }}
         {...rest}>
         {children}
@@ -31,7 +31,7 @@ export const ButtonSecondary = (props) => {
         sx={{
             my: 2,
             mx: "auto",
-            display: "block"
+            display: "flex"
         }}>
         {children}
     </StyledButton >

@@ -3,14 +3,13 @@ import { useNavigate, Outlet } from "react-router-dom";
 import { useGlobalState } from "../utils/globalStateContext";
 import baseURL from "../utils/baseUrl";
 
-import { Typography, Stack } from "@mui/material"
+import { Typography, Stack, Box } from "@mui/material"
+
 import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 
 export const Calendar = () => {
-    // console.log("rendering Calendar");
-
     const { store, dispatch } = useGlobalState();
     const patient = store.selectedPatient;
     const [patientShifts, setPatientShifts] = useState([]);
@@ -31,7 +30,10 @@ export const Calendar = () => {
             <>
                 <SelectedPatient patient={patient} />
 
-                <CalendarDayGrid />
+                <Box id="calendar">
+                    <CalendarDayGrid />
+                </Box>
+
 
                 <section>
                     <Typography variant="h3">Upcoming Shift</Typography>

@@ -5,7 +5,7 @@ import Form from "../components/forms/Form";
 import { useHandleForm } from "../utils/formUtils";
 import { ButtonSecondary } from "../components/root/Buttons";
 
-import { TextField, Alert, Box } from "@mui/material";
+import { TextField, Alert, Box, Typography } from "@mui/material";
 
 const Register = () => {
     // Set the initial form state
@@ -34,8 +34,8 @@ const Register = () => {
 
     return (
         <>
-            <h1>CareSync</h1>
-            <h2>Sign up for an account today.</h2>
+            <Typography variant="h1">CareSync</Typography>
+            <Typography variant="h2">Sign up for an account today.</Typography>
             <Form
                 form={form}
                 setForm={setForm}

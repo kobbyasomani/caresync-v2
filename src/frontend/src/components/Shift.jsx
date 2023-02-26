@@ -20,7 +20,7 @@ const Shift = () => {
                 }}>
                     <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2" }}>
                         <EventNoteIcon sx={{ mr: "0.5rem" }} />
-                        <Typography variant="body1" className="shift-date">24/02/23 | 09:00 – 17:00</Typography>
+                        <Typography variant="body1" className="shift-date">DD/MM/YY | 00:00 – 00:00</Typography>
                     </Box>
                     <Box sx={{ gridArea: "2 / 1 / 3 / 2" }}>
                         <Typography variant="body1" className="shift-carer">Carer: Firstname LastName</Typography>
