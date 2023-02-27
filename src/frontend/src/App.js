@@ -122,7 +122,7 @@ function App() {
 
   // Modal and drawer state handler
   const ModalProvider = ({ children }) => {
-    const [modalState, modalDispatch] = useModalReducer({
+    const [modalStore, modalDispatch] = useModalReducer({
       modalIsOpen: false,
       drawerlIsOpen: false,
       activeModal: {
@@ -133,7 +133,7 @@ function App() {
       }
     });
     return (
-      <ModalContext.Provider value={{ modalState, modalDispatch }}>
+      <ModalContext.Provider value={{ modalStore, modalDispatch }}>
         {children}
       </ModalContext.Provider>
     );

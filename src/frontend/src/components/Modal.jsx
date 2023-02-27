@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 
 import { useSetModal, useSetDrawer } from "../utils/modalUtils";
 import { useModalContext } from "../utils/modalUtils";
@@ -26,9 +26,13 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const { modalState, modalDispatch } = useModalContext();
-    const isOpen = modalState.modalIsOpen;
+    const { modalStore, modalDispatch } = useModalContext();
+    const isOpen = modalStore.modalIsOpen;
     const dispatch = modalDispatch;
+
+    useEffect(() => {
+        console.log(`rendering`);
+    }, [modalStore])
 
     return (
         <Dialog className={isOpen ? "modal open" : "modal closed"}
@@ -40,7 +44,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
             {...rest}>
             <DialogTitle sx={{ pt: 3 }}>
                 <Typography variant="h2" component="p" id="modal-title" sx={{ fontWeight: "bold", mt: 1 }}>
-                    {title || modalState.activeModal.title}
+                    {title || modalStore.activeModal.title}
                 </Typography>
                 <IconButton className="close-modal"
                     onClick={useSetModal(dispatch, "close")}
@@ -50,7 +54,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
             </DialogTitle>
             <DialogContent>
                 <DialogContentText sx={{ mb: 2 }}>
-                    {text || modalState.activeModal.text}
+                    {text || modalStore.activeModal.text}
                 </DialogContentText>
                 {children || "Nested content goes here {children}"}
             </DialogContent>

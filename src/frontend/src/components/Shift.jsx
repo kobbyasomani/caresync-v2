@@ -17,7 +17,7 @@ const Shift = () => {
 
     // Get modal dispatch method from the CalendarContext store
     const { setCalStore } = useCalendarContext();
-    const { modalState, modalDispatch } = useModalContext();
+    const { modalStore, modalDispatch } = useModalContext();
 
     // Open the shift details drawer and close the modal
     const openShift = useCallback(() => {

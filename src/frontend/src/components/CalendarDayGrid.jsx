@@ -10,7 +10,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 const CalendarDayGrid = () => {
     // Selected date information state manager
     const { calStore, calDispatch } = useCalendarContext();
-    const { modalState, modalDispatch } = useModalContext();
+    const { modalStore, modalDispatch } = useModalContext();
     const navigate = useNavigate();
 
     const handleSelect = (info) => {
@@ -20,24 +20,23 @@ const CalendarDayGrid = () => {
             type: "setSelectedDate",
             data: info
         });
-
-        // Open the shift selection modal
+        // Set the shift selection modal title and text
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: `Shifts for ${new Date(calStore.selectedDate.start).toLocaleDateString()}`,
+                text: "Select a shift to view or edit its handover, \
+                        shift notes, and incident reports."
+            }
+        });
+        // Open the modal
         modalDispatch({
             type: "open",
             data: "modal"
         });
-        // Set the modal title and text
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `Shifts for ${calStore.selectedDate ?
-                    new Date(calStore.selectedDate.start).toLocaleDateString()
-                    : null}`,
-                text: "Select a shift to view or edit its handover, \
-                shift notes, and incident reports."
-            }
-        });
+        // Navigate to Select Shift by Date
         navigate("/calendar/select-shift-by-date")
+        console.log(`update selectedDate: ${info.start}`);
     }
 
     // console.log(modalDispatch)

@@ -18,7 +18,7 @@ const ShiftDetails = ({ shift }) => {
     // Sets width of the drawer content column
     const drawerWidth = "100%";
 
-    const { modalState, modalDispatch } = useModalContext();
+    const { modalStore, modalDispatch } = useModalContext();
 
     const closeDrawer = useCallback((event) => {
         // Prevent tab/shift keypresses while drawer is open from closing it
@@ -134,7 +134,7 @@ const ShiftDetails = ({ shift }) => {
                 <Drawer
                     // variant="persistent"
                     anchor="right"
-                    open={modalState.drawerIsOpen}
+                    open={modalStore.drawerIsOpen}
                     onClose={closeDrawer}
                 >
                     {content()}

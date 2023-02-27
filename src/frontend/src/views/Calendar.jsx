@@ -29,7 +29,7 @@ export const Calendar = () => {
     // console.log(calStore);
 
     // Get the state and context manager for modal/drawer
-    const { modalState, modalDispatch } = useModalContext();
+    const { modalStore, modalDispatch } = useModalContext();
 
     // Fetch all patient shifts
     useEffect(() => {
@@ -49,7 +49,7 @@ export const Calendar = () => {
 
                 <Box id="calendar">
                     <CalendarDayGrid
-                        modalState={modalState}
+                        modalStore={modalStore}
                         modalDispatch={modalDispatch} />
                 </Box>
 
@@ -77,7 +77,7 @@ export const Calendar = () => {
                     {/* <SelectShiftByDate /> */}
                 </Modal>
 
-                <ShiftDetails isOpen={modalState.drawerIsOpen} shift />
+                <ShiftDetails isOpen={modalStore.drawerIsOpen} shift />
             </CalendarContext.Provider>
         ) : (
             null

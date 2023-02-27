@@ -16,8 +16,8 @@ const SelectPatient = () => {
     const [patients, setPatients] = useState([]);
 
     // Modal state manager
-    const { modalState, modalDispatch } = useModalContext()
-    const isOpen = modalState.modalIsOpen;
+    const { modalStore, modalDispatch } = useModalContext()
+    const isOpen = modalStore.modalIsOpen;
 
     const openModal = () => {
         modalDispatch({
