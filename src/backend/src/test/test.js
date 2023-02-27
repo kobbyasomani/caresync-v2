@@ -694,7 +694,7 @@ describe("POST /reports/:shiftID", () => {
         .post("/shift/reports/63f01f0a3b5704fa0aa3ddc6")
         .set("Cookie", cookie)
         .send({});
-        expect(response.body.message).toBe("Please fill out all fields");
+      expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
     });
   });
@@ -707,7 +707,7 @@ describe("POST /reports/:shiftID", () => {
           incidentReport:
             "This is a new incident report that will be turned in to a pdf for cloudinary to handle",
         });
-        expect(response.body.message).toBe("User is not authorized");
+      expect(response.body.message).toBe("User is not authorized");
       expect(response.statusCode).toBe(401);
     });
   });
