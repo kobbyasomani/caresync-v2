@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Please add an email"],
+      lowercase: true,
       unique: true,
     },
     password: {
@@ -22,7 +23,7 @@ const userSchema = mongoose.Schema(
     isConfirmed: {
       type: Boolean,
       default: false,
-      required: true
+      required: true,
     },
   },
   {

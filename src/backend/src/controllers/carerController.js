@@ -4,7 +4,6 @@ const jwt_decode = require("jwt-decode");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const emails = require("../services/email");
-const { request } = require("express");
 
 //----- New Route Function------//
 // @desc Sends email invitation to carer to add to team

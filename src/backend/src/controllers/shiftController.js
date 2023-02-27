@@ -78,7 +78,6 @@ const createShift = asyncHandler(async (req, res) => {
   // Search for patient with URL variable
   const carer = await User.findById(carerID);
 
-
   // Make sure logged in user matches the coordinator
   if (patient.coordinator.toString() !== user.id) {
     res.status(401);
@@ -209,12 +208,17 @@ const createShiftNotes = asyncHandler(async (req, res) => {
   );
 
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(notesPDF, "shiftNotes");
+  const result = await cloudinaryUpload(notesPDF, "shiftNotes", shift.patient);
 
   // Update shift with Cloudinary URL
   const updatedShift = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { shiftNotes: result.secure_url },
+    {
+      shiftNotes: {
+        shiftNotesText: shiftNotes,
+        shiftNotesPDF: result.secure_url,
+      },
+    },
     {
       new: true,
     }
@@ -269,12 +273,23 @@ const createIncidentReport = asyncHandler(async (req, res) => {
   );
 
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(incidentPDF, "incidentReports");
+  const result = await cloudinaryUpload(
+    incidentPDF,
+    "incidentReports",
+    shift.patient
+  );
 
   // Add new incident report to incident reports array.
   const addIncidentReport = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { $push: { incidentReports: { incidentReport: result.secure_url } } },
+    {
+      $push: {
+        incidentReports: {
+          incidentReportText: incidentReport,
+          incidentReportPDF: result.secure_url,
+        },
+      },
+    },
     {
       new: true,
     }

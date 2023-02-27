@@ -67,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailVerification = asyncHandler(async (req, res) => {
   // Extract info from JWT
   const decode = jwt_decode(req.params.token);
-  
+
   // Search for user with email from JWT
   const user = await User.findOne({ email: decode.email });
 
@@ -81,9 +81,7 @@ const emailVerification = asyncHandler(async (req, res) => {
     isConfirmed: true,
   });
 
-  res.status(200).json({message: "Email successfully confirmed."});
-
-
+  res.status(200).json({ message: "Email successfully confirmed." });
 });
 
 //----NEW ROUTE----//
@@ -92,7 +90,6 @@ const emailVerification = asyncHandler(async (req, res) => {
 // @access public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  
 
   // Find user by email
   const user = await User.findOne({ email });
@@ -117,13 +114,14 @@ const loginUser = asyncHandler(async (req, res) => {
     expiresIn: "30d",
   });
 
-
   // Compare entered password with stored password and return a cookie
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.cookie("access_token", loginToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    });
+    res
+      .cookie("access_token", loginToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .cookie("authenticated", "true");
   } else {
     res.status(400);
     throw new Error("Invalid credentials");
@@ -153,7 +151,6 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .select("-shifts")
     .lean();
 
-
   // Loop through all patients the current user is coordinator for
   // Find next shift for that patient and return nextShift(date/carer name) added to patient object
   const patientCoordinatorShift = await Promise.all(
@@ -169,18 +166,25 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $sort: { shiftStartTime: 1 } },
         { $limit: 1 },
       ]);
-      
-    
+
       // If there is a shift scheduled for the patient, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
-        const carerName = await User.find({_id : nextCoordinatorShift[0].carer}).select('firstName')
+        const carerName = await User.find({
+          _id: nextCoordinatorShift[0].carer,
+        }).select("firstName");
         // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
-        // Else, add the next shift with the carer name 
-        if(patient.carer == user.id){
-        patient["nextShift"] =   [{time: nextCoordinatorShift[0].shiftStartTime, carerName:"You"}]
+        // Else, add the next shift with the carer name
+        if (patient.carer == user.id) {
+          patient["nextShift"] = [
+            { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
+          ];
+        } else {
+          patient["nextShift"] = {
+            time: nextCoordinatorShift[0].shiftStartTime,
+            carerName: carerName[0].firstName,
+          };
         }
-        else{patient["nextShift"] =  {time: nextCoordinatorShift[0].shiftStartTime, carerName: carerName[0].firstName};}
       } else {
         patient["nextShift"] = null;
       }
@@ -211,8 +215,10 @@ const getUserPatients = asyncHandler(async (req, res) => {
       return patient;
     })
   );
-  
-  res.status(200).json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
+
+  res
+    .status(200)
+    .json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
 // //----NEW ROUTE----//
