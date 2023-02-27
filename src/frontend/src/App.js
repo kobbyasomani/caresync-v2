@@ -1,6 +1,8 @@
 import { GlobalStateContext } from "./utils/globalStateContext";
+import { ModalContext } from "./utils/modalUtils";
 import { useReducer, useEffect, useCallback } from "react"
 import globalReducer from "./utils/globalReducer";
+import { useModalReducer } from "./utils/modalUtils";
 
 import {
   createBrowserRouter,
@@ -16,6 +18,7 @@ import Help from "./views/Help";
 import Error from "./views/Error";
 import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
+import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Theme from "./styles/Theme";
@@ -40,7 +43,13 @@ const router = createBrowserRouter([
               },
               {
                 path: "/calendar",
-                element: <Calendar />
+                element: <Calendar />,
+                children: [
+                  {
+                    path: "/calendar/select-shift-by-date",
+                    element: <SelectShiftByDate />
+                  }
+                ]
               }
             ]
           }
@@ -92,23 +101,47 @@ function App() {
     }
   }, []);
 
-  const [store, dispatch] = useReducer(globalReducer, initialState());
+  // Global state handler
+  const GlobalProvider = ({ children }) => {
+    const [store, dispatch] = useReducer(globalReducer, initialState());
 
-  // Set required global state values in localStorage any time their state changes
-  useEffect(() => {
-    // console.log("updating localStorage from store...");
-    window.localStorage.setItem("careSync", JSON.stringify({
-      ...store,
-    }));
-  }, [store]);
+    // Set required global state values in localStorage any time their state changes
+    useEffect(() => {
+      // console.log("updating localStorage from store...");
+      window.localStorage.setItem("careSync", JSON.stringify({
+        ...store,
+      }));
+    }, [store]);
+
+    return (
+      <GlobalStateContext.Provider value={{ store, dispatch }}>
+        {children}
+      </GlobalStateContext.Provider>
+    );
+  }
+
+  // Modal and drawer state handler
+  const ModalProvider = ({ children }) => {
+    const [modalState, modalDispatch] = useModalReducer({
+      modalIsOpen: false,
+      drawerlIsOpen: false
+    });
+    return (
+      <ModalContext.Provider value={{ modalState, modalDispatch }}>
+        {children}
+      </ModalContext.Provider>
+    );
+  }
 
   return (
-    <GlobalStateContext.Provider value={{ store, dispatch }}>
+    <GlobalProvider>
       <ThemeProvider theme={Theme}>
         <CssBaseline />
-        <RouterProvider router={router} />
+        <ModalProvider>
+          <RouterProvider router={router} />
+        </ModalProvider>
       </ThemeProvider>
-    </GlobalStateContext.Provider >
+    </GlobalProvider >
   );
 }
 

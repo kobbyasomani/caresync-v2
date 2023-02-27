@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { useSetModal, useSetDrawer } from "../utils/modalUtils";
-import { useCalendarContext } from "../utils/calendarUtils";
+import { useModalContext } from "../utils/modalUtils";
 
 import {
     Dialog,
@@ -18,14 +18,17 @@ import CloseIcon from "@mui/icons-material/Close";
 /**
  * A re-usable modal.
  * @param {string} title The title (h2) to be displayed in the modal.
- * @param {string} text Some descriptive text to be displayed above the modal content.
- * @param {*} actions Some action elements (e.g., buttons) to be displayed at the bottom of the modal.
- * @param {object} state The state and update function { state, setSate }.
+ * @param {string} text Descriptive text to be displayed above the modal content.
+ * @param {*} actions Any additional action elements (e.g., buttons) to be displayed at the bottom of the modal.
  * @returns A modal element populated with the passed props.
  */
-const Modal = ({ title, text, actions, isOpen, dispatch, children, ...rest }) => {
+const Modal = ({ title, text, actions, children, ...rest }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const { modalState, modalDispatch } = useModalContext();
+    const isOpen = modalState.modalIsOpen;
+    const dispatch = modalDispatch;
 
     return (
         <Dialog className={isOpen ? "modal open" : "modal closed"}

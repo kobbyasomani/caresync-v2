@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useGlobalState } from "../utils/globalStateContext";
+import { useModalContext, useSetModal } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
 import Patient from "../components/Patient";
 import Modal from "../components/Modal";
@@ -15,7 +16,15 @@ const SelectPatient = () => {
     const [patients, setPatients] = useState([]);
 
     // Modal state manager
-    const [isOpen, setIsOpen] = useState(false);
+    const { modalState, modalDispatch } = useModalContext()
+    const isOpen = modalState.modalIsOpen;
+
+    const openModal = () => {
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+    }
 
     // Fetch the list of patients for the logged-in user
     useEffect(() => {
@@ -66,17 +75,15 @@ const SelectPatient = () => {
                 <h2>Add a patient to get started.</h2>
             )}
 
-            <ButtonPrimary onClick={() => setIsOpen(true)}>
+            <ButtonPrimary onClick={openModal}>
                 Add patient
             </ButtonPrimary>
 
             <Modal
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
                 title="Add Patient"
                 text="You'll be the coordinator for this patient and can 
             create and manage their care shifts."
-                style={{}}>
+            >
                 <AddPatient />
             </Modal>
         </>

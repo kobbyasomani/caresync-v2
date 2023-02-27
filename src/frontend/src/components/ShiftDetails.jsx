@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useCalendarContext } from "../utils/calendarUtils";
+import { useModalContext } from "../utils/modalUtils";
 
 import PersonIcon from '@mui/icons-material/Person';
 import {
@@ -18,7 +18,7 @@ const ShiftDetails = ({ shift }) => {
     // Sets width of the drawer content column
     const drawerWidth = "100%";
 
-    const { modalState, modalDispatch } = useCalendarContext();
+    const { modalState, modalDispatch } = useModalContext();
 
     const closeDrawer = useCallback((event) => {
         // Prevent tab/shift keypresses while drawer is open from closing it

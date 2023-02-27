@@ -1,4 +1,7 @@
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, createContext, useContext } from "react";
+
+const ModalContext = createContext();
+const useModalContext = () => useContext(ModalContext);
 
 const modalReducer = (state, action) => {
     switch (action.type) {
@@ -49,8 +52,10 @@ const useSetDrawer = (dispatch, action) => useCallback(() => {
 }, [dispatch]);
 
 export {
+    ModalContext,
+    useModalContext,
     useModalReducer,
     useSetModal,
-    useSetDrawer
+    useSetDrawer,
 }
 

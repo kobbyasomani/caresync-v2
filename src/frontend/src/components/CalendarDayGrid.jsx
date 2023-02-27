@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCalendarContext } from "../utils/calendarUtils";
+import { useModalContext } from "../utils/modalUtils";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -7,7 +9,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 const CalendarDayGrid = () => {
     // Selected date information state manager
-    const { modalDispatch, calDispatch } = useCalendarContext();
+    const { calDispatch } = useCalendarContext();
+    const { modalState, modalDispatch } = useModalContext();
+    const navigate = useNavigate();
 
     const handleSelect = (info) => {
         // console.log(info);
@@ -19,6 +23,7 @@ const CalendarDayGrid = () => {
             type: "open",
             data: "modal"
         });
+        navigate("/calendar/select-shift-by-date")
     }
 
     // console.log(modalDispatch)

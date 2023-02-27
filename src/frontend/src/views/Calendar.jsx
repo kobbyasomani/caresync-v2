@@ -1,5 +1,8 @@
 import { useState, useEffect, useReducer } from "react";
+import { Outlet } from "react-router-dom";
+
 import { useGlobalState } from "../utils/globalStateContext";
+import { useModalContext } from "../utils/modalUtils";
 import { CalendarContext, useCalendarContext, calendarReducer } from "../utils/calendarUtils";
 import baseURL from "../utils/baseUrl";
 
@@ -19,17 +22,14 @@ export const Calendar = () => {
     const patient = store.selectedPatient;
     const [patientShifts, setPatientShifts] = useState([]);
 
-    // Modal and drawer state handlers
-    const [modalState, modalDispatch] = useModalReducer({
-        modalIsOpen: false,
-        drawerlIsOpen: false
-    });
-
     // Context store for the calendar view
     const [calStore, calDispatch] = useReducer(calendarReducer, {
         selectedDate: {},
     });
     // console.log(calStore);
+
+    // Get the state and context manager for modal/drawer
+    const { modalState, modalDispatch } = useModalContext();
 
     // Fetch all patient shifts
     useEffect(() => {
@@ -44,12 +44,7 @@ export const Calendar = () => {
 
     return (
         patient ? (
-            <CalendarContext.Provider value={{
-                calStore,
-                calDispatch,
-                modalState,
-                modalDispatch
-            }}>
+            <CalendarContext.Provider value={{ calStore, calDispatch }}>
                 <SelectedPatient patient={patient} />
 
                 <Box id="calendar">
@@ -72,19 +67,17 @@ export const Calendar = () => {
                 </section>
 
                 <Modal
-                    title={`Shifts for ${calStore.selectedDate ?
-                        new Date(calStore.selectedDate.start).toLocaleDateString()
-                        : null}`}
-                    text="Select a shift to view or edit its handover, 
-                    shift notes, and incident reports."
-                    isOpen={modalState.modalIsOpen}
-                    dispatch={modalDispatch}
+                // title={`Shifts for ${calStore.selectedDate ?
+                //     new Date(calStore.selectedDate.start).toLocaleDateString()
+                //     : null}`}
+                // text="Select a shift to view or edit its handover, 
+                // shift notes, and incident reports."
                 >
-                    <SelectShiftByDate />
+                    <Outlet />
+                    {/* <SelectShiftByDate /> */}
                 </Modal>
 
-                <ShiftDetails isOpen={modalState.drawerIsOpen}
-                    shift />
+                <ShiftDetails isOpen={modalState.drawerIsOpen} shift />
             </CalendarContext.Provider>
         ) : (
             null
