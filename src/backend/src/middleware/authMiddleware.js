@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 const protect = asyncHandler(async (req, res, next) => {
   const token = req.cookies.access_token;
   if (!token) {
-    res.status(401);
+    res.status(401).clearCookie("authenticated");
     throw new Error("No authorization token found");
   }
   try {
@@ -14,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
     return next();
   } catch {
     console.log(error);
-    res.status(401).clearCookie("access_token");
+    res.status(401).clearCookie("access_token").clearCookie("authenticated");
     throw new Error("Not authorized");
   }
 })
