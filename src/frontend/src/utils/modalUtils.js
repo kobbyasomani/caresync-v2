@@ -4,6 +4,7 @@ const ModalContext = createContext();
 const useModalContext = () => useContext(ModalContext);
 
 const modalReducer = (state, action) => {
+    // console.log("MODAL REDUCER:", action.data);
     switch (action.type) {
         case "open":
             return {
@@ -42,7 +43,7 @@ const useSetModal = (dispatch, action) => useCallback(() => {
         type: action,
         data: "modal"
     });
-}, [dispatch]);
+}, [dispatch, action]);
 
 /**
  * Sets the isOpen state of the drawer to true (open) or false (close).
@@ -54,7 +55,7 @@ const useSetDrawer = (dispatch, action) => useCallback(() => {
         type: action,
         data: "drawer"
     });
-}, [dispatch]);
+}, [dispatch, action]);
 
 export {
     ModalContext,

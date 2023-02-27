@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { Outlet } from "react-router-dom";
 
 import { useGlobalState } from "../utils/globalStateContext";
@@ -12,35 +12,35 @@ import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
-import SelectShiftByDate from "../components/dialogs/SelectShiftByDate";
 import ShiftDetails from "../components/ShiftDetails";
-import { useModalReducer, useSetModal, useSetDrawer } from "../utils/modalUtils";
 
 export const Calendar = () => {
     // Patient data and shifts state handlers
     const { store } = useGlobalState();
     const patient = store.selectedPatient;
-    const [patientShifts, setPatientShifts] = useState([]);
-
-    // Context store for the calendar view
-    const [calStore, calDispatch] = useReducer(calendarReducer, {
-        selectedDate: {},
-    });
-    // console.log(calStore);
 
     // Get the state and context manager for modal/drawer
     const { modalStore, modalDispatch } = useModalContext();
 
-    // Fetch all patient shifts
+    // Context store for the calendar view
+    const [calStore, calDispatch] = useReducer(calendarReducer, {
+        selectedDate: {},
+        shifts: [],
+    });
+
+    // Fetch all patient shifts and add them to state
     useEffect(() => {
-        fetch(`${baseURL}/patient/${patient._id}`, {
+        fetch(`${baseURL}/shift/${patient._id}`, {
             credentials: "include"
         })
             .then(response => response.json())
-            .then((shifts) => setPatientShifts(shifts));
-    }, [patient._id]);
-
-    // console.log(patientShifts);
+            .then((shifts) => {
+                calDispatch({
+                    type: "setShifts",
+                    data: shifts
+                })
+            });
+    }, [patient]);
 
     return (
         patient ? (
@@ -49,6 +49,7 @@ export const Calendar = () => {
 
                 <Box id="calendar">
                     <CalendarDayGrid
+                        shifts={calStore.shifts}
                         modalStore={modalStore}
                         modalDispatch={modalDispatch} />
                 </Box>

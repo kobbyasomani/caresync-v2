@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { useSetModal, useSetDrawer } from "../utils/modalUtils";
 import { useModalContext } from "../utils/modalUtils";
 
@@ -29,10 +27,6 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
     const isOpen = modalStore.modalIsOpen;
     const dispatch = modalDispatch;
-
-    useEffect(() => {
-        console.log(`rendering`);
-    }, [modalStore])
 
     return (
         <Dialog className={isOpen ? "modal open" : "modal closed"}

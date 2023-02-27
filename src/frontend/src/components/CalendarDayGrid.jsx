@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCalendarContext } from "../utils/calendarUtils";
 import { useModalContext } from "../utils/modalUtils";
@@ -7,7 +6,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-const CalendarDayGrid = () => {
+
+const CalendarDayGrid = ({ shifts }) => {
     // Selected date information state manager
     const { calStore, calDispatch } = useCalendarContext();
     const { modalStore, modalDispatch } = useModalContext();
@@ -24,7 +24,7 @@ const CalendarDayGrid = () => {
         modalDispatch({
             type: "setActiveModal",
             data: {
-                title: `Shifts for ${new Date(calStore.selectedDate.start).toLocaleDateString()}`,
+                title: `Shifts for ${new Date(info.start).toLocaleDateString()}`,
                 text: "Select a shift to view or edit its handover, \
                         shift notes, and incident reports."
             }
@@ -61,6 +61,15 @@ const CalendarDayGrid = () => {
                     center: "title",
                     end: "today next"
                 }}
+                events={shifts.map(shift => {
+                    return {
+                        id: shift._id,
+                        title: shift._id,
+                        start: shift.shiftStartTime,
+                        end: shift.shiftEndTime,
+                        display: "auto",
+                    }
+                })}
             />
         </>
     );

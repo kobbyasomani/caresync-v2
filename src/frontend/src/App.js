@@ -21,7 +21,7 @@ import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Theme from "./styles/Theme";
+import { Theme as theme} from "./styles/Theme";
 
 // Create the router
 const router = createBrowserRouter([
@@ -124,7 +124,7 @@ function App() {
   const ModalProvider = ({ children }) => {
     const [modalStore, modalDispatch] = useModalReducer({
       modalIsOpen: false,
-      drawerlIsOpen: false,
+      drawerIsOpen: false,
       activeModal: {
         title: "This is an empty modal",
         text: "You can use the modalDispatch function to set the 'title' \
@@ -141,7 +141,7 @@ function App() {
 
   return (
     <GlobalProvider>
-      <ThemeProvider theme={Theme}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <ModalProvider>
           <RouterProvider router={router} />

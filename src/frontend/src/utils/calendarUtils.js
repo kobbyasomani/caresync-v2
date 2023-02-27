@@ -10,6 +10,11 @@ const calendarReducer = (state, action) => {
                 ...state,
                 selectedDate: action.data
             }
+        case "setShifts":
+            return {
+                ...state,
+                shifts: action.data
+            }
         default: return state
     }
 }
