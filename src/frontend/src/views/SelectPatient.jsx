@@ -71,7 +71,8 @@ const SelectPatient = () => {
             </ButtonPrimary>
 
             <Modal
-                state={{ isOpen, setIsOpen }}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
                 title="Add Patient"
                 text="You'll be the coordinator for this patient and can 
             create and manage their care shifts."

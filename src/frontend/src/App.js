@@ -18,8 +18,7 @@ import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import DefaultTheme from "./styles/DefaultTheme";
-const theme = DefaultTheme;
+import Theme from "./styles/Theme";
 
 // Create the router
 const router = createBrowserRouter([
@@ -105,7 +104,7 @@ function App() {
 
   return (
     <GlobalStateContext.Provider value={{ store, dispatch }}>
-      <ThemeProvider theme={DefaultTheme}>
+      <ThemeProvider theme={Theme}>
         <CssBaseline />
         <RouterProvider router={router} />
       </ThemeProvider>

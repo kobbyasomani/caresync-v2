@@ -1,24 +1,27 @@
 import { useState } from "react";
+import { useCalendarContext } from "../utils/calendarUtils";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-import Modal from "./Modal";
-import SelectShiftByDate from "./dialogs/SelectShiftByDate";
-
 const CalendarDayGrid = () => {
     // Selected date information state manager
-    const [dateInfo, setDateInfo] = useState({});
-
-    // Modal state manager
-    const [isOpen, setIsOpen] = useState(false);
+    const { modalDispatch, calDispatch } = useCalendarContext();
 
     const handleSelect = (info) => {
         // console.log(info);
-        setDateInfo(info);
-        setIsOpen(true);
+        calDispatch({
+            type: "setSelectedDate",
+            data: info
+        });
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
     }
+
+    // console.log(modalDispatch)
 
     return (
         <>
@@ -27,7 +30,7 @@ const CalendarDayGrid = () => {
                 selectable
                 select={handleSelect}
                 selectLongPressDelay={300}
-                aspectRatio={1.0}
+                // aspectRatio={1.0}
                 // contentHeight="auto"
                 expandRows={true}
                 titleFormat={{ year: "numeric", month: "short" }}
@@ -41,14 +44,7 @@ const CalendarDayGrid = () => {
                     end: "today next"
                 }}
             />
-            <Modal title={`Shifts for ${new Date(dateInfo.start).toLocaleDateString()}`}
-                text="Select a shift to view or edit its handover, shift notes, and incident reports."
-                state={{ isOpen, setIsOpen }}
-            >
-                <SelectShiftByDate />
-            </Modal>
         </>
-
     );
 }
 

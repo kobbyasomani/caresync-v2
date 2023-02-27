@@ -1,6 +1,11 @@
 $outline: #999;
 $highlight: powderblue;
 
+:root {
+    font-size: clamp(1rem, calc(1rem + ((1vw - 0.48rem) * 1.3889)), 1.05rem);
+    min-height: 0vw;
+}
+
 html,
 body {
     height: 100%;

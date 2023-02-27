@@ -3,7 +3,7 @@ import { useGlobalState } from "../utils/globalStateContext";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
-import DefaultTheme from "../styles/DefaultTheme";
+import DefaultTheme from "../styles/Theme";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalState();

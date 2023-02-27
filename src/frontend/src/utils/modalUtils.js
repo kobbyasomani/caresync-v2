@@ -1,0 +1,56 @@
+import { useReducer, useCallback } from "react";
+
+const modalReducer = (state, action) => {
+    switch (action.type) {
+        case "open":
+            return {
+                ...state,
+                [`${action.data}IsOpen`]: true
+            }
+        case "close":
+            return {
+                ...state,
+                [`${action.data}IsOpen`]: false
+            }
+        default: return state
+    }
+}
+
+/**
+ * Manages the open state of the modal and drawer (shift details) components.
+ * @param {object} initialState The initial open state of the modal/drawer.
+ * @returns The modal and drawer state and update function.
+ */
+const useModalReducer = (initialState) => useReducer(modalReducer, initialState);
+
+
+/**
+ * Sets the isOpen state of the modal to true (open) or false (close).
+ * @param {function} dispatch The dispatch function returned by useModalReducer
+ * @param {string} action The action to perform on the modal ("open" or "close")
+ */
+const useSetModal = (dispatch, action) => useCallback(() => {
+    dispatch({
+        type: action,
+        data: "modal"
+    });
+}, [dispatch]);
+
+/**
+ * Sets the isOpen state of the drawer to true (open) or false (close).
+ * @param {function} dispatch The dispatch function returned by useModalReducer
+ * @param {string} action The action to perform on the drawer ("open" or "close")
+ */
+const useSetDrawer = (dispatch, action) => useCallback(() => {
+    dispatch({
+        type: action,
+        data: "drawer"
+    });
+}, [dispatch]);
+
+export {
+    useModalReducer,
+    useSetModal,
+    useSetDrawer
+}
+
