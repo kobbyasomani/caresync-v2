@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { useGlobalState } from "../../utils/globalStateContext";
 import { useHandleForm } from "../../utils/formUtils";
+import { useSetModal, useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../root/Buttons";
 
@@ -46,6 +47,15 @@ export const AddPatient = () => {
         });
         navigate("/");
     }, [dispatch]);
+
+    // Close the modal when navigating to the calendar
+    const { modalDispatch } = useModalContext();
+    const closeModal = useCallback(() => {
+        modalDispatch({
+            type: "close",
+            data: "modal"
+        });
+    });
 
     return (
         <>
@@ -92,7 +102,7 @@ export const AddPatient = () => {
                                     Back to patients
                                 </ButtonSecondary>
                             </Link>
-                            <Link to="/calendar" className="button-link">
+                            <Link to="/calendar" onClick={closeModal} className="button-link">
                                 <ButtonPrimary>
                                     View calendar
                                 </ButtonPrimary>

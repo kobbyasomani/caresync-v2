@@ -15,6 +15,11 @@ const modalReducer = (state, action) => {
                 ...state,
                 [`${action.data}IsOpen`]: false
             }
+        case "setActiveModal":
+            return {
+                ...state,
+                activeModal: action.data
+            }
         default: return state
     }
 }

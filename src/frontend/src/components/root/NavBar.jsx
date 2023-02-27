@@ -17,10 +17,7 @@ const NavBar = () => {
     const { store, dispatch } = useGlobalState();
     const navigate = useNavigate();
 
-    const handleLogout = useCallback(async () => {
-        fetch(`${baseURL}/user/auth?logout=true`, {
-            credentials: "include"
-        });
+    const handleLogout = useCallback(() => {
         dispatch({
             type: "logout",
         });

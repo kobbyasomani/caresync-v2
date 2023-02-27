@@ -124,7 +124,13 @@ function App() {
   const ModalProvider = ({ children }) => {
     const [modalState, modalDispatch] = useModalReducer({
       modalIsOpen: false,
-      drawerlIsOpen: false
+      drawerlIsOpen: false,
+      activeModal: {
+        title: "This is an empty modal",
+        text: "You can use the modalDispatch function to set the 'title' \
+        and 'text' or pass them to the modal as props. The content will \
+        be provided by the router using the URL path."
+      }
     });
     return (
       <ModalContext.Provider value={{ modalState, modalDispatch }}>

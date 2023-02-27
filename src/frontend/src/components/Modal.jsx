@@ -20,7 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
  * @param {string} title The title (h2) to be displayed in the modal.
  * @param {string} text Descriptive text to be displayed above the modal content.
  * @param {*} actions Any additional action elements (e.g., buttons) to be displayed at the bottom of the modal.
- * @returns A modal element populated with the passed props.
+ * @returns A modal element populated with the passed props and children.
  */
 const Modal = ({ title, text, actions, children, ...rest }) => {
     const theme = useTheme();
@@ -40,7 +40,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
             {...rest}>
             <DialogTitle sx={{ pt: 3 }}>
                 <Typography variant="h2" component="p" id="modal-title" sx={{ fontWeight: "bold", mt: 1 }}>
-                    {title || "Title goes here"}
+                    {title || modalState.activeModal.title}
                 </Typography>
                 <IconButton className="close-modal"
                     onClick={useSetModal(dispatch, "close")}
@@ -50,7 +50,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
             </DialogTitle>
             <DialogContent>
                 <DialogContentText sx={{ mb: 2 }}>
-                    {text || "Text goes here"}
+                    {text || modalState.activeModal.text}
                 </DialogContentText>
                 {children || "Nested content goes here {children}"}
             </DialogContent>
