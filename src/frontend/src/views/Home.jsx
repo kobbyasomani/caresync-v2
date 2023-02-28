@@ -25,11 +25,11 @@ export default function Login() {
     }, [])
     const [form, setForm] = useHandleForm(initialState);
 
-    const setUser = () => {
+    const loginUser = (response) => {
         // console.log(`setting user ${form.inputs.email}...`)
         dispatch({
             type: "login",
-            data: form.inputs.email
+            data: response.user
         });
     }
 
@@ -46,7 +46,7 @@ export default function Login() {
                 buttonText="Log in"
                 buttonVariant="outlined"
                 postURL="/user/login"
-                callback={setUser}
+                callback={loginUser}
             >
                 {/* <label htmlFor="email">Email address</label> */}
                 <TextField
