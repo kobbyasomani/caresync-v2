@@ -20,8 +20,8 @@ export const Calendar = () => {
 
     // Fetch all patient shifts and add them to state
     useEffect(() => {
-        console.log(`selected patient: ${store.selectedPatient.firstName} \
-${store.selectedPatient.lastName}`);
+        //         console.log(`selected patient: ${store.selectedPatient.firstName} \
+        // ${store.selectedPatient.lastName}`);
         //Find the first shift after the current date
         fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
             credentials: "include"

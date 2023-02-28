@@ -36,7 +36,7 @@ shift notes, and incident reports.`
         });
         // Navigate to Select Shift by Date
         navigate("/calendar/select-shift-by-date")
-        console.log(`update selectedDate: ${info.start}`);
+        // console.log(`update selectedDate: ${info.start}`);
     }
 
     // console.log(modalDispatch)
