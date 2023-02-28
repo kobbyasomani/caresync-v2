@@ -44,15 +44,9 @@ const getPatientShifts = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  // Find all shifts for the current logged in user/ order them from oldest to newest
-  const patientShifts = await Shift.aggregate([
-    {
-      $match: {
-        patient: patient._id,
-      },
-    },
-    { $sort: { shiftStartTime: 1 } },
-  ]);
+  // Find all shifts for the current patient. Join carer first/last name
+  const patientShifts = await Shift.find({patient: patient.id}).populate("carer", "firstName lastName" )
+  
   res.status(200).json(patientShifts);
 });
 
