@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useGlobalState } from "../utils/globalStateContext";
+import { useGlobalContext } from "../utils/globalUtils";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
 import { Theme as theme } from "../styles/Theme";
 
 const Patient = ({ patient }) => {
-    const { dispatch } = useGlobalState();
+    const { dispatch } = useGlobalContext();
     const { _id, firstName, lastName, nextShift } = patient;
     const navigate = useNavigate();
 

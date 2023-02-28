@@ -1,7 +1,7 @@
 import { useState, useCallback, navigate } from "react";
 import { Link } from "react-router-dom";
 
-import { useGlobalState } from "../../utils/globalStateContext";
+import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useSetModal, useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
@@ -12,7 +12,7 @@ import { TextField, Alert } from "@mui/material";
 export const AddPatient = () => {
     // console.log("rendering AddPatient");
 
-    const { dispatch } = useGlobalState();
+    const { dispatch } = useGlobalContext();
 
     // Set the form state
     const initialState = {

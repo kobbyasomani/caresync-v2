@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useGlobalState } from "../../utils/globalStateContext";
-import baseURL from "../../utils/baseUrl";
+import { useGlobalContext } from "../../utils/globalUtils";
 
 import {
     AppBar,
@@ -14,7 +13,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 
 const NavBar = () => {
-    const { store, dispatch } = useGlobalState();
+    const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
 
     const handleLogout = useCallback(() => {

@@ -32,7 +32,6 @@ const modalReducer = (state, action) => {
  */
 const useModalReducer = (initialState) => useReducer(modalReducer, initialState);
 
-
 /**
  * Sets the isOpen state of the modal to true (open) or false (close).
  * @param {function} dispatch The dispatch function returned by useModalReducer

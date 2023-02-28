@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useGlobalState } from "../utils/globalStateContext";
-import { useModalContext, useSetModal } from "../utils/modalUtils";
+import { useGlobalContext } from "../utils/globalUtils";
+import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
 import Patient from "../components/Patient";
 import Modal from "../components/Modal";
@@ -11,20 +11,29 @@ import { ButtonPrimary } from "../components/root/Buttons";
 import { Stack, Typography } from "@mui/material";
 
 const SelectPatient = () => {
-    const { store, dispatch } = useGlobalState();
+    const { store, dispatch } = useGlobalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [patients, setPatients] = useState([]);
 
     // Modal state manager
-    const { modalStore, modalDispatch } = useModalContext()
-    const isOpen = modalStore.modalIsOpen;
-
+    const { modalDispatch } = useModalContext()
     const openModal = () => {
         modalDispatch({
             type: "open",
             data: "modal"
         });
     }
+
+    // Unset selected patient and shifts
+    useEffect(() => {
+        dispatch({
+            type: "setSelectedPatient",
+            data: ""
+        });
+        dispatch({
+            type: "clearShifts"
+        });
+    }, [dispatch]);
 
     // Fetch the list of patients for the logged-in user
     useEffect(() => {

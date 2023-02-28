@@ -1,8 +1,7 @@
-import { GlobalStateContext } from "./utils/globalStateContext";
-import { ModalContext } from "./utils/modalUtils";
+import { GlobalStateContext, globalReducer } from "./utils/globalUtils";
+import { ModalContext, useModalReducer } from "./utils/modalUtils";
 import { useReducer, useEffect, useCallback } from "react"
-import globalReducer from "./utils/globalReducer";
-import { useModalReducer } from "./utils/modalUtils";
+import { } from "./utils/modalUtils";
 
 import {
   createBrowserRouter,
@@ -21,7 +20,7 @@ import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { Theme as theme} from "./styles/Theme";
+import { Theme as theme } from "./styles/Theme";
 
 // Create the router
 const router = createBrowserRouter([
@@ -89,14 +88,20 @@ function App() {
       return {
         isAuth: localStorage.isAuth,
         user: localStorage.user,
-        selectedPatient: localStorage.selectedPatient
+        selectedPatient: localStorage.selectedPatient,
+        shifts: localStorage.shifts,
+        featuredShift: localStorage.featuredShift,
+        previousShifts: localStorage.previousShifts,
       };
       // Set global state to defaults if not in localStorage
     } else {
       return {
         isAuth: false,
         user: "",
-        selectedPatient: ""
+        selectedPatient: "",
+        shifts: "",
+        featuredShift: "",
+        previousShifts: "",
       };
     }
   }, []);
@@ -127,9 +132,9 @@ function App() {
       drawerIsOpen: false,
       activeModal: {
         title: "This is an empty modal",
-        text: "You can use the modalDispatch function to set the 'title' \
-        and 'text' or pass them to the modal as props. The content will \
-        be provided by the router using the URL path."
+        text: `You can use the modalDispatch function to set the 'title' 
+and 'text' or pass them to the modal as props. The content will 
+be provided by the router using the URL path.`
       }
     });
     return (
@@ -141,12 +146,12 @@ function App() {
 
   return (
     <GlobalProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ModalProvider>
+      <ModalProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
           <RouterProvider router={router} />
-        </ModalProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </ModalProvider>
     </GlobalProvider >
   );
 }

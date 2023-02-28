@@ -1,5 +1,4 @@
-import { useState, useCallback } from "react";
-import { useCalendarContext, CalendarContext } from "../utils/calendarUtils";
+import { useCallback } from "react";
 import { useModalContext } from "../utils/modalUtils";
 
 import {
@@ -11,13 +10,11 @@ import ForumIcon from '@mui/icons-material/Forum';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ReportIcon from '@mui/icons-material/Report';
 
-const Shift = () => {
-    // Shift data
-    const [shift, setShift] = useState({});
+const Shift = ({ featured, shift }) => {
+    // Set local loading state
 
-    // Get modal dispatch method from the CalendarContext store
-    const { setCalStore } = useCalendarContext();
-    const { modalStore, modalDispatch } = useModalContext();
+    // Get modal dispatch method to toggle modal from shift card
+    const { modalDispatch } = useModalContext();
 
     // Open the shift details drawer and close the modal
     const openShift = useCallback(() => {
@@ -29,7 +26,7 @@ const Shift = () => {
             type: "close",
             data: "modal"
         });
-    });
+    }, [modalDispatch]);
 
     return (
         <Card variant="outlined" className="shift"
@@ -42,7 +39,9 @@ const Shift = () => {
                 }}>
                     <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2" }}>
                         <EventNoteIcon sx={{ mr: "0.5rem" }} />
-                        <Typography variant="body1" className="shift-date">DD/MM/YY | 00:00 – 00:00</Typography>
+                        <Typography variant="body1" className="shift-date">
+                            {shift ? new Date(shift.shiftStartTime).toLocaleDateString() : "Could not load shift time"}
+                        </Typography>
                     </Box>
                     <Box sx={{ gridArea: "2 / 1 / 3 / 2" }}>
                         <Typography variant="body1" className="shift-carer">Carer: Firstname LastName</Typography>

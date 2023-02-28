@@ -2,11 +2,17 @@ import { createContext, useContext } from "react";
 
 const GlobalStateContext = createContext();
 /**
- * 
+ * Context forproviding global state to child components.
  * @returns The current global state context value object.
  */
 const useGlobalContext = () => useContext(GlobalStateContext);
 
+/**
+ * Reducer function for managing the global state.
+ * @param {object} action An object containing the type of action to take 
+ * and the data to update global state.
+ * @returns 
+ */
 const globalReducer = (state, action) => {
     // console.log(`GLOBAL STATE CHANGED: ${action.type}`);
     switch (action.type) {
@@ -63,6 +69,33 @@ const globalReducer = (state, action) => {
             return {
                 ...state,
                 selectedPatient: patient
+            }
+        case "setSelectedDate":
+            return {
+                ...state,
+                selectedDate: action.data
+            }
+        case "setShifts":
+            return {
+                ...state,
+                shifts: action.data
+            }
+        case "setFeaturedShift":
+            return {
+                ...state,
+                featuredShift: action.data
+            }
+        case "setPreviousShifts":
+            return {
+                ...state,
+                previousShifts: action.data
+            }
+        case "clearShifts":
+            return {
+                ...state,
+                shifts: [],
+                featuredShift: {},
+                previousShifts: [],
             }
         default: return state;
     }

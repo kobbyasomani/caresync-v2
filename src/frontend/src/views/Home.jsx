@@ -1,5 +1,5 @@
-import { useMemo, useNavigate } from "react";
-import { useGlobalState } from "../utils/globalStateContext";
+import { useMemo } from "react";
+import { useGlobalContext } from "../utils/globalUtils";
 import { Outlet, Link } from "react-router-dom";
 import Form from "../components/forms/Form";
 import { useHandleForm } from "../utils/formUtils";
@@ -11,7 +11,7 @@ export default function Login() {
     // console.log("rendering Home");
 
     // Get the global state and set form state
-    const { store, dispatch } = useGlobalState();
+    const { store, dispatch } = useGlobalContext();
 
     // Set the initial form state
     const initialState = useMemo(() => {
@@ -31,7 +31,6 @@ export default function Login() {
             type: "login",
             data: form.inputs.email
         });
-        // navigate("/select-patient");
     }
 
     return store.isAuth ? (

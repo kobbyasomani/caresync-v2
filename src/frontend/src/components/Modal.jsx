@@ -1,4 +1,4 @@
-import { useSetModal, useSetDrawer } from "../utils/modalUtils";
+import { useSetModal } from "../utils/modalUtils";
 import { useModalContext } from "../utils/modalUtils";
 
 import {
