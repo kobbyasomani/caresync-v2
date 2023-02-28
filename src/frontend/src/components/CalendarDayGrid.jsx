@@ -13,6 +13,7 @@ const CalendarDayGrid = ({ shifts }) => {
     const { modalDispatch } = useModalContext();
     const navigate = useNavigate();
 
+    // Handle selecting a calendar day
     const handleSelect = (info) => {
         // console.log(info);
         // Set the selected date in the calendar state
@@ -39,7 +40,12 @@ shift notes, and incident reports.`
         // console.log(`update selectedDate: ${info.start}`);
     }
 
-    // console.log(modalDispatch)
+    // Handle clicking a on a calendar event
+    const handleEventClick = (eventClickInfo) => {
+        // Get the full shift data stored in the event
+        console.log(eventClickInfo.event.extendedProps.fullShift);
+    }
+
 
     return (
         <>
@@ -47,6 +53,7 @@ shift notes, and incident reports.`
                 editable
                 selectable
                 select={handleSelect}
+                eventClick={handleEventClick}
                 selectLongPressDelay={300}
                 // aspectRatio={1.0}
                 // contentHeight="auto"
@@ -68,8 +75,13 @@ shift notes, and incident reports.`
                         start: shift.shiftStartTime,
                         end: shift.shiftEndTime,
                         display: "auto",
+                        fullShift: shift
                     }
                 })}
+                eventTimeFormat={{
+                    hour: "numeric",
+                    meridiem: "short"
+                }}
             />
         </>
     );
