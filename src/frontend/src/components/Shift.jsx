@@ -29,7 +29,7 @@ const Shift = ({ featured, shift }) => {
     }, [modalDispatch]);
 
     return (
-        <Card variant="outlined" className="shift"
+        <Card variant="outlined" className={featured ? "shift featured" : "shift"}
             sx={{ display: "flex", alignItems: "center" }}>
             <CardActionArea onClick={openShift}>
                 <CardContent sx={{
