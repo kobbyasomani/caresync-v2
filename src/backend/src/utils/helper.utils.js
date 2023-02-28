@@ -28,11 +28,11 @@ const createPDF = async (
 };
 
 // Uploads a PDf document to Cloudinary
-const cloudinaryUpload = (buffer, folder) => {
+const cloudinaryUpload = (buffer, folder, patientID) => {
   return new Promise((resolve, reject) => {
     let cld_upload_stream = cloudinary.uploader.upload_stream(
       {
-        folder: `CareSync/${folder}`,
+        folder: `CareSync/${folder}/${patientID}`,
       },
       (error, result) => {
         if (result) {

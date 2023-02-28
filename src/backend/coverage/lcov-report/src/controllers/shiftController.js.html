@@ -356,7 +356,16 @@
 <a name='L291'></a><a href='#L291'>291</a>
 <a name='L292'></a><a href='#L292'>292</a>
 <a name='L293'></a><a href='#L293'>293</a>
-<a name='L294'></a><a href='#L294'>294</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -405,12 +414,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -435,7 +438,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -577,6 +579,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -630,7 +637,18 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -695,15 +713,9 @@ const getPatientShifts = asyncHandler(async (req, res) =&gt; {
     throw new Error("User is not authorized");
   }
 &nbsp;
-  // Find all shifts for the current logged in user/ order them from oldest to newest
-  const patientShifts = await Shift.aggregate([
-    {
-      $match: {
-        patient: patient._id,
-      },
-    },
-    { $sort: { shiftStartTime: 1 } },
-  ]);
+  // Find all shifts for the current patient. Join carer first/last name
+  const patientShifts = await Shift.find({patient: patient.id}).populate("carer", "firstName lastName" )
+  
   res.status(200).json(patientShifts);
 });
 &nbsp;
@@ -728,7 +740,6 @@ const createShift = asyncHandler(async (req, res) =&gt; {
 &nbsp;
   // Search for patient with URL variable
   const carer = await User.findById(carerID);
-&nbsp;
 &nbsp;
   // Make sure logged in user matches the coordinator
   if (patient.coordinator.toString() !== user.id) {
@@ -860,12 +871,17 @@ const createShiftNotes = asyncHandler(async (req, res) =&gt; {
   );
 &nbsp;
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(notesPDF, "shiftNotes");
+  const result = await cloudinaryUpload(notesPDF, "shiftNotes", shift.patient);
 &nbsp;
   // Update shift with Cloudinary URL
   const updatedShift = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { shiftNotes: result.secure_url },
+    {
+      shiftNotes: {
+        shiftNotesText: shiftNotes,
+        shiftNotesPDF: result.secure_url,
+      },
+    },
     {
       new: true,
     }
@@ -920,12 +936,23 @@ const createIncidentReport = asyncHandler(async (req, res) =&gt; {
   );
 &nbsp;
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(incidentPDF, "incidentReports");
+  const result = await cloudinaryUpload(
+    incidentPDF,
+    "incidentReports",
+    shift.patient
+  );
 &nbsp;
   // Add new incident report to incident reports array.
   const addIncidentReport = await Shift.findByIdAndUpdate(
     req.params.shiftID,
-    { $push: { incidentReports: { incidentReport: result.secure_url } } },
+    {
+      $push: {
+        incidentReports: {
+          incidentReportText: incidentReport,
+          incidentReportPDF: result.secure_url,
+        },
+      },
+    },
     {
       new: true,
     }
@@ -949,7 +976,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-02-26T01:31:09.630Z
+                at 2023-02-28T12:52:16.336Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
