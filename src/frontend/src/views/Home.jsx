@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useGlobalContext } from "../utils/globalUtils";
 import { Outlet, Link } from "react-router-dom";
 import Form from "../components/forms/Form";
@@ -25,13 +25,13 @@ export default function Login() {
     }, [])
     const [form, setForm] = useHandleForm(initialState);
 
-    const loginUser = (response) => {
+    const loginUser = useCallback((response) => {
         // console.log(`setting user ${form.inputs.email}...`)
         dispatch({
             type: "login",
             data: response.user
         });
-    }
+    }, [dispatch]);
 
     return store.isAuth ? (
         <Outlet />

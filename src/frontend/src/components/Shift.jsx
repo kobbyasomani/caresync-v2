@@ -40,11 +40,14 @@ const Shift = ({ featured, shift }) => {
                     <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2" }}>
                         <EventNoteIcon sx={{ mr: "0.5rem" }} />
                         <Typography variant="body1" className="shift-date">
-                            {shift ? new Date(shift.shiftStartTime).toLocaleDateString() : "Could not load shift time"}
+                            {shift ? new Date(shift.shiftStartTime)
+                                .toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }) : "Could not load shift time"}
                         </Typography>
                     </Box>
                     <Box sx={{ gridArea: "2 / 1 / 3 / 2" }}>
-                        <Typography variant="body1" className="shift-carer">Carer: Firstname LastName</Typography>
+                        <Typography variant="body1" className="shift-carer">
+                            Carer: {shift.carer.firstName} {shift.carer.lastName}
+                        </Typography>
                     </Box>
                 </CardContent>
             </CardActionArea>
