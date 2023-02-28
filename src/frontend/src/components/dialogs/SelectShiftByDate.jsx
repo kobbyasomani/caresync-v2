@@ -6,12 +6,12 @@ import { compareDates, dateAsObj } from "../../utils/dateUtils";
 import Shift from "../Shift";
 import { ButtonPrimary } from "../root/Buttons";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 
 const SelectShiftByDate = () => {
     // Get all shifts that fall on a given date from the store
-    const { store, dispatch } = useGlobalContext();
+    const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const [shifts, setShifts] = useState([]);
 
@@ -27,19 +27,22 @@ const SelectShiftByDate = () => {
                     shiftsForDate.push(shift);
                 }
             }
-            if (shiftsForDate.length === 0) {
-                modalDispatch({
-                    type: "setActiveModal",
-                    data: {
-                        ...modalStore.activeModal,
-                        text: "There are no shifts for this date."
-                    }
-                })
-            }
             return shiftsForDate;
         }
-        setShifts(getShiftsForDate())
-    }, []);
+        setShifts(getShiftsForDate());
+    }, [modalDispatch, modalStore.activeModal, store.selectedDate, store.shifts]);
+
+    useEffect(() => {
+        if (shifts.length === 0) {
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: modalStore.activeModal.title,
+                    text: "There are no shifts for this date."
+                }
+            })
+        }
+    }, [modalDispatch, modalStore.activeModal.title, shifts.length])
 
     return (
         shifts.length > 0 ? (

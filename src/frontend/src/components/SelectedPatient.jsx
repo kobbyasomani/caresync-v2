@@ -9,20 +9,10 @@ import { Theme as theme } from "../styles/Theme";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalContext();
-    const { _id, firstName, lastName, nextShift } = patient;
+    const { _id, firstName, lastName } = patient;
     const navigate = useNavigate();
 
     // let caringFor;
-    let nextShiftDate = () => {
-        if (nextShift) {
-            if (typeof nextShift === "string") {
-                return new Date(nextShift).toLocaleString();
-            }
-            // caringFor = true;
-            return new Date(nextShift[0].time).toLocaleString();
-        }
-        return "No upcoming shift";
-    }
 
     const switchPatient = useCallback(() => {
         // Unset selected patient
@@ -30,10 +20,6 @@ const Patient = ({ patient }) => {
             type: "setSelectedPatient",
             data: ""
         });
-        // Clear shifts
-        // dispatch({
-        //     type: "clearShifts",
-        // });
         // Navigate to patient selection
         navigate("/");
     }, [dispatch, navigate])

@@ -3,7 +3,7 @@ import { useModalContext } from "../utils/modalUtils";
 
 import PersonIcon from '@mui/icons-material/Person';
 import {
-    Box, Drawer, Button, Typography,
+    Box, Drawer, Typography,
     Card, CardContent, CardActionArea,
     List, ListItem, ListItemAvatar, ListItemText, Avatar,
     Grid, IconButton
@@ -29,7 +29,7 @@ const ShiftDetails = ({ shift }) => {
             type: "close",
             data: "drawer"
         });
-    });
+    }, [modalDispatch]);
 
     const content = () => (
         <Box

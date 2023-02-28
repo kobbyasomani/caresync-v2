@@ -1,4 +1,4 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 
 // Access the default theme settings using 'dtheme'
 const dtheme = createTheme();

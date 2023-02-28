@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
-import { useSetModal, useModalContext } from "../../utils/modalUtils";
+import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../root/Buttons";
 
@@ -55,7 +55,7 @@ export const AddPatient = () => {
             type: "close",
             data: "modal"
         });
-    });
+    }, [modalDispatch]);
 
     return (
         <>

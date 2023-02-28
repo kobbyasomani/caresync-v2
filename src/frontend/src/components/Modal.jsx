@@ -1,4 +1,4 @@
-import { useSetModal } from "../utils/modalUtils";
+import { useCallback } from "react";
 import { useModalContext } from "../utils/modalUtils";
 
 import {
@@ -26,13 +26,19 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
 
     const { modalStore, modalDispatch } = useModalContext();
     const isOpen = modalStore.modalIsOpen;
-    const dispatch = modalDispatch;
+
+    const closeModal = useCallback(() => {
+        modalDispatch({
+            type: "close",
+            data: "modal"
+        });
+    }, [modalDispatch]);
 
     return (
         <Dialog className={isOpen ? "modal open" : "modal closed"}
             fullScreen={fullScreen}
             open={isOpen}
-            onClose={useSetModal(dispatch, "close")}
+            onClose={closeModal}
             maxWidth="xs"
             aria-labelledby="modal-title"
             {...rest}>
@@ -41,7 +47,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
                     {title || modalStore.activeModal.title}
                 </Typography>
                 <IconButton className="close-modal"
-                    onClick={useSetModal(dispatch, "close")}
+                    onClick={closeModal}
                     sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
                     <CloseIcon />
                 </IconButton>
