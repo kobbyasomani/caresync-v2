@@ -88,6 +88,7 @@ function App() {
       // Set the global state values from localStorage
       if (localStorage) {
         return {
+          ...localStorage,
           isAuth: localStorage.isAuth,
           user: localStorage.user,
           selectedPatient: localStorage.selectedPatient,

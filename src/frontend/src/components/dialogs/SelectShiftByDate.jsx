@@ -30,17 +30,27 @@ const SelectShiftByDate = () => {
             return shiftsForDate;
         }
         setShifts(getShiftsForDate());
-    }, [modalDispatch, modalStore.activeModal, store.selectedDate, store.shifts]);
+    }, [modalDispatch, modalStore.activeModal, store.selectedDate.start, store.shifts]);
 
     useEffect(() => {
         if (shifts.length === 0) {
             modalDispatch({
                 type: "setActiveModal",
                 data: {
-                    title: modalStore.activeModal.title,
+                    title: `Shifts for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
                     text: "There are no shifts for this date."
                 }
             })
+        } else {
+            // Set the shift selection modal title and text
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: `Shifts for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
+                    text: `Select a shift to view or edit its handover, 
+shift notes, and incident reports.`
+                }
+            });
         }
     }, [modalDispatch, modalStore.activeModal.title, shifts.length])
 

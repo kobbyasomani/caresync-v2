@@ -15,20 +15,10 @@ const CalendarDayGrid = ({ shifts }) => {
 
     // Handle selecting a calendar day
     const handleSelect = (info) => {
-        // console.log(info);
         // Set the selected date in the calendar state
         dispatch({
             type: "setSelectedDate",
             data: info
-        });
-        // Set the shift selection modal title and text
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `Shifts for ${new Date(info.start).toLocaleDateString()}`,
-                text: `Select a shift to view or edit its handover, 
-shift notes, and incident reports.`
-            }
         });
         // Open the modal
         modalDispatch({
@@ -37,7 +27,6 @@ shift notes, and incident reports.`
         });
         // Navigate to Select Shift by Date
         navigate("/calendar/select-shift-by-date")
-        // console.log(`update selectedDate: ${info.start}`);
     }
 
     // Handle clicking a on a calendar event
