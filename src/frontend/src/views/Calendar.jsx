@@ -127,7 +127,7 @@ export const Calendar = () => {
 
                 {Object.keys(store.featuredShift).length > 0 ? (
                     <section>
-                        <Typography variant="h3">Upcoming Shift</Typography>
+                        <Typography variant="h3" sx={{ mb: 1 }}>Upcoming Shift</Typography>
                         <Shift featured shift={store.featuredShift} />
                     </section>
                 ) : (
@@ -140,7 +140,7 @@ export const Calendar = () => {
                 {store.previousShifts.length > 0 ? (
                     <section>
                         <Typography variant="h3">Recent Shifts</Typography>
-                        <Stack spacing={2}>
+                        <Stack spacing={2} sx={{ mt: 1 }}>
                             {store.previousShifts.map(shift => {
                                 return <Shift key={shift._id} shift={shift} />
                             })}

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useModalContext } from "../utils/modalUtils";
+import { useGlobalContext } from "../utils/globalUtils";
 
 import {
     Card, CardContent, CardActionArea,
@@ -11,13 +12,17 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ReportIcon from '@mui/icons-material/Report';
 
 const Shift = ({ featured, shift }) => {
-    // Set local loading state
+    const { dispatch } = useGlobalContext();
 
     // Get modal dispatch method to toggle modal from shift card
     const { modalDispatch } = useModalContext();
 
     // Open the shift details drawer and close the modal
     const openShift = useCallback(() => {
+        dispatch({
+            type: "setSelectedShift",
+            data: shift
+        });
         modalDispatch({
             type: "open",
             data: "drawer"
@@ -26,7 +31,7 @@ const Shift = ({ featured, shift }) => {
             type: "close",
             data: "modal"
         });
-    }, [modalDispatch]);
+    }, [modalDispatch, dispatch, shift]);
 
     return (
         <Card variant="outlined" className={featured ? "shift featured" : "shift"}

@@ -59,7 +59,4 @@ let Theme = createTheme({
     }
 });
 
-let theme = Theme;
-console.log(theme)
-
 export { Theme };

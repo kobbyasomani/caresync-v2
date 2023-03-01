@@ -42,10 +42,19 @@ shift notes, and incident reports.`
 
     // Handle clicking a on a calendar event
     const handleEventClick = (eventClickInfo) => {
+        eventClickInfo.jsEvent.preventDefault();
         // Get the full shift data stored in the event
-        console.log(eventClickInfo.event.extendedProps.fullShift);
-    }
+        const shift = eventClickInfo.event.extendedProps.fullShift;
 
+        dispatch({
+            type: "setSelectedShift",
+            data: shift
+        });
+        modalDispatch({
+            type: "open",
+            data: "drawer"
+        });
+    }
 
     return (
         <>

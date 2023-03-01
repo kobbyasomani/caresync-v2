@@ -1,12 +1,14 @@
 import { useCallback } from "react";
+import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
+import { dateAsObj } from "../utils/dateUtils";
 
 import PersonIcon from '@mui/icons-material/Person';
 import {
-    Box, Drawer, Typography,
+    Box, Stack, Drawer, Typography,
     Card, CardContent, CardActionArea,
     List, ListItem, ListItemAvatar, ListItemText, Avatar,
-    Grid, IconButton
+    Grid, IconButton, useTheme
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import ReportIcon from '@mui/icons-material/Report';
@@ -14,12 +16,19 @@ import ForumIcon from '@mui/icons-material/Forum';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ShiftDetails = ({ shift }) => {
+const ShiftDetails = () => {
+    const { store } = useGlobalContext();
+    const { modalStore, modalDispatch } = useModalContext();
+    const theme = useTheme();
+
+    const shift = store.selectedShift;
+    const patient = store.selectedPatient;
+    const carer = shift.carer;
+    const shiftStart = dateAsObj(shift.shiftStartTime);
+    const shiftEnd = dateAsObj(shift.shiftEndTime);
+
     // Sets width of the drawer content column
     const drawerWidth = "100%";
-
-    const { modalStore, modalDispatch } = useModalContext();
-
     const closeDrawer = useCallback((event) => {
         // Prevent tab/shift keypresses while drawer is open from closing it
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -43,15 +52,28 @@ const ShiftDetails = ({ shift }) => {
                 <CloseIcon />
             </IconButton>
 
-            <Grid container rowSpacing={2} columnSpacing={2}>
+            <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ pt: 1 }}>
                 <Grid item xs={12}>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <PersonIcon fontSize="medium" /><Typography variant="body1">Patient Name</Typography>
-                    </Box>
+                    <Stack direction="row" spacing={1}>
+                        <PersonIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
+                        <Typography variant="h5" component="p" color={theme.palette.primary.main}>
+                            {patient.firstName} {patient.lastName}
+                        </Typography>
+                    </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h2" component="p">Shift DD/MM/YYYY</Typography>
-                    <Typography variant="h3" component="p">00:00 – 00:00</Typography>
+                    <Typography variant="h2" component="p">
+                        Shift on {shift ? (
+                            shiftStart.toLocaleDateString("en-AU", { dateStyle: "long" })
+                        ) : "D MONTH YEAR"
+                        }
+                    </Typography>
+                    <Typography variant="h3" component="p">
+                        {shift ? (
+                            `${shiftStart.toLocaleTimeString("en-AU", { timeStyle: "short" })} – 
+                            ${shiftEnd.toLocaleTimeString("en-AU", { timeStyle: "short" })}`
+                        ) : "00:00 – 00:00"}
+                    </Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Card variant="outlined" id="shift-notes-card">
@@ -104,7 +126,7 @@ const ShiftDetails = ({ shift }) => {
                                 <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                                 <Typography variant="h5" component="p">Care Team</Typography>
                                 <List dense>
-                                    {[1, 2, 3].map(item => {
+                                    {[1].map(item => {
                                         return (
                                             <ListItem key={item}>
                                                 <ListItemAvatar>
@@ -113,8 +135,8 @@ const ShiftDetails = ({ shift }) => {
                                                     </Avatar>
                                                 </ListItemAvatar>
                                                 <ListItemText
-                                                    primary="Firstname Lastname"
-                                                    secondary={`Carer ${item} quick contact details`}
+                                                    primary={carer ? `${carer.firstName} ${carer.lastName}` : "Firstname Lastname"}
+                                                    secondary="(+61) 123 456 789"
                                                 />
                                             </ListItem>
                                         )
@@ -141,7 +163,7 @@ const ShiftDetails = ({ shift }) => {
                 </Drawer>
             </>
         </div>
-    );
+    )
 }
 
 export default ShiftDetails;

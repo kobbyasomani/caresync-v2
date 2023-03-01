@@ -30,9 +30,9 @@ const SelectPatient = () => {
             type: "setSelectedPatient",
             data: ""
         });
-        dispatch({
-            type: "clearShifts"
-        });
+        // dispatch({
+        //     type: "clearShifts"
+        // });
     }, [dispatch]);
 
     // Fetch the list of patients for the logged-in user

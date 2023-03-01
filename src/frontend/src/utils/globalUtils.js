@@ -90,12 +90,18 @@ const globalReducer = (state, action) => {
                 ...state,
                 previousShifts: action.data
             }
+        case "setSelectedShift":
+            return {
+                ...state,
+                selectedShift: action.data
+            }
         case "clearShifts":
             return {
                 ...state,
                 shifts: [],
                 featuredShift: {},
                 previousShifts: [],
+                selectedShift: {},
             }
         default: return state;
     }

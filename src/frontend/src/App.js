@@ -79,35 +79,37 @@ function App() {
   Refactor these hooks to fetch authenticated
   session data from backend-server */
 
-  const initialState = useCallback(() => {
-    // Get global state values from localStorage on load if available
-    const localStorage = window.localStorage.careSync ?
-      JSON.parse(window.localStorage.getItem("careSync")) : null;
-    // Set the global state values from localStorage
-    if (localStorage) {
-      return {
-        isAuth: localStorage.isAuth,
-        user: localStorage.user,
-        selectedPatient: localStorage.selectedPatient,
-        shifts: localStorage.shifts,
-        featuredShift: localStorage.featuredShift,
-        previousShifts: localStorage.previousShifts,
-      };
-      // Set global state to defaults if not in localStorage
-    } else {
-      return {
-        isAuth: false,
-        user: "",
-        selectedPatient: "",
-        shifts: "",
-        featuredShift: "",
-        previousShifts: "",
-      };
-    }
-  }, []);
-
   // Global state handler
   const GlobalProvider = ({ children }) => {
+    const initialState = useCallback(() => {
+      // Get global state values from localStorage on load if available
+      const localStorage = window.localStorage.careSync ?
+        JSON.parse(window.localStorage.getItem("careSync")) : null;
+      // Set the global state values from localStorage
+      if (localStorage) {
+        return {
+          isAuth: localStorage.isAuth,
+          user: localStorage.user,
+          selectedPatient: localStorage.selectedPatient,
+          shifts: localStorage.shifts,
+          featuredShift: localStorage.featuredShift,
+          previousShifts: localStorage.previousShifts,
+          selectedShift: localStorage.selectedShift,
+        };
+        // Set global state to defaults if not in localStorage
+      } else {
+        return {
+          isAuth: false,
+          user: "",
+          selectedPatient: "",
+          shifts: "",
+          featuredShift: "",
+          previousShifts: "",
+          selectedShift: "",
+        };
+      }
+    }, []);
+
     const [store, dispatch] = useReducer(globalReducer, initialState());
 
     // Set required global state values in localStorage any time their state changes
@@ -132,9 +134,9 @@ function App() {
       drawerIsOpen: false,
       activeModal: {
         title: "This is an empty modal",
-        text: `You can use the modalDispatch function to set the 'title' 
-and 'text' or pass them to the modal as props. The content will 
-be provided by the router using the URL path.`
+        text: `You can use the modalDispatch function to set the active modal 
+'title' and 'text' or pass them to the modal as props. The modal content in 
+the Calendar view will be the component returned by the URL path (/calendar/<path>).`
       }
     });
     return (
