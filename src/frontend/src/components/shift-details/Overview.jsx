@@ -4,7 +4,7 @@ import { useModalContext } from "../../utils/modalUtils";
 import {
     useTheme, Grid, Typography,
     Avatar, Card, CardContent, CardActionArea,
-    List, ListItem, ListItemAvatar, ListItemText,
+    List, ListItem, ListItemAvatar, ListItemText
 } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import ReportIcon from '@mui/icons-material/Report';
@@ -27,6 +27,24 @@ const Overview = () => {
 
     return (
         <Grid container rowSpacing={2} columnSpacing={2} alignItems="center">
+            <Grid item xs={12}>
+                <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none"}}>
+                    <CardContent>
+                        {store.selectedShift.coordinatorNotes ? (
+                            <>
+                                <Typography variant="h6" component="p">
+                                    Notes from Coordinator
+                                </Typography>
+                                <Typography variant="body1">
+                                    {store.selectedShift.coordinatorNotes}
+                                </Typography>
+                            </>
+                        ) : (
+                            null
+                        )}
+                    </CardContent>
+                </Card>
+            </Grid>
             <Grid item xs={12}>
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={viewShiftNotes}>
