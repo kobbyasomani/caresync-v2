@@ -11,7 +11,7 @@ import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
-import ShiftDetails from "../components/ShiftDetails";
+import ShiftDetails from "../components/shift-details/ShiftDetails";
 
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
@@ -154,7 +154,7 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                <ShiftDetails isOpen={modalStore.drawerIsOpen} shift />
+                <ShiftDetails />
             </>
         ) : null
     );
