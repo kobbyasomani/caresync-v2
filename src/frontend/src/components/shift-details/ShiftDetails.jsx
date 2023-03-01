@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ShiftDetails = ({ isLoading, children }) => {
     const { store } = useGlobalContext();
@@ -43,6 +44,13 @@ const ShiftDetails = ({ isLoading, children }) => {
             type: "setActiveDrawer",
             data: ""
         });
+    }, [modalDispatch]);
+
+    const backToOverview = useCallback(() => {
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: ""
+        })
     }, [modalDispatch]);
 
     const content = () => (
@@ -81,6 +89,16 @@ const ShiftDetails = ({ isLoading, children }) => {
                 sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
                 <CloseIcon />
             </IconButton>
+
+            {modalStore.activeDrawer ? (
+                <IconButton className="prev-modal"
+                    onClick={backToOverview}
+                    sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
+                    <ArrowBackIcon />
+                </IconButton>
+            ) : (
+                null
+            )}
 
             {injectActiveDrawer()}
 
