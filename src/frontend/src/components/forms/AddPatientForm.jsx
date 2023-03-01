@@ -59,8 +59,7 @@ export const AddPatient = () => {
 
     return (
         <>
-            <Form
-                form={form}
+            <Form form={form}
                 setForm={setForm}
                 legend="New patient"
                 buttonText="Add patient"

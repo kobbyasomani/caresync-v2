@@ -30,7 +30,7 @@ const SelectShiftByDate = () => {
             return shiftsForDate;
         }
         setShifts(getShiftsForDate());
-    }, [modalDispatch, modalStore.activeModal, store.selectedDate.start, store.shifts]);
+    }, [modalDispatch, modalStore.activeModal, store.selectedDate, store.shifts]);
 
     useEffect(() => {
         if (shifts.length === 0) {
@@ -52,7 +52,7 @@ shift notes, and incident reports.`
                 }
             });
         }
-    }, [modalDispatch, modalStore.activeModal.title, shifts.length])
+    }, [modalDispatch, modalStore.activeModal.title, shifts.length, store.selectedDate])
 
     return (
         shifts.length > 0 ? (

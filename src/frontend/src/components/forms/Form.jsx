@@ -15,10 +15,15 @@ import { ButtonPrimary } from "../root/Buttons";
 
 /**
  * A resuable controlled form component that manages inputs with a reducer function.
- * @param {object} form The current form state object.
+ * @param {object} form The local form state object.
  * @param {function} setForm The form reducer update function.
+ *  Pass as an object with two props: `inputs` and `errors`. 
+ * `inputs: {}` is an object containing input name-value pairs. 
+ * `errors: []` is an array of error message strings.
  * @param {string} legend [optional] A legend to display at the top of the form fieldset.
  * @param {string} buttonText Text for the form submit button.
+ * @param {string} buttonVariant set the mui button variant.
+ * One of 'text', 'contained', or 'outlined' (defaults to contained).
  * @param {string} postURL The API endpoint to submit the form to.
  * @param {function} callback [optional] A function to be called after form submission
  * that takes the API json response as an argument.
@@ -50,8 +55,7 @@ const Form = ({
 
         // Make sure form fields are not empty
         for (const [name, value] of Object.entries(form.inputs)) {
-            const inputLabel = document.querySelector(
-                `input[name="${name}"]`).labels[0].textContent;
+            const inputLabel = document.querySelector(`[name=${name}`).labels[0].textContent
             if (!value) {
                 errors.push(`${inputLabel} cannot be blank.\n`);
             }
@@ -82,17 +86,16 @@ const Form = ({
                 // Render validation error messages
                 handleErrors([`Error: ${error.response.data.message}`]);
             });
-
     }, [postURL, form, setForm, handleErrors, callback]);
 
     return (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
-            <form>
+            <form style={{ flexGrow: 1 }}>
                 <fieldset>
                     {legend ? <legend>{legend}</legend> : null}
                     {/* Pass the input handler and state value to form input elements */}
                     {Children.map(children, (child) => {
-                        if (child.props.mui === "TextField") {
+                        if (child.props.mui === "TextField" || child.props.mui === "TextArea") {
                             return cloneElement(child, {
                                 size: "small",
                                 margin: "normal",

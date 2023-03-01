@@ -5,7 +5,7 @@ import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
 import Patient from "../components/Patient";
 import Modal from "../components/Modal";
-import AddPatient from "../components/forms/AddPatient";
+import AddPatientForm from "../components/forms/AddPatientForm";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 import { Stack, Typography } from "@mui/material";
@@ -93,7 +93,7 @@ const SelectPatient = () => {
                 text="You'll be the coordinator for this patient and can 
             create and manage their care shifts."
             >
-                <AddPatient />
+                <AddPatientForm />
             </Modal>
         </>
     )

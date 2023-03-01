@@ -1,7 +1,6 @@
-import { GlobalStateContext, globalReducer } from "./utils/globalUtils";
+import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
 import { useReducer, useEffect, useCallback } from "react"
-import { } from "./utils/modalUtils";
 
 import {
   createBrowserRouter,
@@ -99,15 +98,7 @@ function App() {
         };
         // Set global state to defaults if not in localStorage
       } else {
-        return {
-          isAuth: false,
-          user: "",
-          selectedPatient: "",
-          shifts: "",
-          featuredShift: "",
-          previousShifts: "",
-          selectedShift: "",
-        };
+        return emptyStore;
       }
     }, []);
 

@@ -3,6 +3,7 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj } from "../../utils/dateUtils";
 import Overview from "./Overview";
+import ShiftNotes from "./ShiftNotes";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
@@ -10,7 +11,7 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ShiftDetails = ({ children }) => {
+const ShiftDetails = ({ isLoading, children }) => {
     const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const activeDrawer = modalStore.activeDrawer;
@@ -18,25 +19,30 @@ const ShiftDetails = ({ children }) => {
 
     const injectActiveDrawer = () => {
         switch (activeDrawer) {
-            default: return <Overview />
+            case "shift notes":
+                return <ShiftNotes />
+            default:
+                return <Overview />
         }
     }
-
-    const shift = store.selectedShift;
-    const patient = store.selectedPatient;
-    const shiftStart = dateAsObj(shift.shiftStartTime);
-    const shiftEnd = dateAsObj(shift.shiftEndTime);
 
     // Sets width of the drawer content column
     const drawerWidth = "100%";
     const closeDrawer = useCallback((event) => {
         // Prevent tab/shift keypresses while drawer is open from closing it
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+        //     return;
+        // }
+        if (event.type === 'keydown' && (event.key !== 'Escape')) {
             return;
         }
         modalDispatch({
             type: "close",
             data: "drawer"
+        });
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: ""
         });
     }, [modalDispatch]);
 
@@ -51,21 +57,21 @@ const ShiftDetails = ({ children }) => {
                     <Stack direction="row" spacing={1}>
                         <PersonIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
                         <Typography variant="h5" component="p" color={theme.palette.primary.main}>
-                            {patient.firstName} {patient.lastName}
+                            {store.selectedPatient.firstName} {store.selectedPatient.lastName}
                         </Typography>
                     </Stack>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h2" component="p">
-                        Shift on {shift ? (
-                            shiftStart.toLocaleDateString("en-AU", { dateStyle: "long" })
+                        Shift on {store.selectedShift ? (
+                            dateAsObj(store.selectedShift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "long" })
                         ) : "D MONTH YEAR"
                         }
                     </Typography>
                     <Typography variant="h3" component="p">
-                        {shift ? (
-                            `${shiftStart.toLocaleTimeString("en-AU", { timeStyle: "short" })} – 
-                ${shiftEnd.toLocaleTimeString("en-AU", { timeStyle: "short" })}`
+                        {store.selectedShift ? (
+                            `${dateAsObj(store.selectedShift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} – 
+                ${dateAsObj(store.selectedShift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })}`
                         ) : "00:00 – 00:00"}
                     </Typography>
                 </Grid>
@@ -80,11 +86,11 @@ const ShiftDetails = ({ children }) => {
             {injectActiveDrawer()}
 
             {children}
-            
+
         </Box>
     );
 
-    return (
+    return isLoading ? null : (
         <div>
             <>
                 <Drawer

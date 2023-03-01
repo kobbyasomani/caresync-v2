@@ -1,8 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
-import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
 
 import { Typography, Stack, Box } from "@mui/material"
@@ -15,8 +14,8 @@ import ShiftDetails from "../components/shift-details/ShiftDetails";
 
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
-    const { modalStore } = useModalContext();
     const patient = store.selectedPatient;
+    const [isLoading, setIsLoading] = useState(true);
 
     // Fetch all patient shifts and add them to state
     useEffect(() => {
@@ -32,14 +31,15 @@ export const Calendar = () => {
                     type: "setShifts",
                     data: shifts
                 });
-            }, [store.selectedPatient, dispatch]);
+                setIsLoading(false);
+            });
     }, [store.selectedPatient, dispatch]);
 
     // Set the featured shift (closest upcoming)
     useEffect(() => {
-        // if (store.shifts === "") {
-        //     return
-        // }
+        if (Object.keys(store.shifts).length === 0) {
+            return
+        }
         const findUpcomingShift = () => {
             // console.log("Finding upcoming shift...");
             let shifts = store.shifts;
@@ -76,9 +76,9 @@ export const Calendar = () => {
 
     // Set the previous shifts (previous two shifts before today)
     useEffect(() => {
-        // if (store.shifts === "") {
-        //     return
-        // }
+        if (Object.keys(store.shifts).length === 0) {
+            return
+        }
         const findPreviousShifts = () => {
             // console.log("Finding previous shifts...");
             let shifts = [...store.shifts];
@@ -116,8 +116,8 @@ export const Calendar = () => {
 
     // console.log(store.featuredShift.shiftStartTime);
 
-    return (
-        patient ? (
+    return isLoading ? null : (
+        patient && store.shifts ? (
             <>
                 <SelectedPatient patient={patient} />
 
@@ -134,8 +134,7 @@ export const Calendar = () => {
                     <section>
                         <Typography variant="h3">No upcoming shifts</Typography>
                     </section>
-                )
-                }
+                )}
 
                 {store.previousShifts.length > 0 ? (
                     <section>
@@ -154,7 +153,7 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                <ShiftDetails />
+                <ShiftDetails isLoading={isLoading} />
             </>
         ) : null
     );

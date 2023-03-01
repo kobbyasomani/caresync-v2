@@ -7,6 +7,17 @@ const GlobalStateContext = createContext();
  */
 const useGlobalContext = () => useContext(GlobalStateContext);
 
+// Global store in empty state
+const emptyStore = {
+    isAuth: false,
+    user: "",
+    selectedPatient: {},
+    shifts: [],
+    featuredShift: {},
+    previousShifts: [],
+    selectedShift: {},
+}
+
 /**
  * Reducer function for managing the global state.
  * @param {object} action An object containing the type of action to take 
@@ -23,11 +34,6 @@ const globalReducer = (state, action) => {
                 user: action.data
             }
         case "logout":
-            const emptyStore = {
-                isAuth: false,
-                user: "",
-                selectedPatient: ""
-            }
             window.localStorage.setItem("careSync", JSON.stringify(emptyStore));
             return emptyStore;
         case "setIsAuth":
@@ -110,5 +116,6 @@ const globalReducer = (state, action) => {
 export {
     GlobalStateContext,
     useGlobalContext,
-    globalReducer
+    globalReducer,
+    emptyStore,
 }

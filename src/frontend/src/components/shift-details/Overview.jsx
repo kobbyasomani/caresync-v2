@@ -1,7 +1,8 @@
 import { useGlobalContext } from "../../utils/globalUtils";
+import { useModalContext } from "../../utils/modalUtils";
 
 import {
-    Grid, Typography,
+    useTheme, Grid, Typography,
     Avatar, Card, CardContent, CardActionArea,
     List, ListItem, ListItemAvatar, ListItemText,
 } from "@mui/material"
@@ -13,21 +14,35 @@ import PersonIcon from '@mui/icons-material/Person';
 
 const Overview = () => {
     const { store } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
+    const theme = useTheme();
     const carer = store.selectedShift.carer;
+
+    const viewShiftNotes = () => {
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: "shift notes"
+        })
+    }
 
     return (
         <Grid container rowSpacing={2} columnSpacing={2} alignItems="center">
             <Grid item xs={12}>
                 <Card variant="outlined" id="shift-notes-card">
-                    <CardActionArea>
+                    <CardActionArea onClick={viewShiftNotes}>
                         <CardContent>
                             <EditIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Shift Notes</Typography>
-                            <Typography variant="body1">Shift note snippet goes here.
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Accusamus similique labore neque veniam, atque magni non
-                                qui tempore quod...
-                            </Typography>
+
+                            {store.selectedShift.shiftNotes ? (
+                                <Typography variant="body1">
+                                    {store.selectedShift.shiftNotes}
+                                </Typography>
+                            ) : (
+                                <Typography variant="body1" color={theme.palette.primary.main}>
+                                    Enter your shift notes here
+                                </Typography>
+                            )}
                         </CardContent>
                     </CardActionArea>
                 </Card>
