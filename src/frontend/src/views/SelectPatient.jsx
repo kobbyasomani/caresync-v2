@@ -52,12 +52,12 @@ const SelectPatient = () => {
 
     return isLoading ? (
         <>
-            <Typography variant="h1">Hi, {store.user}</Typography>
+            <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             <Typography variant="h2">Fetching patients...</Typography>
         </>
     ) : (
         <>
-            <Typography variant="h1">Hi, {store.user}</Typography>
+            <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             {(patients
                 && patients.carer.length > 0) || patients.coordinator.length > 0 ?
                 <Typography variant="h2">Select a patient</Typography> : null}
