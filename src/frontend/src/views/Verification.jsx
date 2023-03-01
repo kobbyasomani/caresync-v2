@@ -17,7 +17,7 @@ const Verification = () => {
         axios.post(`/user/verification/${token}`)
             .then(response => {
                 // Set verified state according to server response
-                setVerified(response.status === 200 && response.data.isConfirmed);
+                setVerified(response.status === 200 && response.data.message === "Email successfully confirmed.");
             });
     }, [params.token]);
 
