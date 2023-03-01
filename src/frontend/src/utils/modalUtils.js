@@ -21,6 +21,11 @@ const modalReducer = (state, action) => {
                 ...state,
                 activeModal: action.data
             }
+        case "setActiveDrawer":
+            return {
+                ...state,
+                activeDrawer: action.data
+            }
         default: return state
     }
 }
