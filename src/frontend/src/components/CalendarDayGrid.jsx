@@ -80,6 +80,7 @@ const CalendarDayGrid = () => {
                     hour: "numeric",
                     meridiem: "short"
                 }}
+                eventColor="#79589fff"
             />
         </>
     );

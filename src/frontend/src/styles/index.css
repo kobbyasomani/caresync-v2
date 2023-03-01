@@ -52,5 +52,14 @@ form .form-errors {
 #calendar {
   padding-top: 1rem;
 }
+#calendar .fc-prev-button,
+#calendar .fc-next-button {
+  background-color: #79589f;
+  border-color: #79589f;
+}
+#calendar .fc-today-button {
+  background-color: #201a23;
+  border-color: #201a23;
+}
 
 /*# sourceMappingURL=index.css.map */

@@ -10,7 +10,7 @@ const fontFamily = ["Arial", "Helvetica", "sans-serif"].join(",");
 let Theme = createTheme({
     palette: {
         primary: {
-            main: "#6000D6",
+            main: "#79589fff",
         }
     },
     typography: {
