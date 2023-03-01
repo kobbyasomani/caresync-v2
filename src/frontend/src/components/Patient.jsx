@@ -14,10 +14,10 @@ const Patient = ({ patient }) => {
     let nextShiftDate = () => {
         if (nextShift) {
             if (typeof nextShift === "string") {
-                return new Date(nextShift).toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" });
+                return new Date(nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
             }
             caringFor = true;
-            return new Date(nextShift[0].time).toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" });
+            return new Date(nextShift[0].time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
         }
         return "No upcoming shift";
     }
