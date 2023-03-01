@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import baseURL from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
@@ -17,10 +16,13 @@ const ShiftNotesForm = () => {
     }
 
     const [form, setForm] = useHandleForm(initialState);
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
 
     const createShiftNotes = (response) => {
-        console.log(response);
+        dispatch({
+            type: "setSelectedShift",
+            data: response
+        });
     }
 
     return (

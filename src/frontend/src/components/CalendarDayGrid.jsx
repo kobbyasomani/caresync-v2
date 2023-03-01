@@ -7,9 +7,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 
-const CalendarDayGrid = ({ shifts }) => {
+const CalendarDayGrid = () => {
     // Selected date information state manager
-    const { dispatch } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const navigate = useNavigate();
 
@@ -66,7 +66,7 @@ const CalendarDayGrid = ({ shifts }) => {
                     center: "title",
                     end: "today next"
                 }}
-                events={shifts.map(shift => {
+                events={store.shifts.map(shift => {
                     return {
                         id: shift._id,
                         title: shift._id,

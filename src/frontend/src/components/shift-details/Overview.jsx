@@ -16,7 +16,7 @@ const Overview = () => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
-    const carer = store.selectedShift.carer;
+    // const carer = store.selectedShift.carer;
 
     const viewShiftNotes = () => {
         modalDispatch({
@@ -54,7 +54,7 @@ const Overview = () => {
 
                             {store.selectedShift.shiftNotes ? (
                                 <Typography variant="body1">
-                                    {store.selectedShift.shiftNotes}
+                                    {store.selectedShift.shiftNotes.shiftNotesText}
                                 </Typography>
                             ) : store.user._id === store.selectedShift.carer._id ? (
                                 <Typography variant="body1" color={theme.palette.primary.main}>
@@ -114,7 +114,7 @@ const Overview = () => {
                                                 </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText
-                                                primary={carer ? `${carer.firstName} ${carer.lastName}` : "Firstname Lastname"}
+                                                primary={store.selectedShift.carer ? `${store.selectedShift.carer.firstName} ${store.selectedShift.carer.lastName}` : "Firstname Lastname"}
                                                 secondary="(+61) 123 456 789"
                                             />
                                         </ListItem>

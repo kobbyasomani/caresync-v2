@@ -81,6 +81,14 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedDate: action.data
             }
+        case "setShift":
+            return {
+                ...state,
+                shifts: [
+                    ...state.shifts,
+                    action.data
+                ]
+            }
         case "setShifts":
             return {
                 ...state,

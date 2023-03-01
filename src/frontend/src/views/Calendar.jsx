@@ -14,7 +14,6 @@ import ShiftDetails from "../components/shift-details/ShiftDetails";
 
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
-    const patient = store.selectedPatient;
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch all patient shifts and add them to state
@@ -117,12 +116,12 @@ export const Calendar = () => {
     // console.log(store.featuredShift.shiftStartTime);
 
     return isLoading ? null : (
-        patient && store.shifts ? (
+        store.selectedPatient && store.shifts ? (
             <>
-                <SelectedPatient patient={patient} />
+                <SelectedPatient />
 
                 <Box id="calendar">
-                    <CalendarDayGrid shifts={store.shifts} />
+                    <CalendarDayGrid />
                 </Box>
 
                 {Object.keys(store.featuredShift).length > 0 ? (

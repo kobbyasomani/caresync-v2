@@ -14,11 +14,10 @@ import CloseIcon from '@mui/icons-material/Close';
 const ShiftDetails = ({ isLoading, children }) => {
     const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
-    const activeDrawer = modalStore.activeDrawer;
     const theme = useTheme();
 
     const injectActiveDrawer = () => {
-        switch (activeDrawer) {
+        switch (modalStore.activeDrawer) {
             case "shift notes":
                 return <ShiftNotes />
             default:

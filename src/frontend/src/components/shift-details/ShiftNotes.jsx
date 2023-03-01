@@ -4,13 +4,14 @@ import { Typography, Box } from "@mui/material";
 
 const ShiftNotes = () => {
     const { store } = useGlobalContext();
+
     return (
         <>
             <Typography variant="h3" component="p">Shift Notes</Typography>
             {store.selectedShift.shiftNotes ? (
                 <Box sx={{ pt: 1 }}>
                     <Typography variant="body1">
-                        {store.selectedShift.shiftNotes}
+                        {store.selectedShift.shiftNotes.shiftNotesText}
                     </Typography>
                 </Box>
             ) : store.user._id === store.selectedShift.carer._id ? (

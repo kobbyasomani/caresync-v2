@@ -7,9 +7,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { Theme as theme } from "../styles/Theme";
 
-const Patient = ({ patient }) => {
-    const { dispatch } = useGlobalContext();
-    const { _id, firstName, lastName } = patient;
+const Patient = () => {
+    const { store, dispatch } = useGlobalContext();
+    const { _id, firstName, lastName } = store.selectedPatient;
     const navigate = useNavigate();
 
     // let caringFor;
