@@ -64,7 +64,7 @@ const SelectPatient = () => {
             {patients && patients.carer.length > 0 ? (
                 <section>
                     <Typography variant="h3">Caring for</Typography>
-                    <Stack spacing={2}>
+                    <Stack spacing={2} sx={{ mt: 1 }}>
                         {patients.carer.map(patient => (
                             <Patient patient={patient} key={patient._id} />
                         ))}
@@ -74,7 +74,7 @@ const SelectPatient = () => {
             {patients && patients.coordinator.length > 0 ? (
                 <section>
                     <Typography variant="h3">Coordinating for</Typography>
-                    <Stack spacing={2}>
+                    <Stack spacing={2} sx={{ mt: 1 }}>
                         {patients.coordinator.map(patient => (
                             <Patient patient={patient} key={patient._id} />
                         ))}
