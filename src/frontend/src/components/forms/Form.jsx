@@ -90,7 +90,7 @@ const Form = ({
 
     return (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
-            <form style={{ flexGrow: 1 }}>
+            <form>
                 <fieldset>
                     {legend ? <legend>{legend}</legend> : null}
                     {/* Pass the input handler and state value to form input elements */}

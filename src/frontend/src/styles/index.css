@@ -62,4 +62,8 @@ form .form-errors {
   border-color: #201a23;
 }
 
+.MuiDrawer-root form {
+  flex-grow: 1;
+}
+
 /*# sourceMappingURL=index.css.map */

@@ -84,3 +84,9 @@ form {
         border-color: $raisin-black;
     }
 }
+
+.MuiDrawer-root {
+    form {
+        flex-grow: 1;
+    }
+}
