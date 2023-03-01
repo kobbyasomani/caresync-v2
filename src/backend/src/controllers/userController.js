@@ -131,7 +131,7 @@ const loginUser = asyncHandler(async (req, res) => {
     message: "Logged in Successfully",
     user: {
       firstName: user.firstName,
-      id: user._id
+      _id: user._id
     }
   });
 });

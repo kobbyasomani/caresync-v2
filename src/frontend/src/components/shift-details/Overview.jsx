@@ -28,7 +28,7 @@ const Overview = () => {
     return (
         <Grid container rowSpacing={2} columnSpacing={2} alignItems="center">
             <Grid item xs={12}>
-                <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none"}}>
+                <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
                     <CardContent>
                         {store.selectedShift.coordinatorNotes ? (
                             <>
@@ -56,9 +56,13 @@ const Overview = () => {
                                 <Typography variant="body1">
                                     {store.selectedShift.shiftNotes}
                                 </Typography>
-                            ) : (
+                            ) : store.user._id === store.selectedShift.carer._id ? (
                                 <Typography variant="body1" color={theme.palette.primary.main}>
                                     Enter your shift notes here
+                                </Typography>
+                            ) : (
+                                <Typography variant="body1">
+                                    There are no shift notes for this shift.
                                 </Typography>
                             )}
                         </CardContent>

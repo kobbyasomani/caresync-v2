@@ -13,8 +13,12 @@ const ShiftNotes = () => {
                         {store.selectedShift.shiftNotes}
                     </Typography>
                 </Box>
-            ) : (
+            ) : store.user._id === store.selectedShift.carer._id ? (
                 <ShiftNotesForm />
+            ) : (
+                <Typography variant="body1">
+                    There are no shift notes for this shift.
+                </Typography>
             )}
         </>
     )
