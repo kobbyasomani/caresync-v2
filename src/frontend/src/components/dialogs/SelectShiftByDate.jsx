@@ -67,7 +67,9 @@ shift notes, and incident reports.`
                 </ButtonPrimary>
             </>
         ) : (
-            null
+            <ButtonPrimary startIcon={<MoreTimeIcon />}>
+                Add Shift
+            </ButtonPrimary>
         )
     )
 }
