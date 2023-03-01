@@ -69,7 +69,7 @@ const CalendarDayGrid = () => {
                 events={store.shifts.map(shift => {
                     return {
                         id: shift._id,
-                        title: shift._id,
+                        title: `${shift.carer.firstName} ${shift.carer.lastName}`,
                         start: shift.shiftStartTime,
                         end: shift.shiftEndTime,
                         display: "auto",

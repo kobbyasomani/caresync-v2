@@ -42,12 +42,12 @@ const ProtectedRoute = () => {
 
     return store.isAuth ? (
         <>
-            <p style={{
+            {/* <p style={{
                 color: "red",
                 // position: "absolute",
                 margin: "0",
                 padding: "0",
-            }}><small>&lt;ProtectedRoute &#92;&gt;</small></p>
+            }}><small>&lt;ProtectedRoute &#92;&gt;</small></p> */}
             <Outlet />
         </>
     ) : <Navigate to="/" replace />
