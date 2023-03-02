@@ -29,9 +29,7 @@ const HandoverNotesForm = () => {
             legend="Add handover notes for this patient's next shift"
             buttonText="Update handover notes"
             postURL={`${baseURL}/shift/${store.selectedShift._id}`}
-            options={{
-                method: "PUT"
-            }}
+            method="put"
             callback={updateHandoverNotes}
         >
             <TextField multiline

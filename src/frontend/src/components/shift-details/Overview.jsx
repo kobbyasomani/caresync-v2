@@ -114,7 +114,7 @@ const Overview = () => {
 
             <Grid item xs={12} sx={{ gridArea: "4 / 1 / span 2 / span 2" }}>
                 <Card variant="outlined" id="care-team-card">
-                    <CardActionArea onClick={() => viewPanel("care team")}>
+                    <CardActionArea onClick={() => viewPanel("")}>
                         <CardContent>
                             <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Care Team</Typography>

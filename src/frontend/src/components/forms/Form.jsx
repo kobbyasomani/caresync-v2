@@ -37,6 +37,7 @@ const Form = ({
     buttonText,
     buttonVariant,
     postURL,
+    method,
     callback,
     children
 }) => {
@@ -70,22 +71,24 @@ const Form = ({
         }
 
         // If there are no errors submit the form
-        axios.post(postURL, form.inputs)
-            .then(response => {
-                // If a callback is passed, return it and pass it the response data
-                if (callback) {
-                    // console.log("executing form callback...");
-                    callback(response.data);
-                }
-                // Clear the form after successful submission
-                setForm({
-                    type: "clearForm"
-                });
-            })
-            .catch(error => {
-                // Render validation error messages
-                handleErrors([`Error: ${error.response.data.message}`]);
+        axios({
+            url: postURL,
+            method: method || "post",
+            data: form.inputs
+        }).then(response => {
+            // If a callback is passed, return it and pass it the response data
+            if (callback) {
+                // console.log("executing form callback...");
+                callback(response.data);
+            }
+            // Clear the form after successful submission
+            setForm({
+                type: "clearForm"
             });
+        }).catch(error => {
+            // Render validation error messages
+            handleErrors([`Error: ${error.response.data.message}`]);
+        });
     }, [postURL, form, setForm, handleErrors, callback]);
 
     return (
