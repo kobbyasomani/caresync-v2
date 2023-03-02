@@ -7,17 +7,19 @@ import { Theme as theme } from "../styles/Theme";
 
 const Patient = ({ patient }) => {
     const { dispatch } = useGlobalContext();
-    const { _id, firstName, lastName, nextShift } = patient;
     const navigate = useNavigate();
 
+    // Get the next shift date for patient and the associated carer
     let caringFor;
     let nextShiftDate = () => {
-        if (nextShift) {
-            if (typeof nextShift === "string") {
-                return new Date(nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+        if (patient.nextShift) {
+            if (typeof patient.nextShift === "string") {
+                return new Date(patient.nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
             }
-            caringFor = true;
-            return new Date(nextShift[0].time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+            if (patient.nextShift.carerName === "You") {
+                caringFor = true;
+            }
+            return new Date(patient.nextShift.time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
         }
         return "No upcoming shift";
     }
@@ -32,7 +34,7 @@ const Patient = ({ patient }) => {
     }
 
     return (
-        <Card variant="outlined" id={_id} className="patient"
+        <Card variant="outlined" id={patient._id} className="patient"
             onClick={selectPatient}>
             <CardActionArea sx={{
                 display: "flex",
@@ -48,12 +50,19 @@ const Patient = ({ patient }) => {
                 </CardMedia>
                 <CardContent>
                     <Typography variant="body1" className="name" sx={{ fontWeight: "600" }}>
-                        {firstName} {lastName}
+                        {patient.firstName} {patient.lastName}
                     </Typography>
                     <Typography variant="body1" className="shift">
-                        Next shift: {nextShiftDate()}
+                        Next shift: {`${nextShiftDate()} 
+                        ${(patient.nextShift?.carerName
+                                && patient.nextShift.carerName !== "You") ? `(${patient.nextShift.carerName})`
+                                : ""}`}
                     </Typography>
-                    {caringFor ? <Typography variant="subtitle1" className="caring-for" color="primary">You are the carer for this shift.</Typography> : null}
+                    {caringFor ? (
+                        <Typography variant="subtitle1" className="caring-for" color="primary">
+                            You are the carer for this shift.
+                        </Typography>
+                    ) : null}
                 </CardContent>
             </CardActionArea>
         </Card>

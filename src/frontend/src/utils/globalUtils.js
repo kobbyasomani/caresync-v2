@@ -11,6 +11,7 @@ const useGlobalContext = () => useContext(GlobalStateContext);
 const emptyStore = {
     isAuth: false,
     user: "",
+    patients: {},
     selectedPatient: {},
     shifts: [],
     featuredShift: {},

@@ -23,9 +23,9 @@ export const Calendar = () => {
         //Find the first shift after the current date
         fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
             credentials: "include"
-        })
-            .then(response => response.json())
+        }).then(response => response.json())
             .then((shifts) => {
+                console.log(shifts);
                 dispatch({
                     type: "setShifts",
                     data: shifts
@@ -41,10 +41,9 @@ export const Calendar = () => {
         }
         const findUpcomingShift = () => {
             // console.log("Finding upcoming shift...");
-            let shifts = store.shifts;
             let upcomingShift = null;
             // console.log(`shifts: `, shifts);
-            for (const shift of shifts) {
+            for (const shift of store.shifts) {
                 const shiftDate = new Date(shift.shiftStartTime);
                 // console.log("shift date: ", shiftDate);
                 const now = new Date();

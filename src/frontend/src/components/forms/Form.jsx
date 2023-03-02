@@ -90,7 +90,7 @@ const Form = ({
             // Render validation error messages
             handleErrors([`Error: ${error.response.data.message}`]);
         });
-    }, [postURL, form, setForm, handleErrors, callback]);
+    }, [postURL, form, setForm, handleErrors, callback, method]);
 
     return (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>

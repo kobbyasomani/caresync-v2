@@ -7,22 +7,13 @@ import Patient from "../components/Patient";
 import Modal from "../components/Modal";
 import AddPatientForm from "../components/forms/AddPatientForm";
 import { ButtonPrimary } from "../components/root/Buttons";
+import Loader from "../components/logo/Loader";
 
 import { Stack, Typography } from "@mui/material";
 
 const SelectPatient = () => {
     const { store, dispatch } = useGlobalContext();
     const [isLoading, setIsLoading] = useState(true);
-    const [patients, setPatients] = useState([]);
-
-    // Modal state manager
-    const { modalDispatch } = useModalContext()
-    const openModal = () => {
-        modalDispatch({
-            type: "open",
-            data: "modal"
-        });
-    }
 
     // Unset selected patient and shifts
     useEffect(() => {
@@ -45,37 +36,52 @@ const SelectPatient = () => {
                     type: "setPatients",
                     data: patients
                 });
-                setPatients(patients);
                 setIsLoading(false);
             }).catch(error => console.error(error.message));
     }, [dispatch]);
+
+    // useEffect(() => {
+    //     if (store.patients.length > 0) {
+
+    //     }
+    // }, [store.patients]);
+
+    // Modal state manager
+    const { modalDispatch } = useModalContext();
+    const openModal = () => {
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+    }
 
     return isLoading ? (
         <>
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             <Typography variant="h2">Fetching patients...</Typography>
+            <Loader />
         </>
     ) : (
         <>
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
-            {(patients
-                && patients.carer.length > 0) || patients.coordinator.length > 0 ?
+            {(Object.keys(store.patients).length > 0
+                && store.patients.carer.length > 0) || store.patients.coordinator.length > 0 ?
                 <Typography variant="h2">Select a patient</Typography> : null}
-            {patients && patients.carer.length > 0 ? (
+            {Object.keys(store.patients).length > 0 && store.patients.carer.length > 0 ? (
                 <section>
                     <Typography variant="h3">Caring for</Typography>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        {patients.carer.map(patient => (
+                        {store.patients.carer.map(patient => (
                             <Patient patient={patient} key={patient._id} />
                         ))}
                     </Stack>
                 </section>
             ) : null}
-            {patients && patients.coordinator.length > 0 ? (
+            {Object.keys(store.patients).length > 0 && store.patients.coordinator.length > 0 ? (
                 <section>
                     <Typography variant="h3">Coordinating for</Typography>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        {patients.coordinator.map(patient => (
+                        {store.patients.coordinator.map(patient => (
                             <Patient patient={patient} key={patient._id} />
                         ))}
                     </Stack>
