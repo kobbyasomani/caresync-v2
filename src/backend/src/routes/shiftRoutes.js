@@ -31,7 +31,7 @@ shiftRouter.route("/:shiftID").put(protect, updateShift).delete(protect, deleteS
 
 
 // Create handover notes
-// @param :shiftID url variable + {shiftNotes}
+// @param :shiftID url variable + {handoverNotes}
 shiftRouter.route("/handover/:shiftID").put(protect, createHandover)
 
 
