@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     useCallback,
     cloneElement,
@@ -113,7 +114,7 @@ const Form = ({
                         }
                     })}
                     {/* Render form errors if any exist */}
-                    {form.errors.length > 0 ? (<div className="form-errors">
+                    {form.errors?.length > 0 ? (<div className="form-errors">
                         <ul>
                             {form.errors.map((error, index) => {
                                 return <li key={index}>{error}</li>

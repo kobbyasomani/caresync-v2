@@ -1,7 +1,7 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -81,6 +81,7 @@ const CalendarDayGrid = () => {
                     meridiem: "short"
                 }}
                 eventColor="#79589fff"
+                data-testid="calendar"
             />
         </>
     );

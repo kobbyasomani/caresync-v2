@@ -1,3 +1,4 @@
+import React from "react";
 import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
 import { useReducer, useEffect, useCallback } from "react"

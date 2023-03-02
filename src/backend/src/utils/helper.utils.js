@@ -13,14 +13,19 @@ const createPDF = async (
   shiftNotes
 ) => {
   const doc = new PDFDocument();
-  doc.font("Helvetica").text(`Client: ${patientFirst} ${patientLast}`);
-  doc.font("Helvetica").text(`Carer: ${carerFirst} ${carerLast}`);
+  doc
+    .image(__dirname + "/../images/logopdf.png", 380, 65, {
+      width: 125,
+    })
+  doc.font("Helvetica").fontSize(12).text(`Client: ${patientFirst} ${patientLast}`);
+  doc.font("Helvetica").fontSize(12).text(`Carer: ${carerFirst} ${carerLast}`);
   doc
     .font("Helvetica")
     .text(`Date: ${new Date().toLocaleString().split(",")[0]}`);
-  doc.font("Helvetica").fontSize(25).moveDown(2).text(`${reportType}`, {
+  doc.font("Helvetica").fontSize(20).moveDown(2).text(`${reportType}`, {
     width: 410,
     align: "center",
+    valign: "top",
   });
   doc.font("Helvetica").fontSize(12).moveDown(1).text(`${shiftNotes}`);
   doc.end();

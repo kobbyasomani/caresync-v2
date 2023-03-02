@@ -1,3 +1,4 @@
+import React from "react";
 import { useCallback } from "react";
 import { useModalContext } from "../utils/modalUtils";
 import { useGlobalContext } from "../utils/globalUtils";
@@ -35,7 +36,7 @@ const Shift = ({ featured, shift }) => {
     }, [modalDispatch, dispatch, shift]);
 
     return (
-        <Card variant="outlined" className={featured ? "shift featured" : "shift"}
+        <Card variant="outlined" className={featured ? "shift featured" : "shift"} data-testid="card"
             sx={{ display: "flex", alignItems: "center" }}>
             <CardActionArea onClick={openShift}>
                 <CardContent sx={{
@@ -59,13 +60,13 @@ const Shift = ({ featured, shift }) => {
             </CardActionArea>
             {/* Show shift buttons only on larger screen sizes */}
             <Box className="shift-buttons" sx={{ flexShrink: 0, [theme.breakpoints.down("sm")]: { display: "none" } }}>
-                <IconButton className="shift-button-handover">
+                <IconButton className="shift-button-handover" data-testid="handover">
                     <ForumIcon />
                 </IconButton>
-                <IconButton className="shift-button-notes">
+                <IconButton className="shift-button-notes" data-testid="notes">
                     <DescriptionIcon />
                 </IconButton>
-                <IconButton className="shift-button-incidents">
+                <IconButton className="shift-button-incidents" data-testid="incidents">
                     <ReportIcon />
                 </IconButton>
             </Box>
