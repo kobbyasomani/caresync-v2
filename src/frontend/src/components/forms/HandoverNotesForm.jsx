@@ -5,10 +5,10 @@ import Form from "./Form";
 import { TextField } from "@mui/material";
 
 
-const ShiftNotesForm = () => {
+const HandoverNotesForm = () => {
     const initialState = {
         inputs: {
-            shiftNotes: ""
+            handoverNotes: ""
         },
         errors: []
     }
@@ -16,7 +16,7 @@ const ShiftNotesForm = () => {
     const [form, setForm] = useHandleForm(initialState);
     const { store, dispatch } = useGlobalContext();
 
-    const submitShiftNotes = (response) => {
+    const updateHandoverNotes = (response) => {
         dispatch({
             type: "setSelectedShift",
             data: response
@@ -26,22 +26,25 @@ const ShiftNotesForm = () => {
     return (
         <Form form={form}
             setForm={setForm}
-            legend="Add and submit your shift notes"
-            buttonText="Submit shift notes"
-            postURL={`${baseURL}/shift/notes/${store.selectedShift._id}`}
-            callback={submitShiftNotes}
+            legend="Add handover notes for this patient's next shift"
+            buttonText="Update handover notes"
+            postURL={`${baseURL}/shift/${store.selectedShift._id}`}
+            options={{
+                method: "PUT"
+            }}
+            callback={updateHandoverNotes}
         >
             <TextField multiline
                 minRows={10}
-                label="Shift notes"
-                id="shift-notes"
+                label="Handover notes"
+                id="handover-notes"
                 type="text"
-                name="shiftNotes"
-                placeholder="Today, the client was feeling..."
+                name="handoverNotes"
+                placeholder={`During the next shift with ${store.selectedPatient.firstName}, please follow up on...`}
                 required
                 mui="TextField" />
         </Form>
     )
 }
 
-export default ShiftNotesForm
+export default HandoverNotesForm

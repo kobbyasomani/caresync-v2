@@ -25,12 +25,12 @@ const Shift = ({ featured, shift }) => {
             data: shift
         });
         modalDispatch({
-            type: "open",
-            data: "drawer"
-        });
-        modalDispatch({
             type: "close",
             data: "modal"
+        });
+        modalDispatch({
+            type: "open",
+            data: "drawer"
         });
     }, [modalDispatch, dispatch, shift]);
 

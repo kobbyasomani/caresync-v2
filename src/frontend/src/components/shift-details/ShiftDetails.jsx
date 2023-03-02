@@ -4,6 +4,7 @@ import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj } from "../../utils/dateUtils";
 import Overview from "./Overview";
 import ShiftNotes from "./ShiftNotes";
+import HandoverNotes from "./HandoverNotes";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
@@ -21,6 +22,8 @@ const ShiftDetails = ({ isLoading, children }) => {
         switch (modalStore.activeDrawer) {
             case "shift notes":
                 return <ShiftNotes />
+            case "handover notes":
+                return <HandoverNotes />
             default:
                 return <Overview />
         }
@@ -55,7 +58,7 @@ const ShiftDetails = ({ isLoading, children }) => {
 
     const content = () => (
         <Box
-            sx={{ drawerWidth, p: 2, pt: 3 }}
+            sx={{ width: drawerWidth, p: 2, pt: 3 }}
             role="presentation"
             onKeyDown={closeDrawer}
         >
