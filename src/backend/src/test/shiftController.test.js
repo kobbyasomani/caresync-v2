@@ -22,8 +22,8 @@ afterAll(async () => {
 
 //---------Get User Shifts----------//
 describe("GET /shift", () => {
-    describe("When user is logged in", () => {
-      test("Should respond with 200 status", async () => {
+    describe("when user is logged in", () => {
+      test("respond with 200 status", async () => {
         const response = await request(app)
           .get("/shift")
           .set("Cookie", cookie)
@@ -35,8 +35,8 @@ describe("GET /shift", () => {
   
   //---------Get Patient Shifts----------//
   describe("GET /shift/:patientID", () => {
-    describe("When the user is associated with the patient", () => {
-      test("Should respond with 200 status", async () => {
+    describe("when the user is associated with the patient", () => {
+      test("should respond with 200 status", async () => {
         const response = await request(app)
           .get("/shift/63f01efe3b5704fa0aa3ddc4")
           .set("Cookie", cookie)
@@ -44,7 +44,7 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(200);
       });
     });
-    describe("When the user isn't associated with the patient", () => {
+    describe("when the user isn't associated with the patient", () => {
       test("Should respond with 401 status", async () => {
         const response = await request(app)
           .get("/shift/63f01f0a3b5704fa0aa3ddc3")

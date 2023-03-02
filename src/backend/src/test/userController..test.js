@@ -23,7 +23,7 @@ afterAll(async () => {
 //---------User Creation----------//
 describe("POST /user/register", () => {
   describe("Given firstName, lastName, email and password", () => {
-    test("Should respond with 201 status", async () => {
+    test("respond with 201 status and the new user object", async () => {
       const response = await request(app).post("/user/register").send({
         firstName: "John",
         lastName: "Daniels",
@@ -38,7 +38,7 @@ describe("POST /user/register", () => {
   });
 
   describe("Given user information that already exists in the DB", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and proper error message", async () => {
       const response = await request(app).post("/user/register").send({
         firstName: "John",
         lastName: "Doe",
@@ -53,7 +53,7 @@ describe("POST /user/register", () => {
   });
 
   describe("When firstName, lastName, email and password are missing", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and proper error message", async () => {
       const response = await request(app).post("/user/register").send({
         firstName: "John",
         lastName: "Daniels",
@@ -67,7 +67,7 @@ describe("POST /user/register", () => {
 //---------User Verification----------//
 describe("POST /verification/:token", () => {
   describe("Given valid verification JWT in the URL", () => {
-    test("should respond with 200 status", async () => {
+    test("respond with 200 status and success message", async () => {
       const response = await request(app)
         .post(
           "/user/verification/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJpYXQiOjE2NzY3Njg5Nzh9.qCjcQ_xMutz35bDd8_olh36e5Z11thoPnXR0hrrbUUg"
@@ -79,7 +79,7 @@ describe("POST /verification/:token", () => {
   });
 
   describe("Given invalid verification JWT in the URL", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and proper error message", async () => {
       const response = await request(app)
         .post(
           "/user/verification/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImR0am9tc2xhbmRqckBnbWFpbC5jb20iLCJpYXQiOjE2NzY3NzAzMDMsImV4cCI6MTY3OTM2MjMwM30.j6uaGEE5t3rAdSj-o2YJyFQHfBzBD_mzTXY_0JVYf8g"
@@ -94,7 +94,7 @@ describe("POST /verification/:token", () => {
 //---------User Login----------//
 describe("POST /user/login", () => {
   describe("Given email and password", () => {
-    test("should respond with 200 status", async () => {
+    test("respond with 200 status and success message", async () => {
       const response = await request(app).post("/user/login").send({
         email: "john@example.com",
         password: "password",
@@ -105,7 +105,7 @@ describe("POST /user/login", () => {
   });
 
   describe("When password is missing", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and specific error message", async () => {
       const response = await request(app).post("/user/login").send({
         email: "john@example.com",
       });
@@ -115,7 +115,7 @@ describe("POST /user/login", () => {
   });
 
   describe("When password is wrong", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and specific error message", async () => {
       const response = await request(app).post("/user/login").send({
         email: "john@example.com",
         password: "password2",
@@ -126,7 +126,7 @@ describe("POST /user/login", () => {
   });
 
   describe("When user is unconfirmed", () => {
-    test("Should respond with 400 status", async () => {
+    test("respond with 400 status and specific error message", async () => {
       const response = await request(app).post("/user/login").send({
         email: "kobby@gmail.com",
         password: "password",
