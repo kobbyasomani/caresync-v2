@@ -1,3 +1,4 @@
+import React from "react";
 import { styled } from "@mui/system";
 import {
     Card, CardContent, CardActionArea,
@@ -10,7 +11,7 @@ import ReportIcon from '@mui/icons-material/Report';
 
 const Shift = () => {
     return (
-        <Card variant="outlined" className="shift"
+        <Card variant="outlined" className="shift" data-testid="card"
             sx={{ display: "flex", alignItems: "center" }}>
             <CardActionArea>
                 <CardContent sx={{
@@ -29,13 +30,13 @@ const Shift = () => {
             </CardActionArea>
             {/* Show shift buttons only on larger screen sizes */}
             <Box className="shift-buttons" sx={{ flexShrink: 0 }}>
-                <IconButton className="shift-button-handover">
+                <IconButton className="shift-button-handover" data-testid="handover">
                     <ForumIcon />
                 </IconButton>
-                <IconButton className="shift-button-notes">
+                <IconButton className="shift-button-notes" data-testid="notes">
                     <DescriptionIcon />
                 </IconButton>
-                <IconButton className="shift-button-incidents">
+                <IconButton className="shift-button-incidents" data-testid="incidents">
                     <ReportIcon />
                 </IconButton>
             </Box>

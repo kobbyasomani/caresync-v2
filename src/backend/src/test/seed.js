@@ -6,7 +6,7 @@ const dotenv = require("dotenv").config();
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect("mongodb+srv://dtjomslandjr:Cygyxy64rtfg@supportcluster.wo7dknn.mongodb.net/mernapp?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
