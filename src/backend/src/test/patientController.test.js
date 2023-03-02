@@ -22,8 +22,8 @@ afterAll(async () => {
 
 //---------Create Patient----------//
 describe("POST /patient", () => {
-    describe("When first and last name are given", () => {
-      test("Should respond with 201 status", async () => {
+    describe("first and last name are given", () => {
+      test("respond with 201 status/new patient object", async () => {
         const response = await request(app)
           .post("/patient")
           .set("Cookie", cookie)
@@ -37,8 +37,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When last name is missing", () => {
-      test("Should respond with 400 status", async () => {
+    describe("last name is missing", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/patient")
           .set("Cookie", cookie)
@@ -50,8 +50,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When auth cookie is missing", () => {
-      test("Should respond with 401 status", async () => {
+    describe("auth cookie is missing", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app).post("/patient").send({
           firstName: "john",
           lastName: "Stevens",
@@ -64,8 +64,8 @@ describe("POST /patient", () => {
   
   //---------Get Patient Info----------//
   describe("GET /patient/:id", () => {
-    describe("When valid patient ID is given in URL", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid patient ID is given in URL", () => {
+      test("respond with 200 status/patient object", async () => {
         const response = await request(app)
           .get("/patient/63f01efe3b5704fa0aa3ddc2")
           .set("Cookie", cookie)
@@ -75,8 +75,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When invalid patient ID is given in URL", () => {
-      test("Should respond with 400 status", async () => {
+    describe("invalid patient ID is given in URL", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .get("/patient/63f01efe3b5704fa0aa3ddc9")
           .set("Cookie", cookie)
@@ -87,7 +87,7 @@ describe("POST /patient", () => {
     });
   
     describe("When user is not affiliated with patient", () => {
-      test("Should respond with 401 status", async () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .get("/patient/63f01f0a3b5704fa0aa3ddc3")
           .set("Cookie", cookie)
@@ -100,8 +100,8 @@ describe("POST /patient", () => {
   
   //---------Update Patient----------//
   describe("PUT /patient/:id", () => {
-    describe("When valid patient ID is given in URL", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid patient ID is given in URL", () => {
+      test("respond with 200 status/updated patient object", async () => {
         const response = await request(app)
           .put("/patient/63f01efe3b5704fa0aa3ddc2")
           .set("Cookie", cookie)
@@ -113,8 +113,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When invalid patient ID is given in URL", () => {
-      test("Should respond with 400 status", async () => {
+    describe("invalid patient ID is given in URL", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .put("/patient/63f01efe3b5704fa0aa3ddc5")
           .set("Cookie", cookie)
@@ -126,8 +126,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When valid patient ID is given, but user is not coordinator", () => {
-      test("Should respond with 401 status", async () => {
+    describe("valid patient ID is given, but user is not coordinator", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .put("/patient/63f01f0a3b5704fa0aa3ddc3")
           .set("Cookie", cookie)
@@ -142,8 +142,8 @@ describe("POST /patient", () => {
   
   //---------Delete Patient----------//
   describe("DELETE /patient/:id", () => {
-    describe("When valid patient ID is given in URL", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid patient ID is given in URL", () => {
+      test("respond with 200 status/deleted patient ID", async () => {
         const response = await request(app)
           .delete("/patient/63f01efe3b5704fa0aa3ddc2")
           .set("Cookie", cookie)
@@ -155,8 +155,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When invalid patient ID is given in URL", () => {
-      test("Should respond with 400 status", async () => {
+    describe("invalid patient ID is given in URL", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .delete("/patient/63f01efe3b5704fa0aa3ddc5")
           .set("Cookie", cookie)
@@ -166,8 +166,8 @@ describe("POST /patient", () => {
       });
     });
   
-    describe("When valid patient ID is given, but user is not coordinator", () => {
-      test("Should respond with 401 status", async () => {
+    describe("valid patient ID is given, but user is not coordinator", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .delete("/patient/63f01f0a3b5704fa0aa3ddc3")
           .set("Cookie", cookie)

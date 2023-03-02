@@ -144,7 +144,7 @@ const createHandover = asyncHandler(async (req, res) => {
   // Find shift
   const shift = await Shift.findById(req.params.shiftID);
 
-  // Make sure logged in user matches the coordinator
+  // Make sure logged in user matches the carer
   if (shift.carer.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
