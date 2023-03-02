@@ -94,10 +94,12 @@ const Overview = () => {
                             <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Handover</Typography>
                             {store.selectedShift.handoverNotes ? (
-                                store.selectedShift.handoverNotes
+                                <Typography variant="body1">
+                                    {store.selectedShift.handoverNotes}
+                                </Typography>
+
                             ) : store.user._id === store.selectedShift.carer._id ? (
                                 <Box sx={{ display: "flex" }}>
-
                                     <Typography variant="body1" color={theme.palette.primary.main}>
                                         Add handover
                                     </Typography>
