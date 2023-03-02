@@ -135,6 +135,34 @@ const updateShift = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Update shift
+// @route PUT /shift/:shiftID
+// @access private
+const createHandover = asyncHandler(async (req, res) => {
+  // Search for user with JWT token ID
+  const user = await User.findById(req.user.id);
+
+  // Find shift
+  const shift = await Shift.findById(req.params.shiftID);
+
+  // Make sure logged in user matches the coordinator
+  if (shift.carer.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  // Update shift
+  const updatedShift = await Shift.findByIdAndUpdate(
+    req.params.shiftID,
+    req.body,
+    {
+      new: true,
+    }
+  );
+  res.status(201).json(updatedShift);
+});
+
+//----NEW ROUTE----//
+// @desc Update shift
 // @route DELETE /shift/:shiftID
 // @access private
 const deleteShift = asyncHandler(async (req, res) => {
@@ -299,4 +327,5 @@ module.exports = {
   deleteShift,
   createShiftNotes,
   createIncidentReport,
+  createHandover
 };

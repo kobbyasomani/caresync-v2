@@ -1,5 +1,5 @@
+import React from "react";
 import { useState } from "react";
-
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -40,10 +40,12 @@ const CalendarDayGrid = () => {
                     center: "title",
                     end: "today next"
                 }}
+                data-testid="calendar"
             />
             <Modal title={`Shifts for ${new Date(dateInfo.start).toLocaleDateString()}`}
                 text="Select a shift to view or edit its handover, shift notes, and incident reports."
                 state={{ isOpen, setIsOpen }}
+                data-testid="modal"
             >
                 <SelectShiftByDate />
             </Modal>

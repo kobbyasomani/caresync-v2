@@ -1,3 +1,4 @@
+import React from "react";
 import { GlobalStateContext } from "./utils/globalStateContext";
 import { useReducer, useEffect, useCallback } from "react"
 import globalReducer from "./utils/globalReducer";

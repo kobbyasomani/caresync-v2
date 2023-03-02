@@ -48,11 +48,6 @@ const loader = () => {
     right: 0;
     mix-blend-mode: difference;
   `;
-  const Text = styled.p`
-    text-align: center;
-    font-size: 2rem;
-    color: #79589f;
-  `;
   const ContainerVariants = {
     initial: {
       transition: {

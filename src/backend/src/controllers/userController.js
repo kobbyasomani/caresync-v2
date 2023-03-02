@@ -166,7 +166,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $sort: { shiftStartTime: 1 } },
         { $limit: 1 },
       ]);
-
+      console.log(nextCoordinatorShift);
       // If there is a shift scheduled for the patient, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
@@ -175,7 +175,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
         }).select("firstName");
         // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
         // Else, add the next shift with the carer name
-        if (patient.carer == user.id) {
+        if (nextCoordinatorShift.carer == user._id) {
           patient["nextShift"] = [
             { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
           ];
