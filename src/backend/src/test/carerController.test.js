@@ -23,8 +23,8 @@ afterAll(async () => {
 
 //---------Invite Carer----------//
 describe("POST /carer/invite/:id", () => {
-    describe("When a valid carer email/id is provided", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid carer email/id is provided", () => {
+      test("respond with 200 status/Email Sent notice", async () => {
         const response = await request(app)
           .post("/carer/invite/63f01efe3b5704fa0aa3ddc4")
           .set("Cookie", cookie)
@@ -36,8 +36,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When a valid carer email is provided but invalid id is provided", () => {
-      test("Should respond with 400 status", async () => {
+    describe("valid carer email is provided but invalid id is provided", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/carer/invite/63f1a4d11f2991daee0c83a2")
           .set("Cookie", cookie)
@@ -49,8 +49,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When an invalid carer email is provided but valid patient id is provided", () => {
-      test("Should respond with 400 status", async () => {
+    describe("invalid carer email is provided but valid patient id is provided", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/carer/invite/63f01efe3b5704fa0aa3ddc4")
           .set("Cookie", cookie)
@@ -62,8 +62,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When user does not have coordinator privileges", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user does not have coordinator privileges", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .post("/carer/invite/63f01f0a3b5704fa0aa3ddc5")
           .set("Cookie", cookie)
@@ -78,8 +78,8 @@ describe("POST /carer/invite/:id", () => {
   
   //---------Add Carer----------//
   describe("POST /carer/add/:token", () => {
-    describe("When a valid addition token is provided", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid addition token is provided", () => {
+      test("respond with 200 status/new carer added to patient object", async () => {
         const response = await request(app)
           .post(
             "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQxIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc2NzgzMDI2LCJleHAiOjE2NzkzNzUwMjZ9.4aHTxtrEiPk62PqF75G8OnNMDCGvHmPMKgVCXW04bqA"
@@ -90,8 +90,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("Try adding the same carer twice", () => {
-      test("Should respond with 400 status", async () => {
+    describe("adding the same carer twice", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post(
             "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQxIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc2NzgzMDI2LCJleHAiOjE2NzkzNzUwMjZ9.4aHTxtrEiPk62PqF75G8OnNMDCGvHmPMKgVCXW04bqA"
@@ -101,8 +101,8 @@ describe("POST /carer/invite/:id", () => {
         expect(response.statusCode).toBe(400);
       });
     });
-    describe("When carer does not have account yet", () => {
-      test("Should respond with 400 status", async () => {
+    describe("carer does not have account yet", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post(
             "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQzIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc3MzM0MDk0LCJleHAiOjE2Nzk5MjYwOTR9.MGfr86okT7CfxIPTizaV91U0wzT0b8VcCxBXNg3fCq0"
@@ -116,8 +116,8 @@ describe("POST /carer/invite/:id", () => {
   
   //---------Remove Carer----------//
   describe("DELETE carer/remove/:patientID/:carerID", () => {
-    describe("When a valid patient and carerID is provided", () => {
-      test("Should respond with 200 status", async () => {
+    describe("valid patient and carerID is provided", () => {
+      test("respond with 200 status/updated patient object", async () => {
         const response = await request(app)
           .delete(
             "/carer/remove/63f01efe3b5704fa0aa3ddc4/63f0b95a0098e28d58f7a2d1"
@@ -129,8 +129,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When an invalid patient and valid carerID is provided", () => {
-      test("Should respond with 400 status", async () => {
+    describe("invalid patient and valid carerID is provided", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .delete(
             "/carer/remove/63f01efe3b5704fa0aa3ddc5/63f0b95a0098e28d58f7a2d1"
@@ -141,8 +141,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When a valid patient and invalid carerID is provided", () => {
-      test("Should respond with 400 status", async () => {
+    describe("valid patient and invalid carerID is provided", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .delete(
             "/carer/remove/63f01efe3b5704fa0aa3ddc4/63f0b95a0098e28d58f7a2d9"
@@ -154,8 +154,8 @@ describe("POST /carer/invite/:id", () => {
       });
     });
   
-    describe("When the user does not have coordinator privileges", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user does not have coordinator privileges", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .delete(
             "/carer/remove/63f01f0a3b5704fa0aa3ddc3/63f0b95a0098e28d58f7a25e"

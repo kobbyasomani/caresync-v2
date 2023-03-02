@@ -35,8 +35,8 @@ describe("GET /shift", () => {
   
   //---------Get Patient Shifts----------//
   describe("GET /shift/:patientID", () => {
-    describe("when the user is associated with the patient", () => {
-      test("should respond with 200 status", async () => {
+    describe("user is associated with the patient", () => {
+      test("respond with 200 status", async () => {
         const response = await request(app)
           .get("/shift/63f01efe3b5704fa0aa3ddc4")
           .set("Cookie", cookie)
@@ -44,8 +44,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(200);
       });
     });
-    describe("when the user isn't associated with the patient", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user isn't associated with the patient", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .get("/shift/63f01f0a3b5704fa0aa3ddc3")
           .set("Cookie", cookie)
@@ -54,8 +54,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(401);
       });
     });
-    describe("When the patient doesn't exist", () => {
-      test("Should respond with 400 status", async () => {
+    describe("patient doesn't exist", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .get("/shift/63f01f0a3b5704fa0aa3ddc7")
           .set("Cookie", cookie)
@@ -68,8 +68,8 @@ describe("GET /shift", () => {
   
   //---------Create Shifts----------//
   describe("POST /shift/:patientID", () => {
-    describe("When the coordinator creates a shift for the patient", () => {
-      test("Should respond with 201 status", async () => {
+    describe("coordinator creates a shift for the patient", () => {
+      test("respond with 201 status/new shift object", async () => {
         const response = await request(app)
           .post("/shift/63f01efe3b5704fa0aa3ddc8")
           .set("Cookie", cookie)
@@ -93,8 +93,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(201);
       });
     });
-    describe("When the patient does not exist", () => {
-      test("Should respond with 400 status", async () => {
+    describe("patient does not exist", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/63f01efe3b5704fa0aa3ddc6")
           .set("Cookie", cookie)
@@ -109,8 +109,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(400);
       });
     });
-    describe("When the user is not the coordinator for the patient", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user is not the coordinator for the patient", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/63f01f0a3b5704fa0aa3ddc5")
           .set("Cookie", cookie)
@@ -129,8 +129,8 @@ describe("GET /shift", () => {
   
   //---------Update Shift----------//
   describe("POST /shift/:shiftID", () => {
-    describe("When the coordinator updates a shift for the patient", () => {
-      test("Should respond with 201 status", async () => {
+    describe("coordinator updates a shift for the patient", () => {
+      test("respond with 201 status/updated shift object", async () => {
         const response = await request(app)
           .put("/shift/63f01f0a3b5704fa0aa3ddc9")
           .set("Cookie", cookie)
@@ -145,8 +145,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(201);
       });
     });
-    describe("When the user is not the coordinator for the patient", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user is not the coordinator for the patient", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .put("/shift/63f01f0a3b5704fa0aa3ddd8")
           .set("Cookie", cookie)
@@ -161,11 +161,41 @@ describe("GET /shift", () => {
       });
     });
   });
+
+  //---------Update Shift----------//
+  describe("POST /shift/handover/:shiftID", () => {
+    describe("coordinator updates a shift for the patient", () => {
+      test("respond with 201 status/updated shift object", async () => {
+        const response = await request(app)
+          .put("/shift/handover/63f01f0a3b5704fa0aa3ddd8")
+          .set("Cookie", cookie)
+          .send({
+            handoverNotes: "New handover notes"
+          });
+        
+        expect(response.statusCode).toBe(201);
+      });
+    });
+    describe("user is not the coordinator for the patient", () => {
+      test("respond with 401 status/specific error message", async () => {
+        const response = await request(app)
+          .put("/shift/handover/63f01f0a3b5704fa0aa3ddc9")
+          .set("Cookie", cookie)
+          .send({
+            handoverNotes: "New handover notes"
+          });
+        expect(response.body.message).toBe("User is not authorized");
+        expect(response.statusCode).toBe(401);
+      });
+    });
+  });
+
+ 
   
   //---------Delete Shift----------//
-  describe("POST /shift/:shiftID", () => {
-    describe("When the coordinator updates deletes a shift", () => {
-      test("Should respond with 201 status", async () => {
+  describe("DELETE /shift/:shiftID", () => {
+    describe("coordinator deletes a shift", () => {
+      test(" respond with 201 status/deleted shift ID", async () => {
         const response = await request(app)
           .delete("/shift/63f01f0a3b5704fa0aa3ddc9")
           .set("Cookie", cookie)
@@ -176,8 +206,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(200);
       });
     });
-    describe("When the user deletes the shift without proper auth", () => {
-      test("Should respond with 401 status", async () => {
+    describe("user deletes shift without proper auth", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .delete("/shift/63f01f0a3b5704fa0aa3ddd8")
           .set("Cookie", cookie)
@@ -190,8 +220,8 @@ describe("GET /shift", () => {
   
   //---------Create Shift Notes----------//
   describe("POST /notes/:shiftID", () => {
-    describe("When the carer creates shift notes", () => {
-      test("Should respond with 200 status", async () => {
+    describe("carer creates shift notes", () => {
+      test("respond with 200 status/shift notes added to shift object", async () => {
         const response = await request(app)
           .post("/shift/notes/63f01f0a3b5704fa0aa3ddc6")
           .set("Cookie", cookie)
@@ -204,8 +234,8 @@ describe("GET /shift", () => {
       });
     });
   
-    describe("When the carer does not enter shift notes", () => {
-      test("Should respond with 400 status", async () => {
+    describe("carer does not enter shift notes", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/notes/63f01f0a3b5704fa0aa3ddc6")
           .set("Cookie", cookie)
@@ -214,8 +244,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(400);
       });
     });
-    describe("When shift notes are entered by someone who is not the carer", () => {
-      test("Should respond with 401 status", async () => {
+    describe("shift notes are entered by someone who is not the carer", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/notes/63f01f0a3b5704fa0aa3ddc8")
           .set("Cookie", cookie)
@@ -231,8 +261,8 @@ describe("GET /shift", () => {
   
   //---------Create Incident report----------//
   describe("POST /reports/:shiftID", () => {
-    describe("When the carer creates shift notes", () => {
-      test("Should respond with 200 status", async () => {
+    describe("carer creates incident report", () => {
+      test("respond with 200 status/incident report added to shift object", async () => {
         const response = await request(app)
           .post("/shift/reports/63f01f0a3b5704fa0aa3ddc6")
           .set("Cookie", cookie)
@@ -244,8 +274,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(200);
       });
     });
-    describe("When the carer does not enter shift notes", () => {
-      test("Should respond with 400 status", async () => {
+    describe("carer does not enter shift notes", () => {
+      test("respond with 400 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/reports/63f01f0a3b5704fa0aa3ddc6")
           .set("Cookie", cookie)
@@ -254,8 +284,8 @@ describe("GET /shift", () => {
         expect(response.statusCode).toBe(400);
       });
     });
-    describe("When shift notes are entered by someone who is not the carer", () => {
-      test("Should respond with 401 status", async () => {
+    describe("shift notes are entered by someone who is not the carer", () => {
+      test("respond with 401 status/specific error message", async () => {
         const response = await request(app)
           .post("/shift/reports/63f01f0a3b5704fa0aa3ddc8")
           .set("Cookie", cookie)
