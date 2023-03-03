@@ -7,6 +7,7 @@ import ShiftNotes from "./ShiftNotes";
 import HandoverNotes from "./HandoverNotes";
 import IncidentReports from "./IncidentReports";
 import CreateIncidentReport from "./CreateIncidentReport";
+import IncidentReportDetails from "./IncidentReportDetails";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
@@ -21,7 +22,6 @@ const ShiftDetails = ({ isLoading, children }) => {
     const theme = useTheme();
 
     const injectActiveDrawer = () => {
-        console.log(modalStore.prevDrawer)
         switch (modalStore.activeDrawer) {
             case "shift notes":
                 return <ShiftNotes />
@@ -31,6 +31,8 @@ const ShiftDetails = ({ isLoading, children }) => {
                 return <IncidentReports />
             case "create incident report":
                 return <CreateIncidentReport />
+            case "incident report details":
+                return <IncidentReportDetails />
             default:
                 return <Overview />
         }

@@ -1,4 +1,5 @@
 import { React, useCallback } from "react";
+import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 
 import {
@@ -8,14 +9,20 @@ import {
 import ReportIcon from '@mui/icons-material/Report';
 
 const Incident = ({ incident, index }) => {
+    const { dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
 
     const openIncident = useCallback(() => {
         modalDispatch({
             type: "setActiveDrawer",
-            data: "incident details"
+            data: "incident report details"
         });
+        dispatch({
+            type: "setSelectedIncident",
+            data: incident
+        });
+
     }, [modalDispatch]);
 
     return (

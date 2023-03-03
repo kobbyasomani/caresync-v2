@@ -16,7 +16,9 @@ const emptyStore = {
     shifts: [],
     featuredShift: {},
     previousShifts: [],
+    selectedDate: {},
     selectedShift: {},
+    selectedIncident: {},
 }
 
 /**
@@ -116,7 +118,14 @@ const globalReducer = (state, action) => {
                 shifts: [],
                 featuredShift: {},
                 previousShifts: [],
+                selectedDate: {},
                 selectedShift: {},
+                selectedIncident: {},
+            }
+        case "setSelectedIncident":
+            return {
+                ...state,
+                selectedIncident: action.data
             }
         default: return state;
     }
