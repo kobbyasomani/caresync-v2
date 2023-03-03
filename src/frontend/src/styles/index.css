@@ -36,6 +36,10 @@ a.button-link {
   text-decoration: none;
 }
 
+form .form-errors {
+  color: red;
+}
+
 fieldset {
   border: 1px solid #eee;
   border-radius: 0.5rem;
@@ -45,8 +49,9 @@ fieldset legend {
   font-weight: bold;
 }
 
-form .form-errors {
-  color: red;
+.modal form,
+.modal fieldset {
+  width: 100%;
 }
 
 #calendar {

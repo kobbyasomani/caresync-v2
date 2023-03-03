@@ -14,7 +14,7 @@ export const AddPatient = () => {
 
     const { dispatch } = useGlobalContext();
 
-    // Set the form state
+    // Set the inital form state
     const initialState = {
         inputs: {
             firstName: "",

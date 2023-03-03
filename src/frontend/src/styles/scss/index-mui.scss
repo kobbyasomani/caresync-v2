@@ -52,6 +52,12 @@ a.button-link {
     text-decoration: none;
 }
 
+form {
+    .form-errors {
+        color: red;
+    }
+}
+
 fieldset {
     legend {
         font-weight: bold;
@@ -62,13 +68,14 @@ fieldset {
     padding: 0 1rem;
 }
 
-form {
-    // max-width: 500px;
+.modal {
 
-    .form-errors {
-        color: red;
+    form,
+    fieldset {
+        width: 100%;
     }
 }
+
 
 #calendar {
     padding-top: 1rem;

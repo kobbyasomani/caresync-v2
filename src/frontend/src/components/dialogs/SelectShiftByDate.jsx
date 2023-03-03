@@ -57,9 +57,16 @@ shift notes, and incident reports.`
     }, [modalDispatch, modalStore.activeModal.title, shifts.length, store.selectedDate])
 
     const addShift = useCallback(() => {
-        console.log("opening add shift dialog...")
+        // Set shift creation modal text
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
+                text: "Enter the details for a new shift on this date."
+            }
+        });
         navigate("/calendar/add-shift");
-    }, [navigate]);
+    }, [navigate, modalDispatch, store.selectedDate.start]);
 
     return (
         <>

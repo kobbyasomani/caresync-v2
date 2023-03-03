@@ -57,7 +57,7 @@ const useHandleForm = (initialState) => useReducer(formReducer, initialState)
  * @returns {function} An anonymous function that calls dispatch with the passed input event.
  */
 const useHandleFormInput = (dispatch) => useCallback((event) => {
-    // console.log(event.target.value);
+    console.log(event.target.value);
     dispatch({
         type: "setForm",
         name: event.target.name,

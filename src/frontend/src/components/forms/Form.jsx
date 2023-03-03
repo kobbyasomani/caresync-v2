@@ -100,6 +100,7 @@ const Form = ({
                     {/* Pass the input handler and state value to form input elements */}
                     {Children.map(children, (child) => {
                         if (child.props.mui === "TextField" || child.props.mui === "TextArea") {
+                            // console.log(child);
                             return cloneElement(child, {
                                 size: "small",
                                 margin: "normal",
@@ -109,6 +110,15 @@ const Form = ({
                                     value: form.inputs[child.props.name]
                                 }
                             });
+                        } else if (child.props.mui === "Select") {
+                            // console.log(child);
+                            // return cloneElement(child, {
+                            //     fullWidth: true,
+                            //     inputProps: {
+                            //         onChange: handleInput,
+                            //         value: form.inputs[child.props.name]
+                            //     },
+                            // });
                         } else {
                             return child;
                         }

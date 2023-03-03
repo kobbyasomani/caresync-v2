@@ -18,6 +18,7 @@ import Error from "./views/Error";
 import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
+import AddShiftForm from "./components/forms/AddShiftForm";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Theme as theme } from "./styles/Theme";
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
                   {
                     path: "/calendar/select-shift-by-date",
                     element: <SelectShiftByDate />
+                  },
+                  {
+                    path: "/calendar/add-shift",
+                    element: <AddShiftForm />
                   }
                 ]
               }
