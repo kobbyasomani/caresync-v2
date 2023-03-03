@@ -87,9 +87,9 @@ describe("POST /shift/:patientID", () => {
         "Please take notes on erratic behaviors for the psychologist"
       );
       expect(response.body.shiftStartTime).toBe(
-        "2023-03-02T09:00:00.000+00:00"
+        "2023-03-02T09:00:00.000Z"
       );
-      expect(response.body.shiftEndTime).toBe("2023-03-02T12:00:00.000+00:00");
+      expect(response.body.shiftEndTime).toBe("2023-03-02T12:00:00.000Z");
       expect(response.statusCode).toBe(201);
     });
   });
