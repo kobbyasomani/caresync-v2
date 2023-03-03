@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const User = require("../models/userModel");
-const Patient = require("../models/patientModel");
-const Shift = require("../models/shiftModel");
+const User = require("./models/userModel");
+const Patient = require("./models/patientModel");
+const Shift = require("./models/shiftModel");
 const dotenv = require("dotenv").config();
 
 mongoose.set("strictQuery", false);

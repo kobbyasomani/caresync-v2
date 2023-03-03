@@ -166,7 +166,6 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $sort: { shiftStartTime: 1 } },
         { $limit: 1 },
       ]);
-      console.log(nextCoordinatorShift);
       // If there is a shift scheduled for the patient, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
@@ -221,24 +220,7 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
-// //----NEW ROUTE----//
-// // @desc Authenticate the user during client-side routing
-// // @route GET /auth
-// // @access private
-// const authUser = asyncHandler(async (req, res) => {
-// console.log(req)
-//   // Clear cookie if the logout flag is set to true
-//   if (req.query.logout === "true") {
-//     res
-//       .clearCookie("access_token")
-//       .status(200)
-//       .json({ message: "logged out" });
-//   } else {
-//     res
-//       .status(200)
-//       .json({ message: "success" });
-//   }
-// });
+
 
 module.exports = {
   registerUser,
