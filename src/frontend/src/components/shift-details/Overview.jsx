@@ -1,5 +1,8 @@
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { ButtonPrimary } from "../root/Buttons";
 
 import {
     useTheme, Grid, Box, Typography,
@@ -16,23 +19,40 @@ const Overview = () => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
+    const navigate = useNavigate();
 
-    const viewPanel = (panel) => {
+    const viewPanel = useCallback((panel) => {
         modalDispatch({
             type: "setActiveDrawer",
             data: panel
         });
-    }
+    }, [modalDispatch]);
+
+    const editShift = useCallback(() => {
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: "Edit your shift",
+                text: `You can make changes to your shift start and end times, assigned carer,
+                and coordinator notes before the shift start time.`
+            }
+        });
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+        navigate("/calendar/edit-shift")
+    }, [modalDispatch, navigate]);
 
     return (
         <Grid display="grid"
             sx={{
-                gridTemplate: "repeat(4, auto) / repeat(2, 1fr)",
+                gridTemplate: "repeat(auto, auto) / repeat(2, auto)",
                 alignItems: "stretch",
                 gap: 2,
             }}>
             {store.selectedShift.coordinatorNotes ? (
-                <Grid item xs={12} sx={{ gridArea: "1 / 1 / span 1 / span 2", mt: 2 }}>
+                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
                     <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
                         <CardContent>
 
@@ -50,7 +70,7 @@ const Overview = () => {
                     </Card>
                 </Grid>) : null
             }
-            <Grid item xs={12} sx={{ gridArea: "2 / 1 / span 1 / span 2" }}>
+            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={() => viewPanel("shift notes")}>
                         <CardContent>
@@ -74,7 +94,7 @@ const Overview = () => {
                 </Card>
             </Grid>
 
-            <Grid item xs={6} sx={{ gridArea: "3 / 1 / span 1 / span 1", display: "flex" }}>
+            <Grid item xs={6} sx={{ gridArea: "auto / 1 / auto / span 1", display: "flex" }}>
                 <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
@@ -98,7 +118,7 @@ const Overview = () => {
                 </Card>
             </Grid>
 
-            <Grid item xs={6} sx={{ gridArea: "3 / 2 / span 1 / span 1", display: "flex" }}>
+            <Grid item xs={6} sx={{ gridArea: "auto / 2 / auto / span 1", display: "flex" }}>
                 <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
@@ -125,7 +145,7 @@ const Overview = () => {
                 </Card>
             </Grid>
 
-            <Grid item xs={12} sx={{ gridArea: "4 / 1 / span 2 / span 2" }}>
+            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
                 <Card variant="outlined" id="care-team-card">
                     <CardActionArea onClick={() => viewPanel("")}>
                         <CardContent>
@@ -152,6 +172,17 @@ const Overview = () => {
                     </CardActionArea>
                 </Card>
             </Grid>
+
+            {/* The shift is editable if the user is the coordinator and the shift is in the future */}
+            {store.selectedShift.coordinator === store.user._id
+                && new Date(store.selectedShift.shiftStartTime) > new Date() ? (
+                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
+                    <ButtonPrimary onClick={editShift}>
+                        Edit shift
+                    </ButtonPrimary>
+                </Grid>
+            ) : null
+            }
         </Grid>
     )
 };

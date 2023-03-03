@@ -14,10 +14,9 @@ import {
 } from "@mui/material";
 import TimePicker from "../TimePicker";
 import dayjs from "dayjs";
-import { plusHours } from "../../utils/dateUtils";
 
 
-export const AddShiftForm = () => {
+export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
@@ -26,10 +25,10 @@ export const AddShiftForm = () => {
     // Set the initial form and alert state
     const initialState = {
         inputs: {
-            carerID: "",
-            shiftStartTime: dayjs(plusHours(new Date(store.selectedDate.start), 7)).$d,
-            shiftEndTime: dayjs(plusHours(new Date(store.selectedDate.start), 15)).$d,
-            coordinatorNotes: ""
+            carer: store.selectedShift.carer._id,
+            shiftStartTime: dayjs(new Date(store.selectedShift.shiftStartTime)).$d,
+            shiftEndTime: dayjs(new Date(store.selectedShift.shiftEndTime)).$d,
+            coordinatorNotes: store.selectedShift.coordinatorNotes
         },
         errors: []
     }
@@ -56,7 +55,7 @@ export const AddShiftForm = () => {
     const selectCarer = useCallback((event) => {
         setForm({
             type: "setForm",
-            name: "carerID",
+            name: "carer",
             value: event.target.value
         });
     }, [setForm]);
@@ -82,18 +81,14 @@ export const AddShiftForm = () => {
                     data: shifts
                 });
 
-                // Set the newly created shift as the selected shift
+                // Set the updated shift as the selected shift
                 dispatch({
                     type: "setSelectedShift",
                     data: shifts[shifts.length - 1]
                 });
 
                 // Show success alert
-                setAlerts(prev => [...prev, `A new shift for 
-                ${store.selectedPatient.firstName} ${store.selectedPatient.lastName} 
-                was added to ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
-                from ${new Date(shift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
-                – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })}.`]);
+                setAlerts(prev => [...prev, `The shift was successfully updated.`]);
 
                 // Finished loading
                 setIsLoading(false);
@@ -120,8 +115,9 @@ export const AddShiftForm = () => {
             <Form form={form}
                 setForm={setForm}
                 legend="New shift details"
-                buttonText="Create shift"
-                postURL={`/shift/${store.selectedPatient._id}`}
+                buttonText="Update shift"
+                postURL={`/shift/${store.selectedShift._id}`}
+                method="PUT"
                 callback={updateShifts}
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
@@ -148,8 +144,8 @@ export const AddShiftForm = () => {
                         label="Select Carer"
                         required
                         mui="Select"
-                        value={form.inputs.carerID}
-                        name="carerID"
+                        value={form.inputs.carer}
+                        name="carer"
                         onChange={selectCarer}
                         inputProps={{ id: "carerID-input" }}
                     >
@@ -195,4 +191,4 @@ export const AddShiftForm = () => {
     )
 }
 
-export default AddShiftForm;
+export default EditShiftForm;

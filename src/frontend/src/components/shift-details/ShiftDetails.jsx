@@ -71,7 +71,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             role="presentation"
             onKeyDown={closeDrawer}
         >
-            <Grid container rowSpacing={2} columnSpacing={2} alignItems="center">
+            <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
                         <PersonIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
