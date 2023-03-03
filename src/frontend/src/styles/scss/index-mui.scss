@@ -1,5 +1,16 @@
 $outline: #999;
 $highlight: powderblue;
+$raisin-black: #201a23ff;
+$royal-purple: #79589fff;
+$antiflash-white: #eef1f6ff;
+$white: #fefffeff;
+$auburn: #9e2b25ff;
+$asparagus: #77ad78ff;
+
+:root {
+    font-size: clamp(1rem, calc(1rem + ((1vw - 0.48rem) * 1.3889)), 1.05rem);
+    min-height: 0vw;
+}
 
 html,
 body {
@@ -61,4 +72,21 @@ form {
 
 #calendar {
     padding-top: 1rem;
+
+    .fc-prev-button,
+    .fc-next-button {
+        background-color: $royal-purple;
+        border-color: $royal-purple;
+    }
+
+    .fc-today-button {
+        background-color: $raisin-black;
+        border-color: $raisin-black;
+    }
+}
+
+.MuiDrawer-root {
+    form {
+        flex-grow: 1;
+    }
 }

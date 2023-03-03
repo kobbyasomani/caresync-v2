@@ -129,6 +129,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: "Logged in Successfully",
+    user: {
+      firstName: user.firstName,
+      _id: user._id
+    }
   });
 });
 
@@ -172,17 +176,18 @@ const getUserPatients = asyncHandler(async (req, res) => {
       if (nextCoordinatorShift.length > 0) {
         const carerName = await User.find({
           _id: nextCoordinatorShift[0].carer,
-        }).select("firstName");
+        }).select("firstName lastName");
         // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
         // Else, add the next shift with the carer name
-        if (nextCoordinatorShift.carer == user._id) {
+        if (new Object(nextCoordinatorShift[0].carer).toString()
+          == new Object(user._id).toString()) {
           patient["nextShift"] = [
             { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
           ];
         } else {
           patient["nextShift"] = {
             time: nextCoordinatorShift[0].shiftStartTime,
-            carerName: carerName[0].firstName,
+            carerName: `${carerName[0].firstName} ${carerName[0].lastName}`,
           };
         }
       } else {
@@ -208,7 +213,21 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $limit: 1 },
       ]);
       if (nextCarerShift.length > 0) {
-        patient["nextShift"] = nextCarerShift[0].shiftStartTime;
+        const carerName = await User.find({
+          _id: nextCarerShift[0].carer,
+        }).select("firstName lastName");
+        if (new Object(nextCarerShift[0].carer).toString()
+          == new Object(user._id).toString()) {
+          patient["nextShift"] = {
+            time: nextCarerShift[0].shiftStartTime,
+            carerName: "You"
+          };
+        } else {
+          patient["nextShift"] = {
+            time: nextCarerShift[0].shiftStartTime,
+            carerName: `${carerName.firstName} ${carerName.lastName}`
+          };
+        }
       } else {
         patient["nextShift"] = null;
       }
