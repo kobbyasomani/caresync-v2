@@ -55,7 +55,7 @@ let Theme = createTheme({
                     }
                 }
             }
-        }
+        },
     }
 });
 

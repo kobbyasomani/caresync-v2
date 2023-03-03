@@ -55,11 +55,14 @@ const Form = ({
         event.preventDefault();
         let errors = [];
 
-        // Make sure form fields are not empty
+        // Make sure required form fields are not empty
         for (const [name, value] of Object.entries(form.inputs)) {
-            const inputLabel = document.querySelector(`[name=${name}`).labels[0].textContent
-            if (!value) {
-                errors.push(`${inputLabel} cannot be blank.\n`);
+            // console.log(`checking ${name} field...`);
+            if (document.querySelector([`[name=${name}]`]).required) {
+                const inputLabel = document.querySelector(`[name=${name}]`).labels[0].textContent
+                if (!value) {
+                    errors.push(`${inputLabel} cannot be blank.\n`);
+                }
             }
         }
 

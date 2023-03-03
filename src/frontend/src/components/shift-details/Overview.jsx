@@ -31,10 +31,11 @@ const Overview = () => {
                 alignItems: "stretch",
                 gap: 2,
             }}>
-            <Grid item xs={12} sx={{ gridArea: "1 / 1 / span 1 / span 2" }}>
-                <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
-                    <CardContent>
-                        {store.selectedShift.coordinatorNotes ? (
+            {store.selectedShift.coordinatorNotes ? (
+                <Grid item xs={12} sx={{ gridArea: "1 / 1 / span 1 / span 2", mt: 2 }}>
+                    <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
+                        <CardContent>
+
                             <>
                                 <Typography variant="h6" component="p">
                                     Notes from Coordinator
@@ -43,12 +44,12 @@ const Overview = () => {
                                     {store.selectedShift.coordinatorNotes}
                                 </Typography>
                             </>
-                        ) : (
-                            null
-                        )}
-                    </CardContent>
-                </Card>
-            </Grid>
+
+
+                        </CardContent>
+                    </Card>
+                </Grid>) : null
+            }
             <Grid item xs={12} sx={{ gridArea: "2 / 1 / span 1 / span 2" }}>
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={() => viewPanel("shift notes")}>
