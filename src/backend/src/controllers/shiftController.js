@@ -129,7 +129,7 @@ const updateShift = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("carer", "firstName lastName" );
   res.status(201).json(updatedShift);
 });
 
@@ -157,7 +157,7 @@ const createHandover = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("carer", "firstName lastName" );
   res.status(201).json(updatedShift);
 });
 
@@ -244,7 +244,7 @@ const createShiftNotes = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("carer", "firstName lastName" );
   res.status(200).json(updatedShift);
 });
 
@@ -315,7 +315,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("carer", "firstName lastName" );
   res.status(200).json(addIncidentReport);
 });
 

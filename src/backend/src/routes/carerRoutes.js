@@ -10,12 +10,12 @@ const { protect } = require("../middleware/authMiddleware");
 // @param :id(Id of the patient) {email}
 carerRouter.route("/invite/:id").post(protect, sendCarerInvite)
 
-// Takes in emailed token and adds carer to the patient
+// Takes in emailed token and adds carer to the patient's team
 // @param :token(containsID of the patient/ID of the carer) 
 carerRouter.route("/add/:token").post(addCarer)
 
-// Takes in emailed token and adds carer to the patient
-// @param :token(containsID of the patient/ID of the carer) 
+// Removes a carer from a patient's team
+// @param :patientID and :carerID 
 carerRouter.route("/remove/:patientID/:carerID").delete(protect, removeCarer)
 
 

@@ -9,14 +9,6 @@ const incidentReportSchema = mongoose.Schema({
   },
 });
 
-const shiftNotesSchema = mongoose.Schema({
-  ShiftNotes: {
-    type: String,
-  },
-  shiftNotesPDF: {
-    type: String,
-  },
-});
 
 const shiftSchema = mongoose.Schema(
   {

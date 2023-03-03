@@ -1,7 +1,7 @@
 const app = require("../server.js");
 const request = require("supertest");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 let cookie;
 
@@ -17,7 +17,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await mongoose.connection.close();
+  await Promise.resolve().then(mongoose.connection.close());
 });
 
 //---------User Creation----------//
@@ -157,8 +157,3 @@ describe("GET /user", () => {
     });
   });
 });
-
-
-
-
-
