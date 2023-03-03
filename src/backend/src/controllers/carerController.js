@@ -6,8 +6,8 @@ const Patient = require("../models/patientModel");
 const emails = require("../services/email");
 
 //----- New Route Function------//
-// @desc Sends email invitation to carer to add to team
-// @route POST
+// @desc Sends email invitation to carer 
+// @route POST /invite/:id
 // @access private
 const sendCarerInvite = asyncHandler(async (req, res) => {
   // Find patient with ID
@@ -67,7 +67,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
 
 //----- New Route Function------//
 // @desc Adds carer to patient from email token
-// @route POST
+// @route POST /add/:token
 // @access public
 const addCarer = asyncHandler(async (req, res) => {
   // Retrieve info from token
@@ -111,7 +111,7 @@ const addCarer = asyncHandler(async (req, res) => {
 
 //----- New Route Function------//
 // @desc Removes carer from patient
-// @route DELETE
+// @route DELETE /remove/:patientID/:carerID
 // @access private
 const removeCarer = asyncHandler(async (req, res) => {
   // Find patient based on patient ID sent in route url

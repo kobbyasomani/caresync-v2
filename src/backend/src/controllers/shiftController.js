@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Patient = require("../models/patientModel");
 const Shift = require("../models/shiftModel");
-const { cloudinaryUpload, createPDF } = require("../utils/helper.utils");
+const { cloudinaryUpload, createPDF } = require("../utils/pdf.utils");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
@@ -90,15 +90,7 @@ const createShift = asyncHandler(async (req, res) => {
 
   // Return shift info
   if (shift) {
-    res.status(201).json({
-      _id: shift.id,
-      patient: patient._id,
-      coordinator: user.id,
-      coordinatorNotes,
-      carer: carer.id,
-      shiftStartTime: shiftStartTime,
-      shiftEndTime: shiftEndTime,
-    });
+    res.status(201).json(shift);
   } else {
     res.status(400);
     throw new Error("Invalid data");
@@ -130,6 +122,8 @@ const updateShift = asyncHandler(async (req, res) => {
       new: true,
     }
   ).populate("carer", "firstName lastName" );
+
+  //Return updated shift object
   res.status(201).json(updatedShift);
 });
 
@@ -158,6 +152,8 @@ const createHandover = asyncHandler(async (req, res) => {
       new: true,
     }
   ).populate("carer", "firstName lastName" );
+
+  //Return updated shift object
   res.status(201).json(updatedShift);
 });
 
@@ -245,6 +241,8 @@ const createShiftNotes = asyncHandler(async (req, res) => {
       new: true,
     }
   ).populate("carer", "firstName lastName" );
+
+  //Return updated shift object
   res.status(200).json(updatedShift);
 });
 
@@ -316,6 +314,8 @@ const createIncidentReport = asyncHandler(async (req, res) => {
       new: true,
     }
   ).populate("carer", "firstName lastName" );
+
+  //Return updated shift object
   res.status(200).json(addIncidentReport);
 });
 
