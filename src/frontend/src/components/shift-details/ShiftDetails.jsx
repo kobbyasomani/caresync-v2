@@ -5,6 +5,8 @@ import { dateAsObj } from "../../utils/dateUtils";
 import Overview from "./Overview";
 import ShiftNotes from "./ShiftNotes";
 import HandoverNotes from "./HandoverNotes";
+import IncidentReports from "./IncidentReports";
+import CreateIncidentReport from "./CreateIncidentReport";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
@@ -19,11 +21,16 @@ const ShiftDetails = ({ isLoading, children }) => {
     const theme = useTheme();
 
     const injectActiveDrawer = () => {
+        console.log(modalStore.prevDrawer)
         switch (modalStore.activeDrawer) {
             case "shift notes":
                 return <ShiftNotes />
             case "handover notes":
                 return <HandoverNotes />
+            case "incident reports":
+                return <IncidentReports />
+            case "create incident report":
+                return <CreateIncidentReport />
             default:
                 return <Overview />
         }
@@ -49,10 +56,10 @@ const ShiftDetails = ({ isLoading, children }) => {
         });
     }, [modalDispatch]);
 
-    const backToOverview = useCallback(() => {
+    const backToPrevDrawer = useCallback(() => {
         modalDispatch({
             type: "setActiveDrawer",
-            data: ""
+            data: "back"
         })
     }, [modalDispatch]);
 
@@ -95,7 +102,7 @@ const ShiftDetails = ({ isLoading, children }) => {
 
             {modalStore.activeDrawer ? (
                 <IconButton className="prev-modal"
-                    onClick={backToOverview}
+                    onClick={backToPrevDrawer}
                     sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
                     <ArrowBackIcon />
                 </IconButton>

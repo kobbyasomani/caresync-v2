@@ -22,10 +22,19 @@ const modalReducer = (state, action) => {
                 activeModal: action.data
             }
         case "setActiveDrawer":
+            if (action.data === "back") {
+                return {
+                    ...state,
+                    prevDrawer: state.prevDrawer[state.prevDrawer.length - 1] === "" ? [] : state.prevDrawer.slice(0, state.prevDrawer.length - 1),
+                    activeDrawer: state.prevDrawer[state.prevDrawer.length - 1],
+                }
+            }
             return {
                 ...state,
+                prevDrawer: [...state.prevDrawer, state.activeDrawer],
                 activeDrawer: action.data
             }
+
         default: return state
     }
 }

@@ -5,10 +5,10 @@ import Form from "./Form";
 import { TextField } from "@mui/material";
 
 
-const HandoverNotesForm = () => {
+const IncidentReportForm = () => {
     const initialState = {
         inputs: {
-            handoverNotes: ""
+            incidentReport: ""
         },
         errors: []
     }
@@ -16,36 +16,33 @@ const HandoverNotesForm = () => {
     const [form, setForm] = useHandleForm(initialState);
     const { store, dispatch } = useGlobalContext();
 
-    const updateHandoverNotes = (response) => {
+    const createIncidentReport = (response) => {
+        console.log(response);
         dispatch({
             type: "setSelectedShift",
-            data: {
-                ...response,
-                carer: store.selectedShift.carer
-            }
+            data: response
         });
     }
 
     return (
         <Form form={form}
             setForm={setForm}
-            legend="Add handover notes for this patient's next shift"
-            buttonText="Update handover notes"
-            postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}
-            method="put"
-            callback={updateHandoverNotes}
+            legend="Create a new incident report"
+            buttonText="Submit incident report"
+            postURL={`${baseURL}/shift/reports/${store.selectedShift._id}`}
+            callback={createIncidentReport}
         >
             <TextField multiline
                 minRows={10}
-                label="Handover notes"
-                id="handover-notes"
+                label="Incident report"
+                id="incident-report"
                 type="text"
-                name="handoverNotes"
-                placeholder={`During the next shift with ${store.selectedPatient.firstName}, please follow up on...`}
+                name="incidentReport"
+                placeholder="Today, the client had an incident where they..."
                 required
                 mui="TextField" />
         </Form>
     )
 }
 
-export default HandoverNotesForm
+export default IncidentReportForm
