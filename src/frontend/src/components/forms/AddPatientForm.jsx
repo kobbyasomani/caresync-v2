@@ -1,8 +1,9 @@
 import { useState, useCallback, navigate } from "react";
 import { Link } from "react-router-dom";
 
-import { useGlobalState } from "../../utils/globalStateContext";
+import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
+import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../root/Buttons";
 
@@ -11,7 +12,7 @@ import { TextField, Alert } from "@mui/material";
 export const AddPatient = () => {
     // console.log("rendering AddPatient");
 
-    const { dispatch } = useGlobalState();
+    const { dispatch } = useGlobalContext();
 
     // Set the form state
     const initialState = {
@@ -47,10 +48,18 @@ export const AddPatient = () => {
         navigate("/");
     }, [dispatch]);
 
+    // Close the modal when navigating to the calendar
+    const { modalDispatch } = useModalContext();
+    const closeModal = useCallback(() => {
+        modalDispatch({
+            type: "close",
+            data: "modal"
+        });
+    }, [modalDispatch]);
+
     return (
         <>
-            <Form
-                form={form}
+            <Form form={form}
                 setForm={setForm}
                 legend="New patient"
                 buttonText="Add patient"
@@ -92,7 +101,7 @@ export const AddPatient = () => {
                                     Back to patients
                                 </ButtonSecondary>
                             </Link>
-                            <Link to="/calendar" className="button-link">
+                            <Link to="/calendar" onClick={closeModal} className="button-link">
                                 <ButtonPrimary>
                                     View calendar
                                 </ButtonPrimary>

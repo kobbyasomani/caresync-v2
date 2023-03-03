@@ -1,3 +1,8 @@
+:root {
+  font-size: clamp(1rem, 1rem + (1vw - 0.48rem) * 1.3889, 1.05rem);
+  min-height: 0vw;
+}
+
 html,
 body {
   height: 100%;
@@ -46,6 +51,19 @@ form .form-errors {
 
 #calendar {
   padding-top: 1rem;
+}
+#calendar .fc-prev-button,
+#calendar .fc-next-button {
+  background-color: #79589f;
+  border-color: #79589f;
+}
+#calendar .fc-today-button {
+  background-color: #201a23;
+  border-color: #201a23;
+}
+
+.MuiDrawer-root form {
+  flex-grow: 1;
 }
 
 /*# sourceMappingURL=index.css.map */

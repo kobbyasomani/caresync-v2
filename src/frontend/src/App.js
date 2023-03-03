@@ -1,7 +1,7 @@
 import React from "react";
-import { GlobalStateContext } from "./utils/globalStateContext";
+import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
+import { ModalContext, useModalReducer } from "./utils/modalUtils";
 import { useReducer, useEffect, useCallback } from "react"
-import globalReducer from "./utils/globalReducer";
 
 import {
   createBrowserRouter,
@@ -17,10 +17,10 @@ import Help from "./views/Help";
 import Error from "./views/Error";
 import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
+import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import DefaultTheme from "./styles/DefaultTheme";
-const theme = DefaultTheme;
+import { Theme as theme } from "./styles/Theme";
 
 // Create the router
 const router = createBrowserRouter([
@@ -42,7 +42,13 @@ const router = createBrowserRouter([
               },
               {
                 path: "/calendar",
-                element: <Calendar />
+                element: <Calendar />,
+                children: [
+                  {
+                    path: "/calendar/select-shift-by-date",
+                    element: <SelectShiftByDate />
+                  }
+                ]
               }
             ]
           }
@@ -73,44 +79,77 @@ function App() {
   Refactor these hooks to fetch authenticated
   session data from backend-server */
 
-  const initialState = useCallback(() => {
-    // Get global state values from localStorage on load if available
-    const localStorage = window.localStorage.careSync ?
-      JSON.parse(window.localStorage.getItem("careSync")) : null;
-    // Set the global state values from localStorage
-    if (localStorage) {
-      return {
-        isAuth: localStorage.isAuth,
-        user: localStorage.user,
-        selectedPatient: localStorage.selectedPatient
-      };
-      // Set global state to defaults if not in localStorage
-    } else {
-      return {
-        isAuth: false,
-        user: "",
-        selectedPatient: ""
-      };
-    }
-  }, []);
+  // Global state handler
+  const GlobalProvider = ({ children }) => {
+    const initialState = useCallback(() => {
+      // Get global state values from localStorage on load if available
+      const localStorage = window.localStorage.careSync ?
+        JSON.parse(window.localStorage.getItem("careSync")) : null;
+      // Set the global state values from localStorage
+      if (localStorage) {
+        return {
+          ...localStorage,
+          isAuth: localStorage.isAuth,
+          user: localStorage.user,
+          selectedPatient: localStorage.selectedPatient,
+          shifts: localStorage.shifts,
+          featuredShift: localStorage.featuredShift,
+          previousShifts: localStorage.previousShifts,
+          selectedShift: localStorage.selectedShift,
+        };
+        // Set global state to defaults if not in localStorage
+      } else {
+        return emptyStore;
+      }
+    }, []);
 
-  const [store, dispatch] = useReducer(globalReducer, initialState());
+    const [store, dispatch] = useReducer(globalReducer, initialState());
 
-  // Set required global state values in localStorage any time their state changes
-  useEffect(() => {
-    // console.log("updating localStorage from store...");
-    window.localStorage.setItem("careSync", JSON.stringify({
-      ...store,
-    }));
-  }, [store]);
+    // Set required global state values in localStorage any time their state changes
+    useEffect(() => {
+      // console.log("updating localStorage from store...");
+      window.localStorage.setItem("careSync", JSON.stringify({
+        ...store,
+      }));
+    }, [store]);
+
+    return (
+      <GlobalStateContext.Provider value={{ store, dispatch }}>
+        {children}
+      </GlobalStateContext.Provider>
+    );
+  }
+
+  // Modal and drawer state handler
+  const ModalProvider = ({ children }) => {
+    const [modalStore, modalDispatch] = useModalReducer({
+      modalIsOpen: false,
+      drawerIsOpen: false,
+      activeModal: {
+        title: "This is an empty modal",
+        text: `You can use the modalDispatch function to set the active modal 
+'title' and 'text' or pass them to the modal as props. The modal content in 
+the Calendar view will be the component returned by the URL path (/calendar/<path>).`
+      },
+      prevDrawer: [],
+      activeDrawer: ""
+    });
+    return (
+      <ModalContext.Provider value={{ modalStore, modalDispatch }}>
+        {children}
+      </ModalContext.Provider>
+    );
+  }
 
   return (
-    <GlobalStateContext.Provider value={{ store, dispatch }}>
-      <ThemeProvider theme={DefaultTheme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </GlobalStateContext.Provider >
+    <GlobalProvider>
+      <ModalProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </ModalProvider>
+    </GlobalProvider >
   );
 }
 
