@@ -19,11 +19,11 @@ const Incident = ({ incident, index }) => {
             data: "incident report details"
         });
         dispatch({
-            type: "setSelectedIncident",
+            type: "setSelectedIncidentReport",
             data: incident
         });
 
-    }, [modalDispatch]);
+    }, [modalDispatch, dispatch, incident]);
 
     return (
         <Card variant="outlined" className="incident" data-testid="incident"
@@ -36,7 +36,7 @@ const Incident = ({ incident, index }) => {
                 }}>
                     <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2", [theme.breakpoints.down("sm")]: { gridArea: "1 / 1 / 2 / 3" } }}>
                         <ReportIcon sx={{ mr: "0.5rem" }} />
-                        <Typography variant="body1" className="shift-date" fontWeight="bold">
+                        <Typography variant="h6" component="p" className="shift-date" fontWeight="bold">
                             {incident ? `Incident ${index}` : "Could not load incident number"}
                         </Typography>
                     </Box>

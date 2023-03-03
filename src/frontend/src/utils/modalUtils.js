@@ -14,7 +14,8 @@ const modalReducer = (state, action) => {
         case "close":
             return {
                 ...state,
-                [`${action.data}IsOpen`]: false
+                [`${action.data}IsOpen`]: false,
+                prevDrawer: []
             }
         case "setActiveModal":
             return {
@@ -22,6 +23,7 @@ const modalReducer = (state, action) => {
                 activeModal: action.data
             }
         case "setActiveDrawer":
+            // console.log(state.prevDrawer);
             if (action.data === "back") {
                 return {
                     ...state,

@@ -1,4 +1,5 @@
 import { useGlobalContext } from "../../utils/globalUtils";
+import { useModalContext } from "../../utils/modalUtils";
 import baseURL from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
@@ -15,12 +16,22 @@ const IncidentReportForm = () => {
 
     const [form, setForm] = useHandleForm(initialState);
     const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
 
+    // After creating the incident report, update the selected shift and incident
     const createIncidentReport = (response) => {
         console.log(response);
         dispatch({
             type: "setSelectedShift",
             data: response
+        });
+        dispatch({
+            type: "setSelectedIncidentReport",
+            data: response.incidentReports[response.incidentReports.length - 1]
+        });
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: "back"
         });
     }
 

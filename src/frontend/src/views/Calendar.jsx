@@ -25,7 +25,7 @@ export const Calendar = () => {
             credentials: "include"
         }).then(response => response.json())
             .then((shifts) => {
-                console.log(shifts);
+                // console.log(shifts);
                 dispatch({
                     type: "setShifts",
                     data: shifts

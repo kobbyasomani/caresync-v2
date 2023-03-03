@@ -12,7 +12,7 @@ const IncidentReportDetails = () => {
             </Typography>
             <Box sx={{ pt: 1 }}>
                 <Typography variant="body1">
-                    {store.selectedIncident.incidentReportText}
+                    {store.selectedIncidentReport.incidentReportText}
                 </Typography>
             </Box>
         </>
