@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { compareDates, dateAsObj } from "../../utils/dateUtils";
+import { compareDates, dateAsObj, minusHours } from "../../utils/dateUtils";
 
 import Shift from "../Shift";
 import { ButtonPrimary } from "../root/Buttons";
@@ -80,7 +80,9 @@ shift notes, and incident reports.`
             ) : (
                 null
             )}
-            {store.selectedPatient.coordinator === store.user._id ? (
+            {store.selectedPatient.coordinator === store.user._id
+                //Hide the 'add shift' button on past days
+                && dateAsObj(store.selectedDate.start) > minusHours(new Date(), 24) ? (
                 <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}>
                     Add Shift
                 </ButtonPrimary>

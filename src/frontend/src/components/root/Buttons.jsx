@@ -23,8 +23,7 @@ export const ButtonPrimary = ({ children, variant, ...rest }) => {
 }
 
 // Secondary button component
-export const ButtonSecondary = (props) => {
-    const { onClick, children, to, component } = props;
+export const ButtonSecondary = ({ onClick, children, to, component, ...rest }) => {
     return <StyledButton variant="outlined"
         component={component}
         onClick={onClick}
@@ -33,7 +32,8 @@ export const ButtonSecondary = (props) => {
             my: 2,
             mx: "auto",
             display: "flex"
-        }}>
+        }}
+        {...rest}>
         {children}
     </StyledButton >
 }

@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
+import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
-
-import { Typography, Stack, Box } from "@mui/material"
-
 import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 
+import { Typography, Stack, Box, IconButton, Tooltip } from "@mui/material"
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Fetch all patient shifts and add them to state
     useEffect(() => {
@@ -108,13 +111,42 @@ export const Calendar = () => {
             data: prevShifts
         });
     }, [store.shifts, store.selectedPatient, dispatch]);
-
     // console.log(store.featuredShift.shiftStartTime);
+
+    const openCareTeamList = useCallback(() => {
+        const patient = store.selectedPatient;
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: `Care team for ${patient.firstName} ${patient.lastName}`,
+                text: `These are the members of this patient's care team. You can 
+                invite users to the care team or remove them from here.`
+            }
+        });
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+        navigate("/calendar/care-team");
+    }, [modalDispatch, navigate, store.selectedPatient]);
 
     return isLoading ? null : (
         store.selectedPatient && store.shifts ? (
             <>
-                <SelectedPatient />
+                <Stack direction="row" alignItems="center">
+                    <SelectedPatient />
+
+                    <Tooltip title="Care Team" placement="left" >
+                        <IconButton color="primary" size="large"
+                            sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
+                            variant="contained"
+                            id="care-team-button"
+                            onClick={openCareTeamList}
+                        >
+                            <Diversity3Icon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
 
                 <Box id="calendar">
                     <CalendarDayGrid />

@@ -64,8 +64,8 @@ const SelectPatient = () => {
     ) : (
         <>
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
-            {(Object.keys(store.patients).length > 0
-                && store.patients.carer.length > 0) || store.patients.coordinator.length > 0 ?
+            {Object.keys(store.patients).length > 0
+                && (store.patients.carer.length > 0 || store.patients.coordinator.length > 0) ?
                 <Typography variant="h2">Select a patient</Typography> : null}
             {Object.keys(store.patients).length > 0 && store.patients.carer.length > 0 ? (
                 <section>
@@ -87,7 +87,10 @@ const SelectPatient = () => {
                     </Stack>
                 </section>
             ) : (
-                <h2>Add a patient to get started.</h2>
+                <Typography variant="h3">
+                    You aren't currently the coordinator for any patients.<br />
+                    Add a patient to get started.
+                </Typography>
             )}
 
             <ButtonPrimary onClick={openModal}>
