@@ -14,10 +14,16 @@ const emails = require("../services/email");
 const registerUser = asyncHandler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
-  //Ensure all fields are filled out
+  // Ensure all fields are filled out
   if (!firstName || !lastName || !email || !password) {
     res.status(400);
     throw new Error("Please fill out all fields");
+  }
+
+  // nsure password is at least 8 characters
+  if(password.length < 8){
+    res.status(400);
+    throw new Error("Passwords must be more than 8 characters long");
   }
 
   // Check if user exists
@@ -47,6 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Sends verification email to user
   emails.verifyUserEmail(firstName, email, emailToken);
 
+  // Return new user object without password
   if (user) {
     res.status(201).json({
       _id: user.id,
@@ -131,8 +138,8 @@ const loginUser = asyncHandler(async (req, res) => {
     message: "Logged in Successfully",
     user: {
       firstName: user.firstName,
-      _id: user._id
-    }
+      _id: user._id,
+    },
   });
 });
 
@@ -178,8 +185,10 @@ const getUserPatients = asyncHandler(async (req, res) => {
         }).select("firstName lastName");
         // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
         // Else, add the next shift with the carer name
-        if (new Object(nextCoordinatorShift[0].carer).toString()
-          == new Object(user._id).toString()) {
+        if (
+          new Object(nextCoordinatorShift[0].carer).toString() ==
+          new Object(user._id).toString()
+        ) {
           patient["nextShift"] = [
             { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
           ];
@@ -215,16 +224,18 @@ const getUserPatients = asyncHandler(async (req, res) => {
         const carerName = await User.find({
           _id: nextCarerShift[0].carer,
         }).select("firstName lastName");
-        if (new Object(nextCarerShift[0].carer).toString()
-          == new Object(user._id).toString()) {
+        if (
+          new Object(nextCarerShift[0].carer).toString() ==
+          new Object(user._id).toString()
+        ) {
           patient["nextShift"] = {
             time: nextCarerShift[0].shiftStartTime,
-            carerName: "You"
+            carerName: "You",
           };
         } else {
           patient["nextShift"] = {
             time: nextCarerShift[0].shiftStartTime,
-            carerName: `${carerName.firstName} ${carerName.lastName}`
+            carerName: `${carerName.firstName} ${carerName.lastName}`,
           };
         }
       } else {
@@ -239,12 +250,9 @@ const getUserPatients = asyncHandler(async (req, res) => {
     .json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
 });
 
-
-
 module.exports = {
   registerUser,
   loginUser,
   getUserPatients,
   emailVerification,
-  // authUser,
 };

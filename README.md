@@ -6,13 +6,15 @@
 
 [Github Repository](https://github.com/kobbyasomani/T3A2-B)
 
-[Trello Board](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app)
+[Trello Board/Project Management](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app)
 
-[User/Testing Document](https://docs.google.com/document/d/1S7gRANIlmqVbgx0sBWA9yxMYTQdqJCkk6nd4g5lVdjc/edit)
+[Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub) (Copy in docs folder)
 
-[Backend Jest Test Results](https://docs.google.com/document/d/1MrpyFgIiumvoVqFCeinkgNDEY-mqw7e2M7sQkCWwR9Y/edit?usp=sharing)
+[Development Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vTL-rH06GU6Pyd_SV-H6eW2llPhoaKgSBs3rVJciimOcESErXd-L-TaZQEZ3EZkVc_IqcrkNr5JKqXG/pub) (Copy in docs folder)
 
-[Frontend Jest Test Results](https://docs.google.com/document/d/1S7gRANIlmqVbgx0sBWA9yxMYTQdqJCkk6nd4g5lVdjc/edit)
+[Production Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vQocsVZHsc5zsYX680dnam778h8RqwmzPLpsMplk9FdCqGUeCwSEaSHjwY3LatMTaIUaAVRFEJMZ1yL/pub) (Copy in docs folder)
+
+
 
 
 ## Description of Website
