@@ -6,11 +6,13 @@
 
 [Github Repository](https://github.com/kobbyasomani/T3A2-B)
 
-[Trello Board](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app)
+[Trello Board/Project Management](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app)
 
-[User/Testing Document](https://docs.google.com/document/d/1S7gRANIlmqVbgx0sBWA9yxMYTQdqJCkk6nd4g5lVdjc/edit)
+[Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub)
 
-[Backend Jest Test Results](https://docs.google.com/document/d/1MrpyFgIiumvoVqFCeinkgNDEY-mqw7e2M7sQkCWwR9Y/edit?usp=sharing)
+[Developer/User Testing Document](https://docs.google.com/document/d/e/2PACX-1vTL-rH06GU6Pyd_SV-H6eW2llPhoaKgSBs3rVJciimOcESErXd-L-TaZQEZ3EZkVc_IqcrkNr5JKqXG/pub)
+
+[Backend Jest Test Results](https://docs.google.com/document/d/e/2PACX-1vTtS5iXq0Prj_jp-e80879IbGWcO9LwZ2xNirvMdBXq6c7b2OI0VG7Dk03w596Cq_JJD3-3L0zrZRYx/pub)
 
 [Frontend Jest Test Results](https://docs.google.com/document/d/1S7gRANIlmqVbgx0sBWA9yxMYTQdqJCkk6nd4g5lVdjc/edit)
 
