@@ -1,4 +1,4 @@
-import { useState, useCallback, navigate } from "react";
+import { useState, useCallback, useEffect, navigate } from "react";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -10,7 +10,7 @@ import { TextField, Alert } from "@mui/material";
 
 export const InviteCarerForm = () => {
     const { store } = useGlobalContext();
-    const { modalDispatch } = useModalContext();
+    const { modalStore, modalDispatch } = useModalContext();
 
     // Set the inital form state
     const initialState = {
@@ -24,11 +24,24 @@ export const InviteCarerForm = () => {
     // Alert state
     const [alerts, setAlerts] = useState([]);
 
-    const invitationSent = useCallback((patient) => {
+    const invitationSent = useCallback(() => {
         // Show success alert
         setAlerts(prev => [...prev, `An email was sent to ${form.inputs.email} inviting 
         the user to join ${store.selectedPatient.firstName} ${store.selectedPatient.lastName}'s care team.`]);
     }, [form.inputs.email, store.selectedPatient]);
+
+    // Set modal text
+    useEffect(() => {
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: "Invite a care team member",
+                text: `Send an invitation to another user to join ${store.selectedPatient.firstName} 
+                ${store.selectedPatient.lastName}'s care team. The user must have an existing 
+                CareSync account.`
+            }
+        })
+    }, [modalDispatch, modalStore.activeModal, store.selectedPatient]);
 
     // Close the modal
     const closeModal = useCallback(() => {

@@ -1,62 +1,59 @@
-import { useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { getCarers } from "../../utils/apiUtils";
 import { ButtonPrimary } from "../root/Buttons";
+import Carer from "../Carer";
+import Loader from "../logo/Loader";
 
-import {
-    List, ListItem, ListItemAvatar, ListItemText,
-    Avatar, IconButton, Tooltip, useTheme
-} from "@mui/material"
-import PersonIcon from '@mui/icons-material/Person';
+import { List, Stack } from "@mui/material"
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 
 const CareTeamList = () => {
+    const [isLoading, setIsLoading] = useState(true);
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const [carers, setCarers] = useState([])
     const navigate = useNavigate();
-    const theme = useTheme();
 
-    const addCarer = useCallback(() => {
+    // Set the modal text
+    useEffect(() => {
         modalDispatch({
             type: "setActiveModal",
             data: {
-                title: "Invite a care team member",
-                text: `Send an invitation to another user to join ${store.selectedPatient.firstName} 
-                ${store.selectedPatient.lastName}'s care team. The user must have an existing 
-                CareSync account.`
+                title: `Care team for ${store.selectedPatient.firstName} ${store.selectedPatient.lastName}`,
+                text: `These are the members of this patient's care team. You can 
+                invite users to the care team or remove them from here.`
             }
         });
-        navigate("/calendar/invite-carer");
-    }, [modalDispatch, store.selectedPatient, navigate]);
+    }, [modalDispatch, store.selectedPatient]);
 
-    return (
+    // Get the list of patient's carers
+    useEffect(() => {
+        getCarers(store.selectedPatient._id).then(carers => {
+            setCarers(carers);
+            setIsLoading(false);
+        });
+    }, [store.selectedPatient]);
+
+    // Open carer invitation dialog
+    const addCarer = useCallback(() => {
+        navigate("/calendar/invite-carer");
+    }, [navigate]);
+
+    console.log(carers)
+
+    return isLoading ? <Loader /> : (
         <>
             <List>
-                <ListItem sx={{
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: `${theme.shape.borderRadius}px`,
-                    p: "1rem"
-                }}>
-                    <Tooltip title="Remove carer" placement="left">
-                        <IconButton sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
-                            <PersonRemoveIcon />
-                        </IconButton>
-                    </Tooltip>
+                <Stack spacing={2}>
+                    {carers.map(carer => {
+                        return <Carer key={carer._id} carer={carer} />
+                    })}
+                </Stack>
 
-                    <ListItemAvatar>
-                        <Avatar sx={{ width: "2.7rem", height: "2.7rem", backgroundColor: theme.palette.primary.main }}>
-                            <PersonIcon fontSize="large" />
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                        primaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                        secondaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                        primary="Firstname Lastname"
-                        secondary="(+61) 123 456 789"
-                    />
-                </ListItem >
             </List>
 
             <ButtonPrimary onClick={addCarer}

@@ -114,21 +114,12 @@ export const Calendar = () => {
     // console.log(store.featuredShift.shiftStartTime);
 
     const openCareTeamList = useCallback(() => {
-        const patient = store.selectedPatient;
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `Care team for ${patient.firstName} ${patient.lastName}`,
-                text: `These are the members of this patient's care team. You can 
-                invite users to the care team or remove them from here.`
-            }
-        });
+        navigate("/calendar/care-team");
         modalDispatch({
             type: "open",
             data: "modal"
         });
-        navigate("/calendar/care-team");
-    }, [modalDispatch, navigate, store.selectedPatient]);
+    }, [modalDispatch, navigate]);
 
     return isLoading ? null : (
         store.selectedPatient && store.shifts ? (
