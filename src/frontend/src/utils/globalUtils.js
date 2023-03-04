@@ -18,6 +18,7 @@ const emptyStore = {
     previousShifts: [],
     selectedDate: {},
     selectedShift: {},
+    selectedShiftInProgress: false,
     selectedIncidentReport: {},
 }
 
@@ -112,6 +113,11 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedShift: action.data
             }
+        case "setSelectedShiftInProgress":
+            return {
+                ...state,
+                selectedShiftInProgress: action.data
+            }
         case "clearShifts":
             return {
                 ...state,
@@ -120,6 +126,7 @@ const globalReducer = (state, action) => {
                 previousShifts: [],
                 selectedDate: {},
                 selectedShift: {},
+                selectedShiftInProgress: false,
                 selectedIncidentReport: {},
             }
         case "setSelectedIncidentReport":

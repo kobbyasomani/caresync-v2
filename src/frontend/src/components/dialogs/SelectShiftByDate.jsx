@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { compareDates, dateAsObj } from "../../utils/dateUtils";
@@ -14,6 +15,7 @@ const SelectShiftByDate = () => {
     const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const [shifts, setShifts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getShiftsForDate = () => {
@@ -54,23 +56,36 @@ shift notes, and incident reports.`
         }
     }, [modalDispatch, modalStore.activeModal.title, shifts.length, store.selectedDate])
 
+    const addShift = useCallback(() => {
+        // Set shift creation modal text
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
+                text: "Enter the details for a new shift on this date."
+            }
+        });
+        navigate("/calendar/add-shift");
+    }, [navigate, modalDispatch, store.selectedDate.start]);
+
     return (
-        shifts.length > 0 ? (
-            <>
+        <>
+            {shifts.length > 0 ? (
                 <Stack spacing={2}>
                     {shifts.map(shift => {
                         return <Shift key={shift._id} shift={shift} />
                     })}
                 </Stack>
-                <ButtonPrimary startIcon={<MoreTimeIcon />}>
+
+            ) : (
+                null
+            )}
+            {store.selectedPatient.coordinator === store.user._id ? (
+                <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}>
                     Add Shift
                 </ButtonPrimary>
-            </>
-        ) : (
-            <ButtonPrimary startIcon={<MoreTimeIcon />}>
-                Add Shift
-            </ButtonPrimary>
-        )
+            ) : null}
+        </>
     )
 }
 

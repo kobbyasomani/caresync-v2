@@ -1,7 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { dateAsObj } from "../../utils/dateUtils";
+import { dateAsObj, plusHours } from "../../utils/dateUtils";
 import Overview from "./Overview";
 import ShiftNotes from "./ShiftNotes";
 import HandoverNotes from "./HandoverNotes";
@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ShiftDetails = ({ isLoading, children }) => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
 
@@ -71,7 +71,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             role="presentation"
             onKeyDown={closeDrawer}
         >
-            <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ pb: 2 }}>
+            <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
                         <PersonIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
@@ -84,7 +84,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                     <Typography variant="h2" component="p">
                         Shift on {store.selectedShift ? (
                             dateAsObj(store.selectedShift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "long" })
-                        ) : "D MONTH YEAR"
+                        ) : "D Month YYYY"
                         }
                     </Typography>
                     <Typography variant="h3" component="p">
@@ -118,6 +118,20 @@ const ShiftDetails = ({ isLoading, children }) => {
 
         </Box>
     );
+
+    /* Sets whether the selected shift is in progress
+    (determines whether carer can enter notes and reports) */
+    useEffect(() => {
+        // console.log(`selected shift in progress: ${new Date(store.selectedShift.shiftStartTime) < new Date()
+        //     && new Date(store.selectedShift.shiftEndTime) > new Date()}`);
+        dispatch({
+            type: "setSelectedShiftInProgress",
+            /* Check whether the selected shift is in progress
+            or within carer edit window (8 hours) */
+            data: new Date(store.selectedShift.shiftStartTime) < new Date()
+                && plusHours(new Date(store.selectedShift.shiftEndTime), 8) > new Date()
+        });
+    }, [store.selectedShift, dispatch]);
 
     return isLoading ? null : (
         <div>
