@@ -69,6 +69,28 @@ export const EditShiftForm = () => {
         })
     }, [setForm]);
 
+    // Additional validation
+    const validation = useCallback((form) => {
+        // Shift must end after it starts
+        if (form.inputs.shiftStartTime > form.inputs.shiftEndTime) {
+            throw new Error("Shift end time cannot be before shift start time.")
+        }
+        // Shift must have a duration
+        if (form.inputs.shiftStartTime.toLocaleString()
+            === form.inputs.shiftEndTime.toLocaleString()) {
+            throw new Error("Shift cannot have the same start time and end time.")
+        }
+        // Shift can only be edited if it is still in progress
+        if (form.inputs.shiftStartTime < new Date()
+            && (new Date(store.selectedShift.shiftEndTime) < new Date())) {
+            throw new Error("Past shifts cannot be edited.")
+        }
+        // Shift end time cannot be in the past
+        if (form.inputs.shiftEndTime < new Date()) {
+            throw new Error("Shift end time cannot be in the past.")
+        }
+    }, []);
+
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
         // Update patient shifts from the database
@@ -118,6 +140,7 @@ export const EditShiftForm = () => {
                 buttonText="Update shift"
                 postURL={`/shift/${store.selectedShift._id}`}
                 method="PUT"
+                validation={validation}
                 callback={updateShifts}
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
@@ -127,12 +150,16 @@ export const EditShiftForm = () => {
                         inputProps={{ name: "shiftStartTime", required: true }}
                         time={form.inputs.shiftStartTime}
                         setTime={setShiftTime}
+                        minDate={dayjs(new Date())}
+                        // Cannot change the start time of an already-commenced shift
+                        disabled={new Date(store.selectedShift.shiftStartTime) < new Date()}
                     />
                     <TimePicker label="Shift End Time"
                         inputProps={{ name: "shiftEndTime", required: true }}
                         name="time-picker-end"
                         time={form.inputs.shiftEndTime}
                         setTime={setShiftTime}
+                        minDate={dayjs(new Date())}
                     />
                 </Stack>
                 <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>

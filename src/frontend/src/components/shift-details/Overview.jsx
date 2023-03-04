@@ -173,9 +173,11 @@ const Overview = () => {
                 </Card>
             </Grid>
 
-            {/* The shift is editable if the user is the coordinator and the shift is in the future */}
+            {/* The shift is editable if the user is the coordinator
+            and the shift is in the future or in progress */}
             {store.selectedShift.coordinator === store.user._id
-                && new Date(store.selectedShift.shiftStartTime) > new Date() ? (
+                && (new Date(store.selectedShift.shiftStartTime) > new Date()
+                    || new Date(store.selectedShift.shiftEndTime) > new Date()) ? (
                 <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
                     <ButtonPrimary onClick={editShift}>
                         Edit shift

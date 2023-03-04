@@ -70,6 +70,27 @@ export const AddShiftForm = () => {
         })
     }, [setForm]);
 
+    // Additional validation
+    const validation = useCallback((form) => {
+        // Shift must end after it starts
+        if (form.inputs.shiftStartTime > form.inputs.shiftEndTime) {
+            throw new Error("Shift end time cannot be before shift start time.")
+        }
+        // Shift must have a duration
+        if (form.inputs.shiftStartTime.toLocaleString()
+            === form.inputs.shiftEndTime.toLocaleString()) {
+            throw new Error("Shift cannot have the same start time and end time.")
+        }
+        // New Shift cannot start in the past
+        if (form.inputs.shiftStartTime < new Date()) {
+            throw new Error("Shift start time cannot be in the past.")
+        }
+        // New Shift end time cannot be in the past
+        if (form.inputs.shiftEndTime < new Date()) {
+            throw new Error("Shift end time cannot be in the past.")
+        }
+    }, []);
+
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
         // Update patient shifts from the database
@@ -89,11 +110,12 @@ export const AddShiftForm = () => {
                 });
 
                 // Show success alert
-                setAlerts(prev => [...prev, `A new shift for 
-                ${store.selectedPatient.firstName} ${store.selectedPatient.lastName} 
-                was added to ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
+                setAlerts(prev => [...prev, `A new shift was added for 
+                ${store.selectedPatient.firstName} ${store.selectedPatient.lastName} on 
+                ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
                 from ${new Date(shift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
-                – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })}.`]);
+                – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
+                with carer ${shifts[shifts.length - 1].carer.firstName} ${shifts[shifts.length - 1].carer.lastName}.`]);
 
                 // Finished loading
                 setIsLoading(false);
@@ -122,6 +144,7 @@ export const AddShiftForm = () => {
                 legend="New shift details"
                 buttonText="Create shift"
                 postURL={`/shift/${store.selectedPatient._id}`}
+                validation={validation}
                 callback={updateShifts}
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
@@ -131,12 +154,14 @@ export const AddShiftForm = () => {
                         inputProps={{ name: "shiftStartTime", required: true }}
                         time={form.inputs.shiftStartTime}
                         setTime={setShiftTime}
+                        minDate={dayjs(new Date())}
                     />
                     <TimePicker label="Shift End Time"
                         inputProps={{ name: "shiftEndTime", required: true }}
                         name="time-picker-end"
                         time={form.inputs.shiftEndTime}
                         setTime={setShiftTime}
+                        minDate={dayjs(new Date())}
                     />
                 </Stack>
                 <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>

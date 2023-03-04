@@ -26,6 +26,10 @@ import { ButtonPrimary } from "../root/Buttons";
  * @param {string} buttonVariant set the mui button variant.
  * One of 'text', 'contained', or 'outlined' (defaults to contained).
  * @param {string} postURL The API endpoint to submit the form to.
+ * @param {string} method The HTTP request method to use.
+ * @param {function} validation Additional validation to perform before submitting form.
+ * The provided function should throw errors based on conditional statements, which the
+ * form will catch and display to the user. The validator function recieves the form state as an arg.
  * @param {function} callback [optional] A function to be called after form submission
  * that takes the API json response as an argument.
  * @param {*} children The child elements of the form (e.g., labels and inputs) 
@@ -39,6 +43,7 @@ const Form = ({
     buttonVariant,
     postURL,
     method,
+    validation,
     callback,
     children
 }) => {
@@ -64,6 +69,16 @@ const Form = ({
                     errors.push(`${inputLabel} cannot be blank.\n`);
                 }
             }
+        }
+
+        // Perform additional validation if any has been provided.
+        try {
+            if (validation) {
+                // console.log("Performing additional validation...");
+                validation(form);
+            }
+        } catch (error) {
+            errors.push(error.message);
         }
 
         // If there are errors, cancel form submission and set them
@@ -93,7 +108,7 @@ const Form = ({
             // Render validation error messages
             handleErrors([`Error: ${error.response.data.message}`]);
         });
-    }, [postURL, form, setForm, handleErrors, callback, method]);
+    }, [postURL, form, setForm, handleErrors, validation, callback, method]);
 
     return (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
