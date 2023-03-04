@@ -8,13 +8,13 @@
 
 [Trello Board/Project Management](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app)
 
-[Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub)
+[Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub) (Copy in docs folder)
 
-[Developer/User Testing Document](https://docs.google.com/document/d/e/2PACX-1vTL-rH06GU6Pyd_SV-H6eW2llPhoaKgSBs3rVJciimOcESErXd-L-TaZQEZ3EZkVc_IqcrkNr5JKqXG/pub)
+[Development Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vTL-rH06GU6Pyd_SV-H6eW2llPhoaKgSBs3rVJciimOcESErXd-L-TaZQEZ3EZkVc_IqcrkNr5JKqXG/pub) (Copy in docs folder)
 
-[Backend Jest Test Results](https://docs.google.com/document/d/e/2PACX-1vTtS5iXq0Prj_jp-e80879IbGWcO9LwZ2xNirvMdBXq6c7b2OI0VG7Dk03w596Cq_JJD3-3L0zrZRYx/pub)
+[Production Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vQocsVZHsc5zsYX680dnam778h8RqwmzPLpsMplk9FdCqGUeCwSEaSHjwY3LatMTaIUaAVRFEJMZ1yL/pub) (Copy in docs folder)
 
-[Frontend Jest Test Results](https://docs.google.com/document/d/1S7gRANIlmqVbgx0sBWA9yxMYTQdqJCkk6nd4g5lVdjc/edit)
+
 
 
 ## Description of Website
