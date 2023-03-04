@@ -47,7 +47,7 @@ const Overview = () => {
     return (
         <Grid display="grid"
             sx={{
-                gridTemplate: "repeat(auto, auto) / repeat(2, auto)",
+                gridTemplate: "repeat(auto, auto) / repeat(2, 1fr)",
                 alignItems: "stretch",
                 gap: 2,
             }}>
@@ -80,7 +80,8 @@ const Overview = () => {
                                 <Typography variant="body1">
                                     {store.selectedShift.shiftNotes.shiftNotesText}
                                 </Typography>
-                            ) : store.user._id === store.selectedShift.carer._id ? (
+                            ) : store.user._id === store.selectedShift.carer._id
+                                && store.selectedShiftInProgress ? (
                                 <Typography variant="body1" color={theme.palette.primary.main}>
                                     Enter your shift notes
                                 </Typography>
@@ -104,7 +105,8 @@ const Overview = () => {
                                 <Typography variant="body1">
                                     {store.selectedShift.incidentReports[0].incidentReportText}
                                 </Typography>
-                            ) : store.user._id === store.selectedShift.carer._id ? (
+                            ) : store.user._id === store.selectedShift.carer._id
+                                && store.selectedShiftInProgress ? (
                                 <Typography variant="body1" color={theme.palette.primary.main}>
                                     Create an incident report
                                 </Typography>
@@ -129,7 +131,10 @@ const Overview = () => {
                                     {store.selectedShift.handoverNotes}
                                 </Typography>
 
-                            ) : store.user._id === store.selectedShift.carer._id ? (
+                            ) : store.user._id === store.selectedShift.carer._id
+                                && (store.selectedShiftInProgress
+                                || (new Date() < new Date(store.selectedPatient.nextShift.time)
+                                    && new Date() > new Date(store.selectedShift.shiftStartTime))) ? (
                                 <Box sx={{ display: "flex" }}>
                                     <Typography variant="body1" color={theme.palette.primary.main}>
                                         Add handover

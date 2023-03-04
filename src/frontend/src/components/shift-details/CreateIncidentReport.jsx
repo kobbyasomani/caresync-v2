@@ -1,11 +1,23 @@
+import { useGlobalContext } from "../../utils/globalUtils";
 import IncidentReportForm from "../forms/IncidentReportForm";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 
 const CreateIncidentReport = () => {
+    const { store } = useGlobalContext();
     return (
         <>
             <Typography variant="h3" component="p">Incident Reports</Typography>
-            <IncidentReportForm />
+            <Box sx={{ mt: 1 }}>
+                {store.selectedShiftInProgress ? (
+                    <IncidentReportForm />
+                ) : (
+                    new Date(store.selectedShift.shiftEndTime) > new Date() ? (
+                        <Typography variant="body1">
+                            You'll be able to create incident reports once the shift starts.
+                        </Typography>
+                    ) : null
+                )}
+            </Box>
         </>
     )
 }

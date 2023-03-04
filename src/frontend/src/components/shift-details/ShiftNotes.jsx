@@ -8,19 +8,26 @@ const ShiftNotes = () => {
     return (
         <>
             <Typography variant="h3" component="p">Shift Notes</Typography>
-            {store.selectedShift.shiftNotes ? (
-                <Box sx={{ pt: 1 }}>
+            <Box sx={{ mt: 1 }}>
+                {store.selectedShift.shiftNotes ? (
                     <Typography variant="body1">
                         {store.selectedShift.shiftNotes.shiftNotesText}
                     </Typography>
-                </Box>
-            ) : store.user._id === store.selectedShift.carer._id ? (
-                <ShiftNotesForm />
-            ) : (
-                <Typography variant="body1">
-                    There are no shift notes for this shift.
-                </Typography>
-            )}
+                ) : store.user._id === store.selectedShift.carer._id
+                    && new Date(store.selectedShift.shiftEndTime) > new Date() ? (
+                    store.selectedShiftInProgress ? (
+                        <ShiftNotesForm />
+                    ) : (
+                        <Typography variant="body1">
+                            You can add shift notes here once the shift starts.
+                        </Typography>
+                    )
+                ) : (
+                    <Typography variant="body1">
+                        There are no shift notes for this shift.
+                    </Typography>
+                )}
+            </Box>
         </>
     )
 }

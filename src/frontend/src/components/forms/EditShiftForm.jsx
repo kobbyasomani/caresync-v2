@@ -89,7 +89,7 @@ export const EditShiftForm = () => {
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
         }
-    }, []);
+    }, [store.selectedShift.shiftEndTime]);
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
@@ -106,7 +106,7 @@ export const EditShiftForm = () => {
                 // Set the updated shift as the selected shift
                 dispatch({
                     type: "setSelectedShift",
-                    data: shifts[shifts.length - 1]
+                    data: shift
                 });
 
                 // Show success alert
@@ -136,7 +136,7 @@ export const EditShiftForm = () => {
         <>
             <Form form={form}
                 setForm={setForm}
-                legend="New shift details"
+                legend="Update shift details"
                 buttonText="Update shift"
                 postURL={`/shift/${store.selectedShift._id}`}
                 method="PUT"
