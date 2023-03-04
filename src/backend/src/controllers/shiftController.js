@@ -45,7 +45,7 @@ const getPatientShifts = asyncHandler(async (req, res) => {
   }
 
   // Find all shifts for the current patient. Join carer first/last name
-  const patientShifts = await Shift.find({patient: patient.id}).populate("carer", "firstName lastName" )
+  const patientShifts = await Shift.find({patient: patient.id}).populate("carer", "firstName lastName" ).sort({shiftStartTime: 1})
   
   res.status(200).json(patientShifts);
 });
