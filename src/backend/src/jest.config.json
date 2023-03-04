@@ -10,5 +10,6 @@
   ],
 
   "collectCoverage": true,
-  "coverageDirectory": "./"
+  "coverageDirectory": "./",
+  "globalSetup": "./utils/jestGlobalSetup.js"
 }
