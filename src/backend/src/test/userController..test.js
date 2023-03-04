@@ -6,6 +6,7 @@ require("dotenv").config();
 let cookie;
 
 beforeAll(async () => {
+  mongoose.set("strictQuery", false);
   await mongoose.connect(process.env.MONGO_URI);
 
   const response = await request(app).post("/user/login").send({
@@ -60,6 +61,34 @@ describe("POST /user/register", () => {
       });
       expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe("invalid email format", () => {
+    test("respond with message about improper email", async () => {
+      const res = await request(app).post("/user/register").send({
+        firstName: "John",
+        lastName: "Doe",
+        password: "password",
+        email: "notemailformat",
+      });
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe(
+        "User validation failed: email: Please add an email"
+      );
+    });
+  });
+
+  describe("invalid password length", () => {
+    test("respond with message about improper email", async () => {
+      const res = await request(app).post("/user/register").send({
+        firstName: "John",
+        lastName: "Doe",
+        password: "pass",
+        email: "email@email.com",
+      });
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe("Passwords must be more than 8 characters long");
     });
   });
 });
@@ -146,6 +175,8 @@ describe("GET /user", () => {
         .set("Cookie", cookie)
         .send({});
       expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty("coordinator");
+      expect(response.body).toHaveProperty("carer");
     });
   });
 

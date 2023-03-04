@@ -4,7 +4,7 @@ const Patient = require("../models/patientModel");
 
 //----- New Route Function------//
 // @desc Create patient
-// @route POST /patient/
+// @route POST /patient
 // @access private
 const createPatient = asyncHandler(async (req, res) => {
   const { firstName, lastName } = req.body;
@@ -95,6 +95,11 @@ const deletePatient = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Deleted patient ${req.params.id}` });
 });
 
+
+//----- New Route Function------//
+// @desc Get patient
+// @route GET /patient/:id
+// @access private
 const getPatientInfo = asyncHandler(async (req, res) => {
   const patient = await Patient.findById(req.params.id)
     .select("-shifts")
@@ -118,7 +123,7 @@ const getPatientInfo = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  // Create and set a value for isCoordinator fo use in setting state on the front end
+  // Create and set a value for isCoordinator for use in setting state on the front end
   if (patient.coordinator.toString() == user.id) {
     patient["isCoordinator"] = true;
   } else {
