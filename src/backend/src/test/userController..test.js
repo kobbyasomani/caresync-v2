@@ -6,6 +6,7 @@ require("dotenv").config();
 let cookie;
 
 beforeAll(async () => {
+  mongoose.set("strictQuery", false);
   await mongoose.connect(process.env.MONGO_URI);
 
   const response = await request(app).post("/user/login").send({

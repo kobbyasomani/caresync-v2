@@ -1,14 +1,12 @@
 const express = require("express");
 const dotenv = require('dotenv').config()
 const {errorHandler} = require('./middleware/errorMiddleware')
-const connectDB = require('./config/db')
 const cookieParser = require("cookie-parser");
-const PORT = process.env.PORT || 5000;
 const cors = require("cors");
 const cloudinary = require('cloudinary').v2;
 
 
-connectDB()
+// connectDB()
 
 const app = express();
 
@@ -35,8 +33,6 @@ app.use('/shift', require('./routes/shiftRoutes'))
 app.use(errorHandler)
 
 
-app.listen(PORT, () => {
-  console.log("Server Started");
-});
 
-module.exports = app;
+module.exports = app
+ 
