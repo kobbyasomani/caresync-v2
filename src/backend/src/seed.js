@@ -75,14 +75,14 @@ const seedPatients = [
     firstName: "Sandra",
     lastName: "Frank",
     coordinator: "63f0b95a0098e28d58f7a25d",
-    carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
+    carers: ["63f0b95a0098e28d58f7a2d5"],
   },
   {
     _id: "63f01efe3b5704fa0aa3ddc4",
     firstName: "Jerry",
     lastName: "Hendricks",
     coordinator: "63f0b95a0098e28d58f7a25d",
-    carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
+    carers: ["63f0b95a0098e28d58f7a2d5"],
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc5",

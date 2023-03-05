@@ -124,7 +124,7 @@ describe("DELETE carer/remove/:patientID/:carerID", () => {
         )
         .set("Cookie", cookie)
         .send({});
-      expect(response.body.carers).toHaveLength(0);
+      expect(response.body.carers).toHaveLength(1);
       expect(response.statusCode).toBe(200);
     });
   });

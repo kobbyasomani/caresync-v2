@@ -33,7 +33,11 @@
 ### Detailed Description of Libraries:
 [Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub) 
 
-*Notice: Copies of documentation are located in docs directory.*
+<br>
+
+*General Notice: Copies of documentation are located in docs directory.*
+
+*Testing Notice: Please seed the database before running tests.*
 
 
 <br>
