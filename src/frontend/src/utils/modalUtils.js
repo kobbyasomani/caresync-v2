@@ -40,7 +40,8 @@ const modalReducer = (state, action) => {
             return {
                 ...state,
                 modalIsOpen: false,
-                drawerIsOpen: false
+                drawerIsOpen: false,
+                confirmationIsOpen: false,
             }
 
         default: return state

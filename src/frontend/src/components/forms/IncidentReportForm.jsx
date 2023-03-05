@@ -5,7 +5,6 @@ import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
 import { TextField } from "@mui/material";
 
-
 const IncidentReportForm = () => {
     const initialState = {
         inputs: {
@@ -20,7 +19,7 @@ const IncidentReportForm = () => {
 
     // After creating the incident report, update the selected shift and incident
     const createIncidentReport = (response) => {
-        console.log(response);
+        // console.log(response);
         dispatch({
             type: "setSelectedShift",
             data: response

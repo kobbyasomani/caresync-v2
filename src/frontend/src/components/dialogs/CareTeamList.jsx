@@ -36,7 +36,7 @@ const CareTeamList = () => {
             setCarers(carers);
             setIsLoading(false);
         });
-    }, [store.selectedPatient]);
+    }, [store.selectedPatient, store.shifts]);
 
     // Open carer invitation dialog
     const addCarer = useCallback(() => {

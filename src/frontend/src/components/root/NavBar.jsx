@@ -1,20 +1,22 @@
 import { useCallback, React } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
+import LogoSmall from "../logo/LogoSmall";
 
 import {
     AppBar,
     Toolbar,
     Button,
-    Container
+    Container,
+    Box, useTheme
 } from "@mui/material";
-// import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 
 const NavBar = () => {
     const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const handleLogout = useCallback(() => {
         dispatch({
@@ -26,18 +28,8 @@ const NavBar = () => {
 
     const navItems = [
         {
-            name: "Home",
-            to: store.isAuth && store.selectedPatient ? "/calendar"
-                : store.isAuth && !store.selectedPatient ? "/"
-                    : "/"
-        },
-        {
             name: "About",
             to: "/about"
-        },
-        {
-            name: "Help",
-            to: "/help"
         }
     ]
 
@@ -45,6 +37,13 @@ const NavBar = () => {
         <AppBar id="nav-main" position="static">
             <Container>
                 <Toolbar>
+                    <Button component={RouterLink}
+                        to={store.isAuth && store.selectedPatient ? "/calendar"
+                            : store.isAuth && !store.selectedPatient ? "/"
+                                : "/"}>
+                        <LogoSmall />
+                    </Button>
+
                     {navItems.map((item, index) => (
                         <Button
                             component={RouterLink}
@@ -62,15 +61,11 @@ const NavBar = () => {
                             size="small"
                             onClick={handleLogout}
                             sx={{ ml: "auto" }}>
-                            Log out
+                            <Box sx={{ [theme.breakpoints.down("sm")]: { display: "none" } }}>
+                                Log out
+                            </Box>
                         </Button>
                     ) : (
-                        // <Button startIcon={<LoginIcon />}
-                        //     color="inherit"
-                        //     sx={{ ml: "auto" }}
-                        //     onClick={() => navigate("/login")}>
-                        //     Log in
-                        // </Button>
                         null
                     )
                     }
