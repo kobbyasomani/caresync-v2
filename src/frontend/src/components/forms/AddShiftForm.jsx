@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import baseURL from "../../utils/baseUrl";
+import { getCarers } from "../../utils/apiUtils";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
-import { ButtonPrimary } from "../root/Buttons";
+import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
 
 import {
     TextField, Alert, Stack,
@@ -38,19 +39,12 @@ export const AddShiftForm = () => {
     const [carers, setCarers] = useState([]);
 
     // Get the carers for the selected patient
-    const getCarers = useCallback(() => {
-        fetch(`${baseURL}/patient/${store.selectedPatient._id}`, {
-            credentials: "include"
-        }).then((response => response.json()))
-            .then((data) => {
-                setCarers(data.patient.carers);
-                setIsLoading(false);
-            });
-    }, [store.selectedPatient]);
-
     useEffect(() => {
-        getCarers();
-    }, [getCarers]);
+        getCarers(store.selectedPatient._id).then(carers => {
+            setCarers(carers);
+            setIsLoading(false);
+        });
+    }, [store.selectedPatient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -135,9 +129,30 @@ export const AddShiftForm = () => {
         navigate("/calendar");
     }, [modalDispatch, navigate]);
 
-    // console.log(form);
+    useEffect(() => {
+        // Set shift creation modal text
+        if (carers.length === 0) {
+            // If the patient has no assigned carers, prompt the user to invite some
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: "No carers assigned",
+                    text: `It looks like this patient doesn't have any carers assigned yet.
+                Add some before creating a shift.`
+                }
+            });
+        } else {
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
+                    text: "Enter the details for a new shift on this date."
+                }
+            });
+        }
+    }, [modalDispatch, carers, store.selectedDate.start]);
 
-    return isLoading ? null : (
+    return isLoading ? null : carers.length > 0 ? (
         <>
             <Form form={form}
                 setForm={setForm}
@@ -217,6 +232,12 @@ export const AddShiftForm = () => {
                 null
             )}
         </>
+    ) : (
+        // If the patient has no assigned carers, prompt the user to invite some
+        <>
+            <ButtonAddCarer />
+        </>
+
     )
 }
 

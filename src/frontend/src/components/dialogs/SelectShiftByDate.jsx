@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { compareDates, dateAsObj } from "../../utils/dateUtils";
+import { compareDates, dateAsObj, minusHours } from "../../utils/dateUtils";
 
 import Shift from "../Shift";
 import { ButtonPrimary } from "../root/Buttons";
@@ -57,16 +57,8 @@ shift notes, and incident reports.`
     }, [modalDispatch, modalStore.activeModal.title, shifts.length, store.selectedDate])
 
     const addShift = useCallback(() => {
-        // Set shift creation modal text
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
-                text: "Enter the details for a new shift on this date."
-            }
-        });
         navigate("/calendar/add-shift");
-    }, [navigate, modalDispatch, store.selectedDate.start]);
+    }, [navigate]);
 
     return (
         <>
@@ -80,7 +72,9 @@ shift notes, and incident reports.`
             ) : (
                 null
             )}
-            {store.selectedPatient.coordinator === store.user._id ? (
+            {store.selectedPatient.coordinator === store.user._id
+                //Hide the 'add shift' button on past days
+                && dateAsObj(store.selectedDate.start) > minusHours(new Date(), 24) ? (
                 <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}>
                     Add Shift
                 </ButtonPrimary>

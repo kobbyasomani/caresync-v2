@@ -36,6 +36,12 @@ const modalReducer = (state, action) => {
                 prevDrawer: [...state.prevDrawer, state.activeDrawer],
                 activeDrawer: action.data
             }
+        case "closeAllModals":
+            return {
+                ...state,
+                modalIsOpen: false,
+                drawerIsOpen: false
+            }
 
         default: return state
     }

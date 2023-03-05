@@ -18,8 +18,11 @@ import Error from "./views/Error";
 import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
+import CareTeamList from "./components/dialogs/CareTeamList";
+
 import AddShiftForm from "./components/forms/AddShiftForm";
 import EditShiftForm from "./components/forms/EditShiftForm";
+import InviteCarerForm from "./components/forms/InviteCarerForm";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Theme as theme } from "./styles/Theme";
@@ -58,6 +61,14 @@ const router = createBrowserRouter([
                     path: "/calendar/edit-shift",
                     element: <EditShiftForm />
                   },
+                  {
+                    path: "/calendar/care-team",
+                    element: <CareTeamList />
+                  },
+                  {
+                    path: "/calendar/invite-carer",
+                    element: <InviteCarerForm />
+                  },
                 ]
               }
             ]
@@ -73,6 +84,10 @@ const router = createBrowserRouter([
         element: <Verification />,
       },
       {
+        path: "/addCarer/:token",
+        element: <Verification />,
+      },
+      {
         path: "/about",
         element: <About />
       },
@@ -85,9 +100,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  console.log("rendering app")
   /* FOR SECURITY: 
-  Refactor these hooks to fetch authenticated
-  session data from backend-server */
+  Refactor these hooks in future to set and fetch
+  authenticated session data from backend server */
 
   // Global state handler
   const GlobalProvider = ({ children }) => {

@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
+import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
-
-import { Typography, Stack, Box } from "@mui/material"
-
 import SelectedPatient from "../components/SelectedPatient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 
+import { Typography, Stack, Box, IconButton, Tooltip } from "@mui/material"
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Fetch all patient shifts and add them to state
     useEffect(() => {
@@ -108,13 +111,46 @@ export const Calendar = () => {
             data: prevShifts
         });
     }, [store.shifts, store.selectedPatient, dispatch]);
-
     // console.log(store.featuredShift.shiftStartTime);
+
+    const openCareTeamList = useCallback(() => {
+        navigate("/calendar/care-team");
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+    }, [modalDispatch, navigate]);
+
+    // Logout user if auth fails
+    useEffect(() => {
+        // console.log("authenticating: ", document.cookie.includes("authenticated=true"));
+        if (document.cookie.includes("authenticated=true") === false) {
+            dispatch({
+                type: "logout",
+            });
+            modalDispatch({
+                type: "closeAllModals"
+            });
+        }
+    }, [dispatch, modalDispatch, store]);
 
     return isLoading ? null : (
         store.selectedPatient && store.shifts ? (
             <>
-                <SelectedPatient />
+                <Stack direction="row" alignItems="center">
+                    <SelectedPatient />
+
+                    <Tooltip title="Care Team" placement="left" >
+                        <IconButton color="primary" size="large"
+                            sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
+                            variant="contained"
+                            id="care-team-button"
+                            onClick={openCareTeamList}
+                        >
+                            <Diversity3Icon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
 
                 <Box id="calendar">
                     <CalendarDayGrid />
@@ -135,7 +171,7 @@ export const Calendar = () => {
                     <section>
                         <Typography variant="h3">Recent Shifts</Typography>
                         <Stack spacing={2} sx={{ mt: 1 }}>
-                            {store.previousShifts.map(shift => {
+                            {store.previousShifts.slice(0, 2).map(shift => {
                                 return <Shift key={shift._id} shift={shift} />
                             })}
                         </Stack>
@@ -150,8 +186,8 @@ export const Calendar = () => {
 
                 <ShiftDetails isLoading={isLoading} />
             </>
-        ) : null
-    );
+        ) : <Navigate to="/" />
+    )
 }
 
 export default Calendar;

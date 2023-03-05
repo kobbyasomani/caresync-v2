@@ -130,11 +130,11 @@ const Overview = () => {
                                 <Typography variant="body1">
                                     {store.selectedShift.handoverNotes}
                                 </Typography>
-
-                            ) : store.user._id === store.selectedShift.carer._id
+                            ) : (store.user._id === store.selectedShift.carer._id
+                                && store.selectedPatient.nextShift !== null
                                 && (store.selectedShiftInProgress
-                                || (new Date() < new Date(store.selectedPatient.nextShift.time)
-                                    && new Date() > new Date(store.selectedShift.shiftStartTime))) ? (
+                                    || (new Date() < new Date(store.selectedPatient.nextShift.time)
+                                        && new Date() > new Date(store.selectedShift.shiftStartTime)))) ? (
                                 <Box sx={{ display: "flex" }}>
                                     <Typography variant="body1" color={theme.palette.primary.main}>
                                         Add handover

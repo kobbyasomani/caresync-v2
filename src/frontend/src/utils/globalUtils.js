@@ -10,7 +10,7 @@ const useGlobalContext = () => useContext(GlobalStateContext);
 // Global store in empty state
 const emptyStore = {
     isAuth: false,
-    user: "",
+    user: {},
     patients: {},
     selectedPatient: {},
     shifts: [],
@@ -34,7 +34,7 @@ const globalReducer = (state, action) => {
         case "login":
             return {
                 ...state,
-                isAuth: true,
+                isAuth: document.cookie.includes("authenticated=true"),
                 user: action.data
             }
         case "logout":
