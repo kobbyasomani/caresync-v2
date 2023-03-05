@@ -128,12 +128,12 @@ const loginUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         domain: process.env.COOKIE_URL,
-        sameSite: "none",
+        SameSite: "none",
       })
       .cookie("authenticated", "true", {
         secure: process.env.NODE_ENV === "production",
         domain: process.env.COOKIE_URL,
-        sameSite: "none",
+        SameSite: "none",
       });
   } else {
     res.status(400);
