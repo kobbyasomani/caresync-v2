@@ -85,7 +85,7 @@ const Verification = () => {
                     <Stack spacing={2}>
                         <Typography variant="h1">Care Team Verification</Typography>
                         <Alert severity="success" sx={{ alignItems: "center" }}>
-                            <Typography variant="h2">Success! You were added to the care team for &lt;PATIENT&gt;.</Typography>
+                            <Typography variant="h2">Success! You were added to the care team.</Typography>
                         </Alert>
                         <Link to="/" className="button-link">
                             <ButtonPrimary>

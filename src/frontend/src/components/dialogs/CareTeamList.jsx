@@ -43,7 +43,7 @@ const CareTeamList = () => {
         navigate("/calendar/invite-carer");
     }, [navigate]);
 
-    console.log(carers)
+    // console.log(carers)
 
     return isLoading ? <Loader /> : (
         <>

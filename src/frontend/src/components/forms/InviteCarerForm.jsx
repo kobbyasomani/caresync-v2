@@ -1,16 +1,18 @@
-import { useState, useCallback, useEffect, navigate } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
-import { ButtonPrimary } from "../root/Buttons";
+import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
 import { TextField, Alert } from "@mui/material";
 
 export const InviteCarerForm = () => {
     const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
+    const navigate = useNavigate();
 
     // Set the inital form state
     const initialState = {
@@ -50,7 +52,7 @@ export const InviteCarerForm = () => {
             data: "modal"
         });
         navigate("/calendar")
-    }, [modalDispatch]);
+    }, [modalDispatch, navigate]);
 
     return (
         <>
@@ -70,6 +72,9 @@ export const InviteCarerForm = () => {
                     required
                     mui="TextField" />
             </Form>
+            <ButtonSecondary onClick={() => navigate(-1)}>
+                Back to Care Team
+            </ButtonSecondary>
             {/* Display alerts */}
             {alerts.length > 0 ? (
                 <div>
@@ -81,7 +86,7 @@ export const InviteCarerForm = () => {
                         );
                     })}
                     <ButtonPrimary onClick={closeModal}>
-                        Continue
+                        Close
                     </ButtonPrimary>
                 </div>
             ) : (

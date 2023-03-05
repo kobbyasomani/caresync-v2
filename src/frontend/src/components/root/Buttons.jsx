@@ -1,5 +1,11 @@
-import React from 'react';
+import { React, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useModalContext } from "../../utils/modalUtils";
+
 import { Button, styled, ButtonGroup } from "@mui/material";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -49,4 +55,28 @@ export const ActionButtonGroup = ({ children }) => {
     }}>
         {children}
     </ButtonGroup>
+}
+
+// Add carer button (opens modal)
+export const ButtonAddCarer = () => {
+    const { modalDispatch } = useModalContext();
+    const navigate = useNavigate();
+
+    // Navigate to carer invitation dialog
+    const addCarer = useCallback(() => {
+        navigate("/calendar/invite-carer");
+
+        // Make sure the modal is open
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+    }, [navigate, modalDispatch]);
+
+    return (
+        <ButtonPrimary onClick={addCarer}
+            startIcon={<PersonAddIcon />}>
+            Add Carer
+        </ButtonPrimary>
+    );
 }

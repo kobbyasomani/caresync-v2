@@ -7,7 +7,7 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
-import { ButtonPrimary } from "../root/Buttons";
+import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
 
 import {
     TextField, Alert, Stack,
@@ -129,9 +129,30 @@ export const AddShiftForm = () => {
         navigate("/calendar");
     }, [modalDispatch, navigate]);
 
-    // console.log(form);
+    useEffect(() => {
+        // Set shift creation modal text
+        if (carers.length === 0) {
+            // If the patient has no assigned carers, prompt the user to invite some
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: "No carers assigned",
+                    text: `It looks like this patient doesn't have any carers assigned yet.
+                Add some before creating a shift.`
+                }
+            });
+        } else {
+            modalDispatch({
+                type: "setActiveModal",
+                data: {
+                    title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
+                    text: "Enter the details for a new shift on this date."
+                }
+            });
+        }
+    }, [modalDispatch, carers, store.selectedDate.start]);
 
-    return isLoading ? null : (
+    return isLoading ? null : carers.length > 0 ? (
         <>
             <Form form={form}
                 setForm={setForm}
@@ -211,6 +232,12 @@ export const AddShiftForm = () => {
                 null
             )}
         </>
+    ) : (
+        // If the patient has no assigned carers, prompt the user to invite some
+        <>
+            <ButtonAddCarer />
+        </>
+
     )
 }
 

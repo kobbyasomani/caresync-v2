@@ -17,8 +17,9 @@ const HandoverNotes = () => {
                 ) : store.user._id === store.selectedShift.carer._id ? (
                     // Handover can be edited during the shift and before the next shift
                     store.selectedShiftInProgress
-                        || (new Date() < new Date(store.selectedPatient.nextShift.time)
-                            && new Date() > new Date(store.selectedShift.shiftStartTime)) ? (
+                        || (store.selectedPatient.nextShift !== null
+                            && (new Date() < new Date(store.selectedPatient.nextShift.time)
+                                && new Date() > new Date(store.selectedShift.shiftStartTime))) ? (
                         <HandoverNotesForm />
                     ) : (
                         <Typography variant="body1">

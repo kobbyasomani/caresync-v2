@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
@@ -158,7 +158,7 @@ export const Calendar = () => {
                     <section>
                         <Typography variant="h3">Recent Shifts</Typography>
                         <Stack spacing={2} sx={{ mt: 1 }}>
-                            {store.previousShifts.map(shift => {
+                            {store.previousShifts.slice(0, 2).map(shift => {
                                 return <Shift key={shift._id} shift={shift} />
                             })}
                         </Stack>
@@ -173,8 +173,8 @@ export const Calendar = () => {
 
                 <ShiftDetails isLoading={isLoading} />
             </>
-        ) : null
-    );
+        ) : <Navigate to="/" replace />
+    )
 }
 
 export default Calendar;
