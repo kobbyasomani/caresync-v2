@@ -30,7 +30,10 @@ const SelectPatient = () => {
     // Fetch the list of patients for the logged-in user
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/user`, {
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+              },
         }).then(response => response.json())
             .then(patients => {
                 dispatch({
