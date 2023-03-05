@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import baseURL from "../../utils/baseUrl";
+import { getCarers } from "../../utils/apiUtils";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -37,19 +38,12 @@ export const EditShiftForm = () => {
     const [carers, setCarers] = useState([]);
 
     // Get the carers for the selected patient
-    const getCarers = useCallback(() => {
-        fetch(`${baseURL}/patient/${store.selectedPatient._id}`, {
-            credentials: "include"
-        }).then((response => response.json()))
-            .then((data) => {
-                setCarers(data.patient.carers);
-                setIsLoading(false);
-            });
-    }, [store.selectedPatient]);
-
     useEffect(() => {
-        getCarers();
-    }, [getCarers]);
+        getCarers(store.selectedPatient._id).then(carers => {
+            setCarers(carers);
+            setIsLoading(false);
+        });
+    }, [store.selectedPatient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {

@@ -45,6 +45,16 @@ const plusHours = (date, hours) => {
 }
 
 /**
+ * Subtracts a variable number of hours fom a date.
+ * @param {Date} date 
+ * @param {number} hours 
+ * @returns The date with the specified number of hours subtracted from it.
+ */
+const minusHours = (date, hours) => {
+    return new Date(date.setTime(date.getTime() - (hours * 60 * 60 * 1000)));
+}
+
+/**
  * Strip the seconds from a date object so that the time will be: HH:SS:00.
  * @param {Date} date The date object.
  * @returns The date object with 0 seconds on the time.
@@ -58,5 +68,6 @@ export {
     compareDates,
     dateAsObj,
     plusHours,
+    minusHours,
     zeroSeconds,
 }

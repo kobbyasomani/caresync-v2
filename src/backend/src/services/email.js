@@ -36,7 +36,7 @@ module.exports = {
                 from: process.env.EMAIL_ADDRESS,
                 to: email,
                 subject: `Hello ${name}, you have been invited to be a carer for ${patientName}`,
-                html: process.env.BASE_URL + `/addCarer?${token}`
+                html: process.env.BASE_URL + `/addCarer/${token}`
             })
         } catch (error) {
             console.log(error)

@@ -18,8 +18,11 @@ import Error from "./views/Error";
 import SelectPatient from "./views/SelectPatient";
 import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
+import CareTeamList from "./components/dialogs/CareTeamList";
+
 import AddShiftForm from "./components/forms/AddShiftForm";
 import EditShiftForm from "./components/forms/EditShiftForm";
+import InviteCarerForm from "./components/forms/InviteCarerForm";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Theme as theme } from "./styles/Theme";
@@ -58,6 +61,14 @@ const router = createBrowserRouter([
                     path: "/calendar/edit-shift",
                     element: <EditShiftForm />
                   },
+                  {
+                    path: "/calendar/care-team",
+                    element: <CareTeamList />
+                  },
+                  {
+                    path: "/calendar/invite-carer",
+                    element: <InviteCarerForm />
+                  },
                 ]
               }
             ]
@@ -70,6 +81,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/emailVerification/:token",
+        element: <Verification />,
+      },
+      {
+        path: "/addCarer/:token",
         element: <Verification />,
       },
       {
