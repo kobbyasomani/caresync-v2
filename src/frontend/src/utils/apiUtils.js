@@ -7,8 +7,11 @@ import baseURL from "./baseUrl";
  * `firstName`, and `lastName` properties.
  */
 const getCarers = async (patientId) => {
-    const carers = await fetch(`${baseURL}/patient/${patientId}`, {
-        credentials: "include"
+    const carers = await fetch(`${process.env.REACT_APP_API_URL}/patient/${patientId}`, {
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+          },
     }).then((response => response.json()))
         .then(data => data.patient.carers)
     return carers
@@ -20,8 +23,11 @@ const getCarers = async (patientId) => {
  * @returns {array} An array of shift objects.
  */
 const getAllShifts = async (patientId) => {
-    const shifts = await fetch(`${baseURL}/shift/${patientId}`, {
-        credentials: "include"
+    const shifts = await fetch(`${process.env.REACT_APP_API_URL}/shift/${patientId}`, {
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+          },
     }).then(response => response.json())
     return shifts
 }
