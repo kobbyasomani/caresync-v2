@@ -5,7 +5,7 @@ import { useGlobalContext } from "../utils/globalUtils";
 
 import {
     Card, CardContent, CardActionArea,
-    Typography, Box, IconButton, useTheme
+    Typography, Box, IconButton, Tooltip, useTheme
 } from "@mui/material"
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ForumIcon from '@mui/icons-material/Forum';
@@ -70,18 +70,24 @@ const Shift = ({ featured, shift }) => {
                 pr: 1,
                 [theme.breakpoints.down("sm")]: { display: "none" },
             }}>
-                <IconButton className="shift-button-handover" data-testid="handover"
-                    onClick={() => openShift("handover notes")}>
-                    <ForumIcon />
-                </IconButton>
-                <IconButton className="shift-button-notes" data-testid="notes"
-                    onClick={() => openShift("shift notes")}>
-                    <DescriptionIcon />
-                </IconButton>
-                <IconButton className="shift-button-incidents" data-testid="incidents"
-                    onClick={() => openShift("incident reports")}>
-                    <ReportIcon />
-                </IconButton>
+                <Tooltip title="Handover">
+                    <IconButton className="shift-button-handover" data-testid="handover"
+                        onClick={() => openShift("handover notes")}>
+                        <ForumIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Shift Notes">
+                    <IconButton className="shift-button-notes" data-testid="notes"
+                        onClick={() => openShift("shift notes")}>
+                        <DescriptionIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Incident Reports">
+                    <IconButton className="shift-button-incidents" data-testid="incidents"
+                        onClick={() => openShift("incident reports")}>
+                        <ReportIcon />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Card>
     );
