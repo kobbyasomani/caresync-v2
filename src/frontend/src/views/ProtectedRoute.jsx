@@ -1,56 +1,22 @@
-// import { useCallback } from "react";
+import { useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useGlobalContext } from "../utils/globalUtils";
-// import baseURL from "../utils/baseUrl";
 
 const ProtectedRoute = () => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
 
-
-    /**
-     * Authenticates the user when attempting to access protected routes.
-     */
-    // const authUser = useCallback(async () => {
-    //     // Authenticate with back-end server via request cookie
-    //     // console.log(`Authenticating user...`);
-    //     let isAuth = false;
-    //     const response = await fetch(`${baseURL}/user/auth`, {
-    //         credentials: "include",
-    //     });
-    //     isAuth = response.status === 200;
-    //     // console.log(`user authentication: ${isAuth ? "success!" : "unauthorised"}`);
-
-    //     // Update authentication status in store if it has changed
-    //     if (isAuth !== store.isAuth) {
-    //         dispatch({
-    //             type: "setIsAuth",
-    //             data: isAuth
-    //         });
-    //     };
-
-    //     // If user does not pass server-side auth, log them out on client side
-    //     if (isAuth === false) {
-    //         dispatch({
-    //             type: "resetStore"
-    //         });
-    //         navigate("/");
-    //     }
-    // }, [dispatch, store.isAuth, navigate,]);
-
-    // useEffect(() => {
-    //     authUser();
-    // }, [authUser]);
+    // Check the authentication cookie when attempting to access protected routes.
+    useEffect(() => {
+        if (store.isAuth === false) {
+            dispatch({
+                type: "logout",
+                data: document.cookie.includes("authenticated=true")
+            });
+        }
+    }, [dispatch, store.isAuth]);
 
     return store.isAuth ? (
-        <>
-            {/* <p style={{
-                color: "red",
-                // position: "absolute",
-                margin: "0",
-                padding: "0",
-            }}><small>&lt;ProtectedRoute &#92;&gt;</small></p> */}
-            <Outlet />
-        </>
+        <Outlet />
     ) : <Navigate to="/" replace />
 }
 

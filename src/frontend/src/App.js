@@ -100,9 +100,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  console.log("rendering app")
   /* FOR SECURITY: 
-  Refactor these hooks to fetch authenticated
-  session data from backend-server */
+  Refactor these hooks in future to set and fetch
+  authenticated session data from backend server */
 
   // Global state handler
   const GlobalProvider = ({ children }) => {

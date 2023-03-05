@@ -1,7 +1,8 @@
 import React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../utils/globalUtils";
+import { useModalContext } from "../utils/modalUtils";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
@@ -10,20 +11,32 @@ import { Theme as theme } from "../styles/Theme";
 
 const Patient = () => {
     const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
     const { _id, firstName, lastName } = store.selectedPatient;
     const navigate = useNavigate();
-
-    // let caringFor;
 
     const switchPatient = useCallback(() => {
         // Unset selected patient
         dispatch({
             type: "setSelectedPatient",
-            data: ""
+            data: {}
         });
         // Navigate to patient selection
         navigate("/");
     }, [dispatch, navigate])
+
+    // Logout user if auth fails
+    useEffect(() => {
+        // console.log("authenticating: ", document.cookie.includes("authenticated=true"));
+        if (document.cookie.includes("authenticated=true") === false) {
+            dispatch({
+                type: "logout",
+            });
+            modalDispatch({
+                type: "closeAllModals"
+            });
+        }
+    }, [dispatch, modalDispatch, store.selectedPatient]);
 
     return (
         <Card variant="outlined" id={_id} className="patient selected">

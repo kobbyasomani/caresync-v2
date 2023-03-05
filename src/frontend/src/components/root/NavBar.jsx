@@ -21,6 +21,7 @@ const NavBar = () => {
             type: "logout",
         });
         navigate("/");
+        window.location.reload();
     }, [dispatch, navigate]);
 
     const navItems = [
