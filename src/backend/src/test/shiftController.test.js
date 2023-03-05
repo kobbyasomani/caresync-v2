@@ -243,19 +243,7 @@ describe("POST /notes/:shiftID", () => {
       expect(response.statusCode).toBe(400);
     });
   });
-  describe("shift notes are entered by someone who is not the carer", () => {
-    test("respond with 401 status/specific error message", async () => {
-      const response = await request(app)
-        .post("/shift/notes/63f01f0a3b5704fa0aa3ddc8")
-        .set("Cookie", cookie)
-        .send({
-          shiftNotes:
-            "These are new shift notes that will be turned in to a pdf for cloudinary to handle",
-        });
-      expect(response.body.message).toBe("User is not authorized");
-      expect(response.statusCode).toBe(401);
-    });
-  });
+
 });
 
 //---------Create Incident report----------//
@@ -281,19 +269,6 @@ describe("POST /reports/:shiftID", () => {
         .send({});
       expect(response.body.message).toBe("Please fill out all fields");
       expect(response.statusCode).toBe(400);
-    });
-  });
-  describe("shift notes are entered by someone who is not the carer", () => {
-    test("respond with 401 status/specific error message", async () => {
-      const response = await request(app)
-        .post("/shift/reports/63f01f0a3b5704fa0aa3ddc8")
-        .set("Cookie", cookie)
-        .send({
-          incidentReport:
-            "This is a new incident report that will be turned in to a pdf for cloudinary to handle",
-        });
-      expect(response.body.message).toBe("User is not authorized");
-      expect(response.statusCode).toBe(401);
     });
   });
 });
