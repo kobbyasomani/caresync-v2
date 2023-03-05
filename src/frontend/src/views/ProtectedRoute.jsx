@@ -1,11 +1,11 @@
 // import { useCallback } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import { useGlobalContext } from "../utils/globalUtils";
 // import baseURL from "../utils/baseUrl";
 
 const ProtectedRoute = () => {
     const { store } = useGlobalContext();
-    const navigate = useNavigate();
+
 
     /**
      * Authenticates the user when attempting to access protected routes.
