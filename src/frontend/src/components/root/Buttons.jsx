@@ -1,4 +1,5 @@
-import { React, useCallback } from "react";
+import { useCallback } from "react";
+import  React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
