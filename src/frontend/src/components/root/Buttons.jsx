@@ -1,11 +1,12 @@
 import { React, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 
-import { Button, styled, ButtonGroup } from "@mui/material";
+import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -79,4 +80,35 @@ export const ButtonAddCarer = () => {
             Add Carer
         </ButtonPrimary>
     );
+}
+
+// Download resource icon button
+/**
+ * A button that downloads the resource located at the proved URL on click.
+ * @param {string} resourceURL The URL of the resource to download.
+ * @param {string} tooltip The tooltip to display when hovering over the button
+ * @returns 
+ */
+export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
+    const downloadResource = useCallback(() => {
+        const anchor = document.createElement("a");
+        anchor.href = resourceURL;
+        anchor.setAttribute("download", filename);
+        anchor.setAttribute("target", "_blank");
+        anchor.click();
+    }, []);
+
+    return (
+        <Tooltip title={tooltip} placement="left" >
+            <IconButton color="primary" size="large"
+                sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
+                variant="contained"
+                id="care-team-button"
+                onClick={downloadResource}
+                {...rest}
+            >
+                <CloudDownloadIcon />
+            </IconButton>
+        </Tooltip>
+    )
 }
