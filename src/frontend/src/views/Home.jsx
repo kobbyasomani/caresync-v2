@@ -41,7 +41,8 @@ export default function Login() {
         <Outlet />
     ) : (
         <>
-            <Typography variant="h1">CareSync</Typography>
+            <h1><LogoLarge alt="CareSync Logo" /></h1>
+            {/* <Typography variant="h1" sx={{ visiblity: "none" }}>CareSync</Typography> */}
             <Typography variant="h2">Easy care work scheduling and shift notes.</Typography>
             <Form
                 form={form}
