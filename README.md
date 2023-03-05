@@ -9,19 +9,28 @@
 
 [Network Graph (Git Branch History Visualizer)](https://github.com/kobbyasomani/T3A2-B/network) 
 
+<br>
+
 ### Requirement 4:
 
 [Trello Board/Project Management](https://trello.com/b/sumrXare/ca-t3a2-full-stack-app) 
+
+<br>
 
 ### Requirement 8:
 [Development Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vTL-rH06GU6Pyd_SV-H6eW2llPhoaKgSBs3rVJciimOcESErXd-L-TaZQEZ3EZkVc_IqcrkNr5JKqXG/pub) 
 
 [Production Testing Documentation](https://docs.google.com/document/d/e/2PACX-1vQocsVZHsc5zsYX680dnam778h8RqwmzPLpsMplk9FdCqGUeCwSEaSHjwY3LatMTaIUaAVRFEJMZ1yL/pub) 
 
+<br>
+
 ### Detailed Description of Libraries:
 [Packages Overview](https://docs.google.com/document/d/e/2PACX-1vSJ3N-Hk3BfI30AdX5GXhAToYu6EY7uqb8qLrq8qY_YjwQ503kHb76G29op7wgQrZPDa7Y_RTLdhRM8/pub) 
 
 *Notice: Copies of documentation are located in docs directory.*
+
+
+<br>
 
 
 ## Description of Website
