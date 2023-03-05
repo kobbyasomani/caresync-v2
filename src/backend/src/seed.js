@@ -82,6 +82,7 @@ const seedPatients = [
     firstName: "Jerry",
     lastName: "Hendricks",
     coordinator: "63f0b95a0098e28d58f7a25d",
+    carers: ["63f0b95a0098e28d58f7a2d5", "63f0b95a0098e28d58f7a2d1"],
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc5",
@@ -162,11 +163,29 @@ const seedShifts = [
     shiftEndTime: "2023-03-07T15:00:00Z",
   },
   {
+    _id: "63f01f0a3b5704fa0aa3ddf4",
+    patient: "63f01efe3b5704fa0aa3ddc2",
+    coordinator: "63f0b95a0098e28d58f7a25d",
+    coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-03-10T09:00:00Z",
+    shiftEndTime: "2023-03-15T15:00:00Z",
+  },
+  {
+    _id: "63f01f0a3b5704fa0aa3ddf5",
+    patient: "63f01efe3b5704fa0aa3ddc2",
+    coordinator: "63f0b95a0098e28d58f7a25d",
+    coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
+    carer: "63f0b95a0098e28d58f7a2d5",
+    shiftStartTime: "2023-03-16T09:00:00Z",
+    shiftEndTime: "2023-03-21T15:00:00Z",
+  },
+  {
     _id: "63f01f0a3b5704fa0aa3ddc8",
     patient: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
-    carer: "63f0b95a0098e28d58f7a2d1",
+    carer: "63f0b95a0098e28d58f7a25d",
     shiftStartTime: "2023-03-01T09:00:00Z",
     shiftEndTime: "2023-03-01T15:00:00Z",
   },
@@ -216,6 +235,42 @@ const seedShifts = [
     shiftEndTime: "2023-03-07T15:00:00Z",
   },
   {
+    _id: "63f01f0a3b5704fa0aa3ddb5",
+    patient: "63f01efe3b5704fa0aa3ddd1",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-03-10T09:00:00Z",
+    shiftEndTime: "2023-03-13T15:00:00Z",
+  },
+  {
+    _id: "63f01f0a3b5704fa0aa3ddf3",
+    patient: "63f01f0a3b5704fa0aa3ddc5",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-03-24T09:00:00Z",
+    shiftEndTime: "2023-03-26T15:00:00Z",
+  },
+  {
+    _id: "63f01f0a3b5704fa0aa3ddb4",
+    patient: "63f01f0a3b5704fa0aa3ddc5",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-03-10T09:00:00Z",
+    shiftEndTime: "2023-03-15T15:00:00Z",
+  },
+  {
+    _id: "63f01f0a3b5704fa0aa3ddb3",
+    patient: "63f01f0a3b5704fa0aa3ddc5",
+    coordinator: "63f0b95a0098e28d58f7a25e",
+    coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
+    carer: "63f0b95a0098e28d58f7a25d",
+    shiftStartTime: "2023-03-15T09:00:00Z",
+    shiftEndTime: "2023-03-20T15:00:00Z",
+  },
+  {
     _id: "63f01f0a3b5704fa0aa3ddc7",
     patient: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
@@ -235,8 +290,7 @@ const seedShifts = [
     carer: "63f0b95a0098e28d58f7a25d",
     shiftStartTime: "2023-02-25T09:00:00Z",
     shiftEndTime: "2023-02-25T15:00:00Z",
-  },
-  
+  } 
 ];
 
 

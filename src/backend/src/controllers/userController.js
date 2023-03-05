@@ -127,13 +127,20 @@ const loginUser = asyncHandler(async (req, res) => {
       .cookie("access_token", loginToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        domain: process.env.COOKIE_URL,
+        sameSite: "none",
       })
-      .cookie("authenticated", "true");
+      .cookie("authenticated", "true", {
+        secure: process.env.NODE_ENV === "production",
+        domain: process.env.COOKIE_URL,
+        sameSite: "none",
+      });
   } else {
     res.status(400);
     throw new Error("Invalid credentials");
   }
 
+  
   res.status(200).json({
     message: "Logged in Successfully",
     user: {
