@@ -3,8 +3,8 @@ import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import baseURL from "../utils/baseUrl";
 import SelectedPatient from "../components/SelectedPatient";
+import { getAllShifts } from "../utils/apiUtils";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
@@ -21,9 +21,7 @@ export const Calendar = () => {
 
     // Fetch all patient shifts and add them to state
     useEffect(() => {
-        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
-            credentials: "include"
-        }).then(response => response.json())
+        getAllShifts(store.selectedPatient._id)
             .then((shifts) => {
                 // console.log(shifts);
                 dispatch({

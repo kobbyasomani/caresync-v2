@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import  React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
@@ -97,7 +96,7 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
         anchor.setAttribute("download", filename);
         anchor.setAttribute("target", "_blank");
         anchor.click();
-    }, []);
+    }, [filename, resourceURL]);
 
     return (
         <Tooltip title={tooltip} placement="left" >
@@ -111,5 +110,5 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
                 <CloudDownloadIcon />
             </IconButton>
         </Tooltip>
-    )
+    );
 }

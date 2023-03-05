@@ -100,7 +100,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  console.log("rendering app")
   /* FOR SECURITY: 
   Refactor these hooks in future to set and fetch
   authenticated session data from backend server */
@@ -151,6 +150,7 @@ function App() {
     const [modalStore, modalDispatch] = useModalReducer({
       modalIsOpen: false,
       drawerIsOpen: false,
+      confirmationIsOpen: false,
       activeModal: {
         title: "This is an empty modal",
         text: `You can use the modalDispatch function to set the active modal 
@@ -158,7 +158,7 @@ function App() {
 the Calendar view will be the component returned by the URL path (/calendar/<path>).`
       },
       prevDrawer: [],
-      activeDrawer: ""
+      activeDrawer: "",
     });
     return (
       <ModalContext.Provider value={{ modalStore, modalDispatch }}>
