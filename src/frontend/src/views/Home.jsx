@@ -3,6 +3,7 @@ import { useMemo, useCallback } from "react";
 import { useGlobalContext } from "../utils/globalUtils";
 import { Outlet, Link } from "react-router-dom";
 import Form from "../components/forms/Form";
+import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
 
 import { TextField, Typography } from "@mui/material";
