@@ -41,8 +41,8 @@ export default function Login() {
         <Outlet />
     ) : (
         <Container maxWidth="md">
-            <h1 style={{ textAlign: "center" }}><LogoLarge alt="CareSync Logo"
-                sx={{ display: "block", margin: "0 auto" }} /></h1>
+            <h1 style={{ textAlign: "center", width: "85%", margin: "0 auto" }}><LogoLarge alt="CareSync Logo"
+                sx={{ display: "block", margin: "0 auto"}} /></h1>
             <Typography variant="h2" textAlign="center"
                 sx={{ mb: "2rem" }}>
                 Support work made easy.
