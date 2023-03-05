@@ -2,7 +2,7 @@
 
 ## Project Links
 
-\<Deployed Site link goes here\>
+[Deployed Site](https://caresync-production.up.railway.app)
 
 ### Requirement 3:
 [Github Repository](https://github.com/kobbyasomani/T3A2-B)

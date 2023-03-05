@@ -1,8 +1,34 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import'@testing-library/jest-dom'
-import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../components/root/Buttons";
+import '@testing-library/jest-dom'
+import "@testing-library/dom"
+import { ButtonAddCarer, ButtonDownload, ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../components/root/Buttons";
 
+
+
+describe('ActionButtonGroup component', () => {
+  test('renders with children', () => {
+    render(
+      <ActionButtonGroup>
+        <ButtonPrimary>Back</ButtonPrimary>
+        <ButtonPrimary>Next</ButtonPrimary>
+      </ActionButtonGroup>
+    );
+    const backButtonElement = screen.getByText(/Back/i);
+    const nextButtonElement = screen.getByText(/Next/i);
+    expect(backButtonElement).toBeInTheDocument();
+    expect(nextButtonElement).toBeInTheDocument();
+  });
+});
+
+
+describe('ButtonDownload component', () => {
+  test('renders without crashing', () => {
+    render(<ButtonDownload resourceURL="https://example.com" filename="example" />);
+    const buttonElement = screen.getByRole('button');
+    expect(buttonElement).toBeInTheDocument();
+  });
+});
 
 
 describe('Buttons', () => {
