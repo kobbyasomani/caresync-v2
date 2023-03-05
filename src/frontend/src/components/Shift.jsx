@@ -16,7 +16,7 @@ const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
     // Get modal dispatch method to toggle modal from shift card
     const { modalDispatch } = useModalContext();
-
+    
     const theme = useTheme();
 
     // Open the shift details drawer and close the modal

@@ -6,6 +6,7 @@ import { useGlobalContext } from "../utils/globalUtils";
 const ProtectedRoute = () => {
     const { store } = useGlobalContext();
 
+
     /**
      * Authenticates the user when attempting to access protected routes.
      */

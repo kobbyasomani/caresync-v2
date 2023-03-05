@@ -1,5 +1,5 @@
-import { useState, useCallback, navigate } from "react";
-import { Link } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { Link, useNavigate} from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -11,6 +11,7 @@ import { TextField, Alert } from "@mui/material";
 
 export const AddPatient = () => {
     // console.log("rendering AddPatient");
+    const navigate = useNavigate();
 
     const { dispatch } = useGlobalContext();
 
