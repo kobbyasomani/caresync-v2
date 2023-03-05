@@ -1,13 +1,25 @@
 import { useGlobalContext } from "../../utils/globalUtils";
 import ShiftNotesForm from "../forms/ShiftNotesForm";
-import { Typography, Box } from "@mui/material";
+import { ButtonDownload } from "../root/Buttons";
+
+import { Typography, Box, Stack } from "@mui/material";
 
 const ShiftNotes = () => {
     const { store } = useGlobalContext();
 
     return (
         <>
-            <Typography variant="h3" component="p">Shift Notes</Typography>
+            <Stack direction="row" alignItems="flex-end">
+                <Typography variant="h3" component="p">Shift Notes</Typography>
+                {store.selectedShift.shiftNotes ? (
+                    <ButtonDownload
+                        tooltip="Download Shift Notes"
+                        filename="Shift Notes"
+                        resourceURL={store.selectedShift.shiftNotes.shiftNotesPDF}
+                    />
+                ) : null
+                }
+            </Stack>
             <Box sx={{ mt: 1 }}>
                 {store.selectedShift.shiftNotes ? (
                     <Typography variant="body1">

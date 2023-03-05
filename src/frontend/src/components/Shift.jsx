@@ -5,7 +5,7 @@ import { useGlobalContext } from "../utils/globalUtils";
 
 import {
     Card, CardContent, CardActionArea,
-    Typography, Box, IconButton, useTheme
+    Typography, Box, IconButton, Tooltip, useTheme
 } from "@mui/material"
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ForumIcon from '@mui/icons-material/Forum';
@@ -16,11 +16,11 @@ const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
     // Get modal dispatch method to toggle modal from shift card
     const { modalDispatch } = useModalContext();
-    
+
     const theme = useTheme();
 
     // Open the shift details drawer and close the modal
-    const openShift = useCallback(() => {
+    const openShift = useCallback((subPanel) => {
         dispatch({
             type: "setSelectedShift",
             data: shift
@@ -33,6 +33,12 @@ const Shift = ({ featured, shift }) => {
             type: "open",
             data: "drawer"
         });
+        if (subPanel) {
+            modalDispatch({
+                type: "setActiveDrawer",
+                data: subPanel
+            });
+        }
     }, [modalDispatch, dispatch, shift]);
 
     return (
@@ -44,7 +50,7 @@ const Shift = ({ featured, shift }) => {
                     gridTemplate: "repeat(2, 1fr) / auto 1fr",
                     alignItems: "center"
                 }}>
-                    <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2", [theme.breakpoints.down("sm")]: { gridArea: "1 / 1 / 2 / 3" }}}>
+                    <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2", [theme.breakpoints.down("sm")]: { gridArea: "1 / 1 / 2 / 3" } }}>
                         <EventNoteIcon sx={{ mr: "0.5rem" }} />
                         <Typography variant="body1" className="shift-date">
                             {shift ? new Date(shift.shiftStartTime)
@@ -59,16 +65,29 @@ const Shift = ({ featured, shift }) => {
                 </CardContent>
             </CardActionArea>
             {/* Show shift buttons only on larger screen sizes */}
-            <Box className="shift-buttons" sx={{ flexShrink: 0, [theme.breakpoints.down("sm")]: { display: "none" } }}>
-                <IconButton className="shift-button-handover" data-testid="handover">
-                    <ForumIcon />
-                </IconButton>
-                <IconButton className="shift-button-notes" data-testid="notes">
-                    <DescriptionIcon />
-                </IconButton>
-                <IconButton className="shift-button-incidents" data-testid="incidents">
-                    <ReportIcon />
-                </IconButton>
+            <Box className="shift-buttons" sx={{
+                flexShrink: 0,
+                pr: 1,
+                [theme.breakpoints.down("sm")]: { display: "none" },
+            }}>
+                <Tooltip title="Handover">
+                    <IconButton className="shift-button-handover" data-testid="handover"
+                        onClick={() => openShift("handover notes")}>
+                        <ForumIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Shift Notes">
+                    <IconButton className="shift-button-notes" data-testid="notes"
+                        onClick={() => openShift("shift notes")}>
+                        <DescriptionIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Incident Reports">
+                    <IconButton className="shift-button-incidents" data-testid="incidents"
+                        onClick={() => openShift("incident reports")}>
+                        <ReportIcon />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Card>
     );
