@@ -6,7 +6,7 @@ import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
 
-import { TextField, Typography } from "@mui/material";
+import { TextField, Typography, Container } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
@@ -40,9 +40,13 @@ export default function Login() {
     return store.isAuth ? (
         <Outlet />
     ) : (
-        <>
-            <h1><LogoLarge alt="CareSync Logo" /></h1>
-            <Typography variant="h2">Easy care work scheduling and shift notes.</Typography>
+        <Container maxWidth="md">
+            <h1 style={{ textAlign: "center" }}><LogoLarge alt="CareSync Logo"
+                sx={{ display: "block", margin: "0 auto" }} /></h1>
+            <Typography variant="h2" textAlign="center"
+                sx={{ mb: "2rem" }}>
+                Support work made easy.
+            </Typography>
             <Form
                 form={form}
                 setForm={setForm}
@@ -77,6 +81,6 @@ export default function Login() {
                     Sign up
                 </ButtonPrimary>
             </Link>
-        </>
+        </Container>
     );
 }

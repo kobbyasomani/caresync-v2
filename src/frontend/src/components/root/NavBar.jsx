@@ -28,6 +28,12 @@ const NavBar = () => {
 
     const navItems = [
         {
+            name: "Home",
+            to: store.isAuth && store.selectedPatient ? "/calendar"
+                : store.isAuth && !store.selectedPatient ? "/"
+                    : "/"
+        },
+        {
             name: "About",
             to: "/about"
         }
