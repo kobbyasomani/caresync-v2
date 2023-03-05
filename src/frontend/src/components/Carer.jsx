@@ -46,12 +46,15 @@ const Carer = ({ carer }) => {
                 borderRadius: `${theme.shape.borderRadius}px`,
                 p: "1rem"
             }}>
-                <Tooltip title="Remove carer" placement="left">
-                    <IconButton onClick={confirmRemoveCarer}
-                        sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
-                        <PersonRemoveIcon />
-                    </IconButton>
-                </Tooltip>
+                {store.user._id === store.selectedPatient.coordinator ? (
+                    <Tooltip title="Remove carer" placement="left">
+                        <IconButton onClick={confirmRemoveCarer}
+                            sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
+                            <PersonRemoveIcon />
+                        </IconButton>
+                    </Tooltip>
+                ) : null
+                }
 
                 <ListItemAvatar>
                     <Avatar sx={{ width: "2.7rem", height: "2.7rem", backgroundColor: theme.palette.primary.main }}>

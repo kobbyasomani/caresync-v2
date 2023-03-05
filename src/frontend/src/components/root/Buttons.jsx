@@ -6,7 +6,6 @@ import { useModalContext } from "../../utils/modalUtils";
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -108,17 +107,6 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
                 {...rest}
             >
                 <CloudDownloadIcon />
-            </IconButton>
-        </Tooltip>
-    );
-}
-
-// Delete Button
-export const ButtonDelete = ({ tooltip, ...rest }) => {
-    return (
-        <Tooltip title={tooltip || "Delete"} placement="left">
-            <IconButton color="primary" size="small" {...rest} component="div">
-                <DeleteForeverIcon />
             </IconButton>
         </Tooltip>
     );
