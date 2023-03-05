@@ -5,7 +5,6 @@ import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
 import { TextField } from "@mui/material";
 
-
 const IncidentReportForm = () => {
     const initialState = {
         inputs: {
