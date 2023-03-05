@@ -37,7 +37,7 @@
 
 *General Notice: Copies of documentation are located in docs directory.*
 
-*Testing Notice: PLease seed the database before running tests.*
+*Testing Notice: Please seed the database before running tests.*
 
 
 <br>
