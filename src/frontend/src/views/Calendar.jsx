@@ -121,6 +121,19 @@ export const Calendar = () => {
         });
     }, [modalDispatch, navigate]);
 
+    // Logout user if auth fails
+    useEffect(() => {
+        // console.log("authenticating: ", document.cookie.includes("authenticated=true"));
+        if (document.cookie.includes("authenticated=true") === false) {
+            dispatch({
+                type: "logout",
+            });
+            modalDispatch({
+                type: "closeAllModals"
+            });
+        }
+    }, [dispatch, modalDispatch, store]);
+
     return isLoading ? null : (
         store.selectedPatient && store.shifts ? (
             <>
@@ -173,7 +186,7 @@ export const Calendar = () => {
 
                 <ShiftDetails isLoading={isLoading} />
             </>
-        ) : <Navigate to="/" replace />
+        ) : <Navigate to="/" />
     )
 }
 

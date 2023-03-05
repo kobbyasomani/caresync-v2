@@ -47,7 +47,7 @@ export const AddPatient = () => {
             data: ""
         });
         navigate("/");
-    }, [dispatch]);
+    }, [dispatch, navigate]);
 
     // Close the modal when navigating to the calendar
     const { modalDispatch } = useModalContext();
