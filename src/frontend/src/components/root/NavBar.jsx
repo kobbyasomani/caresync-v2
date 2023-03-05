@@ -1,7 +1,7 @@
 import { useCallback, React } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
-import LogoSmall from "../logo/LogoSmall";
+import IconSmall from "../logo/IconSmall";
 
 import {
     AppBar,
@@ -28,6 +28,12 @@ const NavBar = () => {
 
     const navItems = [
         {
+            name: "Home",
+            to: store.isAuth && store.selectedPatient ? "/calendar"
+                : store.isAuth && !store.selectedPatient ? "/"
+                    : "/"
+        },
+        {
             name: "About",
             to: "/about"
         }
@@ -41,7 +47,7 @@ const NavBar = () => {
                         to={store.isAuth && store.selectedPatient ? "/calendar"
                             : store.isAuth && !store.selectedPatient ? "/"
                                 : "/"}>
-                        <LogoSmall />
+                        <IconSmall />
                     </Button>
 
                     {navItems.map((item, index) => (
