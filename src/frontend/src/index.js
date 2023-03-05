@@ -4,7 +4,7 @@ import App from './App';
 import "./styles/index.css"
 import axios from "axios";
 
-axios.defaults.baseURL = `https://t3a2-b-production.up.railway.app`;
+axios.defaults.baseURL = `${process.env.REACT_APP_BASE_URL}:${process.env.REACT_APP_BACKEND_PORT}`;
 axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
