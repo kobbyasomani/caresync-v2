@@ -9,6 +9,7 @@ import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
+import Loader from "../components/logo/Loader";
 
 import { Typography, Stack, Box, IconButton, Tooltip } from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
@@ -132,7 +133,7 @@ export const Calendar = () => {
         }
     }, [dispatch, modalDispatch, store]);
 
-    return isLoading ? null : (
+    return isLoading ? <Loader /> : (
         store.selectedPatient && store.shifts ? (
             <>
                 <Stack direction="row" alignItems="center">
