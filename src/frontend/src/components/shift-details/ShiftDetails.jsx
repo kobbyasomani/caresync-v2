@@ -8,6 +8,7 @@ import HandoverNotes from "./HandoverNotes";
 import IncidentReports from "./IncidentReports";
 import CreateIncidentReport from "./CreateIncidentReport";
 import IncidentReportDetails from "./IncidentReportDetails";
+import Loader from "../logo/Loader";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
@@ -133,7 +134,7 @@ const ShiftDetails = ({ isLoading, children }) => {
         });
     }, [store.selectedShift, dispatch]);
 
-    return isLoading ? null : (
+    return isLoading ? <Loader /> : (
         <div>
             <>
                 <Drawer
