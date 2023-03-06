@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import baseURL from "../../utils/baseUrl";
 import { getCarers } from "../../utils/apiUtils";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -8,6 +7,7 @@ import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
+import Loader from "../logo/Loader";
 
 import {
     TextField, Alert, Stack,
@@ -88,8 +88,11 @@ export const AddShiftForm = () => {
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
         // Update patient shifts from the database
-        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
-            credentials: "include"
+        fetch(`${process.env.REACT_APP_API_URL}/shift/${store.selectedPatient._id}`, {
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
         }).then(response => response.json())
             .then((shifts) => {
                 dispatch({
@@ -152,7 +155,7 @@ export const AddShiftForm = () => {
         }
     }, [modalDispatch, carers, store.selectedDate.start]);
 
-    return isLoading ? null : carers.length > 0 ? (
+    return isLoading ? <Loader /> : carers.length > 0 ? (
         <>
             <Form form={form}
                 setForm={setForm}

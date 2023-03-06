@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import baseURL from "../../utils/baseUrl";
 import { getCarers } from "../../utils/apiUtils";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -8,6 +7,7 @@ import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary } from "../root/Buttons";
+import Loader from "../logo/Loader";
 
 import {
     TextField, Alert, Stack,
@@ -88,8 +88,11 @@ export const EditShiftForm = () => {
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
         // Update patient shifts from the database
-        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
-            credentials: "include"
+        fetch(`${process.env.REACT_APP_API_URL}/shift/${store.selectedPatient._id}`, {
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
         }).then(response => response.json())
             .then((shifts) => {
                 dispatch({
@@ -126,7 +129,7 @@ export const EditShiftForm = () => {
 
     // console.log(form);
 
-    return isLoading ? null : (
+    return isLoading ? <Loader /> : (
         <>
             <Form form={form}
                 setForm={setForm}
