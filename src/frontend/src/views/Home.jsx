@@ -6,15 +6,26 @@ import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
 
-import { TextField, Typography, Container } from "@mui/material";
+import { TextField, Typography, Container, useMediaQuery, useTheme } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
-    // console.log("rendering Home");
-
     // Get the global state and set form state
     const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
+
+    // Responsive styles
+    const theme = useTheme();
+    const matchXs = useMediaQuery(theme.breakpoints.up("xs"));
+    const matchSm = useMediaQuery(theme.breakpoints.up("sm"));
+    const matchMd = useMediaQuery(theme.breakpoints.up("md"));
+    const matchLg = useMediaQuery(theme.breakpoints.up("lg"));
+    const matchXl = useMediaQuery(theme.breakpoints.up("xl"));
+    const xsUp = theme.breakpoints.up("xs");
+    const smUp = theme.breakpoints.up("sm");
+    const mdUp = theme.breakpoints.up("md");
+    const lgUp = theme.breakpoints.up("lg");
+    const xlUp = theme.breakpoints.up("xl");
 
     // Set the initial form state
     const initialState = useMemo(() => {
@@ -41,10 +52,17 @@ export default function Login() {
         <Outlet />
     ) : (
         <Container maxWidth="md">
-            <h1 style={{ textAlign: "center", width: "85%", margin: "0 auto" }}><LogoLarge alt="CareSync Logo"
-                sx={{ display: "block", margin: "0 auto"}} /></h1>
+            <Typography sx={{
+                textAlign: "center", margin: "0 auto", mt: 2,
+                [xsUp]: {
+                    width: "clamp(25rem, 35vw, 35rem)",
+                    maxWidth: "100%",
+                },
+            }}>
+                <LogoLarge alt="CareSync logo" />
+            </Typography>
             <Typography variant="h2" textAlign="center"
-                sx={{ mb: "2rem" }}>
+                sx={{ mb: 3 }}>
                 Support work made easy.
             </Typography>
             <Form
@@ -81,6 +99,6 @@ export default function Login() {
                     Sign up
                 </ButtonPrimary>
             </Link>
-        </Container>
+        </Container >
     );
 }
