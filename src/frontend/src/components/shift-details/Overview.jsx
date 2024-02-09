@@ -132,8 +132,18 @@ const Overview = () => {
                                 </Typography>
                             ) : (store.user._id === store.selectedShift.carer._id
                                 && (store.selectedShiftInProgress
-                                    || (new Date() < new Date(store.selectedPatient.nextShift.time)
-                                        && new Date() > new Date(store.selectedShift.shiftStartTime)))) ? (
+                                    // Client has a next shift that has not yet started
+                                    // and selected shift has ended.
+                                    || (store.selectedPatient.nextShift &&
+                                        new Date() < new Date(store.selectedPatient.nextShift.time)
+                                        && new Date() > new Date(store.selectedShift.shiftStartTime)
+                                    )
+                                    // Client has no shifts after selected shift and
+                                    // selected shift has ended (add handover anyway).
+                                    || (!store.selectedPatient.nextShift
+                                        && store.shifts[store.shifts.length - 1]._id === store.selectedShift._id
+                                        && new Date() > new Date(store.selectedShift.shiftStartTime)
+                                    ))) ? (
                                 <Box sx={{ display: "flex" }}>
                                     <Typography variant="body1" color={theme.palette.primary.main}>
                                         Add handover
