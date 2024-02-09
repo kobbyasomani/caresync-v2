@@ -16,6 +16,7 @@ import {
 import TimePicker from "../DateTimePicker";
 import dayjs from "dayjs";
 import { plusHours } from "../../utils/dateUtils";
+import baseURL from "../../utils/baseUrl";
 
 
 export const AddShiftForm = () => {
@@ -88,7 +89,7 @@ export const AddShiftForm = () => {
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
         // Update patient shifts from the database
-        fetch(`${process.env.REACT_APP_API_URL}/shift/${store.selectedPatient._id}`, {
+        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
