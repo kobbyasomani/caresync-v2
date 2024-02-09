@@ -31,7 +31,7 @@ const ShiftNotes = () => {
                         <ShiftNotesForm />
                     ) : (
                         <Typography variant="body1">
-                            You can add shift notes here once the shift starts.
+                            You'll be able to add shift notes once the shift starts.
                         </Typography>
                     )
                 ) : (
