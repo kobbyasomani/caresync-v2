@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const Patient = require("../models/patientModel");
+const Client = require("../models/clientModel");
 const Shift = require("../models/shiftModel");
 const { cloudinaryUpload, createPDF } = require("../utils/pdf.utils");
 
@@ -20,39 +20,39 @@ const getUserShifts = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
-// @desc Get shifts for specified patient
-// @route GET /shift/:patientID
+// @desc Get shifts for specified client
+// @route GET /shift/:clientID
 // @access private
-const getPatientShifts = asyncHandler(async (req, res) => {
+const getClientShifts = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
-  // Search for patient with URL variable
-  const patient = await Patient.findById(req.params.patientID);
+  // Search for client with URL variable
+  const client = await Client.findById(req.params.clientID);
 
   // User Check
-  if (!patient) {
+  if (!client) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Client not found");
   }
 
   // Make sure logged in user matches the coordinator or carer
   if (
-    patient.coordinator.toString() !== user.id &&
-    !patient.carers.toString().includes(user.id)
+    client.coordinator.toString() !== user.id &&
+    !client.carers.toString().includes(user.id)
   ) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
-  // Find all shifts for the current patient. Join carer first/last name
-  const patientShifts = await Shift.find({patient: patient.id}).populate("carer", "firstName lastName" ).sort({shiftStartTime: 1})
+  // Find all shifts for the current client. Join carer first/last name
+  const clientShifts = await Shift.find({client: client.id}).populate("carer", "firstName lastName" ).sort({shiftStartTime: 1})
   
-  res.status(200).json(patientShifts);
+  res.status(200).json(clientShifts);
 });
 
 //----NEW ROUTE----//
-// @desc Create shift for specified patient
-// @route Post /shift/:patientID
+// @desc Create shift for specified client
+// @route Post /shift/:clientID
 // @access private
 const createShift = asyncHandler(async (req, res) => {
   const { carerID, shiftStartTime, shiftEndTime, coordinatorNotes } = req.body;
@@ -60,27 +60,27 @@ const createShift = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
   const user = await User.findById(req.user.id);
 
-  // Search for patient with URL variable
-  const patient = await Patient.findById(req.params.patientID);
+  // Search for client with URL variable
+  const client = await Client.findById(req.params.clientID);
 
-  // Patient Check
-  if (!patient) {
+  // Client Check
+  if (!client) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Client not found");
   }
 
-  // Search for patient with URL variable
+  // Search for client with URL variable
   const carer = await User.findById(carerID);
 
   // Make sure logged in user matches the coordinator
-  if (patient.coordinator.toString() !== user.id) {
+  if (client.coordinator.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
   // Create shift
   const shift = await Shift.create({
-    patient: patient._id,
+    client: client._id,
     coordinator: user.id,
     coordinatorNotes,
     carer: carer.id,
@@ -205,8 +205,8 @@ const createShiftNotes = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  // Get the patient name for the pdf document
-  const patient = await Patient.findById(shift.patient)
+  // Get the client name for the pdf document
+  const client = await Client.findById(shift.client)
     .select("firstName")
     .select("lastName");
 
@@ -218,15 +218,15 @@ const createShiftNotes = asyncHandler(async (req, res) => {
   // Create a pdf from the entered information
   const notesPDF = await createPDF(
     "Shift Notes",
-    patient.firstName,
-    patient.lastName,
+    client.firstName,
+    client.lastName,
     carer.firstName,
     carer.lastName,
     req.body.shiftNotes
   );
 
   // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(notesPDF, "shiftNotes", shift.patient);
+  const result = await cloudinaryUpload(notesPDF, "shiftNotes", shift.client);
 
   // Update shift with Cloudinary URL
   const updatedShift = await Shift.findByIdAndUpdate(
@@ -272,8 +272,8 @@ const createIncidentReport = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  // Get the patient name for the pdf document
-  const patient = await Patient.findById(shift.patient)
+  // Get the client name for the pdf document
+  const client = await Client.findById(shift.client)
     .select("firstName")
     .select("lastName");
 
@@ -285,8 +285,8 @@ const createIncidentReport = asyncHandler(async (req, res) => {
   // Create a pdf from the entered information
   const incidentPDF = await createPDF(
     "Incident Report",
-    patient.firstName,
-    patient.lastName,
+    client.firstName,
+    client.lastName,
     carer.firstName,
     carer.lastName,
     incidentReport
@@ -296,7 +296,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
   const result = await cloudinaryUpload(
     incidentPDF,
     "incidentReports",
-    shift.patient
+    shift.client
   );
 
   // Add new incident report to incident reports array.
@@ -321,7 +321,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
 
 module.exports = {
   getUserShifts,
-  getPatientShifts,
+  getClientShifts,
   createShift,
   updateShift,
   deleteShift,

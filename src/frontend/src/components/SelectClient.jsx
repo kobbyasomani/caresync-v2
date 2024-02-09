@@ -9,19 +9,19 @@ import PersonIcon from '@mui/icons-material/Person';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { Theme as theme } from "../styles/Theme";
 
-const Patient = () => {
+const Client = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const { _id, firstName, lastName } = store.selectedPatient;
+    const { _id, firstName, lastName } = store.selectedClient;
     const navigate = useNavigate();
 
-    const switchPatient = useCallback(() => {
-        // Unset selected patient
+    const switchClient = useCallback(() => {
+        // Unset selected client
         dispatch({
-            type: "setSelectedPatient",
+            type: "setSelectedClient",
             data: {}
         });
-        // Navigate to patient selection
+        // Navigate to client selection
         navigate("/");
     }, [dispatch, navigate])
 
@@ -36,13 +36,13 @@ const Patient = () => {
                 type: "closeAllModals"
             });
         }
-    }, [dispatch, modalDispatch, store.selectedPatient]);
+    }, [dispatch, modalDispatch, store.selectedClient]);
 
     return (
-        <Tooltip title="Switch Patient" placement="right" >
-            <Card variant="outlined" id={_id} className="patient selected">
+        <Tooltip title="Switch Client" placement="right" >
+            <Card variant="outlined" id={_id} className="client selected">
                 <CardActionArea
-                    onClick={switchPatient}
+                    onClick={switchClient}
                     sx={{
                         display: "grid",
                         gridTemplate: "repeat(2, auto) / auto 1fr",
@@ -68,4 +68,4 @@ const Patient = () => {
     );
 }
 
-export default Patient;
+export default Client;

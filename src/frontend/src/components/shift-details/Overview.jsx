@@ -135,7 +135,7 @@ const Overview = () => {
                                     // Client has a next shift that has not yet started
                                     // and selected shift has ended.
                                     || (store.shifts[store.shifts.length - 2]._id === store.selectedShift._id
-                                        && new Date() < new Date(store.selectedPatient.nextShift.time)
+                                        && new Date() < new Date(store.selectedClient.nextShift.time)
                                         && new Date() > new Date(store.selectedShift.shiftEndTime)
                                     )
                                     // Client has no shifts after selected shift (last shift)

@@ -5,37 +5,37 @@ import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea } from
 import PersonIcon from '@mui/icons-material/Person';
 import { Theme as theme } from "../styles/Theme";
 
-const Patient = ({ patient }) => {
+const Client = ({ client }) => {
     const { dispatch } = useGlobalContext();
     const navigate = useNavigate();
 
-    // Get the next shift date for patient and the associated carer
+    // Get the next shift date for client and the associated carer
     let caringFor;
     let nextShiftDate = () => {
-        if (patient.nextShift) {
-            if (typeof patient.nextShift === "string") {
-                return new Date(patient.nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+        if (client.nextShift) {
+            if (typeof client.nextShift === "string") {
+                return new Date(client.nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
             }
-            if (patient.nextShift.carerName === "You") {
+            if (client.nextShift.carerName === "You") {
                 caringFor = true;
             }
-            return new Date(patient.nextShift.time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+            return new Date(client.nextShift.time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
         }
         return "No upcoming shift";
     }
 
-    const selectPatient = (event) => {
+    const selectClient = (event) => {
         dispatch({
-            type: "setSelectedPatientById",
+            type: "setSelectedClientById",
             data: event.currentTarget.id
         });
-        // Redirect to calendar after selecting a patient
+        // Redirect to calendar after selecting a client
         navigate("/calendar");
     }
 
     return (
-        <Card variant="outlined" id={patient._id} className="patient"
-            onClick={selectPatient}>
+        <Card variant="outlined" id={client._id} className="client"
+            onClick={selectClient}>
             <CardActionArea sx={{
                 display: "flex",
                 justifyContent: "flex-start",
@@ -50,12 +50,12 @@ const Patient = ({ patient }) => {
                 </CardMedia>
                 <CardContent>
                     <Typography variant="body1" className="name" sx={{ fontWeight: "600" }}>
-                        {patient.firstName} {patient.lastName}
+                        {client.firstName} {client.lastName}
                     </Typography>
                     <Typography variant="body1" className="shift">
                         Next shift: {`${nextShiftDate()} 
-                        ${(patient.nextShift?.carerName
-                                && patient.nextShift.carerName !== "You") ? `(${patient.nextShift.carerName})`
+                        ${(client.nextShift?.carerName
+                                && client.nextShift.carerName !== "You") ? `(${client.nextShift.carerName})`
                                 : ""}`}
                     </Typography>
                     {caringFor ? (
@@ -69,4 +69,4 @@ const Patient = ({ patient }) => {
     );
 }
 
-export default Patient;
+export default Client;

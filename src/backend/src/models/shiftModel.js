@@ -12,9 +12,9 @@ const incidentReportSchema = mongoose.Schema({
 
 const shiftSchema = mongoose.Schema(
   {
-    patient: {
+    client: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Patient",
+      ref: "Client",
     },
     coordinator: {
       type: mongoose.Schema.Types.ObjectId,

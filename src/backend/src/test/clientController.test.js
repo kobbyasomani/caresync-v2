@@ -21,12 +21,12 @@ afterAll(async () => {
   await Promise.resolve().then(mongoose.connection.close());
 });
 
-//---------Create Patient----------//
-describe("POST /patient", () => {
+//---------Create Client----------//
+describe("POST /client", () => {
   describe("first and last name are given", () => {
-    test("respond with 201 status/new patient object", async () => {
+    test("respond with 201 status/new client object", async () => {
       const response = await request(app)
-        .post("/patient")
+        .post("/client")
         .set("Cookie", cookie)
         .send({
           firstName: "John",
@@ -41,7 +41,7 @@ describe("POST /patient", () => {
   describe("last name is missing", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
-        .post("/patient")
+        .post("/client")
         .set("Cookie", cookie)
         .send({
           firstName: "john",
@@ -53,7 +53,7 @@ describe("POST /patient", () => {
 
   describe("auth cookie is missing", () => {
     test("respond with 401 status/specific error message", async () => {
-      const response = await request(app).post("/patient").send({
+      const response = await request(app).post("/client").send({
         firstName: "john",
         lastName: "Stevens",
       });
@@ -63,34 +63,34 @@ describe("POST /patient", () => {
   });
 });
 
-//---------Get Patient Info----------//
-describe("GET /patient/:id", () => {
-  describe("valid patient ID is given in URL", () => {
-    test("respond with 200 status/patient object", async () => {
+//---------Get Client Info----------//
+describe("GET /client/:id", () => {
+  describe("valid client ID is given in URL", () => {
+    test("respond with 200 status/client object", async () => {
       const response = await request(app)
-        .get("/patient/63f01efe3b5704fa0aa3ddc2")
+        .get("/client/63f01efe3b5704fa0aa3ddc2")
         .set("Cookie", cookie)
         .send({});
-      expect(response.body).toHaveProperty("patient");
+      expect(response.body).toHaveProperty("client");
       expect(response.statusCode).toBe(200);
     });
   });
 
-  describe("invalid patient ID is given in URL", () => {
+  describe("invalid client ID is given in URL", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
-        .get("/patient/63f01efe3b5704fa0aa3ddc9")
+        .get("/client/63f01efe3b5704fa0aa3ddc9")
         .set("Cookie", cookie)
         .send({});
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
 
-  describe("When user is not affiliated with patient", () => {
+  describe("When user is not affiliated with client", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
-        .get("/patient/63f01f0a3b5704fa0aa3ddc3")
+        .get("/client/63f01f0a3b5704fa0aa3ddc3")
         .set("Cookie", cookie)
         .send({});
       expect(response.body.message).toBe("User is not authorized");
@@ -99,12 +99,12 @@ describe("GET /patient/:id", () => {
   });
 });
 
-//---------Update Patient----------//
-describe("PUT /patient/:id", () => {
-  describe("valid patient ID is given in URL", () => {
-    test("respond with 200 status/updated patient object", async () => {
+//---------Update Client----------//
+describe("PUT /client/:id", () => {
+  describe("valid client ID is given in URL", () => {
+    test("respond with 200 status/updated client object", async () => {
       const response = await request(app)
-        .put("/patient/63f01efe3b5704fa0aa3ddc2")
+        .put("/client/63f01efe3b5704fa0aa3ddc2")
         .set("Cookie", cookie)
         .send({
           firstName: "BIG TED",
@@ -114,23 +114,23 @@ describe("PUT /patient/:id", () => {
     });
   });
 
-  describe("invalid patient ID is given in URL", () => {
+  describe("invalid client ID is given in URL", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
-        .put("/patient/63f01efe3b5704fa0aa3ddc5")
+        .put("/client/63f01efe3b5704fa0aa3ddc5")
         .set("Cookie", cookie)
         .send({
           firstName: "BIG TED",
         });
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
 
-  describe("valid patient ID is given, but user is not coordinator", () => {
+  describe("valid client ID is given, but user is not coordinator", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
-        .put("/patient/63f01f0a3b5704fa0aa3ddc3")
+        .put("/client/63f01f0a3b5704fa0aa3ddc3")
         .set("Cookie", cookie)
         .send({
           firstName: "BIG TED",
@@ -141,36 +141,36 @@ describe("PUT /patient/:id", () => {
   });
 });
 
-//---------Delete Patient----------//
-describe("DELETE /patient/:id", () => {
-  describe("valid patient ID is given in URL", () => {
-    test("respond with 200 status/deleted patient ID", async () => {
+//---------Delete Client----------//
+describe("DELETE /client/:id", () => {
+  describe("valid client ID is given in URL", () => {
+    test("respond with 200 status/deleted client ID", async () => {
       const response = await request(app)
-        .delete("/patient/63f01efe3b5704fa0aa3ddc2")
+        .delete("/client/63f01efe3b5704fa0aa3ddc2")
         .set("Cookie", cookie)
         .send({});
       expect(response.body.message).toBe(
-        "Deleted patient 63f01efe3b5704fa0aa3ddc2"
+        "Deleted client 63f01efe3b5704fa0aa3ddc2"
       );
       expect(response.statusCode).toBe(200);
     });
   });
 
-  describe("invalid patient ID is given in URL", () => {
+  describe("invalid client ID is given in URL", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
-        .delete("/patient/63f01efe3b5704fa0aa3ddc5")
+        .delete("/client/63f01efe3b5704fa0aa3ddc5")
         .set("Cookie", cookie)
         .send({});
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
 
-  describe("valid patient ID is given, but user is not coordinator", () => {
+  describe("valid client ID is given, but user is not coordinator", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
-        .delete("/patient/63f01f0a3b5704fa0aa3ddc3")
+        .delete("/client/63f01f0a3b5704fa0aa3ddc3")
         .set("Cookie", cookie)
         .send({});
       expect(response.body.message).toBe("User is not authorized");

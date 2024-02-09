@@ -23,20 +23,20 @@ const CareTeamList = () => {
         modalDispatch({
             type: "setActiveModal",
             data: {
-                title: `Care team for ${store.selectedPatient.firstName} ${store.selectedPatient.lastName}`,
-                text: `These are the members of this patient's care team. You can 
+                title: `Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`,
+                text: `These are the members of this client's care team. You can 
                 invite users to the care team or remove them from here.`
             }
         });
-    }, [modalDispatch, store.selectedPatient]);
+    }, [modalDispatch, store.selectedClient]);
 
-    // Get the list of patient's carers
+    // Get the list of client's carers
     useEffect(() => {
-        getCarers(store.selectedPatient._id).then(carers => {
+        getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
             setIsLoading(false);
         });
-    }, [store.selectedPatient, store.shifts]);
+    }, [store.selectedClient, store.shifts]);
 
     // Open carer invitation dialog
     const addCarer = useCallback(() => {

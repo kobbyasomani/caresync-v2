@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const User = require("../models/userModel");
-const Patient = require("../models/patientModel");
+const Client = require("../models/clientModel");
 const emails = require("../services/email");
 
 //----- New Route Function------//
@@ -10,13 +10,13 @@ const emails = require("../services/email");
 // @route POST /invite/:id
 // @access private
 const sendCarerInvite = asyncHandler(async (req, res) => {
-  // Find patient with ID
-  const patient = await Patient.findById(req.params.id);
+  // Find client with ID
+  const client = await Client.findById(req.params.id);
 
-  // Patient Check
-  if (!patient) {
+  // Client Check
+  if (!client) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Client not found");
   }
 
   // Find carer with email
@@ -32,22 +32,22 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
 
   // Make sure logged in user matches the coordinator user
-  if (patient.coordinator.toString() !== user.id) {
+  if (client.coordinator.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
-  // Patient full name for email
-  const patientFullName = `${patient.firstName} ${patient.lastName}`;
+  // Client full name for email
+  const clientFullName = `${client.firstName} ${client.lastName}`;
 
   // ID for carer (email token)
   const carerID = carer.id;
 
-  // ID for patient (email token)
-  const patientID = patient.id;
+  // ID for client (email token)
+  const clientID = client.id;
 
-  // Generates JWT token for adding patient
-  const emailToken = jwt.sign({ carerID, patientID }, process.env.JWT_SECRET, {
+  // Generates JWT token for adding client
+  const emailToken = jwt.sign({ carerID, clientID }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 
@@ -55,7 +55,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
   emails.addCarerEmail(
     carer.firstName,
     req.body.email,
-    patientFullName,
+    clientFullName,
     emailToken
   );
 
@@ -66,7 +66,7 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
 });
 
 //----- New Route Function------//
-// @desc Adds carer to patient from email token
+// @desc Adds carer to client from email token
 // @route POST /add/:token
 // @access public
 const addCarer = asyncHandler(async (req, res) => {
@@ -74,18 +74,18 @@ const addCarer = asyncHandler(async (req, res) => {
   const decode = jwt_decode(req.params.token);
 
   // Set variables equal to token data
-  const { carerID, patientID } = decode;
+  const { carerID, clientID } = decode;
 
-  // Find patient with ID
-  const patient = await Patient.findById(patientID);
+  // Find client with ID
+  const client = await Client.findById(clientID);
 
   //  Find carer with email
   const carer = await User.findById(carerID);
 
-  // Patient Check
-  if (!patient) {
+  // Client Check
+  if (!client) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Client not found");
   }
 
   // Carer Check
@@ -96,13 +96,13 @@ const addCarer = asyncHandler(async (req, res) => {
 
   // Check if the carer has already been added to carers array
   // Add if they have not already been added
-  if (!patient.carers.includes(carerID)) {
-    const updatedPatient = await Patient.findByIdAndUpdate(
-      patientID,
+  if (!client.carers.includes(carerID)) {
+    const updatedClient = await Client.findByIdAndUpdate(
+      clientID,
       { $push: { carers: carerID } },
       { new: true }
     );
-    res.status(200).json(updatedPatient);
+    res.status(200).json(updatedClient);
   } else {
     res.status(400);
     throw new Error("Carer already exists");
@@ -110,24 +110,24 @@ const addCarer = asyncHandler(async (req, res) => {
 });
 
 //----- New Route Function------//
-// @desc Removes carer from patient
-// @route DELETE /remove/:patientID/:carerID
+// @desc Removes carer from client
+// @route DELETE /remove/:clientID/:carerID
 // @access private
 const removeCarer = asyncHandler(async (req, res) => {
-  // Find patient based on patient ID sent in route url
-  const patient = await Patient.findById(req.params.patientID);
+  // Find client based on client ID sent in route url
+  const client = await Client.findById(req.params.clientID);
 
-  // Patient Check
-  if (!patient) {
+  // Client Check
+  if (!client) {
     res.status(400);
-    throw new Error("Patient not found");
+    throw new Error("Client not found");
   }
 
   // Find current user
   const user = await User.findById(req.user.id);
 
   // Make sure logged in user matches the coordinator user
-  if (patient.coordinator.toString() !== user.id) {
+  if (client.coordinator.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
   }
@@ -135,15 +135,15 @@ const removeCarer = asyncHandler(async (req, res) => {
   // Set carer ID to the carerID sent in route url
   const carerID = req.params.carerID;
 
-  // Check if the carer exists for the patient
+  // Check if the carer exists for the client
   // Remove if they do exist
-  if (patient.carers.includes(carerID)) {
-    const updatedPatient = await Patient.findByIdAndUpdate(
-      patient.id,
+  if (client.carers.includes(carerID)) {
+    const updatedClient = await Client.findByIdAndUpdate(
+      client.id,
       { $pull: { carers: carerID } },
       { new: true }
     );
-    res.status(200).json(updatedPatient);
+    res.status(200).json(updatedClient);
   } else {
     res.status(400);
     throw new Error("Carer does not exist");

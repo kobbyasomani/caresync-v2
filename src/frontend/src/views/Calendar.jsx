@@ -3,7 +3,7 @@ import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import SelectedPatient from "../components/SelectedPatient";
+import SelectClient from "../components/SelectClient";
 import { getAllShifts } from "../utils/apiUtils";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
@@ -20,9 +20,9 @@ export const Calendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Fetch all patient shifts and add them to state
+    // Fetch all client shifts and add them to state
     useEffect(() => {
-        getAllShifts(store.selectedPatient._id)
+        getAllShifts(store.selectedClient._id)
             .then((shifts) => {
                 // console.log(shifts);
                 dispatch({
@@ -31,7 +31,7 @@ export const Calendar = () => {
                 });
                 setIsLoading(false);
             });
-    }, [store.selectedPatient, dispatch]);
+    }, [store.selectedClient, dispatch]);
 
     // Set the featured shift (closest upcoming)
     useEffect(() => {
@@ -69,7 +69,7 @@ export const Calendar = () => {
             type: "setFeaturedShift",
             data: featuredShift
         });
-    }, [store.shifts, store.selectedPatient, dispatch]);
+    }, [store.shifts, store.selectedClient, dispatch]);
 
     // Set the previous shifts (previous two shifts before today)
     useEffect(() => {
@@ -109,7 +109,7 @@ export const Calendar = () => {
             type: "setPreviousShifts",
             data: prevShifts
         });
-    }, [store.shifts, store.selectedPatient, dispatch]);
+    }, [store.shifts, store.selectedClient, dispatch]);
     // console.log(store.featuredShift.shiftStartTime);
 
     const openCareTeamList = useCallback(() => {
@@ -134,10 +134,10 @@ export const Calendar = () => {
     }, [dispatch, modalDispatch, store]);
 
     return isLoading ? <Loader /> : (
-        store.selectedPatient && store.shifts ? (
+        store.selectedClient && store.shifts ? (
             <>
                 <Stack direction="row" alignItems="center">
-                    <SelectedPatient />
+                    <SelectClient />
 
                     <Tooltip title="Care Team" placement="left" >
                         <IconButton color="primary" size="large"

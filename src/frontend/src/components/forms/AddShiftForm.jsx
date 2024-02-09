@@ -39,13 +39,13 @@ export const AddShiftForm = () => {
     const [alerts, setAlerts] = useState([]);
     const [carers, setCarers] = useState([]);
 
-    // Get the carers for the selected patient
+    // Get the carers for the selected client
     useEffect(() => {
-        getCarers(store.selectedPatient._id).then(carers => {
+        getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
             setIsLoading(false);
         });
-    }, [store.selectedPatient]);
+    }, [store.selectedClient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -88,8 +88,8 @@ export const AddShiftForm = () => {
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
-        // Update patient shifts from the database
-        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
+        // Update client shifts from the database
+        fetch(`${baseURL}/shift/${store.selectedClient._id}`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export const AddShiftForm = () => {
 
                 // Show success alert
                 setAlerts(prev => [...prev, `A new shift was added for 
-                ${store.selectedPatient.firstName} ${store.selectedPatient.lastName} on 
+                ${store.selectedClient.firstName} ${store.selectedClient.lastName} on 
                 ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
                 from ${new Date(shift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
                 – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
@@ -118,7 +118,7 @@ export const AddShiftForm = () => {
                 // Finished loading
                 setIsLoading(false);
             });
-    }, [dispatch, store.selectedPatient]);
+    }, [dispatch, store.selectedClient]);
 
     // Close the modal and open the shift details drawer with the new shift
     const manageShift = useCallback(() => {
@@ -136,12 +136,12 @@ export const AddShiftForm = () => {
     useEffect(() => {
         // Set shift creation modal text
         if (carers.length === 0) {
-            // If the patient has no assigned carers, prompt the user to invite some
+            // If the client has no assigned carers, prompt the user to invite some
             modalDispatch({
                 type: "setActiveModal",
                 data: {
                     title: "No carers assigned",
-                    text: `It looks like this patient doesn't have any carers assigned yet.
+                    text: `It looks like this client doesn't have any carers assigned yet.
                 Add some before creating a shift.`
                 }
             });
@@ -162,7 +162,7 @@ export const AddShiftForm = () => {
                 setForm={setForm}
                 legend="New shift details"
                 buttonText="Create shift"
-                postURL={`/shift/${store.selectedPatient._id}`}
+                postURL={`/shift/${store.selectedClient._id}`}
                 validation={validation}
                 callback={updateShifts}
             >
@@ -237,7 +237,7 @@ export const AddShiftForm = () => {
             )}
         </>
     ) : (
-        // If the patient has no assigned carers, prompt the user to invite some
+        // If the client has no assigned carers, prompt the user to invite some
         <>
             <ButtonAddCarer />
         </>

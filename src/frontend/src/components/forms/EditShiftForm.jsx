@@ -38,13 +38,13 @@ export const EditShiftForm = () => {
     const [alerts, setAlerts] = useState([]);
     const [carers, setCarers] = useState([]);
 
-    // Get the carers for the selected patient
+    // Get the carers for the selected client
     useEffect(() => {
-        getCarers(store.selectedPatient._id).then(carers => {
+        getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
             setIsLoading(false);
         });
-    }, [store.selectedPatient]);
+    }, [store.selectedClient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -88,8 +88,8 @@ export const EditShiftForm = () => {
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
-        // Update patient shifts from the database
-        fetch(`${baseURL}/shift/${store.selectedPatient._id}`, {
+        // Update client shifts from the database
+        fetch(`${baseURL}/shift/${store.selectedClient._id}`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const EditShiftForm = () => {
                 // Finished loading
                 setIsLoading(false);
             });
-    }, [dispatch, store.selectedPatient]);
+    }, [dispatch, store.selectedClient]);
 
     // Close the modal and open the shift details drawer with the new shift
     const manageShift = useCallback(() => {

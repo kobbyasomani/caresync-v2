@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const jwt_decode = require("jwt-decode");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
-const Patient = require("../models/patientModel");
+const Client = require("../models/clientModel");
 const Shift = require("../models/shiftModel");
 const emails = require("../services/email");
 
@@ -154,29 +154,29 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc Get user data
 // @route GET /user
 // @access private
-const getUserPatients = asyncHandler(async (req, res) => {
+const getUserClients = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).lean();
 
-  // Gets all patients user is a coordinator for
-  const patientCoordinator = await Patient.find({})
+  // Gets all clients user is a coordinator for
+  const clientCoordinator = await Client.find({})
     .where({ coordinator: user._id })
     .select("-shifts")
     .lean();
 
-  // Gets all patients user is a carer for
-  const patientCarer = await Patient.find({})
+  // Gets all clients user is a carer for
+  const clientCarer = await Client.find({})
     .where({ carers: user._id })
     .select("-shifts")
     .lean();
 
-  // Loop through all patients the current user is coordinator for
-  // Find next shift for that patient and return nextShift(date/carer name) added to patient object
-  const patientCoordinatorShift = await Promise.all(
-    patientCoordinator.map(async (patient) => {
+  // Loop through all clients the current user is coordinator for
+  // Find next shift for that client and return nextShift(date/carer name) added to client object
+  const clientCoordinatorShift = await Promise.all(
+    clientCoordinator.map(async (client) => {
       const nextCoordinatorShift = await Shift.aggregate([
         {
           $match: {
-            patient: patient._id,
+            client: client._id,
             coordinator: user._id,
             shiftStartTime: { $gte: new Date() },
           },
@@ -184,42 +184,42 @@ const getUserPatients = asyncHandler(async (req, res) => {
         { $sort: { shiftStartTime: 1 } },
         { $limit: 1 },
       ]);
-      // If there is a shift scheduled for the patient, get the information for it
+      // If there is a shift scheduled for the client, get the information for it
       // Else return next shift as null
       if (nextCoordinatorShift.length > 0) {
         const carerName = await User.find({
           _id: nextCoordinatorShift[0].carer,
         }).select("firstName lastName");
-        // If the Carer for the patient is the current user, add the next shift with "You" as the carer name
+        // If the Carer for the client is the current user, add the next shift with "You" as the carer name
         // Else, add the next shift with the carer name
         if (
           new Object(nextCoordinatorShift[0].carer).toString() ==
           new Object(user._id).toString()
         ) {
-          patient["nextShift"] = [
+          client["nextShift"] = [
             { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
           ];
         } else {
-          patient["nextShift"] = {
+          client["nextShift"] = {
             time: nextCoordinatorShift[0].shiftStartTime,
             carerName: `${carerName[0].firstName} ${carerName[0].lastName}`,
           };
         }
       } else {
-        patient["nextShift"] = null;
+        client["nextShift"] = null;
       }
-      return patient;
+      return client;
     })
   );
 
-  // Loop through all patients the current user is carer for
-  // Find next shift for that patient and return nextShift added to patient object
-  const patientCarerShift = await Promise.all(
-    patientCarer.map(async (patient) => {
+  // Loop through all clients the current user is carer for
+  // Find next shift for that client and return nextShift added to client object
+  const clientCarerShift = await Promise.all(
+    clientCarer.map(async (client) => {
       const nextCarerShift = await Shift.aggregate([
         {
           $match: {
-            patient: patient._id,
+            client: client._id,
             carer: user._id,
             shiftStartTime: { $gte: new Date() },
           },
@@ -235,31 +235,31 @@ const getUserPatients = asyncHandler(async (req, res) => {
           new Object(nextCarerShift[0].carer).toString() ==
           new Object(user._id).toString()
         ) {
-          patient["nextShift"] = {
+          client["nextShift"] = {
             time: nextCarerShift[0].shiftStartTime,
             carerName: "You",
           };
         } else {
-          patient["nextShift"] = {
+          client["nextShift"] = {
             time: nextCarerShift[0].shiftStartTime,
             carerName: `${carerName.firstName} ${carerName.lastName}`,
           };
         }
       } else {
-        patient["nextShift"] = null;
+        client["nextShift"] = null;
       }
-      return patient;
+      return client;
     })
   );
 
   res
     .status(200)
-    .json({ coordinator: patientCoordinatorShift, carer: patientCarerShift });
+    .json({ coordinator: clientCoordinatorShift, carer: clientCarerShift });
 });
 
 module.exports = {
   registerUser,
   loginUser,
-  getUserPatients,
+  getUserClients,
   emailVerification,
 };

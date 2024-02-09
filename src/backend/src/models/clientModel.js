@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const patientSchema = mongoose.Schema({
+const clientSchema = mongoose.Schema({
   firstName: {
     type: String,
     required: [true, "Please add a first name"],
@@ -26,4 +26,4 @@ const patientSchema = mongoose.Schema({
 }]
 });
 
-module.exports = mongoose.model("Patient", patientSchema);
+module.exports = mongoose.model("Client", clientSchema);

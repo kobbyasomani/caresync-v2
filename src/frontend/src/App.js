@@ -15,7 +15,7 @@ import Verification from "./views/Verification";
 import About from "./views/About";
 import Help from "./views/Help";
 import Error from "./views/Error";
-import SelectPatient from "./views/SelectPatient";
+import SelectClient from "./views/SelectClient";
 import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 import CareTeamList from "./components/dialogs/CareTeamList";
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "/",
-                element: <SelectPatient />
+                element: <SelectClient />
               },
               {
                 path: "/calendar",
@@ -116,7 +116,7 @@ function App() {
           ...localStorage,
           isAuth: localStorage.isAuth,
           user: localStorage.user,
-          selectedPatient: localStorage.selectedPatient,
+          selectedClient: localStorage.selectedClient,
           shifts: localStorage.shifts,
           featuredShift: localStorage.featuredShift,
           previousShifts: localStorage.previousShifts,

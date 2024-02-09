@@ -77,7 +77,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                     <Stack direction="row" spacing={1}>
                         <PersonIcon fontSize="medium" sx={{ color: theme.palette.primary.main }} />
                         <Typography variant="h5" component="p" color={theme.palette.primary.main}>
-                            {store.selectedPatient.firstName} {store.selectedPatient.lastName}
+                            {store.selectedClient.firstName} {store.selectedClient.lastName}
                         </Typography>
                     </Stack>
                 </Grid>

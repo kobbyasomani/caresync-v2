@@ -166,7 +166,7 @@ form {
     }
 }
 
-.patient {
+.client {
     padding: $padding-default;
     border: 1px solid $outline;
     border-radius: $rounded-corners;
@@ -207,12 +207,12 @@ form {
         margin-top: 0;
 
         &:hover::after {
-            content: " => switch patient";
+            content: " => switch client";
         }
     }
 }
 
-h3~div.patient {
+h3~div.client {
     margin-top: 0;
 
     &+* {

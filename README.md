@@ -161,7 +161,7 @@ As John, a parent who employs carers for an adult son with care needs, I want a 
 As Ellen, the lead support worker for a small team of carers, I would love a place to schedule myself and teammates for care shifts and view a calendar of upcoming shifts so that we can all have a central place to view our roster and avoid miscommunication.
 
 <strong>Sandra -</strong>
-As Sandra, the care coordinator for a small business that assigns carers for many patients, I need a single app that I can use to keep track of all carers assigned to our patients so that I can better manage scheduling.
+As Sandra, the care coordinator for a small business that assigns carers for many clients, I need a single app that I can use to keep track of all carers assigned to our clients so that I can better manage scheduling.
 
 ## Wireframes
 

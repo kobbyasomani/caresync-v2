@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const {
   registerUser,
   loginUser,
-  getUserPatients,
+  getUserClients,
   emailVerification,
   // authUser,
 } = require("../controllers/userController");
@@ -22,9 +22,9 @@ userRouter.post("/verification/:token", emailVerification);
 // @param {email, password}
 userRouter.post("/login", loginUser);
 
-// Finds all user patients (both coordinator and carer)
+// Finds all user clients (both coordinator and carer)
 // @param none  (pulls user id from jwt token)
-userRouter.get("/", protect, getUserPatients); 
+userRouter.get("/", protect, getUserClients); 
 
 // Authenticates the user when accessing protected client-side routes
 // @param none (pulls user id from jwt token)

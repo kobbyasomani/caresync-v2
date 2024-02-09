@@ -9,8 +9,8 @@ import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../root/Butto
 
 import { TextField, Alert } from "@mui/material";
 
-export const AddPatient = () => {
-    // console.log("rendering AddPatient");
+export const AddClient = () => {
+    // console.log("rendering AddClient");
     const navigate = useNavigate();
 
     const { dispatch } = useGlobalContext();
@@ -28,22 +28,22 @@ export const AddPatient = () => {
     // Alert state
     const [alerts, setAlerts] = useState([]);
 
-    const setNewPatient = useCallback((patient) => {
-        // console.log("setting new patient...");
+    const setNewClient = useCallback((client) => {
+        // console.log("setting new client...");
         // Show success alert
-        setAlerts(prev => [...prev, `Patient ${patient.firstName} ${patient.lastName} 
+        setAlerts(prev => [...prev, `Client ${client.firstName} ${client.lastName} 
     was added. You can now coordinate their care using the calendar.`]);
 
-        // Set the selectedPatient to newly created patient
+        // Set the selectedClient to newly created client
         dispatch({
-            type: "setSelectedPatient",
-            data: patient
+            type: "setSelectedClient",
+            data: client
         });
     }, [dispatch]);
 
-    const switchPatient = useCallback(() => {
+    const switchClient = useCallback(() => {
         dispatch({
-            type: "setSelectedPatient",
+            type: "setSelectedClient",
             data: ""
         });
         navigate("/");
@@ -62,10 +62,10 @@ export const AddPatient = () => {
         <>
             <Form form={form}
                 setForm={setForm}
-                legend="New patient"
-                buttonText="Add patient"
-                postURL="/patient"
-                callback={setNewPatient}
+                legend="New client"
+                buttonText="Add client"
+                postURL="/client"
+                callback={setNewClient}
             >
                 <TextField
                     label="First name"
@@ -97,9 +97,9 @@ export const AddPatient = () => {
                     < br />
                     <div className="journey-options">
                         <ActionButtonGroup>
-                            <Link to="/" onClick={switchPatient} className="button-link">
+                            <Link to="/" onClick={switchClient} className="button-link">
                                 <ButtonSecondary>
-                                    Back to patients
+                                    Back to clients
                                 </ButtonSecondary>
                             </Link>
                             <Link to="/calendar" onClick={closeModal} className="button-link">
@@ -117,4 +117,4 @@ export const AddPatient = () => {
     )
 }
 
-export default AddPatient;
+export default AddClient;

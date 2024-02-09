@@ -30,12 +30,12 @@ module.exports = {
         }
     }, 
     //Email for adding a carer
-    addCarerEmail: async function addCarerEmail(name, email, patientName, token) {
+    addCarerEmail: async function addCarerEmail(name, email, clientName, token) {
         try{
             let info = await transporter.sendMail({
                 from: process.env.EMAIL_ADDRESS,
                 to: email,
-                subject: `Hello ${name}, you have been invited to be a carer for ${patientName}`,
+                subject: `Hello ${name}, you have been invited to be a carer for ${clientName}`,
                 html: process.env.BASE_URL + `/addCarer/${token}`
             })
         } catch (error) {

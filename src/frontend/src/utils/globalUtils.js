@@ -11,8 +11,8 @@ const useGlobalContext = () => useContext(GlobalStateContext);
 const emptyStore = {
     isAuth: false,
     user: {},
-    patients: {},
-    selectedPatient: {},
+    clients: {},
+    selectedClient: {},
     shifts: [],
     featuredShift: {},
     previousShifts: [],
@@ -50,35 +50,35 @@ const globalReducer = (state, action) => {
                 ...state,
                 user: action.data
             }
-        case "setPatients":
+        case "setClients":
             return {
                 ...state,
-                patients: action.data
+                clients: action.data
             }
-        case "setSelectedPatient":
+        case "setSelectedClient":
             return {
                 ...state,
-                selectedPatient: action.data
+                selectedClient: action.data
             }
-        case "setSelectedPatientById":
-            function getPatientById(id) {
+        case "setSelectedClientById":
+            function getClientById(id) {
                 if (!id) return "";
-                let foundPatient;
-                const allPatients = [
-                    ...state.patients.coordinator,
-                    ...state.patients.carer
+                let foundClient;
+                const allClients = [
+                    ...state.clients.coordinator,
+                    ...state.clients.carer
                 ];
-                allPatients.forEach(patient => {
-                    if (patient._id === id) {
-                        foundPatient = patient;
+                allClients.forEach(client => {
+                    if (client._id === id) {
+                        foundClient = client;
                     }
                 });
-                return foundPatient;
+                return foundClient;
             }
-            const patient = getPatientById(action.data)
+            const client = getClientById(action.data)
             return {
                 ...state,
-                selectedPatient: patient
+                selectedClient: client
             }
         case "setSelectedDate":
             return {

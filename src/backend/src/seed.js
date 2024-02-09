@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./models/userModel");
-const Patient = require("./models/patientModel");
+const Client = require("./models/clientModel");
 const Shift = require("./models/shiftModel");
 const dotenv = require("dotenv").config();
 
@@ -61,7 +61,7 @@ const seedUsers = [
   },
 ];
 
-const seedPatients = [
+const seedClients = [
   {
     _id: "63f01efe3b5704fa0aa3ddc2",
     firstName: "Henry",
@@ -110,7 +110,7 @@ const seedPatients = [
 const seedShifts = [
   {
     _id: "63f01f0a3b5704fa0aa3ddc9",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Come wearing cool clothing. You are going to an event at the fairgrounds.  His family will meet you there for a couple hours",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -119,7 +119,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc1",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -128,7 +128,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd1",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -137,7 +137,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd2",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -146,7 +146,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd3",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -155,7 +155,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd4",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -164,7 +164,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddf4",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -173,7 +173,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddf5",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "There is a pool party today. The party starts at noon. Bring swimming apparel if you want to get in the water.",
     carer: "63f0b95a0098e28d58f7a2d5",
@@ -182,7 +182,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc8",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -191,7 +191,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd8",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -200,7 +200,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd9",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -209,7 +209,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd7",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -218,7 +218,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd6",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -227,7 +227,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddd5",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -236,7 +236,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddb5",
-    patient: "63f01efe3b5704fa0aa3ddd1",
+    client: "63f01efe3b5704fa0aa3ddd1",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -245,7 +245,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddf3",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -254,7 +254,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddb4",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -263,7 +263,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddb3",
-    patient: "63f01f0a3b5704fa0aa3ddc5",
+    client: "63f01f0a3b5704fa0aa3ddc5",
     coordinator: "63f0b95a0098e28d58f7a25e",
     coordinatorNotes: "Psych meeting at 1:00pm today.  Ensure you leave early in case of traffic.",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -272,7 +272,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc7",
-    patient: "63f01efe3b5704fa0aa3ddc2",
+    client: "63f01efe3b5704fa0aa3ddc2",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Client has been feeling sick over the last few days and may have covid.  Please bring a mask and proceed with caution",
     carer: "63f0b95a0098e28d58f7a2d1",
@@ -284,7 +284,7 @@ const seedShifts = [
   },
   {
     _id: "63f01f0a3b5704fa0aa3ddc6",
-    patient: "63f01efe3b5704fa0aa3ddd1",
+    client: "63f01efe3b5704fa0aa3ddd1",
     coordinator: "63f0b95a0098e28d58f7a25d",
     coordinatorNotes: "Client has been feeling sick over the last few days and may have covid.  Please bring a mask and proceed with caution",
     carer: "63f0b95a0098e28d58f7a25d",
@@ -297,8 +297,8 @@ const seedShifts = [
 const seedDB = async () => {
   await User.deleteMany({});
   await User.insertMany(seedUsers);
-  await Patient.deleteMany({});
-  await Patient.insertMany(seedPatients);
+  await Client.deleteMany({});
+  await Client.insertMany(seedClients);
   await Shift.deleteMany({});
   await Shift.insertMany(seedShifts);
   console.log("Seeded DB");

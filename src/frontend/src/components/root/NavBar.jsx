@@ -29,8 +29,8 @@ const NavBar = () => {
     const navItems = [
         {
             name: "Home",
-            to: store.isAuth && store.selectedPatient ? "/calendar"
-                : store.isAuth && !store.selectedPatient ? "/"
+            to: store.isAuth && store.selectedClient ? "/calendar"
+                : store.isAuth && !store.selectedClient ? "/"
                     : "/"
         },
         {
@@ -44,8 +44,8 @@ const NavBar = () => {
             <Container>
                 <Toolbar>
                     <Button component={RouterLink}
-                        to={store.isAuth && store.selectedPatient ? "/calendar"
-                            : store.isAuth && !store.selectedPatient ? "/"
+                        to={store.isAuth && store.selectedClient ? "/calendar"
+                            : store.isAuth && !store.selectedClient ? "/"
                                 : "/"}>
                         <IconSmall />
                     </Button>

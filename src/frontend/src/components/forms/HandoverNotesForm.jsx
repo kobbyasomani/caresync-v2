@@ -29,7 +29,7 @@ const HandoverNotesForm = () => {
     return (
         <Form form={form}
             setForm={setForm}
-            legend="Add handover notes for this patient's next shift"
+            legend="Add handover notes for this client's next shift"
             buttonText="Update handover notes"
             postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}
             method="put"
@@ -41,7 +41,7 @@ const HandoverNotesForm = () => {
                 id="handover-notes"
                 type="text"
                 name="handoverNotes"
-                placeholder={`During the next shift with ${store.selectedPatient.firstName}, please follow up on...`}
+                placeholder={`During the next shift with ${store.selectedClient.firstName}, please follow up on...`}
                 required
                 mui="TextField" />
         </Form>

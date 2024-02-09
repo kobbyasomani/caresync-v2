@@ -4,22 +4,22 @@ import { useEffect, useState } from "react";
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
 import baseURL from "../utils/baseUrl";
-import Patient from "../components/Patient";
+import Client from "../components/Client";
 import Modal from "../components/Modal";
-import AddPatientForm from "../components/forms/AddPatientForm";
+import AddClientForm from "../components/forms/AddClientForm";
 import { ButtonPrimary } from "../components/root/Buttons";
 import Loader from "../components/logo/Loader";
 
 import { Stack, Typography } from "@mui/material";
 
-const SelectPatient = () => {
+const SelectClient = () => {
     const { store, dispatch } = useGlobalContext();
     const [isLoading, setIsLoading] = useState(true);
 
-    // Unset selected patient and shifts
+    // Unset selected client and shifts
     useEffect(() => {
         dispatch({
-            type: "setSelectedPatient",
+            type: "setSelectedClient",
             data: ""
         });
         dispatch({
@@ -27,7 +27,7 @@ const SelectPatient = () => {
         });
     }, [dispatch]);
 
-    // Fetch the list of patients for the logged-in user
+    // Fetch the list of clients for the logged-in user
     useEffect(() => {
         fetch(`${baseURL}/user`, {
             credentials: "include",
@@ -35,20 +35,20 @@ const SelectPatient = () => {
                 "Content-Type": "application/json",
             },
         }).then(response => response.json())
-            .then(patients => {
+            .then(clients => {
                 dispatch({
-                    type: "setPatients",
-                    data: patients
+                    type: "setClients",
+                    data: clients
                 });
                 setIsLoading(false);
             }).catch(error => console.error(error.message));
     }, [dispatch]);
 
     // useEffect(() => {
-    //     if (store.patients.length > 0) {
+    //     if (store.clients.length > 0) {
 
     //     }
-    // }, [store.patients]);
+    // }, [store.clients]);
 
     // Modal state manager
     const { modalDispatch } = useModalContext();
@@ -62,54 +62,54 @@ const SelectPatient = () => {
     return isLoading ? (
         <>
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
-            <Typography variant="h2">Fetching patients...</Typography>
+            <Typography variant="h2">Fetching clients...</Typography>
             <Loader />
         </>
     ) : (
         <>
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
-            {Object.keys(store.patients).length > 0
-                && (store.patients.carer.length > 0 || store.patients.coordinator.length > 0) ?
-                <Typography variant="h2">Select a patient</Typography> : null}
-            {Object.keys(store.patients).length > 0 && store.patients.carer.length > 0 ? (
+            {Object.keys(store.clients).length > 0
+                && (store.clients.carer.length > 0 || store.clients.coordinator.length > 0) ?
+                <Typography variant="h2">Select a client</Typography> : null}
+            {Object.keys(store.clients).length > 0 && store.clients.carer.length > 0 ? (
                 <section>
                     <Typography variant="h3">Caring for</Typography>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        {store.patients.carer.map(patient => (
-                            <Patient patient={patient} key={patient._id} />
+                        {store.clients.carer.map(client => (
+                            <Client client={client} key={client._id} />
                         ))}
                     </Stack>
                 </section>
             ) : null}
-            {Object.keys(store.patients).length > 0 && store.patients.coordinator.length > 0 ? (
+            {Object.keys(store.clients).length > 0 && store.clients.coordinator.length > 0 ? (
                 <section>
                     <Typography variant="h3">Coordinating for</Typography>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        {store.patients.coordinator.map(patient => (
-                            <Patient patient={patient} key={patient._id} />
+                        {store.clients.coordinator.map(client => (
+                            <Client client={client} key={client._id} />
                         ))}
                     </Stack>
                 </section>
             ) : (
                 <Typography variant="h3">
-                    You aren't currently the coordinator for any patients.<br />
-                    Add a patient to get started.
+                    You aren't currently the coordinator for any clients.<br />
+                    Add a client to get started.
                 </Typography>
             )}
 
             <ButtonPrimary onClick={openModal}>
-                Add patient
+                Add client
             </ButtonPrimary>
 
             <Modal
-                title="Add Patient"
-                text="You'll be the coordinator for this patient and can 
+                title="Add Client"
+                text="You'll be the coordinator for this client and can 
             create and manage their care shifts."
             >
-                <AddPatientForm />
+                <AddClientForm />
             </Modal>
         </>
     )
 }
 
-export default SelectPatient
+export default SelectClient

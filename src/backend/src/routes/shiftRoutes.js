@@ -2,7 +2,7 @@ const express = require("express");
 const shiftRouter = express.Router();
 const {
   getUserShifts,
-  getPatientShifts,
+  getClientShifts,
   createShift,
   updateShift,
   deleteShift,
@@ -19,9 +19,9 @@ const { protect } = require("../middleware/authMiddleware");
 // @param JWT token identity
 shiftRouter.route("/").get(protect, getUserShifts)
 
-// Get all shifts for specific patient/create a shift
-// @param :patientID url variable
-shiftRouter.route("/:patientID").get(protect, getPatientShifts).post(protect, createShift)
+// Get all shifts for specific client/create a shift
+// @param :clientID url variable
+shiftRouter.route("/:clientID").get(protect, getClientShifts).post(protect, createShift)
 
 // Update a shift 
 // @param :shiftID url variable + input key(s): carerID, shiftStartTime, shiftEndTime, coordinatorNotes (will update only what you send)

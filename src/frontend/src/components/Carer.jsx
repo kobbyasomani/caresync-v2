@@ -27,9 +27,9 @@ const Carer = ({ carer }) => {
 
     const removeCarer = useCallback(() => {
         // console.log("removing carer...")
-        axios.delete(`carer/remove/${store.selectedPatient._id}/${carer._id}`)
+        axios.delete(`carer/remove/${store.selectedClient._id}/${carer._id}`)
             .then(() => {
-                getAllShifts(store.selectedPatient._id)
+                getAllShifts(store.selectedClient._id)
                     .then(shifts => {
                         dispatch({
                             type: "setShifts",
@@ -37,7 +37,7 @@ const Carer = ({ carer }) => {
                         });
                     });
             });
-    }, [carer._id, store.selectedPatient, dispatch]);
+    }, [carer._id, store.selectedClient, dispatch]);
 
     return (
         <>
@@ -46,7 +46,7 @@ const Carer = ({ carer }) => {
                 borderRadius: `${theme.shape.borderRadius}px`,
                 p: "1rem"
             }}>
-                {store.user._id === store.selectedPatient.coordinator ? (
+                {store.user._id === store.selectedClient.coordinator ? (
                     <Tooltip title="Remove carer" placement="left">
                         <IconButton onClick={confirmRemoveCarer}
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>

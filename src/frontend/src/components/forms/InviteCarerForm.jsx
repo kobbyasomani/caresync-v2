@@ -29,8 +29,8 @@ export const InviteCarerForm = () => {
     const invitationSent = useCallback(() => {
         // Show success alert
         setAlerts(prev => [...prev, `An email was sent to ${form.inputs.email} inviting 
-        the user to join ${store.selectedPatient.firstName} ${store.selectedPatient.lastName}'s care team.`]);
-    }, [form.inputs.email, store.selectedPatient]);
+        the user to join ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s care team.`]);
+    }, [form.inputs.email, store.selectedClient]);
 
     // Set modal text
     useEffect(() => {
@@ -38,12 +38,12 @@ export const InviteCarerForm = () => {
             type: "setActiveModal",
             data: {
                 title: "Invite a care team member",
-                text: `Send an invitation to another user to join ${store.selectedPatient.firstName} 
-                ${store.selectedPatient.lastName}'s care team. The user must have an existing 
+                text: `Send an invitation to another user to join ${store.selectedClient.firstName} 
+                ${store.selectedClient.lastName}'s care team. The user must have an existing 
                 CareSync account.`
             }
         })
-    }, [modalDispatch, modalStore.activeModal, store.selectedPatient]);
+    }, [modalDispatch, modalStore.activeModal, store.selectedClient]);
 
     // Close the modal
     const closeModal = useCallback(() => {
@@ -60,7 +60,7 @@ export const InviteCarerForm = () => {
                 setForm={setForm}
                 legend="Invite a carer"
                 buttonText="Send invitation"
-                postURL={`/carer/invite/${store.selectedPatient._id}`}
+                postURL={`/carer/invite/${store.selectedClient._id}`}
                 callback={invitationSent}
             >
                 <TextField

@@ -34,9 +34,9 @@ describe("GET /shift", () => {
   });
 });
 
-//---------Get Patient Shifts----------//
-describe("GET /shift/:patientID", () => {
-  describe("user is associated with the patient", () => {
+//---------Get Client Shifts----------//
+describe("GET /shift/:clientID", () => {
+  describe("user is associated with the client", () => {
     test("respond with 200 status", async () => {
       const response = await request(app)
         .get("/shift/63f01efe3b5704fa0aa3ddc4")
@@ -45,7 +45,7 @@ describe("GET /shift/:patientID", () => {
       expect(response.statusCode).toBe(200);
     });
   });
-  describe("user isn't associated with the patient", () => {
+  describe("user isn't associated with the client", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .get("/shift/63f01f0a3b5704fa0aa3ddc3")
@@ -55,21 +55,21 @@ describe("GET /shift/:patientID", () => {
       expect(response.statusCode).toBe(401);
     });
   });
-  describe("patient doesn't exist", () => {
+  describe("client doesn't exist", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .get("/shift/63f01f0a3b5704fa0aa3ddc7")
         .set("Cookie", cookie)
         .send({});
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
 });
 
 //---------Create Shifts----------//
-describe("POST /shift/:patientID", () => {
-  describe("coordinator creates a shift for the patient", () => {
+describe("POST /shift/:clientID", () => {
+  describe("coordinator creates a shift for the client", () => {
     test("respond with 201 status/new shift object", async () => {
       const response = await request(app)
         .post("/shift/63f01efe3b5704fa0aa3ddc8")
@@ -81,7 +81,7 @@ describe("POST /shift/:patientID", () => {
           coordinatorNotes:
             "Please take notes on erratic behaviors for the psychologist",
         });
-      expect(response.body.patient).toBe("63f01efe3b5704fa0aa3ddc8");
+      expect(response.body.client).toBe("63f01efe3b5704fa0aa3ddc8");
       expect(response.body.coordinator).toBe("63f0b95a0098e28d58f7a25d");
       expect(response.body.carer).toBe("63f0b95a0098e28d58f7a2d5");
       expect(response.body.coordinatorNotes).toBe(
@@ -94,7 +94,7 @@ describe("POST /shift/:patientID", () => {
       expect(response.statusCode).toBe(201);
     });
   });
-  describe("patient does not exist", () => {
+  describe("client does not exist", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .post("/shift/63f01efe3b5704fa0aa3ddc6")
@@ -106,11 +106,11 @@ describe("POST /shift/:patientID", () => {
           coordinatorNotes:
             "Please take notes on erratic behaviors for the psychologist",
         });
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
-  describe("user is not the coordinator for the patient", () => {
+  describe("user is not the coordinator for the client", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
         .post("/shift/63f01f0a3b5704fa0aa3ddc5")
@@ -130,7 +130,7 @@ describe("POST /shift/:patientID", () => {
 
 //---------Update Shift----------//
 describe("POST /shift/:shiftID", () => {
-  describe("coordinator updates a shift for the patient", () => {
+  describe("coordinator updates a shift for the client", () => {
     test("respond with 201 status/updated shift object", async () => {
       const response = await request(app)
         .put("/shift/63f01f0a3b5704fa0aa3ddc9")
@@ -146,7 +146,7 @@ describe("POST /shift/:shiftID", () => {
       expect(response.statusCode).toBe(201);
     });
   });
-  describe("user is not the coordinator for the patient", () => {
+  describe("user is not the coordinator for the client", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
         .put("/shift/63f01f0a3b5704fa0aa3ddd8")
@@ -165,7 +165,7 @@ describe("POST /shift/:shiftID", () => {
 
 //---------Update Shift----------//
 describe("POST /shift/handover/:shiftID", () => {
-  describe("coordinator updates a shift for the patient", () => {
+  describe("coordinator updates a shift for the client", () => {
     test("respond with 201 status/updated shift object", async () => {
       const response = await request(app)
         .put("/shift/handover/63f01f0a3b5704fa0aa3ddd8")
@@ -177,7 +177,7 @@ describe("POST /shift/handover/:shiftID", () => {
       expect(response.statusCode).toBe(201);
     });
   });
-  describe("user is not the coordinator for the patient", () => {
+  describe("user is not the coordinator for the client", () => {
     test("respond with 401 status/specific error message", async () => {
       const response = await request(app)
         .put("/shift/handover/63f01f0a3b5704fa0aa3ddc9")

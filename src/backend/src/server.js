@@ -26,7 +26,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/user', require('./routes/userRoutes'))
-app.use('/patient', require('./routes/patientRoutes'))
+app.use('/client', require('./routes/clientRoutes'))
 app.use('/carer', require('./routes/carerRoutes'))
 app.use('/shift', require('./routes/shiftRoutes'))
 

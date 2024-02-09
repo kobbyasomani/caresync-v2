@@ -44,12 +44,12 @@ describe("POST /carer/invite/:id", () => {
         .send({
           email: "frank@example.com",
         });
-      expect(response.body.message).toBe("Patient not found");
+      expect(response.body.message).toBe("Client not found");
       expect(response.statusCode).toBe(400);
     });
   });
 
-  describe("invalid carer email is provided but valid patient id is provided", () => {
+  describe("invalid carer email is provided but valid client id is provided", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .post("/carer/invite/63f01efe3b5704fa0aa3ddc4")
@@ -79,7 +79,7 @@ describe("POST /carer/invite/:id", () => {
 //---------Add Carer----------//
 describe("POST /carer/add/:token", () => {
   describe("valid addition token is provided", () => {
-    test("respond with 200 status/new carer added to patient object", async () => {
+    test("respond with 200 status/new carer added to client object", async () => {
       const response = await request(app)
         .post(
           "/carer/add/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJlcklEIjoiNjNmMGI5NWEwMDk4ZTI4ZDU4ZjdhMmQxIiwicGF0aWVudElEIjoiNjNmMDFlZmUzYjU3MDRmYTBhYTNkZGM0IiwiaWF0IjoxNjc2NzgzMDI2LCJleHAiOjE2NzkzNzUwMjZ9.4aHTxtrEiPk62PqF75G8OnNMDCGvHmPMKgVCXW04bqA"
@@ -115,9 +115,9 @@ describe("POST /carer/add/:token", () => {
 });
 
 //---------Remove Carer----------//
-describe("DELETE carer/remove/:patientID/:carerID", () => {
-  describe("valid patient and carerID is provided", () => {
-    test("respond with 200 status/updated patient object", async () => {
+describe("DELETE carer/remove/:clientID/:carerID", () => {
+  describe("valid client and carerID is provided", () => {
+    test("respond with 200 status/updated client object", async () => {
       const response = await request(app)
         .delete(
           "/carer/remove/63f01efe3b5704fa0aa3ddc4/63f0b95a0098e28d58f7a2d1"
@@ -129,7 +129,7 @@ describe("DELETE carer/remove/:patientID/:carerID", () => {
     });
   });
 
-  describe("invalid patient and valid carerID is provided", () => {
+  describe("invalid client and valid carerID is provided", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .delete(
@@ -141,7 +141,7 @@ describe("DELETE carer/remove/:patientID/:carerID", () => {
     });
   });
 
-  describe("valid patient and invalid carerID is provided", () => {
+  describe("valid client and invalid carerID is provided", () => {
     test("respond with 400 status/specific error message", async () => {
       const response = await request(app)
         .delete(

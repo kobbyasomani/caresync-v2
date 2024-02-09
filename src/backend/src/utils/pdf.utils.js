@@ -6,8 +6,8 @@ const getStream = require("get-stream");
 // Creates a pdf doc out of user input/information
 const createPDF = async (
   reportType,
-  patientFirst,
-  patientLast,
+  clientFirst,
+  clientLast,
   carerFirst,
   carerLast,
   shiftNotes
@@ -17,7 +17,7 @@ const createPDF = async (
     .image(__dirname + "/../images/logopdf.png", 380, 65, {
       width: 125,
     })
-  doc.font("Helvetica").fontSize(12).text(`Client: ${patientFirst} ${patientLast}`);
+  doc.font("Helvetica").fontSize(12).text(`Client: ${clientFirst} ${clientLast}`);
   doc.font("Helvetica").fontSize(12).text(`Carer: ${carerFirst} ${carerLast}`);
   doc
     .font("Helvetica")
@@ -33,11 +33,11 @@ const createPDF = async (
 };
 
 // Uploads a PDf document to Cloudinary
-const cloudinaryUpload = (buffer, folder, patientID) => {
+const cloudinaryUpload = (buffer, folder, clientID) => {
   return new Promise((resolve, reject) => {
     let cld_upload_stream = cloudinary.uploader.upload_stream(
       {
-        folder: `CareSync/${folder}/${patientID}`,
+        folder: `CareSync/${folder}/${clientID}`,
       },
       (error, result) => {
         if (result) {
