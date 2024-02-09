@@ -131,7 +131,6 @@ const Overview = () => {
                                     {store.selectedShift.handoverNotes}
                                 </Typography>
                             ) : (store.user._id === store.selectedShift.carer._id
-                                && store.selectedPatient.nextShift !== null
                                 && (store.selectedShiftInProgress
                                     || (new Date() < new Date(store.selectedPatient.nextShift.time)
                                         && new Date() > new Date(store.selectedShift.shiftStartTime)))) ? (
