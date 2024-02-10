@@ -1,22 +1,38 @@
-import { useGlobalContext } from "../../utils/globalUtils";
 import IncidentReportForm from "../forms/IncidentReportForm";
 import { Typography, Box } from "@mui/material";
 
-const CreateIncidentReport = () => {
-    const { store } = useGlobalContext();
+const CreateIncidentReport = (props) => {
+    const { shiftUtils } = props
+
+    const renderContent = () => {
+        if (shiftUtils.userIsCarer) {
+            switch (true) {
+                case (shiftUtils.isInProgress || shiftUtils.isInEditWindow)
+                    && (shiftUtils.isPenultimateShift || shiftUtils.isLastShift):
+                    return (
+                        <IncidentReportForm />
+                    );
+                case shiftUtils.isPending:
+                    return (
+                        <Typography variant="body1">
+                            You'll be able to create incident reports once the shift starts.
+                        </Typography>
+                    );
+                default:
+                    return (
+                        <Typography variant="body1">
+                            You can't create incident reports at this time.
+                        </Typography>
+                    );
+            }
+        }
+    };
+
     return (
         <>
             <Typography variant="h3" component="p">Incident Reports</Typography>
             <Box sx={{ mt: 1 }}>
-                {store.selectedShiftInProgress ? (
-                    <IncidentReportForm />
-                ) : (
-                    new Date(store.selectedShift.shiftEndTime) > new Date() ? (
-                        <Typography variant="body1">
-                            You'll be able to create incident reports once the shift starts.
-                        </Typography>
-                    ) : null
-                )}
+                {renderContent()}
             </Box>
         </>
     )

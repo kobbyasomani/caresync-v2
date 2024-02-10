@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj, plusHours } from "../../utils/dateUtils";
@@ -21,21 +21,61 @@ const ShiftDetails = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
+    const [shiftUtils, setShiftUtils] = useState({});
+
+    const getShiftUtils = useCallback(() => {
+        const shifts = store.shifts;
+        const lastShift = shifts[shifts.length - 1];
+        const penultimateShift = shifts[shifts.length - 2];
+        const shift = store.selectedShift;
+        const shiftUtils = { _id: shift._id };
+        const editWindow = 8; // Time in hours
+
+        // Check if the current user is the carer
+        shiftUtils.userIsCarer = Boolean(store.selectedShift._id
+            && (store.user._id === store.selectedShift.carer._id));
+        // Check if the shift is the last shift
+        shiftUtils.isLastShift = Boolean(shift._id === lastShift._id);
+        // Check if the shift is the penultimate shift
+        shiftUtils.isPenultimateShift = Boolean(shift._id === penultimateShift._id);
+        // Check if the shift is pending
+        shiftUtils.isPending = Boolean(new Date() < new Date(shift.shiftStartTime));
+        // Check if the shift is in progress
+        shiftUtils.isInProgress = Boolean(new Date(shift.shiftStartTime) < new Date()
+            && new Date(shift.shiftEndTime) > new Date());
+        // Check if the shift has ended
+        shiftUtils.hasEnded = Boolean(new Date() > new Date(shift.shiftEndTime));
+        // Check if the next shift has started
+        shiftUtils.nextShiftHasStarted = Boolean(store.selectedClient.nextShift
+            && (new Date() > new Date(store.selectedClient.nextShift.time)));
+        // Check if the shift is within its edit window
+        shiftUtils.isInEditWindow = Boolean(
+            (new Date() > new Date(shift.shiftEndTime))
+            && (plusHours(new Date(store.selectedShift.shiftEndTime), editWindow) > new Date())
+            && !shiftUtils.nextShiftHasStarted);
+
+        return shiftUtils;
+
+    }, [store.user._id, store.shifts, store.selectedShift, store.selectedClient.nextShift]);
+
+    useEffect(() => {
+        setShiftUtils(getShiftUtils());
+    }, [getShiftUtils]);
 
     const injectActiveDrawer = () => {
         switch (modalStore.activeDrawer) {
             case "shift notes":
-                return <ShiftNotes />
+                return <ShiftNotes shiftUtils={shiftUtils} />
             case "handover notes":
-                return <HandoverNotes />
+                return <HandoverNotes shiftUtils={shiftUtils} />
             case "incident reports":
-                return <IncidentReports />
+                return <IncidentReports shiftUtils={shiftUtils} />
             case "create incident report":
-                return <CreateIncidentReport />
+                return <CreateIncidentReport shiftUtils={shiftUtils} />
             case "incident report details":
                 return <IncidentReportDetails />
             default:
-                return <Overview />
+                return <Overview shiftUtils={shiftUtils} />
         }
     }
 
@@ -129,10 +169,9 @@ const ShiftDetails = ({ isLoading, children }) => {
             type: "setSelectedShiftInProgress",
             /* Check whether the selected shift is in progress
             or within carer edit window (8 hours) */
-            data: new Date(store.selectedShift.shiftStartTime) < new Date()
-                && plusHours(new Date(store.selectedShift.shiftEndTime), 8) > new Date()
+            data: shiftUtils.isInProgress && shiftUtils.isInEditWindow
         });
-    }, [store.selectedShift, dispatch]);
+    }, [store.selectedShift, dispatch, shiftUtils]);
 
     return isLoading ? <Loader /> : (
         <div>

@@ -15,11 +15,12 @@ import ForumIcon from '@mui/icons-material/Forum';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 
-const Overview = () => {
+const Overview = (props) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
     const navigate = useNavigate();
+    const { shiftUtils } = props;
 
     const viewPanel = useCallback((panel) => {
         modalDispatch({
@@ -44,10 +45,73 @@ const Overview = () => {
         navigate("/calendar/edit-shift")
     }, [modalDispatch, navigate]);
 
+    const renderContent = (card) => {
+        switch (card) {
+            case "shift notes":
+                if (store.selectedShift.shiftNotes) {
+                    return (
+                        <Typography variant="body1">
+                            {store.selectedShift.shiftNotes.shiftNotesText}
+                        </Typography>
+                    );
+                } break;
+            case "incident reports":
+                if (store.selectedShift.incidentReports.length > 0) {
+                    return (
+                        <Typography variant="body1">
+                            {store.selectedShift.incidentReports[0].incidentReportText}
+                        </Typography>
+                    );
+                } break;
+            case "handover":
+                if (store.selectedShift.handoverNotes) {
+                    return (
+                        <Typography variant="body1">
+                            {store.selectedShift.handoverNotes}
+                        </Typography>
+                    );
+                } break;
+            default: break;
+        }
+        if (shiftUtils.userIsCarer
+            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)
+            && (shiftUtils.isPenultimateShift || shiftUtils.isLastShift)) {
+            let content;
+            switch (card) {
+                case "shift notes": content = "Enter your shift notes"; break;
+                case "incident reports": content = "Create an incident report"; break;
+                case "handover": content = "Add handover"; break;
+                default: content = `Add ${card}`; break;
+            }
+            return (
+                <Box sx={{ display: "flex" }}>
+                    <Typography variant="body1" color={theme.palette.primary.main}>
+                        {content}
+                    </Typography>
+                </Box>
+            );
+        } else {
+            let content;
+            switch (card) {
+                case "shift notes": content = "There are no shift notes for this shift"; break;
+                case "incident reports": content = "There are no incident reports for this shift"; break;
+                case "handover": content = "There is no handover for this shift"; break;
+                default: content = `There is no ${card} for this shift`; break;
+            }
+            return (
+                <Box sx={{ display: "flex" }}>
+                    <Typography variant="body1" >
+                        {content}
+                    </Typography >
+                </Box>
+            );
+        }
+    }
+
     return (
         <Grid display="grid"
             sx={{
-                gridTemplate: "repeat(auto, auto) / repeat(2, 1fr)",
+                gridTemplate: "auto / repeat(auto-fit, 1fr)",
                 alignItems: "stretch",
                 gap: 2,
             }}>
@@ -55,7 +119,6 @@ const Overview = () => {
                 <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
                     <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
                         <CardContent>
-
                             <>
                                 <Typography variant="h6" component="p">
                                     Notes from Coordinator
@@ -64,8 +127,6 @@ const Overview = () => {
                                     {store.selectedShift.coordinatorNotes}
                                 </Typography>
                             </>
-
-
                         </CardContent>
                     </Card>
                 </Grid>) : null
@@ -76,20 +137,7 @@ const Overview = () => {
                         <CardContent>
                             <EditIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Shift Notes</Typography>
-                            {store.selectedShift.shiftNotes ? (
-                                <Typography variant="body1">
-                                    {store.selectedShift.shiftNotes.shiftNotesText}
-                                </Typography>
-                            ) : store.user._id === store.selectedShift.carer._id
-                                && store.selectedShiftInProgress ? (
-                                <Typography variant="body1" color={theme.palette.primary.main}>
-                                    Enter your shift notes
-                                </Typography>
-                            ) : (
-                                <Typography variant="body1">
-                                    There are no shift notes for this shift.
-                                </Typography>
-                            )}
+                            {renderContent("shift notes")}
                         </CardContent>
                     </CardActionArea>
                 </Card>
@@ -101,20 +149,7 @@ const Overview = () => {
                         <CardContent sx={{ flexGrow: 1 }}>
                             <ReportIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Incidents {store.selectedShift.incidentReports.length > 0 ? `(${store.selectedShift.incidentReports.length})` : null}</Typography>
-                            {store.selectedShift.incidentReports.length > 0 ? (
-                                <Typography variant="body1">
-                                    {store.selectedShift.incidentReports[0].incidentReportText}
-                                </Typography>
-                            ) : store.user._id === store.selectedShift.carer._id
-                                && store.selectedShiftInProgress ? (
-                                <Typography variant="body1" color={theme.palette.primary.main}>
-                                    Create an incident report
-                                </Typography>
-                            ) : (
-                                <Typography variant="body1">
-                                    There are no incident reports for this shift.
-                                </Typography>
-                            )}
+                            {renderContent("incident reports")}
                         </CardContent>
                     </CardActionArea>
                 </Card>
@@ -126,33 +161,7 @@ const Overview = () => {
                         <CardContent sx={{ flexGrow: 1 }}>
                             <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Handover</Typography>
-                            {store.selectedShift.handoverNotes ? (
-                                <Typography variant="body1">
-                                    {store.selectedShift.handoverNotes}
-                                </Typography>
-                            ) : (store.user._id === store.selectedShift.carer._id
-                                && (store.selectedShiftInProgress
-                                    // Client has a next shift that has not yet started
-                                    // and selected shift has ended.
-                                    || (store.shifts[store.shifts.length - 2]._id === store.selectedShift._id
-                                        && new Date() < new Date(store.selectedClient.nextShift.time)
-                                        && new Date() > new Date(store.selectedShift.shiftEndTime)
-                                    )
-                                    // Client has no shifts after selected shift (last shift)
-                                    // and selected shift has ended.
-                                    || (store.shifts[store.shifts.length - 1]._id === store.selectedShift._id
-                                        && new Date() > new Date(store.selectedShift.shiftEndTime)
-                                    ))) ? (
-                                <Box sx={{ display: "flex" }}>
-                                    <Typography variant="body1" color={theme.palette.primary.main}>
-                                        Add handover
-                                    </Typography>
-                                </Box>
-                            ) : (
-                                <Typography variant="body1">
-                                    There are no handover notes for this shift.
-                                </Typography>
-                            )}
+                            {renderContent("handover")}
                         </CardContent>
                     </CardActionArea>
                 </Card>
@@ -183,6 +192,21 @@ const Overview = () => {
                             </List>
                         </CardContent>
                     </CardActionArea>
+                </Card>
+            </Grid>
+
+            <Grid item xs={6}>
+                <Card variant="outlined">
+                    <CardContent sx={{ columns: 2 }}>
+                        userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
+                        isLastShift: {shiftUtils.isLastShift.toString()}<br></br>
+                        isPenultimateShift: {shiftUtils.isPenultimateShift.toString()}<br></br>
+                        isPending: {shiftUtils.isPending.toString()}<br></br>
+                        isInProgress: {shiftUtils.isInProgress.toString()}<br></br>
+                        hasEnded: {shiftUtils.hasEnded.toString()}<br></br>
+                        nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}<br></br>
+                        isInEditWindow: {shiftUtils.isInEditWindow.toString()}
+                    </CardContent>
                 </Card>
             </Grid>
 
