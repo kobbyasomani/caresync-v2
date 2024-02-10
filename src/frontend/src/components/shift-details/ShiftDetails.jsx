@@ -31,6 +31,15 @@ const ShiftDetails = ({ isLoading, children }) => {
         const shiftUtils = { _id: shift._id };
         const editWindow = 8; // Time in hours
 
+        const getShiftIndex = (shift) => {
+            const index = shifts.findIndex(element => element._id === shift._id);
+            return index;
+        };
+
+        // Store the next, and previous shifts
+        shiftUtils.nextShift = shift._id === lastShift._id ? false : shifts[getShiftIndex(shift) + 1];
+        shiftUtils.prevShift = shifts[getShiftIndex(shift) - 1];
+
         // Check if the current user is the carer
         shiftUtils.userIsCarer = Boolean(store.selectedShift._id
             && (store.user._id === store.selectedShift.carer._id));
@@ -45,18 +54,18 @@ const ShiftDetails = ({ isLoading, children }) => {
             && new Date(shift.shiftEndTime) > new Date());
         // Check if the shift has ended
         shiftUtils.hasEnded = Boolean(new Date() > new Date(shift.shiftEndTime));
-        // Check if the next shift has started
-        shiftUtils.nextShiftHasStarted = Boolean(store.selectedClient.nextShift
-            && (new Date() > new Date(store.selectedClient.nextShift.time)));
         // Check if the shift is within its edit window
         shiftUtils.isInEditWindow = Boolean(
             (new Date() > new Date(shift.shiftEndTime))
             && (plusHours(new Date(store.selectedShift.shiftEndTime), editWindow) > new Date())
             && !shiftUtils.nextShiftHasStarted);
+        // Check if the next shift has started
+        shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift
+            && (new Date() > new Date(shiftUtils.nextShift.shiftStartTime)));
 
         return shiftUtils;
 
-    }, [store.user._id, store.shifts, store.selectedShift, store.selectedClient.nextShift]);
+    }, [store.user._id, store.shifts, store.selectedShift]);
 
     useEffect(() => {
         setShiftUtils(getShiftUtils());

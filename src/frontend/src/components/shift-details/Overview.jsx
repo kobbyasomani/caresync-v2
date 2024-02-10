@@ -14,6 +14,7 @@ import ReportIcon from '@mui/icons-material/Report';
 import ForumIcon from '@mui/icons-material/Forum';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const Overview = (props) => {
     const { store } = useGlobalContext();
@@ -117,14 +118,42 @@ const Overview = (props) => {
             }}>
             {store.selectedShift.coordinatorNotes ? (
                 <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
-                    <Card variant="outlined" sx={{ backgroundColor: theme.palette.grey[200], border: "none" }}>
+                    <Card variant="outlined" sx={{
+                        backgroundColor: theme.palette.primary.light,
+                        border: "none", position: "relative"
+                    }}>
                         <CardContent>
                             <>
-                                <Typography variant="h6" component="p">
+                                <AssignmentIcon sx={{
+                                    position: "absolute",
+                                    right: "0.5rem", top: "0.5rem",
+                                    color: theme.palette.primary.main
+                                }} />
+                                <Typography variant="h6" component="p" color={theme.palette.primary.dark}>
                                     Notes from Coordinator
                                 </Typography>
                                 <Typography variant="body1">
                                     {store.selectedShift.coordinatorNotes}
+                                </Typography>
+                            </>
+                        </CardContent>
+                    </Card>
+                </Grid>) : null
+            }
+            {shiftUtils.prevShift.handoverNotes ? (
+                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
+                    <Card variant="outlined" sx={{
+                        backgroundColor: theme.palette.grey[200],
+                        border: "none", position: "relative"
+                    }}>
+                        <CardContent>
+                            <>
+                                <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
+                                <Typography variant="h6" component="p">
+                                    Handover from previous shift
+                                </Typography>
+                                <Typography variant="body1">
+                                    {shiftUtils.prevShift.handoverNotes}
                                 </Typography>
                             </>
                         </CardContent>
