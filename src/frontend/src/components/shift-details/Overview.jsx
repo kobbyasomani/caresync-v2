@@ -110,14 +110,9 @@ const Overview = (props) => {
     }
 
     return (
-        <Grid display="grid"
-            sx={{
-                gridTemplate: "auto / repeat(auto-fit, 1fr)",
-                alignItems: "stretch",
-                gap: 2,
-            }}>
+        <Grid container rowSpacing={2} columnSpacing={2}>
             {store.selectedShift.coordinatorNotes ? (
-                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
+                <Grid item xs={12}>
                     <Card variant="outlined" sx={{
                         backgroundColor: theme.palette.primary.light,
                         border: "none", position: "relative"
@@ -141,7 +136,7 @@ const Overview = (props) => {
                 </Grid>) : null
             }
             {shiftUtils.prevShift.handoverNotes ? (
-                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
+                <Grid item xs={12}>
                     <Card variant="outlined" sx={{
                         backgroundColor: theme.palette.grey[200],
                         border: "none", position: "relative"
@@ -160,7 +155,7 @@ const Overview = (props) => {
                     </Card>
                 </Grid>) : null
             }
-            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
+            <Grid item xs={12}>
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={() => viewPanel("shift notes")}>
                         <CardContent>
@@ -172,7 +167,7 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            <Grid item xs={6} sx={{ gridArea: "auto / 1 / auto / span 1", display: "flex" }}>
+            <Grid item xs={12} md={6} display={"flex"}>
                 <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
@@ -184,7 +179,7 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            <Grid item xs={6} sx={{ gridArea: "auto / 2 / auto / span 1", display: "flex" }}>
+            <Grid item xs={12} md={6} display={"flex"}>
                 <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
@@ -196,7 +191,7 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2" }}>
+            <Grid item xs={12}>
                 <Card variant="outlined" id="care-team-card">
                     <CardActionArea onClick={() => viewPanel("")}>
                         <CardContent>
@@ -224,9 +219,9 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12}>
                 <Card variant="outlined">
-                    <CardContent sx={{ columns: 2 }}>
+                    <CardContent>
                         userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
                         isLastShift: {shiftUtils.isLastShift.toString()}<br></br>
                         isPenultimateShift: {shiftUtils.isPenultimateShift.toString()}<br></br>
