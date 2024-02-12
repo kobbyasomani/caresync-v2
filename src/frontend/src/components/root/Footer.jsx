@@ -5,7 +5,7 @@ const Footer = () => {
         <footer>
             <Container>
                 <p>
-                    &copy; 2023
+                    &copy; 2024
                 </p>
             </Container>
         </footer>

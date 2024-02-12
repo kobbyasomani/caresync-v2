@@ -6,7 +6,7 @@ import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
 
-import { TextField, Typography, Container, useMediaQuery, useTheme } from "@mui/material";
+import { TextField, Typography, Container, useTheme } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
@@ -16,16 +16,7 @@ export default function Login() {
 
     // Responsive styles
     const theme = useTheme();
-    const matchXs = useMediaQuery(theme.breakpoints.up("xs"));
-    const matchSm = useMediaQuery(theme.breakpoints.up("sm"));
-    const matchMd = useMediaQuery(theme.breakpoints.up("md"));
-    const matchLg = useMediaQuery(theme.breakpoints.up("lg"));
-    const matchXl = useMediaQuery(theme.breakpoints.up("xl"));
     const xsUp = theme.breakpoints.up("xs");
-    const smUp = theme.breakpoints.up("sm");
-    const mdUp = theme.breakpoints.up("md");
-    const lgUp = theme.breakpoints.up("lg");
-    const xlUp = theme.breakpoints.up("xl");
 
     // Set the initial form state
     const initialState = useMemo(() => {

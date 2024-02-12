@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { ButtonPrimary } from "../root/Buttons";
-import Loader from "../logo/Loader";
 
 import {
     useTheme, Grid, Box, Typography,

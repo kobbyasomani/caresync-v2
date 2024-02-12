@@ -3,6 +3,7 @@ import {
     useCallback,
     cloneElement,
     Children,
+    useState,
 } from "react";
 import {
     useHandleFormInput,
@@ -11,7 +12,7 @@ import {
 
 import axios from "axios";
 
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { ButtonPrimary } from "../root/Buttons";
 
 /**
@@ -52,6 +53,48 @@ const Form = ({
     // Handle form state and controlled inputs.
     const handleInput = useHandleFormInput(setForm);
     const handleErrors = useHandleFormErrors(setForm);
+    const [formFeedback, setFormFeedback] = useState("");
+
+    /**
+     * Submit form to the postURL using axios
+     */
+    const submitForm = useCallback(() => {
+        axios({
+            url: postURL,
+            method: method || "post",
+            data: form.inputs
+        }).then(response => {
+            // If a callback is passed, return it and pass it the response data
+            if (callback) {
+                // console.log("executing form callback...");
+                callback(response.data);
+            }
+            // Clear the form after successful submission
+            setForm({
+                type: "clearForm"
+            });
+        }).catch(error => {
+            // Render validation error messages
+            handleErrors([`Error: ${error.response.data.message}`]);
+        });
+    }, [callback, form.inputs, handleErrors, method, postURL, setForm]);
+
+    /**
+     * Resend user verification email
+     */
+    const sendVerificationEmail = useCallback(() => {
+        axios({
+            url: "/user/resend-verification",
+            method: "POST",
+            data: { email: form.inputs.email }
+        }).then(response => {
+            setFormFeedback(response.data.message);
+        }).catch(error => {
+            // Render validation error messages
+            handleErrors([`Error: ${error.response.data.message}`]);;
+        });
+    }, [form.inputs.email, handleErrors]);
+
 
     /**
      * Validate and submit the form.
@@ -90,25 +133,8 @@ const Form = ({
         }
 
         // If there are no errors submit the form
-        axios({
-            url: postURL,
-            method: method || "post",
-            data: form.inputs
-        }).then(response => {
-            // If a callback is passed, return it and pass it the response data
-            if (callback) {
-                // console.log("executing form callback...");
-                callback(response.data);
-            }
-            // Clear the form after successful submission
-            setForm({
-                type: "clearForm"
-            });
-        }).catch(error => {
-            // Render validation error messages
-            handleErrors([`Error: ${error.response.data.message}`]);
-        });
-    }, [postURL, form, setForm, handleErrors, validation, callback, method]);
+        submitForm();
+    }, [form, handleErrors, validation, submitForm]);
 
     return (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
@@ -142,17 +168,30 @@ const Form = ({
                         }
                     })}
                     {/* Render form errors if any exist */}
-                    {form.errors?.length > 0 ? (<div className="form-errors">
-                        <ul>
-                            {form.errors.map((error, index) => {
-                                return <li key={index}>{error}</li>
-                            })}
-                        </ul>
-                    </div>) : null
+                    {form.errors?.length > 0 ? (
+                        <div className="form-errors">
+                            <ul>
+                                {form.errors.map((error, index) => {
+                                    return <li key={index}>{error}</li>
+                                })}
+                            </ul>
+                        </div>) : null
                     }
-                    <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
-                        {buttonText}
-                    </ButtonPrimary>
+                    {formFeedback ? (
+                        <div className="form-feedback">
+                            {formFeedback}
+                        </div>) : null
+                    }
+                    <Stack direction="row" gap={0}>
+                        <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
+                            {buttonText}
+                        </ButtonPrimary>
+                        {form.errors.includes("Error: Please confirm your email") ? (
+                            <ButtonPrimary onClick={sendVerificationEmail}>
+                                Resend verification email
+                            </ButtonPrimary>
+                        ) : (null)}
+                    </Stack>
                 </fieldset>
             </form>
         </Box>

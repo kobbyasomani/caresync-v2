@@ -68,6 +68,47 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
+// @desc Resend Verification
+// @route POST /user/resendVerification
+// @access public
+const resendVerification = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  //Ensure all fields are filled out
+  if (!email) {
+    res.status(400);
+    throw new Error("Please enter your email address.");
+  }
+
+  // Find user by email
+  const user = await User.findOne({ email });
+
+  // Current user ID
+  if (!user) {
+    res.status(404);
+    throw new Error("Please check your email address.")
+  }
+
+  const id = user.id;
+  const firstName = user.firstName;
+
+  // Generates JWT token for verification
+  const emailToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  // Sends verification email to user
+  emails.verifyUserEmail(firstName, email, emailToken);
+
+  res.status(200).json({
+    message:
+      `A verification email has been set to: ${email}. Click the link in the email to verify your account.`
+  })
+
+});
+
+
+//----NEW ROUTE----//
 // @desc Verify Email
 // @route POST /user/emailVerification
 // @access public
@@ -267,4 +308,5 @@ module.exports = {
   loginUser,
   getUserClients,
   emailVerification,
+  resendVerification,
 };

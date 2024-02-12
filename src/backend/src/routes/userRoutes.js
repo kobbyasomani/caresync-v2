@@ -5,6 +5,7 @@ const {
   loginUser,
   getUserClients,
   emailVerification,
+  resendVerification,
   // authUser,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
@@ -13,6 +14,10 @@ const { protect } = require("../middleware/authMiddleware");
 // Creates user and sends verification email
 // @param {firstName, lastName, email, password}
 userRouter.post("/register", registerUser);
+
+// Resend a verification email to the user
+// @param {email, password}
+userRouter.post("/resend-verification", resendVerification);
 
 // Sets "isConfirmed" to true. 
 // @param :token variable.  Needs to be sliced from the url on the front end.  Example: const confirmation = window.location.search.slice(1);
@@ -24,7 +29,7 @@ userRouter.post("/login", loginUser);
 
 // Finds all user clients (both coordinator and carer)
 // @param none  (pulls user id from jwt token)
-userRouter.get("/", protect, getUserClients); 
+userRouter.get("/", protect, getUserClients);
 
 // Authenticates the user when accessing protected client-side routes
 // @param none (pulls user id from jwt token)
