@@ -24,8 +24,8 @@ body {
         flex-grow: 1;
         padding-top: 1rem;
 
-        // Standard margin for all sections in main
-        section:first-of-type,
+        // Standard margin for all sections in main preceded by a sibling
+        &>section:first-of-type,
         &>section+* {
             margin-top: 1rem;
         }
@@ -45,6 +45,7 @@ h4,
 h5,
 h6 {
     word-wrap: break-word;
+    color: $raisin-black;
 }
 
 a.button-link {
@@ -54,7 +55,9 @@ a.button-link {
 
 form {
     .form-errors {
-        color: red;
+        color: $auburn;
+        background-color: #ffe7e6;
+        border-radius: 0.25rem;
     }
 }
 
@@ -76,7 +79,6 @@ fieldset {
     }
 }
 
-
 #calendar {
     padding-top: 1rem;
 
@@ -89,6 +91,11 @@ fieldset {
     .fc-today-button {
         background-color: $raisin-black;
         border-color: $raisin-black;
+    }
+
+    .fc-toggleView-button {
+        background-color: $royal-purple;
+        border-color: $royal-purple;
     }
 }
 

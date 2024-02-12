@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { ButtonPrimary } from "../root/Buttons";
+import Loader from "../logo/Loader";
 
 import {
     useTheme, Grid, Box, Typography,
@@ -44,6 +45,14 @@ const Overview = (props) => {
             data: "modal"
         });
         navigate("/calendar/edit-shift")
+    }, [modalDispatch, navigate]);
+
+    const openCareTeamList = useCallback(() => {
+        navigate("/calendar/care-team");
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
     }, [modalDispatch, navigate]);
 
     const renderContent = (card) => {
@@ -135,7 +144,7 @@ const Overview = (props) => {
                     </Card>
                 </Grid>) : null
             }
-            {shiftUtils.prevShift.handoverNotes ? (
+            {shiftUtils.prevShift && Boolean(shiftUtils.prevShift.handoverNotes) ? (
                 <Grid item xs={12}>
                     <Card variant="outlined" sx={{
                         backgroundColor: theme.palette.grey[200],
@@ -193,10 +202,10 @@ const Overview = (props) => {
 
             <Grid item xs={12}>
                 <Card variant="outlined" id="care-team-card">
-                    <CardActionArea onClick={() => viewPanel("")}>
+                    <CardActionArea onClick={openCareTeamList}>
                         <CardContent>
                             <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
-                            <Typography variant="h5" component="p">Care Team</Typography>
+                            <Typography variant="h5" component="p">Shift Carers</Typography>
                             <List dense>
                                 {[1].map(item => {
                                     return (

@@ -39,8 +39,8 @@ const Client = () => {
     }, [dispatch, modalDispatch, store.selectedClient]);
 
     return (
-        <Tooltip title="Switch Client" placement="right" >
-            <Card variant="outlined" id={_id} className="client selected">
+        <Tooltip title="Switch Client" placement="bottom" >
+            <Card variant="outlined" id={_id} className="client selected" sx={{ width: "100%" }}>
                 <CardActionArea
                     onClick={switchClient}
                     sx={{

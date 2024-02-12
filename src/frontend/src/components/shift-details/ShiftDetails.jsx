@@ -183,18 +183,16 @@ const ShiftDetails = ({ isLoading, children }) => {
     }, [store.selectedShift, dispatch, shiftUtils]);
 
     return isLoading ? <Loader /> : (
-        <div>
-            <>
-                <Drawer
-                    // variant="persistent"
-                    anchor="right"
-                    open={modalStore.drawerIsOpen}
-                    onClose={closeDrawer}
-                >
-                    {content()}
-                </Drawer>
-            </>
-        </div>
+        <>
+            <Drawer
+                // variant="persistent"
+                anchor="right"
+                open={modalStore.drawerIsOpen}
+                onClose={closeDrawer}
+            >
+                {content()}
+            </Drawer>
+        </>
     )
 }
 

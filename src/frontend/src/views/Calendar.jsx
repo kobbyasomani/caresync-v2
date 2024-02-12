@@ -10,15 +10,22 @@ import CalendarDayGrid from "../components/CalendarDayGrid";
 import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 import Loader from "../components/logo/Loader";
+import { getCarers } from "../utils/apiUtils";
 
-import { Typography, Stack, Box, IconButton, Tooltip } from "@mui/material"
+import {
+    Typography, Stack, Box, IconButton, Tooltip,
+    Avatar, useTheme, Card, CardActionArea, CardContent
+} from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
+import PersonIcon from '@mui/icons-material/Person';
 
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    const [carers, setCarers] = useState([]);
+    const theme = useTheme();
 
     // Fetch all client shifts and add them to state
     useEffect(() => {
@@ -133,58 +140,138 @@ export const Calendar = () => {
         }
     }, [dispatch, modalDispatch, store]);
 
+    // Get the list of carers for selelcted client and set them in state
+    useEffect(() => {
+        getCarers(store.selectedClient._id).then(carers => {
+            setCarers(carers);
+        });
+    }, [store.selectedClient]);
+
     return isLoading ? <Loader /> : (
         store.selectedClient && store.shifts ? (
-            <>
-                <Stack direction="row" alignItems="center">
-                    <SelectClient />
+            <Box display="grid"
+                gridTemplateColumns="repeat(12, 1fr)"
+                gap={2}
+            >
 
-                    <Tooltip title="Care Team" placement="left" >
-                        <IconButton color="primary" size="large"
-                            sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
-                            variant="contained"
-                            id="care-team-button"
-                            onClick={openCareTeamList}
-                        >
-                            <Diversity3Icon />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
-
-                <Box id="calendar">
-                    <CalendarDayGrid />
+                <Box sx={{ mt: { lg: "1rem" } }}
+                    gridArea={{
+                        xs: "1 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
+                    }}>
+                    <Stack direction="row" alignItems="center">
+                        <SelectClient />
+                        <Tooltip title="Care Team" placement="left">
+                            <IconButton color="primary" size="large"
+                                sx={{
+                                    ml: "auto", backgroundColor: "#eef1f6ff",
+                                    display: { lg: "none" }
+                                }}
+                                variant="contained"
+                                id="care-team-button"
+                                onClick={openCareTeamList}
+                            >
+                                <Diversity3Icon />
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
                 </Box>
 
-                {Object.keys(store.featuredShift).length > 0 ? (
-                    <section>
-                        <Typography variant="h3" sx={{ mb: 1 }}>Upcoming Shift</Typography>
-                        <Shift featured shift={store.featuredShift} />
-                    </section>
-                ) : (
-                    <section>
-                        <Typography variant="h3">No upcoming shifts</Typography>
-                    </section>
-                )}
+                <Box id="upcomingShift"
+                    gridArea={{
+                        xs: "3 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
+                    }}
+                    sx={{
+                        bgcolor: theme.palette.primary.light,
+                        borderRadius: "0.25rem",
+                        padding: 2,
+                        mb: { xs: "1rem", lg: 0 },
+                    }}>
+                    {Object.keys(store.featuredShift).length > 0 ? (
+                        <section>
+                            <Typography variant="h3" sx={{ mb: 1 }}>Upcoming Shift</Typography>
+                            <Shift featured shift={store.featuredShift} />
+                        </section>
+                    ) : (
+                        <section>
+                            <Typography variant="h3">No upcoming shift</Typography>
+                        </section>
+                    )}
+                </Box>
 
-                {store.previousShifts.length > 0 ? (
-                    <section>
-                        <Typography variant="h3">Recent Shifts</Typography>
-                        <Stack spacing={2} sx={{ mt: 1 }}>
-                            {store.previousShifts.slice(0, 2).map(shift => {
-                                return <Shift key={shift._id} shift={shift} />
-                            })}
-                        </Stack>
+                <Box id="recentShifts"
+                    gridArea={{
+                        xs: "4 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
+                    }}
+                    sx={{ mb: { xs: "1rem", lg: 0 } }}>
+                    {store.previousShifts.length > 0 ? (
+                        <section>
+                            <Typography variant="h3">Recent Shifts</Typography>
+                            <Stack spacing={2} sx={{ mt: 1 }}>
+                                {store.previousShifts.slice(0, 3).map(shift => {
+                                    return <Shift key={shift._id} shift={shift} />
+                                })}
+                            </Stack>
+                        </section>
+                    ) : (
+                        <Typography variant="h3">No Recent Shifts</Typography>
+                    )}
+                </Box>
+
+                <Box id="careTeam"
+                    gridArea={{
+                        xs: "4 / 1 / span 1 / span 12",
+                        lg: "12 / 1 / span 1 / span 3"
+                    }}
+                    sx={{ display: { xs: "none", lg: "initial" }, mt: "auto" }}>
+                    <section style={{ mt: 0 }}>
+                        <Card variant="outlined">
+                            <CardActionArea onClick={openCareTeamList}>
+                                <CardContent>
+                                    <Typography variant="h3" mb={1}>
+                                        Care team
+                                    </Typography>
+                                    <Stack gap={1}>
+                                        {carers.map(carer => {
+                                            return (
+                                                <Stack direction="row" gap={1} key={carer._id}>
+                                                    <Avatar sx={{
+                                                        width: "1.5rem", height: "1.5rem",
+                                                        backgroundColor: theme.palette.primary.main
+                                                    }}>
+                                                        <PersonIcon fontSize="small" />
+                                                    </Avatar>
+                                                    <Typography variant="body1">
+                                                        {carer.firstName} {carer.lastName}
+                                                    </Typography>
+                                                </Stack>
+                                            )
+                                        })}
+                                    </Stack>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
                     </section>
-                ) : (
-                    <Typography variant="h3">No Recent Shifts</Typography>
-                )}
+                </Box>
+
+                <Box gridArea={{
+                    xs: "2 / 1 / span 1 / span 12",
+                    lg: "1 / 4 / span 12 / span 9"
+                }}
+                    sx={{ mb: { xs: "2rem", lg: 0 } }}>
+                    <Box id="calendar">
+                        <CalendarDayGrid />
+                    </Box>
+                </Box>
 
                 <Modal>
                     <Outlet />
                 </Modal>
 
                 <ShiftDetails isLoading={isLoading} />
-            </>
+            </Box>
         ) : <Navigate to="/" />
     )
 }

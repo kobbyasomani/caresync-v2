@@ -4,7 +4,7 @@ import { useModalContext } from "../utils/modalUtils";
 import { useGlobalContext } from "../utils/globalUtils";
 
 import {
-    Card, CardContent, CardActionArea,
+    Card, CardContent, CardActionArea, CardActions,
     Typography, Box, IconButton, Tooltip, useTheme
 } from "@mui/material"
 import EventNoteIcon from '@mui/icons-material/EventNote';
@@ -16,7 +16,6 @@ const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
     // Get modal dispatch method to toggle modal from shift card
     const { modalDispatch } = useModalContext();
-
     const theme = useTheme();
 
     // Open the shift details drawer and close the modal
@@ -43,18 +42,18 @@ const Shift = ({ featured, shift }) => {
 
     return (
         <Card variant="outlined" className={featured ? "shift featured" : "shift"} data-testid="card"
-            sx={{ display: "flex", alignItems: "center" }}>
+            sx={{ display: "flex", alignItems: "center", flexDirection: { lg: "column" }, }}>
             <CardActionArea onClick={openShift}>
                 <CardContent sx={{
                     display: "grid",
                     gridTemplate: "repeat(2, 1fr) / auto 1fr",
-                    alignItems: "center"
+                    alignItems: "center",
                 }}>
                     <Box sx={{ display: "flex", gridArea: "1 / 1 / 2 / 2", [theme.breakpoints.down("sm")]: { gridArea: "1 / 1 / 2 / 3" } }}>
                         <EventNoteIcon sx={{ mr: "0.5rem" }} />
                         <Typography variant="body1" className="shift-date">
                             {shift ? new Date(shift.shiftStartTime)
-                                .toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }) : "Could not load shift time"}
+                                .toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }) : "Could not load shift time"}
                         </Typography>
                     </Box>
                     <Box sx={{ gridArea: "2 / 1 / 3 / 2", [theme.breakpoints.down("sm")]: { gridArea: "2 / 1 / 3 / 3" } }}>
@@ -65,30 +64,37 @@ const Shift = ({ featured, shift }) => {
                 </CardContent>
             </CardActionArea>
             {/* Show shift buttons only on larger screen sizes */}
-            <Box className="shift-buttons" sx={{
-                flexShrink: 0,
-                pr: 1,
-                [theme.breakpoints.down("sm")]: { display: "none" },
+            <CardActions sx={{
+                width: "100%",
+                justifyContent: { xs: "flex-end", lg: "flex-start" },
             }}>
-                <Tooltip title="Handover">
-                    <IconButton className="shift-button-handover" data-testid="handover"
-                        onClick={() => openShift("handover notes")}>
-                        <ForumIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Shift Notes">
-                    <IconButton className="shift-button-notes" data-testid="notes"
-                        onClick={() => openShift("shift notes")}>
-                        <DescriptionIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Incident Reports">
-                    <IconButton className="shift-button-incidents" data-testid="incidents"
-                        onClick={() => openShift("incident reports")}>
-                        <ReportIcon />
-                    </IconButton>
-                </Tooltip>
-            </Box>
+                <Box className="shift-buttons"
+                    sx={{
+                        display: "flex",
+                        flexShrink: 0,
+                        pr: 1,
+                        [theme.breakpoints.down("sm")]: { display: "none" },
+                    }}>
+                    <Tooltip title="Handover">
+                        <IconButton className="shift-button-handover" data-testid="handover"
+                            onClick={() => openShift("handover notes")}>
+                            <ForumIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Shift Notes">
+                        <IconButton className="shift-button-notes" data-testid="notes"
+                            onClick={() => openShift("shift notes")}>
+                            <DescriptionIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Incident Reports">
+                        <IconButton className="shift-button-incidents" data-testid="incidents"
+                            onClick={() => openShift("incident reports")}>
+                            <ReportIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            </CardActions>
         </Card>
     );
 }

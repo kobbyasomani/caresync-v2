@@ -15,7 +15,7 @@ body {
   flex-grow: 1;
   padding-top: 1rem;
 }
-#root main section:first-of-type, #root main > section + * {
+#root main > section:first-of-type, #root main > section + * {
   margin-top: 1rem;
 }
 #root footer p {
@@ -29,6 +29,7 @@ h4,
 h5,
 h6 {
   word-wrap: break-word;
+  color: #201a23;
 }
 
 a.button-link {
@@ -37,7 +38,9 @@ a.button-link {
 }
 
 form .form-errors {
-  color: red;
+  color: #9e2b25;
+  background-color: #ffe7e6;
+  border-radius: 0.25rem;
 }
 
 fieldset {
@@ -65,6 +68,10 @@ fieldset legend {
 #calendar .fc-today-button {
   background-color: #201a23;
   border-color: #201a23;
+}
+#calendar .fc-toggleView-button {
+  background-color: #79589f;
+  border-color: #79589f;
 }
 
 .MuiDrawer-root form {
