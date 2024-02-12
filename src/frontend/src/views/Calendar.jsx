@@ -270,7 +270,9 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                <ShiftDetails isLoading={isLoading} />
+                {store.selectedShift ?
+                    <ShiftDetails isLoading={isLoading} /> : null
+                }
             </Box>
         ) : <Navigate to="/" />
     )

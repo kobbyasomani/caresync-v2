@@ -68,8 +68,10 @@ const ShiftDetails = ({ isLoading, children }) => {
     }, [store.user._id, store.shifts, store.selectedShift]);
 
     useEffect(() => {
-        setShiftUtils(getShiftUtils());
-    }, [getShiftUtils]);
+        if (Object.keys(store.selectedShift).length > 0) {
+            setShiftUtils(getShiftUtils());
+        }
+    }, [store.selectedClient, getShiftUtils]);
 
     const injectActiveDrawer = () => {
         switch (modalStore.activeDrawer) {
