@@ -4,11 +4,11 @@ const nodemailer = require("nodemailer")
 
 // Setting up node mailer information
 let transporter = nodemailer.createTransport({
-    service:"gmail",
-    host: "smtp.gmail.com",
-    secure: false,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: process.env.NODE_ENV === "production" ? true : false,
     auth: {
-        user: process.env.EMAIL_ADDRESS,
+        user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
     }
 })
@@ -20,7 +20,7 @@ module.exports = {
     verifyUserEmail: async function verifyUserEmail(name, email, token) {
         try{
             let info = await transporter.sendMail({
-                from: process.env.EMAIL_ADDRESS,
+                from: process.env.EMAIL_USER,
                 to: email,
                 subject: `Hello ${name}, please verify your email by clicking the link`,
                 html: process.env.BASE_URL + "/emailVerification/"+`${token}`
@@ -33,7 +33,7 @@ module.exports = {
     addCarerEmail: async function addCarerEmail(name, email, clientName, token) {
         try{
             let info = await transporter.sendMail({
-                from: process.env.EMAIL_ADDRESS,
+                from: process.env.EMAIL_USER,
                 to: email,
                 subject: `Hello ${name}, you have been invited to be a carer for ${clientName}`,
                 html: process.env.BASE_URL + `/addCarer/${token}`
