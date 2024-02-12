@@ -20,8 +20,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Please fill out all fields");
   }
 
-  // nsure password is at least 8 characters
-  if(password.length < 8){
+  // Ensure password is at least 8 characters
+  if (password.length < 8) {
     res.status(400);
     throw new Error("Passwords must be more than 8 characters long");
   }
@@ -102,6 +102,11 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   // Current user ID
+  if (!user) {
+    res.status(404);
+    throw new Error("Please check your email and password.")
+  }
+
   const id = user.id;
 
   //Ensure all fields are filled out
@@ -140,7 +145,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  
+
   res.status(200).json({
     message: "Logged in Successfully",
     user: {
