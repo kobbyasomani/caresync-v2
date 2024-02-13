@@ -230,14 +230,19 @@ const Overview = (props) => {
             <Grid item xs={12}>
                 <Card variant="outlined">
                     <CardContent>
-                        userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
-                        isLastShift: {shiftUtils.isLastShift.toString()}<br></br>
-                        isPenultimateShift: {shiftUtils.isPenultimateShift.toString()}<br></br>
-                        isPending: {shiftUtils.isPending.toString()}<br></br>
-                        isInProgress: {shiftUtils.isInProgress.toString()}<br></br>
-                        hasEnded: {shiftUtils.hasEnded.toString()}<br></br>
-                        nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}<br></br>
-                        isInEditWindow: {shiftUtils.isInEditWindow.toString()}
+                        {Object.keys(shiftUtils).length > 0 ? (
+                            <>
+                                userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
+                                isLastShift: {shiftUtils.isLastShift.toString()}<br></br>
+                                isPenultimateShift: {shiftUtils.isPenultimateShift.toString()}<br></br>
+                                isPending: {shiftUtils.isPending.toString()}<br></br>
+                                isInProgress: {shiftUtils.isInProgress.toString()}<br></br>
+                                hasEnded: {shiftUtils.hasEnded.toString()}<br></br>
+                                isInEditWindow: {shiftUtils.isInEditWindow.toString()}<br></br>
+                                nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}
+                            </>
+                        ) : null
+                        }
                     </CardContent>
                 </Card>
             </Grid>

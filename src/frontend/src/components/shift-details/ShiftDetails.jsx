@@ -24,10 +24,13 @@ const ShiftDetails = ({ isLoading, children }) => {
     const [shiftUtils, setShiftUtils] = useState({});
 
     const getShiftUtils = useCallback(() => {
+        const getCurrentTime = () => new Date();
         const shifts = store.shifts;
         const lastShift = shifts[shifts.length - 1];
-        const penultimateShift = shifts[shifts.length - 2];
+        const penultimateShift = shifts.length > 1 ? shifts[shifts.length - 2] : null;
         const shift = store.selectedShift;
+        const shiftStartTime = new Date(shift.shiftStartTime);
+        const shiftEndTime = new Date(shift.shiftEndTime);
         const shiftUtils = { _id: shift._id };
         const editWindow = 8; // Time in hours
 
@@ -37,32 +40,21 @@ const ShiftDetails = ({ isLoading, children }) => {
         };
 
         // Store the next, and previous shifts
-        shiftUtils.nextShift = shift._id === lastShift._id ? false : shifts[getShiftIndex(shift) + 1];
-        shiftUtils.prevShift = shifts[getShiftIndex(shift) - 1];
+        shiftUtils.nextShift = shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
+        shiftUtils.prevShift = shifts.length > 1 && lastShift._id !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
 
-        // Check if the current user is the carer
-        shiftUtils.userIsCarer = Boolean(store.selectedShift._id
-            && (store.user._id === store.selectedShift.carer._id));
-        // Check if the shift is the last shift
-        shiftUtils.isLastShift = Boolean(shift._id === lastShift._id);
-        // Check if the shift is the penultimate shift
-        shiftUtils.isPenultimateShift = Boolean(shift._id === penultimateShift._id);
-        // Check if the shift is pending
-        shiftUtils.isPending = Boolean(new Date() < new Date(shift.shiftStartTime));
-        // Check if the shift is in progress
-        shiftUtils.isInProgress = Boolean(new Date(shift.shiftStartTime) < new Date()
-            && new Date(shift.shiftEndTime) > new Date());
-        // Check if the shift has ended
-        shiftUtils.hasEnded = Boolean(new Date() > new Date(shift.shiftEndTime));
-        // Check if the shift is within its edit window
-        shiftUtils.isInEditWindow = Boolean(
-            (new Date() > new Date(shift.shiftEndTime))
-            && (plusHours(new Date(store.selectedShift.shiftEndTime), editWindow) > new Date())
-            && !shiftUtils.nextShiftHasStarted);
-        // Check if the next shift has started
-        shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift
-            && (new Date() > new Date(shiftUtils.nextShift.shiftStartTime)));
+        shiftUtils.userIsCarer = store.selectedShift._id && store.user._id === store.selectedShift.carer._id;
+        shiftUtils.isLastShift = shift._id === lastShift._id;
+        shiftUtils.isPenultimateShift = shift._id === penultimateShift?._id;
+        shiftUtils.isPending = getCurrentTime() < shiftStartTime;
+        shiftUtils.isInProgress = shiftStartTime < getCurrentTime() && shiftEndTime > getCurrentTime();
+        shiftUtils.hasEnded = getCurrentTime() > shiftEndTime;
+        shiftUtils.isInEditWindow = plusHours(shiftEndTime, editWindow) > getCurrentTime()
+            && shiftUtils.nextShift?.shiftStartTime > getCurrentTime();
+        shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift)
+            && getCurrentTime() > new Date(shiftUtils.nextShift.shiftStartTime);
 
+        // console.log(shiftUtils);
         return shiftUtils;
 
     }, [store.user._id, store.shifts, store.selectedShift]);
@@ -90,13 +82,9 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
     }
 
-    // Sets width of the drawer content column
-    const drawerWidth = "100%";
+    const drawerContentWidth = "100%";
     const closeDrawer = useCallback((event) => {
-        // Prevent tab/shift keypresses while drawer is open from closing it
-        // if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        //     return;
-        // }
+        // Prevent non-Escape keypresses while drawer is open from closing it
         if (event.type === 'keydown' && (event.key !== 'Escape')) {
             return;
         }
@@ -119,7 +107,7 @@ const ShiftDetails = ({ isLoading, children }) => {
 
     const content = () => (
         <Box
-            sx={{ width: drawerWidth, p: 2, pt: 3 }}
+            sx={{ width: drawerContentWidth, p: 2, pt: 3 }}
             role="presentation"
             onKeyDown={closeDrawer}
         >
@@ -174,13 +162,9 @@ const ShiftDetails = ({ isLoading, children }) => {
     /* Sets whether the selected shift is in progress
     (determines whether carer can enter notes and reports) */
     useEffect(() => {
-        // console.log(`selected shift in progress: ${new Date(store.selectedShift.shiftStartTime) < new Date()
-        //     && new Date(store.selectedShift.shiftEndTime) > new Date()}`);
         dispatch({
             type: "setSelectedShiftInProgress",
-            /* Check whether the selected shift is in progress
-            or within carer edit window (8 hours) */
-            data: shiftUtils.isInProgress && shiftUtils.isInEditWindow
+            data: shiftUtils.isInProgress
         });
     }, [store.selectedShift, dispatch, shiftUtils]);
 
