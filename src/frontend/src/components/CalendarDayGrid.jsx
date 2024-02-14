@@ -54,7 +54,7 @@ const CalendarDayGrid = () => {
     const toggleCalendarView = () => {
         setCalendarView(prev => {
             const toggleText = prev.toggleText === "Grid view" ? "List view" : "Grid view";
-            const view = prev.view === "dayGridMonth" ? "list" : "dayGridMonth"
+            const view = prev.view === "dayGridMonth" ? "listMonth" : "dayGridMonth"
 
             calendarRef.current.getApi().changeView(view);
             return {
@@ -97,7 +97,8 @@ const CalendarDayGrid = () => {
                 events={store.shifts.map(shift => {
                     return {
                         id: shift._id,
-                        title: `${shift.carer.firstName} ${shift.carer.lastName}`,
+                        title: `${shift.carer.firstName} ${calendarView.view === "listMonth" ? shift.carer.lastName
+                                : shift.carer.lastName[0]}`,
                         start: shift.shiftStartTime,
                         end: shift.shiftEndTime,
                         display: "auto",

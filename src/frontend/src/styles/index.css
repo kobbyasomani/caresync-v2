@@ -73,6 +73,9 @@ fieldset legend {
   background-color: #79589f;
   border-color: #79589f;
 }
+#calendar .fc-day-today {
+  background-color: #f5ecff;
+}
 
 .MuiDrawer-root form {
   flex-grow: 1;

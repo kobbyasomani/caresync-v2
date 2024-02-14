@@ -151,6 +151,7 @@ function App() {
       modalIsOpen: false,
       drawerIsOpen: false,
       confirmationIsOpen: false,
+      id: "",
       activeModal: {
         title: "This is an empty modal",
         text: `You can use the modalDispatch function to set the active modal 

@@ -28,10 +28,8 @@ const Verification = () => {
                         && response.data.message === "Email successfully confirmed.");
                     setIsLoading(false);
                 });
-        }
-
-        // Handle carer invite verification
-        if (location.pathname.includes("/addCarer/")) {
+            // Handle carer invite verification
+        } else if (location.pathname.includes("/addCarer/")) {
             const token = params.token;
             axios.post(`/carer/add/${token}`)
                 .then(response => {
@@ -40,7 +38,8 @@ const Verification = () => {
                 })
                 .catch(function (error) {
                     // console.log(error);
-                    if (error.response.status === 400 && error.response.data.message === "Carer already exists") {
+                    if (error.response.status === 400
+                        && error.response.data.message === "The carer has already been assigned to this client.") {
                         setPreviouslyVerified(true);
                         setIsLoading(false);
                     }

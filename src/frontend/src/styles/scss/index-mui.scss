@@ -2,6 +2,7 @@ $outline: #999;
 $highlight: powderblue;
 $raisin-black: #201a23ff;
 $royal-purple: #79589fff;
+$royal-purple-light: #f5ecff;
 $antiflash-white: #eef1f6ff;
 $white: #fefffeff;
 $auburn: #9e2b25ff;
@@ -96,6 +97,10 @@ fieldset {
     .fc-toggleView-button {
         background-color: $royal-purple;
         border-color: $royal-purple;
+    }
+
+    .fc-day-today {
+        background-color: $royal-purple-light;
     }
 }
 

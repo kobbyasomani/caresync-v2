@@ -80,6 +80,14 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedClient: client
             }
+        case "setCarers":
+            return {
+                ...state,
+                selectedClient: {
+                    ...state.selectedClient,
+                    carers: action.data
+                }
+            }
         case "setSelectedDate":
             return {
                 ...state,

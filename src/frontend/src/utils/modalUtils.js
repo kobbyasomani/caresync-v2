@@ -4,12 +4,13 @@ const ModalContext = createContext();
 const useModalContext = () => useContext(ModalContext);
 
 const modalReducer = (state, action) => {
-    // console.log("MODAL REDUCER:", action.data);
+    // console.log("Modal Reducer:", action.type, action.data, action.id);
     switch (action.type) {
         case "open":
             return {
                 ...state,
-                [`${action.data}IsOpen`]: true
+                [`${action.data}IsOpen`]: true,
+                id: action.id? action.id : "hello"
             }
         case "close":
             return {

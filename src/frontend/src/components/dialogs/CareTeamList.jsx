@@ -1,21 +1,27 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { getCarers } from "../../utils/apiUtils";
-import { ButtonPrimary } from "../root/Buttons";
+import { getAllShifts } from "../../utils/apiUtils";
+
+import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Carer from "../Carer";
 import Loader from "../logo/Loader";
 
-import { List, Stack } from "@mui/material"
+import { List, Stack, Alert } from "@mui/material"
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const CareTeamList = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+
+    const [isLoading, setIsLoading] = useState(true);
     const [carers, setCarers] = useState([])
+    const [alert, setAlert] = useState({});
+
     const navigate = useNavigate();
 
     // Set the modal text
@@ -30,36 +36,112 @@ const CareTeamList = () => {
         });
     }, [modalDispatch, store.selectedClient]);
 
-    // Get the list of client's carers
-    useEffect(() => {
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            setIsLoading(false);
-        });
-    }, [store.selectedClient, store.shifts]);
-
-    // Open carer invitation dialog
+    // Opens carer invitation dialog
     const addCarer = useCallback(() => {
         navigate("/calendar/invite-carer");
     }, [navigate]);
 
-    // console.log(carers)
+    // Add logged-in user to the care team if they are the coordinator
+    const addCoordinatorAsCarer = useCallback(() => {
+        axios.post("/carer/add-coordinator-as-carer", {
+            "coordinatorID": store.user._id,
+            "clientID": store.selectedClient._id
+        }).then(response => {
+            setAlert({
+                message: "You have been added to the care team.",
+                severity: "success"
+            });
+            getCarers(store.selectedClient._id).then(carers => {
+                setCarers(carers);
+                dispatch({
+                    type: "setCarers",
+                    data: carers
+                });
+            });
+        }).catch(error => setAlert({
+            message: error.response.data.message,
+            severity: "error"
+        }));
+    }, [store.user._id, store.selectedClient._id, dispatch]);
+
+    // Remove a carer from the selected client
+    const removeCarer = useCallback((carer) => {
+        axios.delete(`carer/remove/${store.selectedClient._id}/${carer._id}`)
+            .then(response => {
+                getCarers(store.selectedClient._id).then(carers => {
+                    let message;
+                    if (carer._id === store.user._id) {
+                        message = "You were removed from the care team."
+                    } else {
+                        message = `${carer.firstName} ${carer.lastName} was removed from the care team.`;
+                    }
+                    setAlert({
+                        message: message,
+                        severity: "success"
+                    });
+                    setCarers(carers);
+                    dispatch({
+                        type: "setCarers",
+                        data: carers
+                    });
+                    getAllShifts(store.selectedClient._id)
+                        .then(shifts => {
+                            dispatch({
+                                type: "setShifts",
+                                data: shifts
+                            });
+                        });
+                });
+            }).catch(error => setAlert({
+                message: error.response.data.message,
+                severity: "error"
+            }));
+    }, [store.selectedClient, store.user._id, dispatch]);
+
+    // Update carers on component load
+    useEffect(() => {
+        setIsLoading(true);
+        getCarers(store.selectedClient._id).then(carers => {
+            setCarers(carers);
+            dispatch({
+                type: "setCarers",
+                data: carers
+            });
+        }).then(() => {
+            setIsLoading(false);
+        });
+    }, [dispatch, store.selectedClient._id]);
 
     return isLoading ? <Loader /> : (
         <>
             <List>
-                <Stack spacing={2}>
-                    {carers.map(carer => {
-                        return <Carer key={carer._id} carer={carer} />
-                    })}
+                <Stack spacing={2} key="carer-list">
+                    {carers.length > 0 ? carers.map(carer => {
+                        return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
+                    }) : null}
                 </Stack>
-
             </List>
 
-            <ButtonPrimary onClick={addCarer}
-                startIcon={<PersonAddIcon />}>
-                Add Carer
-            </ButtonPrimary>
+            {Object.keys(alert).length > 0 ? (
+                <Alert severity={alert.severity}>
+                    {alert.message}
+                </Alert>
+
+            ) : null}
+
+            <Stack direction="row">
+                <ButtonPrimary onClick={addCarer}
+                    startIcon={<PersonAddIcon />}>
+                    Add Carer
+                </ButtonPrimary>
+                {store.selectedClient.coordinator === store.user._id
+                    && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
+                    <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                        Add yourself
+                    </ButtonSecondary>
+                ) : (null)
+                }
+            </Stack>
         </>
     )
 }

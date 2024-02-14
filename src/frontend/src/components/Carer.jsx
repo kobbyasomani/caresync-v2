@@ -2,9 +2,6 @@ import { useCallback } from "react";
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
 import Confirmation from "./dialogs/Confirmation";
-// import { getCarers } from "../utils/apiUtils";
-import axios from "axios";
-import { getAllShifts } from "../utils/apiUtils";
 
 import {
     ListItem, ListItemAvatar, ListItemText,
@@ -13,40 +10,30 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 
-const Carer = ({ carer }) => {
+const Carer = (props) => {
     const theme = useTheme();
-    const { store, dispatch } = useGlobalContext();
+    const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const { carer, removeCarer } = props;
+    const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
+    const userIsCarer = store.user._id === carer._id;
 
     const confirmRemoveCarer = useCallback(() => {
         modalDispatch({
             type: "open",
-            data: "confirmation"
+            data: "confirmation",
+            id: carer._id
         });
-    }, [modalDispatch]);
-
-    const removeCarer = useCallback(() => {
-        // console.log("removing carer...")
-        axios.delete(`carer/remove/${store.selectedClient._id}/${carer._id}`)
-            .then(() => {
-                getAllShifts(store.selectedClient._id)
-                    .then(shifts => {
-                        dispatch({
-                            type: "setShifts",
-                            data: shifts
-                        });
-                    });
-            });
-    }, [carer._id, store.selectedClient, dispatch]);
+    }, [modalDispatch, carer._id]);
 
     return (
-        <>
+        <div>
             <ListItem sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: `${theme.shape.borderRadius}px`,
                 p: "1rem"
             }}>
-                {store.user._id === store.selectedClient.coordinator ? (
+                {userIsCoordinator ? (
                     <Tooltip title="Remove carer" placement="left">
                         <IconButton onClick={confirmRemoveCarer}
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
@@ -70,10 +57,14 @@ const Carer = ({ carer }) => {
             </ListItem >
 
             <Confirmation title="Remove Carer"
-                text={`Are you sure you want to remove this carer?`}
+                text={`Are you sure you want to remove ${userIsCarer ? "yourself" : `${carer.firstName} ${carer.lastName}`} 
+                from ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s care team?
+                ${userIsCoordinator && userIsCarer ? "You will be removed as a carer but remain the coordinator for this client." : ""}`}
                 callback={removeCarer}
+                modalId={carer._id}
+                sx={{ ml: { sm: "2.5rem" } }}
             />
-        </>
+        </div>
     )
 }
 

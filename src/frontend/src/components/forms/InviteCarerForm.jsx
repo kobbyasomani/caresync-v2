@@ -40,7 +40,7 @@ export const InviteCarerForm = () => {
                 title: "Invite a care team member",
                 text: `Send an invitation to another user to join ${store.selectedClient.firstName} 
                 ${store.selectedClient.lastName}'s care team. The user must have an existing 
-                CareSync account.`
+                CareSync account that uses the same email address.`
             }
         })
     }, [modalDispatch, modalStore.activeModal, store.selectedClient]);

@@ -71,10 +71,10 @@ const sendCarerInvite = asyncHandler(async (req, res) => {
 // @access public
 const addCarer = asyncHandler(async (req, res) => {
   // Retrieve info from token
-  const decode = jwt_decode(req.params.token);
+  const payload = jwt_decode(req.params.token);
 
   // Set variables equal to token data
-  const { carerID, clientID } = decode;
+  const { carerID, clientID } = payload;
 
   // Find client with ID
   const client = await Client.findById(clientID);
@@ -95,18 +95,34 @@ const addCarer = asyncHandler(async (req, res) => {
   }
 
   // Check if the carer has already been added to carers array
-  // Add if they have not already been added
-  if (!client.carers.includes(carerID)) {
+  // Add them if they have not already been added
+  if (client.carers.includes(carerID)) {
+    res.status(400).json({ "message": "The carer has already been assigned to this client." });
+  } else {
     const updatedClient = await Client.findByIdAndUpdate(
       clientID,
       { $push: { carers: carerID } },
       { new: true }
     );
     res.status(200).json(updatedClient);
-  } else {
-    res.status(400);
-    throw new Error("Carer already exists");
   }
+});
+
+//----- New Route Function ------//
+// @desc Add the coordinator as a carer for the given client
+// @route POST /add-coordinator-as-carer
+// @access private
+const addCoordinatorAsCarer = asyncHandler(async (req, res, next) => {
+  const carerID = req.body.coordinatorID;
+  const clientID = req.body.clientID;
+
+  const token = jwt.sign({ carerID, clientID }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
+  });
+
+  // Pass the generated token to the /carer/add route
+  req.params.token = token;
+  addCarer(req, res);
 });
 
 //----- New Route Function------//
@@ -146,12 +162,13 @@ const removeCarer = asyncHandler(async (req, res) => {
     res.status(200).json(updatedClient);
   } else {
     res.status(400);
-    throw new Error("Carer does not exist");
+    throw new Error("The user is not a carer fir this client.");
   }
 });
 
 module.exports = {
   sendCarerInvite,
   addCarer,
+  addCoordinatorAsCarer,
   removeCarer,
 };

@@ -11,17 +11,18 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } 
  * @param {function} callback The function to execute if the user confirms.
  * @returns 
  */
-const Confirmation = ({ title, text, callback, ...rest }) => {
+const Confirmation = ({ title, text, callback, modalId, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
 
     const closeConfirmation = useCallback(() => {
         modalDispatch({
             type: "close",
-            data: "confirmation"
+            data: "confirmation",
+            id: modalId
         });
-    }, [modalDispatch]);
+    }, [modalDispatch, modalId]);
 
-    const handleClick = useCallback(() => {
+    const handleConfirm = useCallback(() => {
         callback();
         closeConfirmation();
     }, [callback, closeConfirmation]);
@@ -29,7 +30,8 @@ const Confirmation = ({ title, text, callback, ...rest }) => {
     return (
         <>
             <Dialog
-                open={modalStore.confirmationIsOpen}
+                maxWidth="xs"
+                open={modalStore.confirmationIsOpen && modalStore.id === modalId}
                 onClose={closeConfirmation}
                 aria-labelledby={title}
                 aria-describedby={text}
@@ -45,7 +47,7 @@ const Confirmation = ({ title, text, callback, ...rest }) => {
                     <ButtonSecondary onClick={closeConfirmation}>
                         Cancel
                     </ButtonSecondary>
-                    <ButtonPrimary onClick={handleClick}>
+                    <ButtonPrimary onClick={handleConfirm}>
                         Confirm
                     </ButtonPrimary>
                 </DialogActions>

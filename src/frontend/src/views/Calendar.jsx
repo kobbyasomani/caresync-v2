@@ -23,9 +23,12 @@ export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
     const [carers, setCarers] = useState([]);
     const theme = useTheme();
+    const navigate = useNavigate();
+    const userIsCoordinator = (userId) => {
+        return userId === store.selectedClient.coordinator;
+    };
 
     // Fetch all client shifts and add them to state
     useEffect(() => {
@@ -177,53 +180,10 @@ export const Calendar = () => {
                     </Stack>
                 </Box>
 
-                <Box id="upcomingShift"
-                    gridArea={{
-                        xs: "3 / 1 / span 1 / span 12",
-                        lg: "auto / 1 / span 1 / span 3"
-                    }}
-                    sx={{
-                        bgcolor: theme.palette.primary.light,
-                        borderRadius: "0.25rem",
-                        padding: 2,
-                        mb: { xs: "1rem", lg: 0 },
-                    }}>
-                    {Object.keys(store.featuredShift).length > 0 ? (
-                        <section>
-                            <Typography variant="h3" sx={{ mb: 1 }}>Upcoming Shift</Typography>
-                            <Shift featured shift={store.featuredShift} />
-                        </section>
-                    ) : (
-                        <section>
-                            <Typography variant="h3">No upcoming shift</Typography>
-                        </section>
-                    )}
-                </Box>
-
-                <Box id="recentShifts"
-                    gridArea={{
-                        xs: "4 / 1 / span 1 / span 12",
-                        lg: "auto / 1 / span 1 / span 3"
-                    }}
-                    sx={{ mb: { xs: "1rem", lg: 0 } }}>
-                    {store.previousShifts.length > 0 ? (
-                        <section>
-                            <Typography variant="h3">Recent Shifts</Typography>
-                            <Stack spacing={2} sx={{ mt: 1 }}>
-                                {store.previousShifts.slice(0, 3).map(shift => {
-                                    return <Shift key={shift._id} shift={shift} />
-                                })}
-                            </Stack>
-                        </section>
-                    ) : (
-                        <Typography variant="h3">No Recent Shifts</Typography>
-                    )}
-                </Box>
-
                 <Box id="careTeam"
                     gridArea={{
-                        xs: "4 / 1 / span 1 / span 12",
-                        lg: "12 / 1 / span 1 / span 3"
+                        xs: "2 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
                     }}
                     sx={{ display: { xs: "none", lg: "initial" }, mt: "auto" }}>
                     <section style={{ mt: 0 }}>
@@ -245,6 +205,7 @@ export const Calendar = () => {
                                                     </Avatar>
                                                     <Typography variant="body1">
                                                         {carer.firstName} {carer.lastName}
+                                                        {userIsCoordinator(carer._id) ? <small> (coordinator)</small> : null}
                                                     </Typography>
                                                 </Stack>
                                             )
@@ -254,6 +215,55 @@ export const Calendar = () => {
                             </CardActionArea>
                         </Card>
                     </section>
+                </Box>
+
+                <Box id="upcomingShift"
+                    gridArea={{
+                        xs: "3 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
+                    }}
+                    sx={{
+                        bgcolor: theme.palette.primary.light,
+                        borderRadius: "0.25rem",
+                        padding: 2,
+                        mb: { xs: "1rem", lg: 0 }
+                    }}>
+                    {Object.keys(store.featuredShift).length > 0 ? (
+                        <section>
+                            <Typography variant="h3" sx={{ mb: 1 }}>
+                                Upcoming Shift
+                            </Typography>
+                            <Shift featured shift={store.featuredShift} />
+                        </section>
+                    ) : (
+                        <section>
+                            <Typography variant="h3">
+                                No upcoming shift
+                            </Typography>
+                        </section>
+                    )}
+                </Box>
+
+                <Box id="recentShifts"
+                    gridArea={{
+                        xs: "4 / 1 / span 1 / span 12",
+                        lg: "auto / 1 / span 1 / span 3"
+                    }}
+                    sx={{ mb: { xs: "1rem", lg: 0 }, mt: { lg: "1rem" } }}>
+                    {store.previousShifts.length > 0 ? (
+                        <section>
+                            <Typography variant="h3">
+                                Recent Shifts
+                            </Typography>
+                            <Stack spacing={2} sx={{ mt: 1 }}>
+                                {store.previousShifts.slice(0, 3).map(shift => {
+                                    return <Shift key={shift._id} shift={shift} />
+                                })}
+                            </Stack>
+                        </section>
+                    ) : (
+                        <Typography variant="h3">No Recent Shifts</Typography>
+                    )}
                 </Box>
 
                 <Box gridArea={{
