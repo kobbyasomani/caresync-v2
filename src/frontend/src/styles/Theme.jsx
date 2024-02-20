@@ -20,10 +20,12 @@ let Theme = createTheme({
         h1: {
             fontWeight: "bold",
             fontSize: "2.4rem",
+            marginBottom: "0.25rem"
         },
         h2: {
             fontWeight: "bold",
             fontSize: "1.8rem",
+            marginBottom: "0.25rem"
         },
         h3: {
             fontWeight: "bold",

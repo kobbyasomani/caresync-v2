@@ -162,7 +162,7 @@ const removeCarer = asyncHandler(async (req, res) => {
     res.status(200).json(updatedClient);
   } else {
     res.status(400);
-    throw new Error("The user is not a carer fir this client.");
+    throw new Error("The user is not a carer for this client.");
   }
 });
 

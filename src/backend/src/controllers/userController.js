@@ -242,9 +242,10 @@ const getUserClients = asyncHandler(async (req, res) => {
           new Object(nextCoordinatorShift[0].carer).toString() ==
           new Object(user._id).toString()
         ) {
-          client["nextShift"] = [
-            { time: nextCoordinatorShift[0].shiftStartTime, carerName: "You" },
-          ];
+          client["nextShift"] = {
+            time: nextCoordinatorShift[0].shiftStartTime,
+            carerName: "You"
+          };
         } else {
           client["nextShift"] = {
             time: nextCoordinatorShift[0].shiftStartTime,
@@ -266,7 +267,7 @@ const getUserClients = asyncHandler(async (req, res) => {
         {
           $match: {
             client: client._id,
-            carer: user._id,
+            // carer: user._id,
             shiftStartTime: { $gte: new Date() },
           },
         },
@@ -288,7 +289,7 @@ const getUserClients = asyncHandler(async (req, res) => {
         } else {
           client["nextShift"] = {
             time: nextCarerShift[0].shiftStartTime,
-            carerName: `${carerName.firstName} ${carerName.lastName}`,
+            carerName: `${carerName[0].firstName} ${carerName[0].lastName}`,
           };
         }
       } else {

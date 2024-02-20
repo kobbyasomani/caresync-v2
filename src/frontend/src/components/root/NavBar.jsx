@@ -4,7 +4,6 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import IconSmall from "../logo/IconSmall";
 
 import {
-    useTheme,
     AppBar,
     Toolbar,
     Button,
@@ -18,7 +17,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const NavBar = () => {
     const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
-    const theme = useTheme();
 
     const handleLogout = useCallback(() => {
         dispatch({

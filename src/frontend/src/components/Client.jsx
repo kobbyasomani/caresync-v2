@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../utils/globalUtils";
 
@@ -7,22 +8,25 @@ import { Theme as theme } from "../styles/Theme";
 
 const Client = ({ client }) => {
     const { dispatch } = useGlobalContext();
+    const [caringFor, setCaringFor] = useState(false);
+    const [nextShiftDate, setNextShiftDate] = useState("");
     const navigate = useNavigate();
 
     // Get the next shift date for client and the associated carer
-    let caringFor;
-    let nextShiftDate = () => {
+    let getNextShiftDate = useCallback(() => {
+        let nextShift = "";
         if (client.nextShift) {
             if (typeof client.nextShift === "string") {
-                return new Date(client.nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+                nextShift = new Date(client.nextShift).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+            } else if (typeof client.nextShift === "object") {
+                nextShift = new Date(client.nextShift.time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
             }
             if (client.nextShift.carerName === "You") {
-                caringFor = true;
+                setCaringFor(true);
             }
-            return new Date(client.nextShift.time).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+            setNextShiftDate(nextShift);
         }
-        return "No upcoming shift";
-    }
+    }, [client]);
 
     const selectClient = (event) => {
         dispatch({
@@ -33,6 +37,10 @@ const Client = ({ client }) => {
         navigate("/calendar");
     }
 
+    useEffect(() => {
+        getNextShiftDate();
+    }, [getNextShiftDate]);
+
     return (
         <Card variant="outlined" id={client._id} className="client"
             onClick={selectClient}>
@@ -42,22 +50,23 @@ const Client = ({ client }) => {
                 alignItems: "center"
             }}>
                 <CardMedia sx={{ px: 2 }}>
-                    <div className="icon">
-                        <Avatar sx={{ backgroundColor: theme.palette.primary.light }}>
-                            <PersonIcon fontSize="large" />
-                        </Avatar>
-                    </div>
+                    <Avatar sx={{ backgroundColor: theme.palette.primary.light }}>
+                        <PersonIcon fontSize="large" />
+                    </Avatar>
                 </CardMedia>
                 <CardContent>
                     <Typography variant="body1" className="name" sx={{ fontWeight: "600" }}>
                         {client.firstName} {client.lastName}
                     </Typography>
                     <Typography variant="body1" className="shift">
-                        Next shift: {`${nextShiftDate()} 
-                        ${(client.nextShift?.carerName
-                                && client.nextShift.carerName !== "You") ? `(${client.nextShift.carerName})`
-                                : ""}`}
+                        {nextShiftDate ? `Next shift: ${nextShiftDate}` : "No upcoming shift"}
                     </Typography>
+                    {client.nextShift?.carerName
+                        && client.nextShift.carerName !== "You" ? (
+                        <Typography variant="subtitle1">
+                            Carer: {client.nextShift.carerName}
+                        </Typography>
+                    ) : null}
                     {caringFor ? (
                         <Typography variant="subtitle1" className="caring-for" color="primary">
                             You are the carer for this shift.

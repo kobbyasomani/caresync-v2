@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
@@ -10,11 +10,40 @@ import AddClientForm from "../components/forms/AddClientForm";
 import { ButtonPrimary } from "../components/root/Buttons";
 import Loader from "../components/logo/Loader";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, Tabs, Tab, Box } from "@mui/material";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+
+import { Theme as theme } from "../styles/Theme";
+
+const TabPanel = (props) => {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
 
 const SelectClient = () => {
     const { store, dispatch } = useGlobalContext();
     const [isLoading, setIsLoading] = useState(true);
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleChangeTabs = useCallback((event, newValue) => {
+        setTabValue(newValue);
+    }, []);
 
     // Unset selected client and shifts
     useEffect(() => {
@@ -44,12 +73,6 @@ const SelectClient = () => {
             }).catch(error => console.error(error.message));
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (store.clients.length > 0) {
-
-    //     }
-    // }, [store.clients]);
-
     // Modal state manager
     const { modalDispatch } = useModalContext();
     const openModal = () => {
@@ -70,33 +93,51 @@ const SelectClient = () => {
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             {Object.keys(store.clients).length > 0
                 && (store.clients.carer.length > 0 || store.clients.coordinator.length > 0) ?
-                <Typography variant="h2">Select a client</Typography> : null}
-            {Object.keys(store.clients).length > 0 && store.clients.carer.length > 0 ? (
-                <section>
-                    <Typography variant="h3">Caring for</Typography>
+                (
+                    <>
+                        <Typography variant="h2">Select a client</Typography>
+                        <Typography variant="body1">You can switch between clients you are caring or coordinating for.</Typography>
+                    </>
+                ) : null}
+            <Tabs value={tabValue} onChange={handleChangeTabs}>
+                <Tab label="Caring for" component="h3" icon={<PeopleAltIcon />} iconPosition="start"
+                    sx={{
+                        fontSize: theme.typography.h3,
+                        textTransform: "capitalize",
+                        color: theme.palette.primary.main,
+                        '&.Mui-selected': { color: theme.palette.primary.dark }
+                    }} />
+                <Tab label="Coordinating for" component="h3" icon={<AssignmentIcon />} iconPosition="start"
+                    sx={{
+                        fontSize: theme.typography.h3,
+                        textTransform: "capitalize",
+                        color: theme.palette.primary.main,
+                        '&.Mui-selected': { color: theme.palette.primary.dark }
+                    }} />
+            </Tabs>
+            <TabPanel value={tabValue} index={0} >
+                {Object.keys(store.clients).length > 0 && store.clients.carer.length > 0 ? (
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         {store.clients.carer.map(client => (
-                            <Client client={client} key={client._id} />
+                            <Client client={client} key={`caringFor_${client._id}`} />
                         ))}
                     </Stack>
-                </section>
-            ) : null}
-            {Object.keys(store.clients).length > 0 && store.clients.coordinator.length > 0 ? (
-                <section>
-                    <Typography variant="h3">Coordinating for</Typography>
+                ) : null}
+            </TabPanel>
+            <TabPanel value={tabValue} index={1}>
+                {Object.keys(store.clients).length > 0 && store.clients.coordinator.length > 0 ? (
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         {store.clients.coordinator.map(client => (
-                            <Client client={client} key={client._id} />
+                            <Client client={client} key={`coordinatingFor_${client._id}`} />
                         ))}
                     </Stack>
-                </section>
-            ) : (
-                <Typography variant="h3">
-                    You aren't currently the coordinator for any clients.<br />
-                    Add a client to get started.
-                </Typography>
-            )}
-
+                ) : (
+                    <Typography variant="h3">
+                        You aren't currently the coordinator for any clients.<br />
+                        Add a client to get started.
+                    </Typography>
+                )}
+            </TabPanel>
             <ButtonPrimary onClick={openModal}>
                 Add client
             </ButtonPrimary>
