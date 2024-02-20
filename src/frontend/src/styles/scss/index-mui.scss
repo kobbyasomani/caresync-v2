@@ -102,6 +102,10 @@ fieldset {
     .fc-day-today {
         background-color: $royal-purple-light;
     }
+
+    .fc-daygrid-day:hover {
+        cursor: pointer;
+    }
 }
 
 .MuiDrawer-root {

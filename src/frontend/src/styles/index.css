@@ -76,6 +76,9 @@ fieldset legend {
 #calendar .fc-day-today {
   background-color: #f5ecff;
 }
+#calendar .fc-daygrid-day:hover {
+  cursor: pointer;
+}
 
 .MuiDrawer-root form {
   flex-grow: 1;
