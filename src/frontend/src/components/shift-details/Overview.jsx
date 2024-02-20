@@ -230,7 +230,7 @@ const Overview = (props) => {
             <Grid item xs={12}>
                 <Card variant="outlined">
                     <CardContent>
-                        {Object.keys(shiftUtils).length > 0 ? (
+                        {Object.keys(shiftUtils).length > 0 && process.env.NODE_ENV === 'development' ? (
                             <>
                                 userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
                                 isLastShift: {shiftUtils.isLastShift.toString()}<br></br>

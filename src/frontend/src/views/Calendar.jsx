@@ -11,6 +11,7 @@ import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 import Loader from "../components/logo/Loader";
 import { getCarers } from "../utils/apiUtils";
+import { ButtonAddShift } from "../components/root/Buttons";
 
 import {
     Typography, Stack, Box, IconButton, Tooltip,
@@ -162,7 +163,7 @@ export const Calendar = () => {
                         xs: "1 / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}>
-                    <Stack direction="row" alignItems="center">
+                    <Stack direction="row" alignItems="center" gap={2}>
                         <SelectClient />
                         <Tooltip title="Care Team" placement="left">
                             <IconButton color="primary" size="large"
@@ -191,7 +192,7 @@ export const Calendar = () => {
                             <CardActionArea onClick={openCareTeamList}>
                                 <CardContent>
                                     <Typography variant="h3" mb={1}>
-                                        Care team
+                                        Care Team
                                     </Typography>
                                     <Stack gap={1}>
                                         {carers.map(carer => {
@@ -226,7 +227,8 @@ export const Calendar = () => {
                         bgcolor: theme.palette.primary.light,
                         borderRadius: "0.25rem",
                         padding: 2,
-                        mb: { xs: "1rem", lg: 0 }
+                        mb: { xs: "1rem", lg: 0 },
+                        position: "relative",
                     }}>
                     {Object.keys(store.featuredShift).length > 0 ? (
                         <section>
@@ -234,12 +236,14 @@ export const Calendar = () => {
                                 Upcoming Shift
                             </Typography>
                             <Shift featured shift={store.featuredShift} />
+                            <ButtonAddShift variant={{ xs: "full", xl: "icon-only" }} />
                         </section>
                     ) : (
                         <section>
                             <Typography variant="h3">
                                 No upcoming shift
                             </Typography>
+                            <ButtonAddShift />
                         </section>
                     )}
                 </Box>

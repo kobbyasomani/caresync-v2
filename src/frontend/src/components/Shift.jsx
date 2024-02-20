@@ -42,7 +42,26 @@ const Shift = ({ featured, shift }) => {
 
     return (
         <Card variant="outlined" className={featured ? "shift featured" : "shift"} data-testid="card"
-            sx={{ display: "flex", alignItems: "center", flexDirection: { lg: "column" }, }}>
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: { lg: "column" },
+                '&:hover': { cursor: "pointer" }
+            }}
+            onClick={(event) => {
+                let subPanel;
+                switch (event.target.className) {
+                    case "shift-button-handover": subPanel = "handover notes"; break;
+                    case "shift-button-notes": subPanel = "shift notes"; break;
+                    case "shift-button-incidents": subPanel = "incident reports"; break;
+                    default: subPanel = null;
+                }
+                if (subPanel) {
+                    openShift(subPanel);
+                } else {
+                    openShift();
+                }
+            }}>
             <CardActionArea onClick={openShift}>
                 <CardContent sx={{
                     display: "grid",

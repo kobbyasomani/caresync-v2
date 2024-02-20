@@ -1,12 +1,15 @@
-import { useCallback } from "react";
-import  React from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { Theme as theme } from "../../styles/Theme";
 
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import MoreTimeIcon from '@mui/icons-material/MoreTime';
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -111,4 +114,82 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
             </IconButton>
         </Tooltip>
     );
+}
+
+// Add Shift button (opens modal)
+export const ButtonAddShift = ({ variant }) => {
+    const { store } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
+    const [breakpoint, setBreakpoint] = useState(getBreakpoint());
+    const buttonDefaults = useMemo(() => {
+        return {
+            ...variant,
+            xs: "full",
+            sm: "full",
+            md: "full",
+            lg: "full",
+            xl: "icon-only"
+        }
+    }, [variant]);
+    const [buttonVariant, setButtonVariant] = useState(buttonDefaults['xs']);
+    const navigate = useNavigate();
+
+    const addShift = (() => {
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+        navigate("/calendar/add-shift");
+    });
+
+    // Get the current breakpoint token key
+    function getBreakpoint() {
+        const windowWidth = window.innerWidth;
+        let breakpoint = 'xs'
+        if (windowWidth > theme.breakpoints.values.xs) breakpoint = 'sm';
+        if (windowWidth > theme.breakpoints.values.sm) breakpoint = 'md';
+        if (windowWidth > theme.breakpoints.values.md) breakpoint = 'lg';
+        if (windowWidth > theme.breakpoints.values.lg) breakpoint = 'xl';
+
+        return breakpoint;
+    }
+
+    // Handle switching between variants depending on viewport resize
+    useEffect(() => {
+        function handleResize() {
+            let newBreakpoint = getBreakpoint();
+            setBreakpoint(newBreakpoint);
+            setButtonVariant(buttonDefaults[newBreakpoint]);
+        }
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [breakpoint, buttonDefaults, variant, buttonVariant]);
+
+    return buttonVariant === "icon-only" ? (
+        <Tooltip title="Add Shift" placement="right">
+            <IconButton sx={{
+                color: "white",
+                backgroundColor: theme.palette.primary.main,
+                '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                },
+                position: "absolute", top: "0.5rem", right: "0.75rem",
+            }} onClick={addShift}>
+                <MoreTimeIcon fontSize="small" />
+            </IconButton>
+        </Tooltip>
+    ) : buttonVariant === "full" ? (
+        store.selectedClient.coordinator === store.user._id ? (
+            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}
+                sx={{ position: "absolute", top: "0.5rem", right: "0.75rem" }}>
+                Add Shift
+            </ButtonPrimary>
+        ) : null
+    ) : (null);
 }
