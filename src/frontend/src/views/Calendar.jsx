@@ -243,7 +243,7 @@ export const Calendar = () => {
                             <Typography variant="h3">
                                 No upcoming shift
                             </Typography>
-                            <ButtonAddShift />
+                            <ButtonAddShift variant={{ xl: "full" }} />
                         </section>
                     )}
                 </Box>

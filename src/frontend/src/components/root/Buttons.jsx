@@ -123,12 +123,12 @@ export const ButtonAddShift = ({ variant }) => {
     const [breakpoint, setBreakpoint] = useState('xs');
     const buttonDefaults = useMemo(() => {
         return {
-            ...variant,
             xs: "full",
             sm: "full",
             md: "full",
             lg: "full",
-            xl: "icon-only"
+            xl: "icon-only",
+            ...variant,
         }
     }, [variant]);
     const [buttonVariant, setButtonVariant] = useState(buttonDefaults['xs']);
@@ -187,9 +187,15 @@ export const ButtonAddShift = ({ variant }) => {
             </Tooltip>
         ) : buttonVariant === "full" ? (
             <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}
-                sx={{ position: "absolute", top: "0.5rem", right: "0.75rem" }}>
+                sx={{
+                    position: { xs: "absolute", lg: "relative" },
+                    top: { xs: "0.5rem", lg: "initial" },
+                    right: { xs: "0.75rem", lg: "initial" },
+                    margin: { lg: "0.5rem auto" },
+                    display: "flex"
+                }}>
                 Add Shift
-            </ButtonPrimary>
+            </ButtonPrimary >
         ) : (null)
     ) : (null);
 }
