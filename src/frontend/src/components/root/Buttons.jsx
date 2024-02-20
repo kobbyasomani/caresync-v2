@@ -120,7 +120,7 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
 export const ButtonAddShift = ({ variant }) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const [breakpoint, setBreakpoint] = useState(getBreakpoint());
+    const [breakpoint, setBreakpoint] = useState('xs');
     const buttonDefaults = useMemo(() => {
         return {
             ...variant,

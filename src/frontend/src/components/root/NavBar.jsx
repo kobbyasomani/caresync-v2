@@ -4,14 +4,16 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import IconSmall from "../logo/IconSmall";
 
 import {
+    useTheme,
     AppBar,
     Toolbar,
     Button,
-    Container,
-    Box, useTheme
+    Container, Box,
+    Typography, Stack,
+    Tooltip
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const NavBar = () => {
     const { store, dispatch } = useGlobalContext();
@@ -60,21 +62,31 @@ const NavBar = () => {
                         </Button>
                     ))}
                     {store.isAuth ? (
-                        <Button id="logout"
-                            startIcon={<LogoutIcon />}
-                            color="inherit"
-                            aria-label="log out"
-                            size="small"
-                            onClick={handleLogout}
-                            sx={{ ml: "auto" }}>
-                            <Box sx={{ [theme.breakpoints.down("sm")]: { display: "none" } }}>
-                                Log out
-                            </Box>
-                        </Button>
+                        <Stack direction="row" gap={2} sx={{ ml: "auto" }}>
+                            <Stack direction="row" gap={0.5} sx={{ alignItems: "center" }}>
+                                <AccountCircleIcon />
+                                <Typography>
+                                    {store.user.firstName}
+                                </Typography>
+                            </Stack>
+                            <Tooltip position="bottom" title="Log out" sx={{ display: { xs: "none", md: "flex" } }}>
+                                <Button id="logout"
+                                    startIcon={<LogoutIcon />}
+                                    color="inherit"
+                                    aria-label="log out"
+                                    size="small"
+                                    onClick={handleLogout}
+                                >
+                                    <Box sx={{ display: { xs: "none", md: "inline" } }}>
+                                        Log out
+                                    </Box>
+                                </Button>
+                            </Tooltip>
+
+                        </Stack>
                     ) : (
                         null
-                    )
-                    }
+                    )}
                 </Toolbar>
             </Container>
         </AppBar >
