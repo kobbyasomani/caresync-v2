@@ -21,6 +21,7 @@ const CareTeamList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [carers, setCarers] = useState([])
     const [alert, setAlert] = useState({});
+    const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
 
     const navigate = useNavigate();
 
@@ -129,19 +130,21 @@ const CareTeamList = () => {
 
             ) : null}
 
-            <Stack direction="row">
-                <ButtonPrimary onClick={addCarer}
-                    startIcon={<PersonAddIcon />}>
-                    Add Carer
-                </ButtonPrimary>
-                {store.selectedClient.coordinator === store.user._id
-                    && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
-                    <ButtonSecondary onClick={addCoordinatorAsCarer}>
-                        Add yourself
-                    </ButtonSecondary>
-                ) : (null)
-                }
-            </Stack>
+            {userIsCoordinator ?
+                (<Stack direction="row">
+                    <ButtonPrimary onClick={addCarer}
+                        startIcon={<PersonAddIcon />}>
+                        Add Carer
+                    </ButtonPrimary>
+                    {store.selectedClient.coordinator === store.user._id
+                        && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
+                        <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                            Add yourself
+                        </ButtonSecondary>
+                    ) : (null)
+                    }
+                </Stack>) : null
+            }
         </>
     )
 }

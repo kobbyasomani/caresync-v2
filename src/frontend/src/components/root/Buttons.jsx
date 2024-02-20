@@ -171,25 +171,25 @@ export const ButtonAddShift = ({ variant }) => {
         };
     }, [breakpoint, buttonDefaults, variant, buttonVariant]);
 
-    return buttonVariant === "icon-only" ? (
-        <Tooltip title="Add Shift" placement="right">
-            <IconButton sx={{
-                color: "white",
-                backgroundColor: theme.palette.primary.main,
-                '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
-                },
-                position: "absolute", top: "0.5rem", right: "0.75rem",
-            }} onClick={addShift}>
-                <MoreTimeIcon fontSize="small" />
-            </IconButton>
-        </Tooltip>
-    ) : buttonVariant === "full" ? (
-        store.selectedClient.coordinator === store.user._id ? (
+    return store.selectedClient.coordinator === store.user._id ? (
+        buttonVariant === "icon-only" ? (
+            <Tooltip title="Add Shift" placement="right">
+                <IconButton sx={{
+                    color: "white",
+                    backgroundColor: theme.palette.primary.main,
+                    '&:hover': {
+                        backgroundColor: theme.palette.primary.dark,
+                    },
+                    position: "absolute", top: "0.5rem", right: "0.75rem",
+                }} onClick={addShift}>
+                    <MoreTimeIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+        ) : buttonVariant === "full" ? (
             <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}
                 sx={{ position: "absolute", top: "0.5rem", right: "0.75rem" }}>
                 Add Shift
             </ButtonPrimary>
-        ) : null
+        ) : (null)
     ) : (null);
 }
