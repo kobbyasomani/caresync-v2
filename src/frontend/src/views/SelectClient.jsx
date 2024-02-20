@@ -100,13 +100,6 @@ const SelectClient = () => {
                     </>
                 ) : null}
             <Tabs value={tabValue} onChange={handleChangeTabs}>
-                <Tab label="Caring for" component="h3" icon={<PeopleAltIcon />} iconPosition="start"
-                    sx={{
-                        fontSize: theme.typography.h3,
-                        textTransform: "capitalize",
-                        color: theme.palette.primary.main,
-                        '&.Mui-selected': { color: theme.palette.primary.dark }
-                    }} />
                 <Tab label="Coordinating for" component="h3" icon={<AssignmentIcon />} iconPosition="start"
                     sx={{
                         fontSize: theme.typography.h3,
@@ -114,17 +107,15 @@ const SelectClient = () => {
                         color: theme.palette.primary.main,
                         '&.Mui-selected': { color: theme.palette.primary.dark }
                     }} />
+                <Tab label="Caring for" component="h3" icon={<PeopleAltIcon />} iconPosition="start"
+                    sx={{
+                        fontSize: theme.typography.h3,
+                        textTransform: "capitalize",
+                        color: theme.palette.primary.main,
+                        '&.Mui-selected': { color: theme.palette.primary.dark }
+                    }} />
             </Tabs>
-            <TabPanel value={tabValue} index={0} >
-                {Object.keys(store.clients).length > 0 && store.clients.carer.length > 0 ? (
-                    <Stack spacing={2} sx={{ mt: 1 }}>
-                        {store.clients.carer.map(client => (
-                            <Client client={client} key={`caringFor_${client._id}`} />
-                        ))}
-                    </Stack>
-                ) : null}
-            </TabPanel>
-            <TabPanel value={tabValue} index={1}>
+            <TabPanel value={tabValue} index={0}>
                 {Object.keys(store.clients).length > 0 && store.clients.coordinator.length > 0 ? (
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         {store.clients.coordinator.map(client => (
@@ -137,6 +128,15 @@ const SelectClient = () => {
                         Add a client to get started.
                     </Typography>
                 )}
+            </TabPanel>
+            <TabPanel value={tabValue} index={1} >
+                {Object.keys(store.clients).length > 0 && store.clients.carer.length > 0 ? (
+                    <Stack spacing={2} sx={{ mt: 1 }}>
+                        {store.clients.carer.map(client => (
+                            <Client client={client} key={`caringFor_${client._id}`} />
+                        ))}
+                    </Stack>
+                ) : null}
             </TabPanel>
             <ButtonPrimary onClick={openModal}>
                 Add client

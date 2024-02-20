@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, Navigate } from "react-router-dom";
+import { getUserName } from "../utils/apiUtils";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
@@ -20,16 +21,46 @@ import {
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 
+// Care team member component (Care team mini-list in Calendar view)
+const CareTeamMember = ({ carer }) => {
+    const { store } = useGlobalContext();
+    const theme = useTheme();
+
+    const userIsCoordinator = (userId) => {
+        return userId === store.selectedClient.coordinator;
+    };
+    return (
+        <Stack direction="row" gap={1}>
+            <Avatar sx={{
+                width: "1.5rem", height: "1.5rem",
+                backgroundColor: theme.palette.primary.main
+            }}>
+                <PersonIcon fontSize="small" />
+            </Avatar>
+            <Typography variant="body1">
+                {carer.firstName} {carer.lastName}
+                {userIsCoordinator(carer._id) ? <small> (coordinator)</small> : null}
+            </Typography>
+        </Stack>
+    );
+}
+
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [carers, setCarers] = useState([]);
+    const [coordinator, setCoordinator] = useState({});
     const theme = useTheme();
     const navigate = useNavigate();
-    const userIsCoordinator = (userId) => {
-        return userId === store.selectedClient.coordinator;
-    };
+
+    // Get the name of the cooridnator for display in the care team
+    useEffect(() => {
+        const getCoordinator = async () => getUserName(store.selectedClient.coordinator).then(response => {
+            setCoordinator(response);
+        });
+        getCoordinator();
+    }, [setCoordinator, store.selectedClient.coordinator]);
 
     // Fetch all client shifts and add them to state
     useEffect(() => {
@@ -195,21 +226,9 @@ export const Calendar = () => {
                                         Care Team
                                     </Typography>
                                     <Stack gap={1}>
-                                        {carers.map(carer => {
-                                            return (
-                                                <Stack direction="row" gap={1} key={carer._id}>
-                                                    <Avatar sx={{
-                                                        width: "1.5rem", height: "1.5rem",
-                                                        backgroundColor: theme.palette.primary.main
-                                                    }}>
-                                                        <PersonIcon fontSize="small" />
-                                                    </Avatar>
-                                                    <Typography variant="body1">
-                                                        {carer.firstName} {carer.lastName}
-                                                        {userIsCoordinator(carer._id) ? <small> (coordinator)</small> : null}
-                                                    </Typography>
-                                                </Stack>
-                                            )
+                                        <CareTeamMember carer={coordinator} id={coordinator._id} />
+                                        {carers.filter(carer => carer._id !== coordinator._id).map(carer => {
+                                            return <CareTeamMember carer={carer} id={carer._id} key={carer._id} />
                                         })}
                                     </Stack>
                                 </CardContent>

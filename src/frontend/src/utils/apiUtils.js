@@ -42,8 +42,28 @@ const getAllShifts = async (clientId) => {
     return shifts
 };
 
+/**
+ * Returns the human-readable name for a given user id
+ * @param {string} userId The id of the user whose names should be returned.
+ * @returns {object} A user object containing the _id, firstName, and lastName properties.
+ */
+const getUserName = async (userId) => {
+    const userName = await fetch(`${baseURL}/user/name`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "id": userId
+        })
+    }).then(response => response.json());
+    return userName;
+}
+
 export {
     getClient,
     getCarers,
     getAllShifts,
+    getUserName,
 }

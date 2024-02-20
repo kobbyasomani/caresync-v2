@@ -304,10 +304,30 @@ const getUserClients = asyncHandler(async (req, res) => {
     .json({ coordinator: clientCoordinatorShift, carer: clientCarerShift });
 });
 
+//----NEW ROUTE----//
+// @desc Get user data
+// @route POST /user/name
+// @access public
+const getUserName = asyncHandler(async (req, res) => {
+  const id = req.body.id;
+  const user = await User.findOne({ _id: id }).select("_id firstName lastName");
+
+  if (user) {
+    res.status(200).json({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
+  } else {
+    res.status(404).json({ message: "The user could not be found." })
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getUserClients,
   emailVerification,
   resendVerification,
+  getUserName,
 };
