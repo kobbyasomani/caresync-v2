@@ -27,14 +27,19 @@ export const AddShiftForm = () => {
 
     // Set the initial form and alert state
     const initialState = {
-        inputs: {
+        inputs: new Date(store.selectedDate.start) > new Date() ? {
             carerID: "",
             shiftStartTime: dayjs(plusHours(new Date(store.selectedDate.start), 7)).$d,
             shiftEndTime: dayjs(plusHours(new Date(store.selectedDate.start), 15)).$d,
             coordinatorNotes: ""
+        } : {
+            carerID: "",
+            shiftStartTime: dayjs(plusHours(new Date(), 7).setMinutes(0, 0, 0)).$d,
+            shiftEndTime: dayjs(plusHours(new Date(), 15).setMinutes(0, 0, 0)).$d,
+            coordinatorNotes: ""
         },
         errors: []
-    }
+    };
     const [form, setForm] = useHandleForm(initialState);
     const [alerts, setAlerts] = useState([]);
     const [carers, setCarers] = useState([]);

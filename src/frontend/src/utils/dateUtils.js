@@ -57,12 +57,12 @@ const minusHours = (date, hours) => {
 }
 
 /**
- * Strip the seconds from a date object so that the time will be: HH:SS:00.
+ * Strip the seconds from a date object so that the time will be: HH:MM:00.
  * @param {Date} date The date object.
  * @returns The date object with 0 seconds on the time.
  */
 const zeroSeconds = (date) => {
-    return date.setTime(date.getTime() - (date.getSeconds() * 1000))
+    return new Date(date.setSeconds(0, 0));
 }
 
 export {
