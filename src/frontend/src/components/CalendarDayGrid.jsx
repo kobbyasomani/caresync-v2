@@ -1,7 +1,10 @@
-import { React, useState, useRef } from "react";
+import { React, useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
+import { getYearMonthDay, minusHours } from "../utils/dateUtils";
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar//list";
@@ -18,6 +21,7 @@ const CalendarDayGrid = () => {
         toggleText: "List view",
     });
     const calendarRef = useRef(null);
+    const calendarApi = useCallback(() => calendarRef.current.getApi(), []);
 
     // Handle selecting a calendar day
     const handleSelect = (info) => {
@@ -56,13 +60,27 @@ const CalendarDayGrid = () => {
             const toggleText = prev.toggleText === "Grid view" ? "List view" : "Grid view";
             const view = prev.view === "dayGridMonth" ? "listMonth" : "dayGridMonth"
 
-            calendarRef.current.getApi().changeView(view);
+            calendarApi().changeView(view);
             return {
                 view: view,
                 toggleText: toggleText
             }
         });
     };
+
+    // Default the selected day to the current day
+    useEffect(() => {
+        if (Object.keys(store.selectedDate).length === 0) {
+            const now = new Date();
+            const nowPlusEightHours = minusHours(now, 8);
+            const startDate = `${getYearMonthDay(nowPlusEightHours)}T${nowPlusEightHours.getHours().toString().padStart(2, "0")}:00:00.000Z`;
+            dispatch({
+                type: "setSelectedDate",
+                data: { start: startDate }
+            });
+        }
+        console.log();
+    }, [calendarApi, dispatch, store.selectedDate]);
 
     return (
         <>
@@ -98,7 +116,7 @@ const CalendarDayGrid = () => {
                     return {
                         id: shift._id,
                         title: `${shift.carer.firstName} ${calendarView.view === "listMonth" ? shift.carer.lastName
-                                : shift.carer.lastName[0]}`,
+                            : shift.carer.lastName[0]}`,
                         start: shift.shiftStartTime,
                         end: shift.shiftEndTime,
                         display: "auto",

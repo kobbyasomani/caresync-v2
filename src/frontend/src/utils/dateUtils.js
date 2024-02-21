@@ -5,7 +5,7 @@
  */
 const getYearMonthDay = (dateObj) => {
     const year = dateObj.getFullYear().toString();
-    const month = dateObj.getMonth().toString();
+    const month = (dateObj.getMonth() + 1).toString();
     const day = dateObj.getDate().toString();
     const yearMonthDay = [year, month, day].map(str => str.padStart(2, "0")).join("-");
     // console.log(yearMonthDay);
@@ -41,7 +41,8 @@ const dateAsObj = (date) => {
  * @returns The date with the specified number of hours added to it.
  */
 const plusHours = (date, hours) => {
-    return new Date(date.setTime(date.getTime() + (hours * 60 * 60 * 1000)));
+    const newDate = new Date(date.setHours(date.getHours() + hours));
+    return newDate;
 }
 
 /**
@@ -51,7 +52,8 @@ const plusHours = (date, hours) => {
  * @returns The date with the specified number of hours subtracted from it.
  */
 const minusHours = (date, hours) => {
-    return new Date(date.setTime(date.getTime() - (hours * 60 * 60 * 1000)));
+    const newDate = new Date(date.setHours(date.getHours() - hours));
+    return newDate;
 }
 
 /**
