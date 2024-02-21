@@ -89,7 +89,21 @@ export const AddShiftForm = () => {
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
         }
-    }, []);
+        // Shift should not everlap existing shifts
+        for (let shift of store.shifts) {
+            const newShiftStart = form.inputs.shiftStartTime;
+            const newShiftEnd = form.inputs.shiftEndTime;
+            const start = new Date(shift.shiftStartTime);
+            const end = new Date(shift.shiftEndTime);
+            if ((start <= newShiftStart && end >= newShiftEnd)
+                || (start >= newShiftStart && end < newShiftEnd)
+                || (start < newShiftStart && end > newShiftStart)) {
+                throw new Error(`The shift times overlap an existing shift for this client: 
+                ${start.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }).replace("at", "from")} –
+                ${end.toLocaleTimeString("en-AU", { timeStyle: "short" })} with carer ${shift.carer.firstName} ${shift.carer.lastName[0]}.`);
+            }
+        }
+    }, [store.shifts]);
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {

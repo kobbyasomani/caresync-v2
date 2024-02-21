@@ -1,13 +1,18 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { ButtonPrimary } from "../root/Buttons";
+import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
+import Confirmation from "../dialogs/Confirmation";
+import baseURL from "../../utils/baseUrl";
+import { getAllShifts } from "../../utils/apiUtils";
 
 import {
-    useTheme, Grid, Box, Typography,
+    useTheme, Grid, Box, Typography, Stack, Alert,
     Avatar, Card, CardContent, CardActionArea,
-    List, ListItem, ListItemAvatar, ListItemText
+    List, ListItem, ListItemAvatar, ListItemText,
+    TableContainer, Table, TableBody, TableRow, TableCell
 } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import ReportIcon from '@mui/icons-material/Report';
@@ -15,13 +20,16 @@ import ForumIcon from '@mui/icons-material/Forum';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 
 const Overview = (props) => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
     const navigate = useNavigate();
     const { shiftUtils } = props;
+    const [alert, setAlert] = useState({});
+    const [isCancelled, setIsCancelled] = useState(false);
 
     const viewPanel = useCallback((panel) => {
         modalDispatch({
@@ -53,6 +61,40 @@ const Overview = (props) => {
             data: "modal"
         });
     }, [modalDispatch, navigate]);
+
+    const confirmCancelShift = useCallback(() => {
+        modalDispatch({
+            type: "open",
+            data: "confirmation",
+            id: "confirmCancelShift"
+        });
+    }, [modalDispatch]);
+
+    const cancelShift = useCallback(() => {
+        // TODO: Implement cancel shift logic
+        fetch(`${baseURL}/shift/${store.selectedShift._id}`, {
+            credentials: "include",
+            method: "DELETE"
+        }).then((response) => {
+            if (response.status === 200) {
+                setAlert({ severity: "success", message: "The shift has been cancelled." });
+                setIsCancelled(true);
+            } else {
+                setAlert({ severity: "error", message: "The shift could not be cancelled. Please try again later." })
+            }
+        }).then(() => {
+            return getAllShifts(store.selectedClient._id);
+        }).then(shifts => {
+            modalDispatch({
+                type: "close",
+                data: "drawer"
+            });
+            dispatch({
+                type: "setShifts",
+                data: shifts
+            });
+        }).catch((error) => { setAlert({ error: error.message }) });
+    }, [dispatch, modalDispatch, store.selectedClient._id, store.selectedShift._id]);
 
     const renderContent = (card) => {
         switch (card) {
@@ -117,7 +159,7 @@ const Overview = (props) => {
         }
     }
 
-    return (
+    return Object.keys(store.selectedShift).length > 0 ? (
         <Grid container rowSpacing={2} columnSpacing={2}>
             {store.selectedShift.coordinatorNotes ? (
                 <Grid item xs={12}>
@@ -253,13 +295,73 @@ const Overview = (props) => {
                 && (new Date(store.selectedShift.shiftStartTime) > new Date()
                     || new Date(store.selectedShift.shiftEndTime) > new Date()) ? (
                 <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
-                    <ButtonPrimary onClick={editShift}>
-                        Edit shift
-                    </ButtonPrimary>
+                    <Stack direction="row" gap={2} justifyContent="center">
+                        <ButtonPrimary onClick={editShift} sx={{ margin: "0" }}>
+                            Edit shift
+                        </ButtonPrimary>
+                        <ButtonSecondary onClick={confirmCancelShift}
+                            sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
+                            Cancel shift
+                        </ButtonSecondary>
+                    </Stack>
                 </Grid>
             ) : null
             }
+
+            <Confirmation title="Confirm Cancel Shift"
+                text={isCancelled ? "The below shift has been cancelled." : `Are you sure you want to cancel this shift? It will be permanently removed from 
+                ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
+                callback={cancelShift}
+                modalId="confirmCancelShift"
+                sx={{ ml: { sm: "2.5rem" } }}
+                confirmText={<><EventBusyIcon />&nbsp;Cancel shift</>}
+                cancelText="Keep shift"
+                stayOpen
+                afterConfirm={() => {
+                    console.log("Calling afterConfirm()...");
+                    // dispatch({
+                    //     type: "clearSelectedShift",
+                    // });
+                }}
+            >
+                <Box mt={2}>
+                    <Typography variant="body1">
+                        <strong>Shift summary</strong>
+                    </Typography>
+                    <TableContainer>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>Client</TableCell>
+                                    <TableCell>{store.selectedClient.firstName} {store.selectedClient.lastName}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>Start</TableCell>
+                                    <TableCell>{new Date(store.selectedShift.shiftStartTime).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" })}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>End</TableCell>
+                                    <TableCell>{new Date(store.selectedShift.shiftEndTime).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" })}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>Carer</TableCell>
+                                    <TableCell>{store.selectedShift.carer.firstName} {store.selectedShift.carer.lastName}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+                {Object.keys(alert).length > 0 ? (
+                    <Alert severity={alert.severity}>
+                        {alert.message}
+                    </Alert>
+                ) : (null)}
+            </Confirmation>
         </Grid>
+    ) : (
+        <Typography variant="body1">
+            Shift not found.
+        </Typography>
     )
 };
 

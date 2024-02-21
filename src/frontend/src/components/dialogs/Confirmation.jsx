@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useModalContext } from "../../utils/modalUtils"
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
@@ -11,8 +11,10 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } 
  * @param {function} callback The function to execute if the user confirms.
  * @returns 
  */
-const Confirmation = ({ title, text, callback, modalId, ...rest }) => {
+const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText, children,
+    stayOpen, afterConfirm, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
+    const [isConfirmed, setIsConfirmed] = useState(false);
 
     const closeConfirmation = useCallback(() => {
         modalDispatch({
@@ -20,12 +22,19 @@ const Confirmation = ({ title, text, callback, modalId, ...rest }) => {
             data: "confirmation",
             id: modalId
         });
-    }, [modalDispatch, modalId]);
+        if (isConfirmed) {
+            afterConfirm();
+        }
+    }, [modalDispatch, modalId, isConfirmed, afterConfirm]);
 
     const handleConfirm = useCallback(() => {
         callback();
-        closeConfirmation();
-    }, [callback, closeConfirmation]);
+        if (!stayOpen) {
+            closeConfirmation();
+        } else {
+            setIsConfirmed(true);
+        }
+    }, [callback, closeConfirmation, stayOpen]);
 
     return (
         <>
@@ -42,14 +51,23 @@ const Confirmation = ({ title, text, callback, modalId, ...rest }) => {
                     <DialogContentText>
                         {text}
                     </DialogContentText>
+                    {children}
                 </DialogContent>
                 <DialogActions>
-                    <ButtonSecondary onClick={closeConfirmation}>
-                        Cancel
-                    </ButtonSecondary>
-                    <ButtonPrimary onClick={handleConfirm}>
-                        Confirm
-                    </ButtonPrimary>
+                    {!isConfirmed ? (
+                        <>
+                            <ButtonPrimary onClick={closeConfirmation}>
+                                {cancelText || "Cancel"}
+                            </ButtonPrimary>
+                            <ButtonSecondary onClick={handleConfirm} color="error">
+                                {confirmText || "Confirm"}
+                            </ButtonSecondary>
+                        </>
+                    ) : (
+                        <ButtonPrimary onClick={closeConfirmation}>
+                            Close
+                        </ButtonPrimary>
+                    )}
                 </DialogActions>
             </Dialog>
         </>

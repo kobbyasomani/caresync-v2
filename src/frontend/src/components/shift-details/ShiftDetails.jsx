@@ -122,13 +122,13 @@ const ShiftDetails = ({ isLoading, children }) => {
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h2" component="p">
-                        Shift on {store.selectedShift ? (
+                        Shift on {Object.keys(store.selectedShift).length > 0 ? (
                             dateAsObj(store.selectedShift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "long" })
                         ) : "D Month YYYY"
                         }
                     </Typography>
                     <Typography variant="h3" component="p">
-                        {store.selectedShift ? (
+                        {Object.keys(store.selectedShift).length > 0 ? (
                             `${dateAsObj(store.selectedShift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} – 
                 ${dateAsObj(store.selectedShift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })}`
                         ) : "00:00 – 00:00"}
@@ -173,11 +173,13 @@ const ShiftDetails = ({ isLoading, children }) => {
             <Drawer
                 // variant="persistent"
                 anchor="right"
-                open={modalStore.drawerIsOpen}
+                open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}
                 onClose={closeDrawer}
             >
                 {content()}
             </Drawer>
+
+            {/* //TODO: Raise Confirmation component to this level to prevent unmounting on Drawer close */}
         </>
     )
 }

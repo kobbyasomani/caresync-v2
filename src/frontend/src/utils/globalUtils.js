@@ -121,6 +121,11 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedShift: action.data
             }
+        case "clearSelectedShift":
+            return {
+                ...state,
+                selectedShift: {}
+            }
         case "setSelectedShiftInProgress":
             return {
                 ...state,

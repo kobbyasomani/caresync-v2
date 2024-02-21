@@ -10,7 +10,7 @@ const modalReducer = (state, action) => {
             return {
                 ...state,
                 [`${action.data}IsOpen`]: true,
-                id: action.id? action.id : "hello"
+                id: action.id ? action.id : ""
             }
         case "close":
             return {
