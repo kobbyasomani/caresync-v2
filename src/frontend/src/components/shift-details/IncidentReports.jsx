@@ -44,8 +44,7 @@ const IncidentReports = (props) => {
 
     const renderAddReportButton = () => {
         if (shiftUtils.userIsCarer
-            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)
-            && (shiftUtils.isPenultimateShift || shiftUtils.isLastShift)) {
+            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             return (
                 <ButtonPrimary onClick={createIncidentReport} >
                     Create Incident Report

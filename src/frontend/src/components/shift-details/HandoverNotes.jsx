@@ -21,9 +21,7 @@ const HandoverNotes = (props) => {
         if (shiftUtils.userIsCarer) {
             switch (true) {
                 case shiftUtils.isInProgress
-                    || (shiftUtils.isInEditWindow
-                        && shiftUtils.isPenultimateShift
-                        && !shiftUtils.nextShiftHasStarted)
+                    || shiftUtils.isInEditWindow
                     || (shiftUtils.isLastShift && shiftUtils.hasEnded):
                     return <HandoverNotesForm />;
                 case shiftUtils.isPending:

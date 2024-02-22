@@ -18,8 +18,7 @@ const ShiftNotes = (props) => {
         }
         if (shiftUtils.userIsCarer) {
             switch (true) {
-                case ((shiftUtils.isInProgress || shiftUtils.isInEditWindow)
-                    && (shiftUtils.isPenultimateShift || shiftUtils.isLastShift)):
+                case shiftUtils.isInProgress || shiftUtils.isInEditWindow:
                     return <ShiftNotesForm />;
                 case shiftUtils.isPending:
                     return (

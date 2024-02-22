@@ -93,8 +93,7 @@ const Overview = (props) => {
             default: break;
         }
         if (shiftUtils.userIsCarer
-            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)
-            && (shiftUtils.isPenultimateShift || shiftUtils.isLastShift)) {
+            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             let content;
             switch (card) {
                 case "shift notes": content = "Enter your shift notes"; break;
