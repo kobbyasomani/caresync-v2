@@ -20,6 +20,7 @@ import {
 } from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
+import ConfirmCancelShift from "../components/dialogs/ConfirmCancelShift";
 
 // Care team member component (Care team mini-list in Calendar view)
 const CareTeamMember = ({ carer }) => {
@@ -302,6 +303,8 @@ export const Calendar = () => {
                 <Modal>
                     <Outlet />
                 </Modal>
+
+                <ConfirmCancelShift />
 
                 {store.selectedShift ?
                     <ShiftDetails isLoading={isLoading} /> : null
