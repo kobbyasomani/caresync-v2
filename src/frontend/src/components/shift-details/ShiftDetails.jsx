@@ -50,7 +50,7 @@ const ShiftDetails = ({ isLoading, children }) => {
         shiftUtils.isInProgress = shiftStartTime < getCurrentTime() && shiftEndTime > getCurrentTime();
         shiftUtils.hasEnded = getCurrentTime() > shiftEndTime;
         shiftUtils.isInEditWindow = plusHours(shiftEndTime, editWindow) > getCurrentTime()
-            && shiftUtils.nextShift?.shiftStartTime > getCurrentTime();
+            && (shiftUtils.isLastShift || shiftUtils.nextShift?.shiftStartTime > getCurrentTime());
         shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift)
             && getCurrentTime() > new Date(shiftUtils.nextShift.shiftStartTime);
 
