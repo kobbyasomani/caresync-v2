@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
  * @returns 
  */
 const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
-    stayOpenOnConfirm, afterConfirm, children, ...rest }) => {
+    stayOpenOnConfirm, afterConfirm, noDismiss, children, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
     const [isConfirmed, setIsConfirmed] = useState(false);
 
@@ -56,11 +56,13 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                 aria-describedby={text}
                 {...rest}
             >
-                <IconButton className="close-modal"
-                    onClick={closeConfirmation}
-                    sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
-                    <CloseIcon />
-                </IconButton>
+                {!noDismiss ? (
+                    <IconButton className="close-modal"
+                        onClick={closeConfirmation}
+                        sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
+                        <CloseIcon />
+                    </IconButton>
+                ) : null}
                 <DialogTitle variant="h3" sx={{ paddingTop: 4 }}>{title}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
