@@ -304,10 +304,13 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                <ConfirmCancelShift />
-
                 {store.selectedShift ?
-                    <ShiftDetails isLoading={isLoading} /> : null
+                    (
+                        <>
+                            <ShiftDetails isLoading={isLoading} />
+                            <ConfirmCancelShift />
+                        </>
+                    ) : null
                 }
             </Box>
         ) : <Navigate to="/" />

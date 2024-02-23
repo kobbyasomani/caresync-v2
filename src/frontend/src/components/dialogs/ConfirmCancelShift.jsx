@@ -20,7 +20,7 @@ export const ConfirmCancelShift = () => {
     const { modalDispatch } = useModalContext();
     const [alert, setAlert] = useState({});
     const [isCancelled, setIsCancelled] = useState(false);
-
+    // TODO: Clear cancel shift dialog state after shift is deleted
     const cancelShift = useCallback(() => {
         fetch(`${baseURL}/shift/${store.selectedShift._id}`, {
             credentials: "include",
@@ -46,22 +46,25 @@ export const ConfirmCancelShift = () => {
         }).catch((error) => { setAlert({ error: error.message }) });
     }, [dispatch, modalDispatch, store.selectedClient._id, store.selectedShift._id]);
 
+    const afterConfirm = useCallback(() => {
+        dispatch({
+            type: "clearSelectedShift",
+        });
+        setAlert({});
+        setIsCancelled(false);
+    }, [dispatch]);
 
     return Object.keys(store.selectedShift).length > 0 ? (
         <Confirmation title="Confirm Cancel Shift"
             text={isCancelled ? "The below shift has been cancelled." : `Are you sure you want to cancel this shift? It will be permanently removed from 
 ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
             callback={cancelShift}
-            modalId="confirmCancelShift"
+            modalId={`confirmCancelShift_${store.selectedShift._id}`}
             sx={{ ml: { sm: "2.5rem" } }}
             confirmText={<><EventBusyIcon />&nbsp;Cancel shift</>}
             cancelText="Keep shift"
-            stayOpen
-            afterConfirm={() => {
-                dispatch({
-                    type: "clearSelectedShift",
-                });
-            }}
+            stayOpenOnConfirm
+            afterConfirm={afterConfirm}
         >
             <Box mt={2}>
                 <Typography variant="body1">

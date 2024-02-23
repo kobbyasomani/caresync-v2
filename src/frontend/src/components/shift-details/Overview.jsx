@@ -60,9 +60,9 @@ const Overview = (props) => {
         modalDispatch({
             type: "open",
             data: "confirmation",
-            id: "confirmCancelShift"
+            id: `confirmCancelShift_${store.selectedShift._id}`
         });
-    }, [modalDispatch]);
+    }, [modalDispatch, store.selectedShift._id]);
 
     const renderContent = (card) => {
         switch (card) {
