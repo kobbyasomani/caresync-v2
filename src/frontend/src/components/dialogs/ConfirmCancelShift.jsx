@@ -55,7 +55,7 @@ export const ConfirmCancelShift = () => {
     }, [dispatch]);
 
     return Object.keys(store.selectedShift).length > 0 ? (
-        <Confirmation title="Confirm Cancel Shift"
+        <Confirmation title={isCancelled ? "Shift Cancelled" : "Confirm Cancel Shift"}
             text={isCancelled ? "The below shift has been cancelled." : `Are you sure you want to cancel this shift? It will be permanently removed from 
 ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
             callback={cancelShift}
