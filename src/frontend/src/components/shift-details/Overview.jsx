@@ -21,9 +21,9 @@ import EventBusyIcon from '@mui/icons-material/EventBusy';
 const Overview = (props) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const { shiftUtils } = props;
     const theme = useTheme();
     const navigate = useNavigate();
-    const { shiftUtils } = props;
 
     const viewPanel = useCallback((panel) => {
         modalDispatch({
@@ -65,6 +65,13 @@ const Overview = (props) => {
     }, [modalDispatch, store.selectedShift._id]);
 
     const renderContent = (card) => {
+        if (shiftUtils.isPending) {
+            return (
+                <Typography variant="body1" sx={{ color: theme.palette.grey[500] }}>
+                    Pending
+                </Typography>
+            );
+        }
         switch (card) {
             case "shift notes":
                 if (store.selectedShift.shiftNotes) {

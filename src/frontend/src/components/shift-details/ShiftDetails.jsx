@@ -11,11 +11,13 @@ import IncidentReportDetails from "./IncidentReportDetails";
 import Loader from "../logo/Loader";
 
 import {
-    Grid, Box, Stack, Typography, Drawer, IconButton, useTheme
+    Grid, Box, Stack, Typography, Drawer, IconButton, Alert,
+    Tooltip, useTheme
 } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const ShiftDetails = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
@@ -53,6 +55,8 @@ const ShiftDetails = ({ isLoading, children }) => {
             && getCurrentTime() > new Date(shiftUtils.nextShift.shiftStartTime);
         shiftUtils.isInEditWindow = shiftUtils.hasEnded && plusHours(shiftEndTime, editWindow) > getCurrentTime()
             && (shiftUtils.isLastShift || shiftUtils.nextShiftHasStarted === false);
+        shiftUtils.editWindowEndTime = shiftUtils.isFinalShift ? plusHours(shiftEndTime, editWindow) :
+            new Date(shiftUtils.nextShift?.shiftStartTime);
 
         // console.log(shiftUtils);
         return shiftUtils;
@@ -134,6 +138,26 @@ const ShiftDetails = ({ isLoading, children }) => {
                         ) : "00:00 – 00:00"}
                     </Typography>
                 </Grid>
+                {shiftUtils.isPending || shiftUtils.isInProgress || shiftUtils.isInEditWindow ?
+                    (
+                        <Grid item xs={12}>
+                            <Tooltip title={shiftUtils.hasEnded ? `Shifts notes, incident reports, and handover can be added before 
+                            the next shift starts and within eight hours of the shift ending time` : ""}>
+                                <Alert icon={<EventNoteIcon />}
+                                    severity={shiftUtils.isPending ? "info"
+                                        : shiftUtils.isInProgress ? "success"
+                                            : "warning"}>
+                                    This shift is {shiftUtils.isPending ? "pending"
+                                        : shiftUtils.isInProgress ? "in progress"
+                                            : `has ended. You can add notes until 
+                                        ${shiftUtils.editWindowEndTime.toLocaleString(
+                                                "en-AU", { dateStyle: "long", timeStyle: "short" })}`}.
+                                </Alert>
+                            </Tooltip>
+
+                        </Grid>
+                    ) : null
+                }
             </Grid>
 
             <IconButton className="close-modal"
@@ -142,21 +166,23 @@ const ShiftDetails = ({ isLoading, children }) => {
                 <CloseIcon />
             </IconButton>
 
-            {modalStore.activeDrawer ? (
-                <IconButton className="prev-modal"
-                    onClick={backToPrevDrawer}
-                    sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
-                    <ArrowBackIcon />
-                </IconButton>
-            ) : (
-                null
-            )}
+            {
+                modalStore.activeDrawer ? (
+                    <IconButton className="prev-modal"
+                        onClick={backToPrevDrawer}
+                        sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                ) : (
+                    null
+                )
+            }
 
             {injectActiveDrawer()}
 
             {children}
 
-        </Box>
+        </Box >
     );
 
     /* Sets whether the selected shift is in progress
@@ -178,8 +204,6 @@ const ShiftDetails = ({ isLoading, children }) => {
             >
                 {content()}
             </Drawer>
-
-            {/* //TODO: Raise Confirmation component to this level to prevent unmounting on Drawer close */}
         </>
     )
 }

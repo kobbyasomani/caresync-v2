@@ -13,14 +13,15 @@ import ShiftDetails from "../components/shift-details/ShiftDetails";
 import Loader from "../components/logo/Loader";
 import { getCarers } from "../utils/apiUtils";
 import { ButtonAddShift } from "../components/root/Buttons";
+import ConfirmCancelShift from "../components/dialogs/ConfirmCancelShift";
 
 import {
-    Typography, Stack, Box, IconButton, Tooltip,
+    Typography, Stack, Box, IconButton, Tooltip, Button,
     Avatar, useTheme, Card, CardActionArea, CardContent
 } from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
-import ConfirmCancelShift from "../components/dialogs/ConfirmCancelShift";
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 // Care team member component (Care team mini-list in Calendar view)
 const CareTeamMember = ({ carer }) => {
@@ -52,6 +53,7 @@ export const Calendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [carers, setCarers] = useState([]);
     const [coordinator, setCoordinator] = useState({});
+    const [shiftInProgress, setShiftInProgress] = useState({});
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -65,16 +67,41 @@ export const Calendar = () => {
 
     // Fetch all client shifts and add them to state
     useEffect(() => {
+        const findInProgressShift = (shifts) => {
+            const now = new Date();
+            let shiftInProgress = null;
+            for (let shift of shifts) {
+                const shiftStart = new Date(shift.shiftStartTime);
+                const shiftEnd = new Date(shift.shiftEndTime);
+                if ((now > shiftStart) && (now < shiftEnd)) {
+                    shiftInProgress = shift;
+                }
+            }
+            return shiftInProgress;
+        };
         getAllShifts(store.selectedClient._id)
             .then((shifts) => {
-                // console.log(shifts);
                 dispatch({
                     type: "setShifts",
                     data: shifts
                 });
-                setIsLoading(false);
-            });
+                return shifts
+            }).then((shifts) => {
+                const shift = findInProgressShift(shifts);
+                setShiftInProgress(shift);
+            }).then(() => setIsLoading(false));
     }, [store.selectedClient, dispatch]);
+
+    const handleSelectInProgressShift = () => {
+        dispatch({
+            type: "setSelectedShift",
+            data: shiftInProgress
+        });
+        modalDispatch({
+            type: "open",
+            data: "drawer"
+        });
+    }
 
     // Set the featured shift (closest upcoming)
     useEffect(() => {
@@ -153,7 +180,6 @@ export const Calendar = () => {
             data: prevShifts
         });
     }, [store.shifts, store.selectedClient, dispatch]);
-    // console.log(store.featuredShift.shiftStartTime);
 
     const openCareTeamList = useCallback(() => {
         navigate("/calendar/care-team");
@@ -192,7 +218,7 @@ export const Calendar = () => {
 
                 <Box sx={{ mt: { lg: "1rem" } }}
                     gridArea={{
-                        xs: "1 / 1 / span 1 / span 12",
+                        xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}>
                     <Stack direction="row" alignItems="center" gap={2}>
@@ -215,7 +241,7 @@ export const Calendar = () => {
 
                 <Box id="careTeam"
                     gridArea={{
-                        xs: "2 / 1 / span 1 / span 12",
+                        xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}
                     sx={{ display: { xs: "none", lg: "initial" }, mt: "auto" }}>
@@ -238,9 +264,23 @@ export const Calendar = () => {
                     </section>
                 </Box>
 
+                {shiftInProgress ? (
+                    <Box id="shiftInProgress"
+                        gridArea={{
+                            xs: "auto / 1 / span 1 / span 12",
+                            lg: "auto / 1 / span 1 / span 3"
+                        }}>
+                        <Button onClick={handleSelectInProgressShift}
+                            variant="contained" size="large" startIcon={<EventNoteIcon />}
+                            sx={{ textAlign: "left", textTransform: "capitalize", width: "100%" }}>
+                            View shift in progress
+                        </Button>
+                    </Box>
+                ) : null}
+
                 <Box id="upcomingShift"
                     gridArea={{
-                        xs: "3 / 1 / span 1 / span 12",
+                        xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}
                     sx={{
@@ -270,7 +310,7 @@ export const Calendar = () => {
 
                 <Box id="recentShifts"
                     gridArea={{
-                        xs: "4 / 1 / span 1 / span 12",
+                        xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}
                     sx={{ mb: { xs: "1rem", lg: 0 }, mt: { lg: "1rem" } }}>
@@ -294,7 +334,7 @@ export const Calendar = () => {
                     xs: "2 / 1 / span 1 / span 12",
                     lg: "1 / 4 / span 12 / span 9"
                 }}
-                    sx={{ mb: { xs: "2rem", lg: 0 } }}>
+                    sx={{ mb: { xs: 1, lg: 0 } }}>
                     <Box id="calendar">
                         <CalendarDayGrid />
                     </Box>
@@ -304,15 +344,16 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                {store.selectedShift ?
-                    (
-                        <>
-                            <ShiftDetails isLoading={isLoading} />
-                            <ConfirmCancelShift />
-                        </>
-                    ) : null
+                {
+                    store.selectedShift ?
+                        (
+                            <>
+                                <ShiftDetails isLoading={isLoading} />
+                                <ConfirmCancelShift />
+                            </>
+                        ) : null
                 }
-            </Box>
+            </Box >
         ) : <Navigate to="/" />
     )
 }
