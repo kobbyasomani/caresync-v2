@@ -287,7 +287,6 @@ export const Calendar = () => {
                         bgcolor: theme.palette.primary.light,
                         borderRadius: "0.25rem",
                         padding: 2,
-                        mb: { xs: "1rem", lg: 0 },
                         position: "relative",
                     }}>
                     {Object.keys(store.featuredShift).length > 0 ? (
@@ -313,7 +312,7 @@ export const Calendar = () => {
                         xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}
-                    sx={{ mb: { xs: "1rem", lg: 0 }, mt: { lg: "1rem" } }}>
+                    sx={{ mb: { xs: "1rem", lg: 0 }}}>
                     {store.previousShifts.length > 0 ? (
                         <section>
                             <Typography variant="h3">
