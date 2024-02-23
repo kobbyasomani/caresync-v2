@@ -54,11 +54,12 @@ const ShiftDetails = ({ isLoading, children }) => {
         shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift)
             && getCurrentTime() > new Date(shiftUtils.nextShift.shiftStartTime);
         shiftUtils.isInEditWindow = shiftUtils.hasEnded && plusHours(shiftEndTime, editWindow) > getCurrentTime()
-            && (shiftUtils.isLastShift || shiftUtils.nextShiftHasStarted === false);
+            && (shiftUtils.isLastShift
+                || plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2) > getCurrentTime()
+                || shiftUtils.nextShiftHasStarted === false);
         shiftUtils.editWindowEndTime = shiftUtils.isFinalShift ? plusHours(shiftEndTime, editWindow) :
-            new Date(shiftUtils.nextShift?.shiftStartTime);
+            plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2);
 
-        // console.log(shiftUtils);
         return shiftUtils;
 
     }, [store.user._id, store.shifts, store.selectedShift]);
@@ -141,8 +142,8 @@ const ShiftDetails = ({ isLoading, children }) => {
                 {shiftUtils.isPending || shiftUtils.isInProgress || shiftUtils.isInEditWindow ?
                     (
                         <Grid item xs={12}>
-                            <Tooltip title={shiftUtils.hasEnded ? `Shifts notes, incident reports, and handover can be added before 
-                            the next shift starts and within eight hours of the shift ending time` : ""}>
+                            <Tooltip title={shiftUtils.hasEnded ? `Shifts notes, incident reports, and handover can be added  
+                            within eight hours of the shift ending time or in the first two hours of the next shift, whichever is earlier.` : ""}>
                                 <Alert icon={<EventNoteIcon />}
                                     severity={shiftUtils.isPending ? "info"
                                         : shiftUtils.isInProgress ? "success"
