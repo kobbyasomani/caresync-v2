@@ -76,6 +76,9 @@ fieldset legend {
 #calendar .fc-day-today {
   background-color: #f5ecff;
 }
+#calendar .fc-daygrid {
+  background-color: white;
+}
 #calendar .fc-daygrid-day:hover {
   cursor: pointer;
 }

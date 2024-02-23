@@ -50,7 +50,7 @@ const Client = ({ client }) => {
                 alignItems: "center"
             }}>
                 <CardMedia sx={{ px: 2 }}>
-                    <Avatar sx={{ backgroundColor: theme.palette.primary.light }}>
+                    <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
                         <PersonIcon fontSize="large" />
                     </Avatar>
                 </CardMedia>

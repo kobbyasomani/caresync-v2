@@ -51,7 +51,7 @@ const Client = () => {
                     }}>
                     <CardMedia sx={{ px: 2 }}>
                         <div className="icon">
-                            <Avatar sx={{ backgroundColor: theme.palette.primary.light, height: "2rem", width: "2rem" }}>
+                            <Avatar sx={{ backgroundColor: theme.palette.primary.main, height: "2rem", width: "2rem" }}>
                                 <PersonIcon fontSize="medium" />
                             </Avatar>
                         </div>

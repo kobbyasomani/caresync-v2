@@ -10,7 +10,8 @@ export default function Root() {
         <Box sx={{
             display: "flex",
             flexDirection: "column",
-            height: "100%"
+            height: "100%",
+            backgroundColor: "#fffefc"
         }}>
             <NavBar />
             <Container component="main">
