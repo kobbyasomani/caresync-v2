@@ -9,6 +9,7 @@ import { Theme as theme } from "../../styles/Theme";
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 
 // mui Button style override
@@ -106,11 +107,53 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
             <IconButton color="primary" size="large"
                 sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
                 variant="contained"
-                id="care-team-button"
+                id="download-button"
                 onClick={downloadResource}
                 {...rest}
             >
                 <CloudDownloadIcon />
+            </IconButton>
+        </Tooltip>
+    );
+}
+
+// Upload resource icon button
+/**
+ * A button that uploads the specified resource to the provided URL on click.
+ * @param {string} resource The resource to upload.
+ * @param {string} destinationURL The URL to upload the resource to.
+ * @param {string} callback A callback function to execute with the response data as its argument.
+ * @param {string} tooltip The tooltip to display when hovering over the button
+ * @returns 
+ */
+export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...rest }) => {
+    const uploadResource = useCallback(async () => {
+        const response = await fetch(destinationURL, {
+            method: "POST",
+            date: resource
+        }).then(response => response.json())
+            .then((json) => {
+                if (callback) {
+                    callback(json);
+                }
+                return JSON.stringify({ message: "The file was successfully uploaded." });
+            }).catch((error) => {
+                return JSON.stringify({ message: error.message });
+            });
+
+        return response;
+    }, [resource, destinationURL, callback]);
+
+    return (
+        <Tooltip title={tooltip} placement="left" >
+            <IconButton color="primary" size="large"
+                sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
+                variant="contained"
+                id="upload-button"
+                onClick={uploadResource}
+                {...rest}
+            >
+                <CloudUploadIcon />
             </IconButton>
         </Tooltip>
     );

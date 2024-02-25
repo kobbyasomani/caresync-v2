@@ -1,6 +1,6 @@
 import { useGlobalContext } from "../../utils/globalUtils";
 import ShiftNotesForm from "../forms/ShiftNotesForm";
-import { ButtonDownload } from "../root/Buttons";
+import { ButtonDownload, ButtonUpload } from "../root/Buttons";
 
 import { Typography, Box, Stack } from "@mui/material";
 
@@ -44,14 +44,23 @@ const ShiftNotes = (props) => {
                     resourceURL={store.selectedShift.shiftNotes.shiftNotesPDF}
                 />
             );
+        } else {
+            return (
+                <ButtonUpload
+                    tooltip="Upload Shift Notes to the cloud. You will be able to download them as a PDF file afterwards."
+                    resource=""
+                    destinationURL="/"
+                    callback=""
+                />
+            )
         }
     }
 
     return (
         <>
-            <Stack direction="row" alignItems="flex-end">
+            <Stack direction="row" alignItems="flex-end" sx={{ position: "relative" }}>
                 <Typography variant="h3" component="p">Shift Notes</Typography>
-                {renderHeaderButtons()}
+                    {renderHeaderButtons()}
             </Stack>
             <Box sx={{ mt: 1 }}>
                 {renderContent()}
