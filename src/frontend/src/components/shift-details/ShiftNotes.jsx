@@ -36,7 +36,7 @@ const ShiftNotes = (props) => {
     };
 
     const renderHeaderButtons = () => {
-        if (store.selectedShift.shiftNotes) {
+        if (store.selectedShift.shiftNotes.shiftNotesPDF) {
             return (
                 <ButtonDownload
                     tooltip="Download Shift Notes"

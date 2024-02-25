@@ -148,8 +148,8 @@ const ShiftDetails = ({ isLoading, children }) => {
                                     severity={shiftUtils.isPending ? "info"
                                         : shiftUtils.isInProgress ? "success"
                                             : "warning"}>
-                                    This shift is {shiftUtils.isPending ? "pending"
-                                        : shiftUtils.isInProgress ? "in progress"
+                                    This shift {shiftUtils.isPending ? "is pending"
+                                        : shiftUtils.isInProgress ? "is in progress"
                                             : `has ended. You can add notes until 
                                         ${shiftUtils.editWindowEndTime.toLocaleString(
                                                 "en-AU", { dateStyle: "long", timeStyle: "short" })}`}.

@@ -22,6 +22,7 @@ const ShiftNotesForm = () => {
             type: "setSelectedShift",
             data: response
         });
+        // TODO: Preserve line breaks in stored notes
     }
 
     return (

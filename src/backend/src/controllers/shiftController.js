@@ -45,8 +45,8 @@ const getClientShifts = asyncHandler(async (req, res) => {
   }
 
   // Find all shifts for the current client. Join carer first/last name
-  const clientShifts = await Shift.find({client: client.id}).populate("carer", "firstName lastName" ).sort({shiftStartTime: 1})
-  
+  const clientShifts = await Shift.find({ client: client.id }).populate("carer", "firstName lastName").sort({ shiftStartTime: 1 })
+
   res.status(200).json(clientShifts);
 });
 
@@ -121,7 +121,7 @@ const updateShift = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  ).populate("carer", "firstName lastName" );
+  ).populate("carer", "firstName lastName");
 
   //Return updated shift object
   res.status(201).json(updatedShift);
@@ -151,7 +151,7 @@ const createHandover = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  ).populate("carer", "firstName lastName" );
+  ).populate("carer", "firstName lastName");
 
   //Return updated shift object
   res.status(201).json(updatedShift);
@@ -215,35 +215,47 @@ const createShiftNotes = asyncHandler(async (req, res) => {
     .select("firstName")
     .select("lastName");
 
+  let updatedShift;
+  let cloudinaryUploadResult = "";
   // Create a pdf from the entered information
-  const notesPDF = await createPDF(
-    "Shift Notes",
-    client.firstName,
-    client.lastName,
-    carer.firstName,
-    carer.lastName,
-    req.body.shiftNotes
-  );
+  try {
+    const notesPDF = await createPDF(
+      "Shift Notes",
+      client.firstName,
+      client.lastName,
+      carer.firstName,
+      carer.lastName,
+      req.body.shiftNotes
+    );
 
-  // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
-  const result = await cloudinaryUpload(notesPDF, "shiftNotes", shift.client);
-
-  // Update shift with Cloudinary URL
-  const updatedShift = await Shift.findByIdAndUpdate(
-    req.params.shiftID,
-    {
-      shiftNotes: {
-        shiftNotesText: shiftNotes,
-        shiftNotesPDF: result.secure_url,
+    // Upload the pdf to Cloudinary and set the results equal to result. Second param specifies folder to upload to
+    cloudinaryUploadResult = await cloudinaryUpload(notesPDF, "shiftNotes", shift.client);
+  }
+  catch (error) {
+    console.log("Error:", error);
+  }
+  finally {
+    // Update shift with Cloudinary URL
+    updatedShift = await Shift.findByIdAndUpdate(
+      req.params.shiftID,
+      {
+        shiftNotes: {
+          shiftNotesText: shiftNotes,
+          shiftNotesPDF: cloudinaryUploadResult
+        },
       },
-    },
-    {
-      new: true,
-    }
-  ).populate("carer", "firstName lastName" );
+      {
+        new: true,
+      }
+    ).populate("carer", "firstName lastName");
 
-  //Return updated shift object
-  res.status(200).json(updatedShift);
+    if (updatedShift) {
+      //Return updated shift object
+      res.status(200).json(updatedShift);
+    } else {
+      res.status(500).json({ message: "The shift notes could not be added at this time. Please try again later." })
+    }
+  }
 });
 
 //----NEW ROUTE----//
@@ -313,7 +325,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  ).populate("carer", "firstName lastName" );
+  ).populate("carer", "firstName lastName");
 
   //Return updated shift object
   res.status(200).json(addIncidentReport);
