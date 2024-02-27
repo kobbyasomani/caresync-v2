@@ -1,19 +1,14 @@
-import React from 'react';
-import {
-    useCallback,
-    cloneElement,
-    Children,
-    useState,
-} from "react";
+import React, { forwardRef, useCallback, cloneElement, Children, useState, } from "react";
 import {
     useHandleFormInput,
     useHandleFormErrors
 } from "../../utils/formUtils";
-
 import axios from "axios";
 
-import { Box, Stack } from "@mui/material";
 import { ButtonPrimary } from "../root/Buttons";
+import Loader from "../logo/Loader";
+
+import { Box, Stack } from "@mui/material";
 
 /**
  * A resuable controlled form component that manages inputs with a reducer function.
@@ -26,6 +21,8 @@ import { ButtonPrimary } from "../root/Buttons";
  * @param {string} buttonText Text for the form submit button.
  * @param {string} buttonVariant set the mui button variant.
  * One of 'text', 'contained', or 'outlined' (defaults to contained).
+ * @param {boolean} hideSubmitButton If true, the submit button will be hidden. This
+ * is useful in instances where a higher-level component is managing the form submission.
  * @param {string} postURL The API endpoint to submit the form to.
  * @param {string} method The HTTP request method to use.
  * @param {function} validation Additional validation to perform before submitting form.
@@ -33,32 +30,44 @@ import { ButtonPrimary } from "../root/Buttons";
  * form will catch and display to the user. The validator function recieves the form state as an arg.
  * @param {function} callback [optional] A function to be called after form submission
  * that takes the API json response as an argument.
- * @param {*} children The child elements of the form (e.g., labels and inputs) 
- * @returns 
+ * @param {*} children The child elements of the form (e.g., labels and inputs)
+ * @param {function} setParentIsLoading A function to update the load state of the parent.
+ * @returns
  */
-const Form = ({
-    form,
-    setForm,
-    legend,
-    buttonText,
-    buttonVariant,
-    postURL,
-    method,
-    validation,
-    callback,
-    children
-}) => {
+const Form = forwardRef((
+    { form,
+        setForm,
+        legend,
+        buttonText,
+        buttonVariant,
+        postURL,
+        method,
+        validation,
+        callback,
+        hideSubmitButton,
+        children,
+        setParentIsLoading,
+    }, formRef) => {
     // console.log(form.inputs);
 
     // Handle form state and controlled inputs.
     const handleInput = useHandleFormInput(setForm);
     const handleErrors = useHandleFormErrors(setForm);
     const [formFeedback, setFormFeedback] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const updateLoadState = useCallback((isLoading) => {
+        setIsLoading(isLoading);
+        if (setParentIsLoading) {
+            setParentIsLoading(isLoading);
+        }
+    }, [setIsLoading, setParentIsLoading]);
 
     /**
      * Submit form to the postURL using axios
      */
     const submitForm = useCallback(() => {
+        updateLoadState(true)
         axios({
             url: postURL,
             method: method || "post",
@@ -73,11 +82,13 @@ const Form = ({
             setForm({
                 type: "clearForm"
             });
+        }).then(() => {
+            updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
-            handleErrors([`Error: ${error.response.data.message}`]);
+            handleErrors([`Error: ${error.response.data?.message || error.message}`]);
         });
-    }, [callback, form.inputs, handleErrors, method, postURL, setForm]);
+    }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState]);
 
     /**
      * Resend user verification email
@@ -136,7 +147,8 @@ const Form = ({
         submitForm();
     }, [form, handleErrors, validation, submitForm]);
 
-    return (
+
+    return isLoading ? <Loader /> : (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
             <form>
                 <fieldset>
@@ -183,10 +195,14 @@ const Form = ({
                         </div>) : null
                     }
                     <Stack direction="row" gap={0}>
-                        <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
-                            {buttonText}
-                        </ButtonPrimary>
-                        {form.errors.includes("Error: Please confirm your email") ? (
+                        {!hideSubmitButton ? (
+                            <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
+                                {buttonText}
+                            </ButtonPrimary>
+                        ) : <button ref={formRef} onClick={handleSubmit}
+                            style={{ opacity: 0 }}></button>
+                        }
+                        {form.errors?.includes("Error: Please confirm your email") ? (
                             <ButtonPrimary onClick={sendVerificationEmail}>
                                 Resend verification email
                             </ButtonPrimary>
@@ -194,8 +210,8 @@ const Form = ({
                     </Stack>
                 </fieldset>
             </form>
-        </Box>
+        </Box >
     );
-}
+});
 
 export default Form;

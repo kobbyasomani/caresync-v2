@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Client = require("../models/clientModel");
 const Shift = require("../models/shiftModel");
-const { cloudinaryUpload, createPDF } = require("../utils/pdf.utils");
+const { cloudinaryUpload, createPDF, cloudinaryDelete } = require("../utils/pdf.utils");
 
 //----NEW ROUTE----//
 // @desc Get shifts for current user
@@ -102,33 +102,49 @@ const createShift = asyncHandler(async (req, res) => {
 // @route PUT /shift/:shiftID
 // @access private
 const updateShift = asyncHandler(async (req, res) => {
-  // Search for user with JWT token ID
-  const user = await User.findById(req.user.id);
+  try {
+    // Search for user with JWT token ID
+    const user = await User.findById(req.user.id);
 
-  // Find shift
-  const shift = await Shift.findById(req.params.shiftID);
+    // Find shift
+    const shift = await Shift.findById(req.params.shiftID);
 
-  // Make sure logged in user matches the coordinator
-  if (shift.coordinator.toString() !== user.id) {
-    res.status(401);
-    throw new Error("User is not authorized");
+    // Make sure logged in user matches the coordinator
+    if (shift.coordinator.toString() !== user.id) {
+      res.status(401);
+      throw new Error("User is not authorized");
+    }
+
+    // Update shift
+    const updatedShift = await Shift.findByIdAndUpdate(
+      req.params.shiftID,
+      req.body,
+      {
+        new: true,
+      }
+    ).populate("carer", "firstName lastName");
+
+    // Delete existing shift notes PDF from cloud storage if they have been edited or removed
+    if ("shiftNotes" in req.body) {
+      const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
+        /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+
+      if (shiftNotesPDF_public_id) {
+        cloudinaryDelete([shiftNotesPDF_public_id]);
+      };
+    }
+
+    //Return updated shift object
+    res.status(201).json(updatedShift);
+  }
+  catch (error) {
+    res.status(error.status).json({ message: error.message });
   }
 
-  // Update shift
-  const updatedShift = await Shift.findByIdAndUpdate(
-    req.params.shiftID,
-    req.body,
-    {
-      new: true,
-    }
-  ).populate("carer", "firstName lastName");
-
-  //Return updated shift object
-  res.status(201).json(updatedShift);
 });
 
 //----NEW ROUTE----//
-// @desc Update shift
+// @desc Create shift handover
 // @route PUT /shift/:shiftID
 // @access private
 const createHandover = asyncHandler(async (req, res) => {
@@ -158,7 +174,7 @@ const createHandover = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
-// @desc Update shift
+// @desc Delete shift
 // @route DELETE /shift/:shiftID
 // @access private
 const deleteShift = asyncHandler(async (req, res) => {
@@ -215,6 +231,14 @@ const createShiftNotes = asyncHandler(async (req, res) => {
     .select("firstName")
     .select("lastName");
 
+  // Delete existing shift notes PDF from cloud storage if they have been edited or removed
+  const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
+    /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+
+  if (shiftNotesPDF_public_id) {
+    cloudinaryDelete([shiftNotesPDF_public_id]);
+  };
+
   let updatedShift;
   let cloudinaryUploadResult = "";
   // Create a pdf from the entered information
@@ -241,7 +265,7 @@ const createShiftNotes = asyncHandler(async (req, res) => {
       {
         shiftNotes: {
           shiftNotesText: shiftNotes,
-          shiftNotesPDF: cloudinaryUploadResult
+          shiftNotesPDF: cloudinaryUploadResult.secure_url
         },
       },
       {

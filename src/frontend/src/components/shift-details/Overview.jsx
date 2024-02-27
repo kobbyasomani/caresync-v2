@@ -76,7 +76,7 @@ const Overview = (props) => {
             case "shift notes":
                 if (store.selectedShift.shiftNotes) {
                     return (
-                        <Typography variant="body1">
+                        <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                             {store.selectedShift.shiftNotes.shiftNotesText}
                         </Typography>
                     );

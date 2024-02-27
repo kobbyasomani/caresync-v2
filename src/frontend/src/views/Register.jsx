@@ -66,7 +66,7 @@ const Register = () => {
                     id="email"
                     type="email"
                     name="email"
-                    placeholder="your@provider.com"
+                    placeholder="you@provider.com"
                     required
                     mui="TextField" />
                 <TextField

@@ -57,7 +57,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             && (shiftUtils.isLastShift
                 || plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2) > getCurrentTime()
                 || shiftUtils.nextShiftHasStarted === false);
-        shiftUtils.editWindowEndTime = shiftUtils.isFinalShift ? plusHours(shiftEndTime, editWindow) :
+        shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? plusHours(shiftEndTime, editWindow).toLocaleString("en-AU", { timeZone: "UTC", dateStyle: "long", timeStyle: "short" }) :
             plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2);
 
         return shiftUtils;

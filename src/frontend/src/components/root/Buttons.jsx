@@ -18,11 +18,11 @@ const StyledButton = styled(Button)({
 })
 
 // Primary button component
-export const ButtonPrimary = ({ children, variant, ...rest }) => {
+export const ButtonPrimary = ({ variant, children, ...rest }) => {
     return <StyledButton variant={variant || "contained"}
-        component={rest.component}
-        onClick={rest.onClick}
-        to={rest.to}
+        // component={rest.component}
+        // onClick={rest.onClick}
+        // to={rest.to}
         sx={{
             my: 2,
             mx: "auto",

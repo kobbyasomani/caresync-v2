@@ -51,4 +51,16 @@ const cloudinaryUpload = (buffer, folder, clientID) => {
   });
 };
 
-module.exports = { createPDF, cloudinaryUpload };
+/**
+ * Deletes a list of given resource from Cloudinary by public_id
+ * @param {string[]} public_ids An array of public_id strings for resources to delete
+ * @param {object} options `{ resource_type: "image" (default) | "raw" | "video" }`
+ */
+const cloudinaryDelete = (public_ids, delete_options) => {
+  const options = delete_options || { resource_type: "image" };
+  cloudinary.api.delete_resources(public_ids, options).then((response) => {
+    // console.log(response);
+  });
+};
+
+module.exports = { createPDF, cloudinaryUpload, cloudinaryDelete };

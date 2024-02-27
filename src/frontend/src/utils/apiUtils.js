@@ -61,9 +61,27 @@ const getUserName = async (userId) => {
     return userName;
 }
 
+/**
+ * Updates the given shift by id and returns an updated shift object.
+ * @param {string} shiftId The id of the shift to update.
+ * @param {json} body The key value pairs of fields to be updated in the shift object.
+ */
+const updateShift = async (shiftId, body) => {
+    const updatedShift = await fetch(`${baseURL}/shift/${shiftId}`, {
+        credentials: "include",
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    }).then(response => response.json());
+    return updatedShift;
+}
+
 export {
     getClient,
     getCarers,
     getAllShifts,
     getUserName,
+    updateShift,
 }

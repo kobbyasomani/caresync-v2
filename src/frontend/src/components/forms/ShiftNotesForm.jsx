@@ -1,37 +1,59 @@
-import React from "react";
+import React, { useCallback, useState, forwardRef } from "react";
+
 import { useGlobalContext } from "../../utils/globalUtils";
 import baseURL from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
+import Loader from "../logo/Loader";
+
 import { TextField } from "@mui/material";
 
 
-const ShiftNotesForm = () => {
-    const initialState = {
+const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading }, formRef) => {
+    const { store, dispatch } = useGlobalContext();
+    const initialFormState = {
         inputs: {
-            shiftNotes: ""
+            shiftNotes: editMode ? store.selectedShift.shiftNotes.shiftNotesText : ""
         },
         errors: []
     }
+    const [form, setForm] = useHandleForm(initialFormState);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const [form, setForm] = useHandleForm(initialState);
-    const { store, dispatch } = useGlobalContext();
+    const handleChildLoadState = useCallback((childIsLoading) => {
+        setIsLoading(childIsLoading);
+        if (setParentIsLoading) {
+            setParentIsLoading(childIsLoading);
+        }
+    }, [setParentIsLoading]);
 
-    const submitShiftNotes = (response) => {
+    const checkForChanges = useCallback((form) => {
+        if (store.selectedShift.shiftNotes?.shiftNotesText === form.inputs.shiftNotes) {
+            throw new Error("No changes have been made to the shift notes. Select \"cancel edit\" to leave edit mode.");
+        } else {
+            // Continue
+        }
+    }, [store.selectedShift.shiftNotes?.shiftNotesText]);
+
+    const submitShiftNotes = useCallback((response) => {
         dispatch({
             type: "setSelectedShift",
             data: response
         });
-        // TODO: Preserve line breaks in stored notes
-    }
+        setEditMode(false);
+    }, [dispatch, setEditMode]);
 
-    return (
+    return isLoading ? <Loader /> : (
         <Form form={form}
             setForm={setForm}
-            legend="Add and submit your shift notes"
+            legend={editMode ? "Edit your shift notes" : "Add and submit your shift notes"}
             buttonText="Submit shift notes"
             postURL={`${baseURL}/shift/notes/${store.selectedShift._id}`}
             callback={submitShiftNotes}
+            validation={checkForChanges}
+            hideSubmitButton={hideSubmitButton}
+            ref={formRef}
+            setParentIsLoading={handleChildLoadState}
         >
             <TextField multiline
                 minRows={10}
@@ -44,6 +66,6 @@ const ShiftNotesForm = () => {
                 mui="TextField" />
         </Form>
     )
-}
+});
 
 export default ShiftNotesForm
