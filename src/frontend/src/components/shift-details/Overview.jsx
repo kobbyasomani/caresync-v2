@@ -89,10 +89,15 @@ const Overview = (props) => {
                 if (store.selectedShift.shiftNotes) {
                     return (
                         <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                            {store.selectedShift.shiftNotes.shiftNotesText.slice(0, 500)}
-                            ...<span style={{ color: theme.palette.primary.main }}>
-                                Read more
-                            </span>
+                            {store.selectedShift.shiftNotes.shiftNotesText.length <= 500 ?
+                                store.selectedShift.shiftNotes.shiftNotesText
+                                : <>
+                                    {store.selectedShift.shiftNotes.shiftNotesText.slice(0, 500)}
+                                    ...<span style={{ color: theme.palette.primary.main }}>
+                                        Read more
+                                    </span>
+                                </>
+                            }
                         </Typography>
                     );
                 } break;
@@ -109,7 +114,10 @@ const Overview = (props) => {
                                                 onClick={() => openIncident(report)}
                                             >
                                                 <Typography variant="body1">
-                                                    {report.incidentReportText.slice(0, 100)}...
+                                                    {report.incidentReportText.length <= 100 ?
+                                                        report.incidentReportText
+                                                        : report.incidentReportText.slice(0, 100)}...
+
                                                 </Typography>
                                             </ListItemButton>
                                         </ListItem>
