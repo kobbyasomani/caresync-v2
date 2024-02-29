@@ -4,13 +4,14 @@ import { useModalContext } from "../../utils/modalUtils";
 
 import {
     Card, CardContent, CardActionArea,
-    Typography, Box,
+    Typography, Box, useTheme
 } from "@mui/material"
 import ReportIcon from '@mui/icons-material/Report';
 
 const Incident = ({ incident, index }) => {
     const { dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const theme = useTheme();
 
     const openIncident = useCallback(() => {
         modalDispatch({
@@ -37,7 +38,16 @@ const Incident = ({ incident, index }) => {
                     </Box>
                     <Box>
                         <Typography variant="body1" className="shift-carer">
-                            {incident ? incident.incidentReportText : "Could not load incident"}
+                            {incident ?
+                                incident.incidentReportText.length <= 240 ?
+                                    incident.incidentReportText :
+                                    <>
+                                        {incident.incidentReportText.slice(0, 240)}
+                                        ... <span style={{ color: theme.palette.primary.main }}>
+                                            Read more
+                                        </span>
+                                    </>
+                                : "Could not load incident"}
                         </Typography>
                     </Box>
                 </CardContent>
