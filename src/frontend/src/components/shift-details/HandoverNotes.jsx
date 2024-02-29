@@ -1,10 +1,57 @@
+import { useState, useRef, useCallback } from "react";
+
 import { useGlobalContext } from "../../utils/globalUtils";
+import { useModalContext } from "../../utils/modalUtils";
+import { updateShift } from "../../utils/apiUtils";
 import HandoverNotesForm from "../forms/HandoverNotesForm";
-import { Typography, Box } from "@mui/material";
+import Confirmation from "../dialogs/Confirmation";
+import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
+
+import { Typography, Box, Stack } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import TaskIcon from '@mui/icons-material/Task';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const HandoverNotes = (props) => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
+    const { modalStore, modalDispatch } = useModalContext();
     const { shiftUtils } = props;
+    const modalId = `confirmClearHandoverNotes_${store.selectedShift._id}`;
+
+    const [editMode, setEditMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const formRef = useRef(null);
+
+    const toggleEditMode = useCallback((override) => {
+        setEditMode(override || !editMode);
+    }, [editMode]);
+
+    const handleChildLoadState = useCallback((childIsLoading) => {
+        setIsLoading(childIsLoading);
+    }, []);
+
+    const updateHandoverNotes = useCallback(() => {
+        formRef.current.click();
+    }, [formRef]);
+
+    const confirmClearHandoverNotes = useCallback(() => {
+        modalDispatch({
+            type: "open",
+            data: "confirmation",
+            id: modalId
+        });
+    }, [modalDispatch, modalId]);
+
+    const clearHandoverNotes = useCallback(async () => {
+        const updatedHandover = await updateShift(store.selectedShift._id, {
+            handoverNotes: ""
+        });
+        dispatch({
+            type: "setSelectedShift",
+            data: updatedHandover
+        });
+    }, [store.selectedShift._id, dispatch]);
 
     const renderContent = () => {
         // Handover is editable when user is the carer and:
@@ -13,9 +60,51 @@ const HandoverNotes = (props) => {
         // 3. The shift is the last shift for the client (no next shift exists)
         if (store.selectedShift.handoverNotes) {
             return (
-                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                    {store.selectedShift.handoverNotes}
-                </Typography>
+                <>
+                    {!editMode ? (
+                        <>
+                            <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                                {store.selectedShift.handoverNotes}
+                            </Typography>
+                            {shiftUtils.userIsCarer
+                                && (shiftUtils.isInProgress || shiftUtils.isInEditWindow) ?
+
+                                <Stack direction="row" justifyContent="center" mt={4} gap={2}>
+                                    <ButtonPrimary onClick={toggleEditMode}
+                                        sx={{ margin: "0" }} startIcon={<EditIcon />}>
+                                        Edit handover notes
+                                    </ButtonPrimary>
+                                    <ButtonSecondary onClick={confirmClearHandoverNotes}
+                                        sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
+                                        Clear handover notes
+                                    </ButtonSecondary>
+                                </Stack>
+                                : null
+                            }
+                        </>
+                    ) : (
+                        <>
+                            <HandoverNotesForm
+                                editMode={editMode}
+                                setEditMode={setEditMode}
+                                hideSubmitButton
+                                ref={formRef}
+                                setParentIsLoading={handleChildLoadState}
+                            />
+                            <Stack direction="row" justifyContent="center" mt={4} gap={2}>
+                                <ButtonPrimary onClick={updateHandoverNotes} disabled={isLoading}
+                                    sx={{ margin: "0" }} startIcon={<TaskIcon />}>
+                                    Save handover notes
+                                </ButtonPrimary>
+                                <ButtonSecondary onClick={() => toggleEditMode(false)} disabled={isLoading}
+                                    sx={{ margin: "0" }} startIcon={<CancelIcon />}>
+                                    Cancel edit
+                                </ButtonSecondary>
+                            </Stack>
+                        </>
+                    )}
+                </>
+
             )
         }
         if (shiftUtils.userIsCarer) {
@@ -46,6 +135,16 @@ const HandoverNotes = (props) => {
             <Box sx={{ mt: 1 }}>
                 {renderContent()}
             </Box >
+
+            <Confirmation
+                title="Confirm Clear Handover Notes"
+                text={`Are you sure you want to clear the handover notes for this shift?
+                        They will be permanently deleted.`}
+                callback={clearHandoverNotes}
+                modalId={modalId}
+                cancelText="Keep notes"
+                confirmText={<><DeleteForeverIcon /> Clear handover notes</>}
+            />
         </>
     )
 }

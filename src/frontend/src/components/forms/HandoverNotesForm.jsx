@@ -1,20 +1,40 @@
+import { useState, useCallback, forwardRef } from "react";
+
 import { useGlobalContext } from "../../utils/globalUtils";
 import baseURL from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
+import Loader from "../logo/Loader";
+
 import { TextField } from "@mui/material";
 
 
-const HandoverNotesForm = () => {
+const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading }, formRef) => {
+    const { store, dispatch } = useGlobalContext();
+
     const initialState = {
         inputs: {
-            handoverNotes: ""
+            handoverNotes: editMode ? store.selectedShift.handoverNotes : ""
         },
         errors: []
     }
-
     const [form, setForm] = useHandleForm(initialState);
-    const { store, dispatch } = useGlobalContext();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleChildLoadState = useCallback((childIsLoading) => {
+        setIsLoading(childIsLoading);
+        if (setParentIsLoading) {
+            setParentIsLoading(childIsLoading);
+        }
+    }, [setParentIsLoading]);
+
+    const checkForChanges = useCallback((form) => {
+        if (store.selectedShift.handoverNotes === form.inputs.handoverNotes) {
+            throw new Error("No changes have been made. Select \"cancel edit\" to leave edit mode.");
+        } else {
+            // Continue
+        }
+    }, [store.selectedShift.hadnoverNotes]);
 
     const updateHandoverNotes = (response) => {
         dispatch({
@@ -24,16 +44,21 @@ const HandoverNotesForm = () => {
                 carer: store.selectedShift.carer
             }
         });
+        setEditMode(false);
     }
 
-    return (
+    return isLoading ? <Loader /> : (
         <Form form={form}
             setForm={setForm}
-            legend="Add handover notes for this client's next shift"
+            legend={editMode ? "Edit your handover notes" : "Add handover notes for this client's next shift"}
             buttonText="Update handover notes"
             postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}
             method="put"
             callback={updateHandoverNotes}
+            validation={checkForChanges}
+            hideSubmitButton={hideSubmitButton}
+            ref={formRef}
+            setParentIsLoading={handleChildLoadState}
         >
             <TextField multiline
                 minRows={10}
@@ -46,6 +71,6 @@ const HandoverNotesForm = () => {
                 mui="TextField" />
         </Form>
     )
-}
+});
 
 export default HandoverNotesForm

@@ -145,7 +145,7 @@ const updateShift = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Create shift handover
-// @route PUT /shift/:shiftID
+// @route PUT /handover/:shiftID
 // @access private
 const createHandover = asyncHandler(async (req, res) => {
   // Search for user with JWT token ID
@@ -169,8 +169,13 @@ const createHandover = asyncHandler(async (req, res) => {
     }
   ).populate("carer", "firstName lastName");
 
-  //Return updated shift object
-  res.status(201).json(updatedShift);
+  if (updatedShift) {
+    //Return updated shift object
+    res.status(201).json(updatedShift);
+  } else {
+    res.status(500).json({ message: "The shift handover could not be added at this time. Please try again later." })
+  }
+
 });
 
 //----NEW ROUTE----//
