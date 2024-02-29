@@ -135,9 +135,19 @@ const Overview = (props) => {
             case "handover":
                 if (store.selectedShift.handoverNotes) {
                     return (
-                        <Typography variant="body1">
-                            {store.selectedShift.handoverNotes}
-                        </Typography>
+                        <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                            {store.selectedShift.handoverNotes.length <= 350 ?
+                                store.selectedShift.handoverNotes
+                                : (
+                                    <>
+                                        {store.selectedShift.handoverNotes.slice(0, 350)}
+                                        ... <span style={{ color: theme.palette.primary.main }}>
+                                            Read more
+                                        </span>
+                                    </>
+                                )
+                            }
+                        </Typography >
                     );
                 } break;
             default: break;
@@ -214,7 +224,7 @@ const Overview = (props) => {
                                 <Typography variant="h6" component="p">
                                     Handover from previous shift
                                 </Typography>
-                                <Typography variant="body1">
+                                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                                     {shiftUtils.prevShift.handoverNotes}
                                 </Typography>
                             </>

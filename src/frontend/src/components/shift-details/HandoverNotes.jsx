@@ -13,7 +13,7 @@ const HandoverNotes = (props) => {
         // 3. The shift is the last shift for the client (no next shift exists)
         if (store.selectedShift.handoverNotes) {
             return (
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                     {store.selectedShift.handoverNotes}
                 </Typography>
             )
