@@ -21,7 +21,7 @@ const IncidentReportDetails = () => {
             </Stack>
 
             <Box sx={{ pt: 1 }}>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                     {store.selectedIncidentReport.incidentReportText}
                 </Typography>
             </Box>
