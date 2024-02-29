@@ -23,11 +23,15 @@ export default function formReducer(state, action) {
                 ...state,
                 errors: action.errors
             }
+        case "initForm":
+            return {
+                ...state,
+                ...action.data
+            }
         case "clearForm":
             let emptyForm = { ...state.inputs };
             for (const name in state.inputs) {
-                const formInput = (document.querySelector(`[name=${name}]`));
-                if (formInput.readOnly === true) {
+                if (state.inputs.readOnly && name in state.inputs?.readOnly) {
                     continue;
                 }
                 emptyForm[name] = "";

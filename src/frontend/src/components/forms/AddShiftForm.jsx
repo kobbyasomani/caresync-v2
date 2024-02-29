@@ -25,32 +25,64 @@ export const AddShiftForm = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    /**
+     * Returns whether or not the given start and end times overlap an existing shift.
+     * @param {Date} newShiftStart The start time of the proposed shift
+     * @param {Date} newShiftEnd The end time of the proposed shift
+     * @param {boolean} throwError If true, will throw an error message containing the
+     * overlapping shift information when an overlap is found, rather than returning true.
+     */
+    const shiftsOverlap = useCallback((newShiftStart, newShiftEnd, throwError) => {
+        let overlap = false;
+        for (let shift of store.shifts) {
+            const start = new Date(shift.shiftStartTime);
+            const end = new Date(shift.shiftEndTime);
+            if ((newShiftStart < end) && (newShiftEnd > start)) {
+                overlap = true;
+                if (throwError) {
+                    throw new Error(`The shift times overlap an existing shift for this client: 
+                    ${start.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }).replace("at", "from")} –
+                    ${end.toLocaleTimeString("en-AU", { timeStyle: "short" })} with carer ${shift.carer.firstName} ${shift.carer.lastName[0]}.`);
+                }
+            }
+        }
+        return overlap;
+    }, [store.shifts]);
+
+
+    /**
+     * Returns an object containing the default shift start and end times as `Date` objects.
+     * @returns {Object}
+     */
+    const getShiftTimeDefaults = useCallback(() => {
+        let defaultStart = plusHours(new Date(store.selectedDate.start), 7);
+        let defaultEnd = plusHours(new Date(store.selectedDate.start), 15);
+
+        if (store.shifts.length > 0) {
+            /* Check for overlapping shifts and adjust times forward by one hour
+            until a free 8-hour timespan is found. */
+            while (shiftsOverlap(defaultStart, defaultEnd)) {
+                defaultStart = plusHours(defaultStart, 1);
+                defaultEnd = plusHours(defaultEnd, 1);
+            }
+        }
+        return { start: dayjs(defaultStart).$d, end: dayjs(defaultEnd).$d }
+    }, [store.shifts, store.selectedDate, shiftsOverlap])
+
     // Set the initial form and alert state
-    const initialState = {
-        inputs: new Date(store.selectedDate.start) > new Date() ? {
+    const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
+    const [initialState] = useState({
+        inputs: {
             carerID: "",
-            shiftStartTime: dayjs(plusHours(new Date(store.selectedDate.start), 7)).$d,
-            shiftEndTime: dayjs(plusHours(new Date(store.selectedDate.start), 15)).$d,
-            coordinatorNotes: ""
-        } : {
-            carerID: "",
-            shiftStartTime: dayjs(plusHours(new Date(), 7).setMinutes(0, 0, 0)).$d,
-            shiftEndTime: dayjs(plusHours(new Date(), 15).setMinutes(0, 0, 0)).$d,
+            shiftStartTime: defaultShiftTime.start,
+            shiftEndTime: defaultShiftTime.end,
             coordinatorNotes: ""
         },
         errors: []
-    };
+    });
     const [form, setForm] = useHandleForm(initialState);
     const [alerts, setAlerts] = useState([]);
     const [carers, setCarers] = useState([]);
-
-    // Get the carers for the selected client
-    useEffect(() => {
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            setIsLoading(false);
-        });
-    }, [store.selectedClient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -89,21 +121,9 @@ export const AddShiftForm = () => {
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
         }
-        // Shift should not everlap existing shifts
-        for (let shift of store.shifts) {
-            const newShiftStart = form.inputs.shiftStartTime;
-            const newShiftEnd = form.inputs.shiftEndTime;
-            const start = new Date(shift.shiftStartTime);
-            const end = new Date(shift.shiftEndTime);
-            if ((start <= newShiftStart && end >= newShiftEnd)
-                || (start >= newShiftStart && end < newShiftEnd)
-                || (start < newShiftStart && end > newShiftStart)) {
-                throw new Error(`The shift times overlap an existing shift for this client: 
-                ${start.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }).replace("at", "from")} –
-                ${end.toLocaleTimeString("en-AU", { timeStyle: "short" })} with carer ${shift.carer.firstName} ${shift.carer.lastName[0]}.`);
-            }
-        }
-    }, [store.shifts]);
+        // New shift should not everlap existing shifts
+        shiftsOverlap(form.inputs.shiftStartTime, form.inputs.shiftEndTime, true);
+    }, [shiftsOverlap]);
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {
@@ -118,7 +138,7 @@ export const AddShiftForm = () => {
                 dispatch({
                     type: "setShifts",
                     data: shifts
-                });
+                })
 
                 // Set the newly created shift as the selected shift
                 dispatch({
@@ -152,6 +172,14 @@ export const AddShiftForm = () => {
         navigate("/calendar");
     }, [modalDispatch, navigate]);
 
+    // Get the carers for the selected client
+    useEffect(() => {
+        getCarers(store.selectedClient._id).then(carers => {
+            setCarers(carers);
+            setIsLoading(false);
+        });
+    }, [store.selectedClient]);
+
     useEffect(() => {
         // Set shift creation modal text
         if (carers.length === 0) {
@@ -175,6 +203,16 @@ export const AddShiftForm = () => {
         }
     }, [modalDispatch, carers, store.selectedDate.start]);
 
+    useEffect(() => {
+        const newDefaultTime = getShiftTimeDefaults();
+        setDefaultShiftTime({
+            start: newDefaultTime.start,
+            end: newDefaultTime.end
+        });
+        setShiftTime("Start", dayjs(newDefaultTime.start));
+        setShiftTime("End", dayjs(newDefaultTime.end));
+    }, [getShiftTimeDefaults, setShiftTime]);
+
     return isLoading ? <Loader /> : carers.length > 0 ? (
         <>
             <Form form={form}
@@ -184,6 +222,7 @@ export const AddShiftForm = () => {
                 postURL={`/shift/${store.selectedClient._id}`}
                 validation={validation}
                 callback={updateShifts}
+                initialState={initialState}
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
                 <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
@@ -196,7 +235,6 @@ export const AddShiftForm = () => {
                     />
                     <TimePicker label="Shift End Time"
                         inputProps={{ name: "shiftEndTime", required: true }}
-                        name="time-picker-end"
                         time={form.inputs.shiftEndTime}
                         setTime={setShiftTime}
                         minDate={dayjs(new Date())}

@@ -77,7 +77,10 @@ const Overview = (props) => {
                 if (store.selectedShift.shiftNotes) {
                     return (
                         <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                            {store.selectedShift.shiftNotes.shiftNotesText}
+                            {store.selectedShift.shiftNotes.shiftNotesText.slice(0, 500)}
+                            ...<span style={{ color: theme.palette.primary.main }}>
+                                Read more
+                            </span>
                         </Typography>
                     );
                 } break;

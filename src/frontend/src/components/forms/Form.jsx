@@ -13,6 +13,7 @@ import { Box, Stack } from "@mui/material";
 /**
  * A resuable controlled form component that manages inputs with a reducer function.
  * @param {object} form The local form state object.
+ * @param {object} initialState The inital state of the form.
  * @param {function} setForm The form reducer update function.
  *  Pass as an object with two props: `inputs` and `errors`. 
  * `inputs: {}` is an object containing input name-value pairs. 
@@ -32,10 +33,12 @@ import { Box, Stack } from "@mui/material";
  * that takes the API json response as an argument.
  * @param {*} children The child elements of the form (e.g., labels and inputs)
  * @param {function} setParentIsLoading A function to update the load state of the parent.
+ * @param {boolean} dontClear If true, will not clear the form on submission.
  * @returns
  */
 const Form = forwardRef((
     { form,
+        initialState,
         setForm,
         legend,
         buttonText,
@@ -47,6 +50,7 @@ const Form = forwardRef((
         hideSubmitButton,
         children,
         setParentIsLoading,
+        dontClear
     }, formRef) => {
     // console.log(form.inputs);
 
@@ -73,22 +77,25 @@ const Form = forwardRef((
             method: method || "post",
             data: form.inputs
         }).then(response => {
+            // Clear the form after successful submission
+            if (!dontClear) {
+                setForm({
+                    type: initialState ? "initForm" : "clearForm",
+                    data: initialState || null
+                });
+            }
             // If a callback is passed, return it and pass it the response data
             if (callback) {
                 // console.log("executing form callback...");
                 callback(response.data);
             }
-            // Clear the form after successful submission
-            setForm({
-                type: "clearForm"
-            });
         }).then(() => {
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
-            handleErrors([`Error: ${error.response.data?.message || error.message}`]);
+            handleErrors([`Error: ${error.response?.data.message || error.message}`]);
         });
-    }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState]);
+    }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState, initialState, dontClear]);
 
     /**
      * Resend user verification email

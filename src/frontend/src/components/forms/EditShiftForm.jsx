@@ -140,6 +140,7 @@ export const EditShiftForm = () => {
                 method="PUT"
                 validation={validation}
                 callback={updateShifts}
+                dontClear
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
                 <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
@@ -154,7 +155,6 @@ export const EditShiftForm = () => {
                     />
                     <TimePicker label="Shift End Time"
                         inputProps={{ name: "shiftEndTime", required: true }}
-                        name="time-picker-end"
                         time={form.inputs.shiftEndTime}
                         setTime={setShiftTime}
                         minDate={dayjs(new Date())}

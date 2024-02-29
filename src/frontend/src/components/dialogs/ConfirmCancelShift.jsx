@@ -20,7 +20,6 @@ export const ConfirmCancelShift = () => {
     const { modalDispatch } = useModalContext();
     const [alert, setAlert] = useState({});
     const [isCancelled, setIsCancelled] = useState(false);
-    // TODO: Clear cancel shift dialog state after shift is deleted
     const cancelShift = useCallback(() => {
         fetch(`${baseURL}/shift/${store.selectedShift._id}`, {
             credentials: "include",
