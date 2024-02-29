@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -6,9 +6,9 @@ import { useModalContext } from "../../utils/modalUtils";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
 import {
-    useTheme, Grid, Box, Typography, Stack,
-    Avatar, Card, CardContent, CardActionArea,
-    List, ListItem, ListItemAvatar, ListItemText,
+    useTheme, Grid, Box, Typography, Stack, Divider, Tooltip,
+    Avatar, Card, CardContent, CardActionArea, CardActions,
+    List, ListItem, ListItemAvatar, ListItemText, ListItemButton
 } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import ReportIcon from '@mui/icons-material/Report';
@@ -19,7 +19,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 
 const Overview = (props) => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { shiftUtils } = props;
     const theme = useTheme();
@@ -64,6 +64,18 @@ const Overview = (props) => {
         });
     }, [modalDispatch, store.selectedShift._id]);
 
+    const openIncident = useCallback((incident) => {
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: "incident report details"
+        });
+        dispatch({
+            type: "setSelectedIncidentReport",
+            data: incident
+        });
+
+    }, [modalDispatch, dispatch]);
+
     const renderContent = (card) => {
         if (shiftUtils.isPending) {
             return (
@@ -87,9 +99,37 @@ const Overview = (props) => {
             case "incident reports":
                 if (store.selectedShift.incidentReports.length > 0) {
                     return (
-                        <Typography variant="body1">
-                            {store.selectedShift.incidentReports[0].incidentReportText}
-                        </Typography>
+                        <List gap={2} sx={{ pt: 0 }}>
+                            {store.selectedShift.incidentReports.slice(0, 3).map((report, index) => {
+                                return (
+                                    <React.Fragment key={`${report._id}_listItem`}>
+                                        <ListItem sx={{ px: 0, py: 0.5 }}>
+                                            <ListItemButton
+                                                sx={{ borderRadius: 1, px: 1 }}
+                                                onClick={() => openIncident(report)}
+                                            >
+                                                <Typography variant="body1">
+                                                    {report.incidentReportText.slice(0, 100)}...
+                                                </Typography>
+                                            </ListItemButton>
+                                        </ListItem>
+                                        {index < store.selectedShift.incidentReports.length - 1
+                                            || store.selectedShift.incidentReports.length > 3 ?
+                                            <Divider key={`${report._id}_divider`} />
+                                            : null
+                                        }
+                                    </React.Fragment>
+                                );
+                            })}
+                            {store.selectedShift.incidentReports.length > 3 ?
+                                <ListItem key="moreIncidentReports">
+                                    <Typography variant="body1">
+                                        And {store.selectedShift.incidentReports.length - 3} more...
+                                    </Typography>
+                                </ListItem>
+                                : null
+                            }
+                        </List>
                     );
                 } break;
             case "handover":
@@ -196,13 +236,21 @@ const Overview = (props) => {
 
             <Grid item xs={12} md={6} display={"flex"}>
                 <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
-                    <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
-                        <CardContent sx={{ flexGrow: 1 }}>
-                            <ReportIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
-                            <Typography variant="h5" component="p">Incidents {store.selectedShift.incidentReports.length > 0 ? `(${store.selectedShift.incidentReports.length})` : null}</Typography>
-                            {renderContent("incident reports")}
-                        </CardContent>
-                    </CardActionArea>
+                    <Tooltip title="View all incidents" placement="top" arrow>
+                        <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
+                                <ReportIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: theme.palette.error.main }} />
+                                <Typography variant="h5" component="p">
+                                    Incidents {store.selectedShift.incidentReports.length > 0 ?
+                                        `(${store.selectedShift.incidentReports.length})`
+                                        : null}
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                    </Tooltip>
+                    <CardActions sx={{ pt: 0 }}>
+                        {renderContent("incident reports")}
+                    </CardActions>
                 </Card>
             </Grid>
 
@@ -225,9 +273,9 @@ const Overview = (props) => {
                             <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Shift Carers</Typography>
                             <List dense>
-                                {[1].map(item => {
+                                {[1,].map(item => {
                                     return (
-                                        <ListItem key={item}>
+                                        <ListItem key={`carer_${item}`}>
                                             <ListItemAvatar>
                                                 <Avatar sx={{ width: "2rem", height: "2rem", backgroundColor: theme.palette.primary.main }}>
                                                     <PersonIcon />
