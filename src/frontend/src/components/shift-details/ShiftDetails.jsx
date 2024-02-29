@@ -112,7 +112,7 @@ const ShiftDetails = ({ isLoading, children }) => {
 
     const content = () => (
         <Box
-            sx={{ width: drawerContentWidth, p: 2, pt: 3 }}
+            sx={{ width: drawerContentWidth, p: 3, pt: 4 }}
             role="presentation"
             onKeyDown={closeDrawer}
         >
