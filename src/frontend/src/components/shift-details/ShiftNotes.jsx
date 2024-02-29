@@ -62,7 +62,7 @@ const ShiftNotes = (props) => {
                             {store.selectedShift.shiftNotes.shiftNotesText}
                         </Typography>
                     ) : null}
-                    {shiftUtils.isInProgress || shiftUtils.isInEditWindow ? (
+                    {shiftUtils.userIsCarer && (shiftUtils.isInProgress || shiftUtils.isInEditWindow) ? (
                         editMode ? (
                             <>
                                 <ShiftNotesForm
