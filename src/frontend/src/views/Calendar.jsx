@@ -57,7 +57,7 @@ export const Calendar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
 
-    // Get the name of the cooridnator for display in the care team
+    // Get the name of the coordinator for display in the care team
     useEffect(() => {
         const getCoordinator = async () => getUserName(store.selectedClient.coordinator).then(response => {
             setCoordinator(response);

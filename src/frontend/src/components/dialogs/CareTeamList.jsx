@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { getCarers } from "../../utils/apiUtils";
+import { getCarers, getUserName } from "../../utils/apiUtils";
 import { getAllShifts } from "../../utils/apiUtils";
 
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
@@ -19,6 +19,7 @@ const CareTeamList = () => {
     const { modalDispatch } = useModalContext();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [coordinator, setCoordinator] = useState({});
     const [carers, setCarers] = useState([])
     const [alert, setAlert] = useState({});
     const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
@@ -99,27 +100,37 @@ const CareTeamList = () => {
             }));
     }, [store.selectedClient, store.user._id, dispatch]);
 
+    const getCoordinator = useCallback(async () => {
+        const coordinator = await getUserName(store.selectedClient.coordinator);
+        return coordinator
+    }, [store.selectedClient.coordinator]);
+
     // Update carers on component load
     useEffect(() => {
         setIsLoading(true);
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            dispatch({
-                type: "setCarers",
-                data: carers
+        getCoordinator(store.selectedClient.coordinator).then((coordinator) => {
+            setCoordinator(coordinator);
+            getCarers(store.selectedClient._id).then(carers => {
+                setCarers(carers);
+                dispatch({
+                    type: "setCarers",
+                    data: carers
+                });
+            }).then(() => {
+                setIsLoading(false);
             });
-        }).then(() => {
-            setIsLoading(false);
-        });
-    }, [dispatch, store.selectedClient._id]);
+        })
+    }, [dispatch, store.selectedClient._id, getCoordinator, store.selectedClient.coordinator]);
 
     return isLoading ? <Loader /> : (
         <>
             <List>
                 <Stack spacing={2} key="carer-list">
-                    {carers.length > 0 ? carers.map(carer => {
-                        return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
-                    }) : null}
+                    <Carer key={coordinator._id} carer={coordinator} />
+                    {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator)
+                        .map(carer => {
+                            return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
+                        }) : null}
                 </Stack>
             </List>
 
