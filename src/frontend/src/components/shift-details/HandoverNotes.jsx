@@ -15,7 +15,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 
 const HandoverNotes = (props) => {
     const { store, dispatch } = useGlobalContext();
-    const { modalStore, modalDispatch } = useModalContext();
+    const { setValue: modalDispatch } = useModalContext();
     const { shiftUtils } = props;
     const modalId = `confirmClearHandoverNotes_${store.selectedShift._id}`;
 

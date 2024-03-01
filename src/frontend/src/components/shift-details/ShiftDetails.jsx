@@ -8,6 +8,7 @@ import HandoverNotes from "./HandoverNotes";
 import IncidentReports from "./IncidentReports";
 import CreateIncidentReport from "./CreateIncidentReport";
 import IncidentReportDetails from "./IncidentReportDetails";
+import PrevShiftHandover from "./PrevShiftHandover";
 import Loader from "../logo/Loader";
 
 import {
@@ -43,7 +44,7 @@ const ShiftDetails = ({ isLoading, children }) => {
 
         // Store the next, and previous shifts
         shiftUtils.nextShift = shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
-        shiftUtils.prevShift = shifts.length > 1 && lastShift._id !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
+        shiftUtils.prevShift = shifts.length > 1 && shifts[0] !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
 
         shiftUtils.userIsCarer = store.selectedShift._id && store.user._id === store.selectedShift.carer._id;
         shiftUtils.isLastShift = shift._id === lastShift._id;
@@ -68,7 +69,7 @@ const ShiftDetails = ({ isLoading, children }) => {
         if (Object.keys(store.selectedShift).length > 0) {
             setShiftUtils(getShiftUtils());
         }
-    }, [store.selectedClient, getShiftUtils, store.selectedShift]);
+    }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
 
     const injectActiveDrawer = () => {
         switch (modalStore.activeDrawer) {
@@ -82,6 +83,8 @@ const ShiftDetails = ({ isLoading, children }) => {
                 return <CreateIncidentReport shiftUtils={shiftUtils} />
             case "incident report details":
                 return <IncidentReportDetails />
+            case "prev shift handover":
+                return <PrevShiftHandover shiftUtils={shiftUtils}/>
             default:
                 return <Overview shiftUtils={shiftUtils} />
         }

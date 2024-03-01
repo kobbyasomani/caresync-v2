@@ -180,7 +180,7 @@ const Overview = (props) => {
             let content;
             switch (card) {
                 case "shift notes": content = "There are no shift notes for this shift"; break;
-                case "incident reports": content = "There are no incident reports for this shift"; break;
+                case "incident reports": content = "There are no incidents for this shift"; break;
                 case "handover": content = "There is no handover for this shift"; break;
                 default: content = `There is no ${card} for this shift`; break;
             }
@@ -220,23 +220,31 @@ const Overview = (props) => {
                     </Card>
                 </Grid>) : null
             }
-            {shiftUtils.prevShift && Boolean(shiftUtils.prevShift.handoverNotes) ? (
+            {shiftUtils.prevShift && shiftUtils.prevShift.handoverNotes ? (
                 <Grid item xs={12}>
                     <Card variant="outlined" sx={{
                         backgroundColor: theme.palette.grey[200],
                         border: "none", position: "relative"
                     }}>
-                        <CardContent>
-                            <>
+                        <CardActionArea onClick={() => viewPanel("prev shift handover")}>
+                            <CardContent>
                                 <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
                                 <Typography variant="h6" component="p">
                                     Handover from previous shift
                                 </Typography>
                                 <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                                    {shiftUtils.prevShift.handoverNotes}
+                                    {shiftUtils.prevShift.handoverNotes.length <= 300 ?
+                                        shiftUtils.prevShift.handoverNotes
+                                        : <>
+                                            {shiftUtils.prevShift.handoverNotes.slice(0, 300)}
+                                            ... <span style={{ color: theme.palette.primary.main }}>
+                                                <small>Read more</small>
+                                            </span>
+                                        </>
+                                    }
                                 </Typography>
-                            </>
-                        </CardContent>
+                            </CardContent>
+                        </CardActionArea>
                     </Card>
                 </Grid>) : null
             }
@@ -257,18 +265,28 @@ const Overview = (props) => {
                     <Tooltip title="View all incidents" placement="top" arrow>
                         <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                             <CardContent sx={{ flexGrow: 1 }}>
-                                <ReportIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: theme.palette.error.main }} />
+                                <ReportIcon sx={{
+                                    position: "absolute", right: "0.5rem", top: "0.5rem",
+                                    color: store.selectedShift.incidentReports.length > 0 ? theme.palette.error.main : "initial"
+                                }} />
                                 <Typography variant="h5" component="p">
                                     Incidents {store.selectedShift.incidentReports.length > 0 ?
                                         `(${store.selectedShift.incidentReports.length})`
                                         : null}
                                 </Typography>
+                                {store.selectedShift.incidentReports.length === 0 ?
+                                    renderContent("incident reports")
+                                    : null
+                                }
                             </CardContent>
                         </CardActionArea>
                     </Tooltip>
-                    <CardActions sx={{ pt: 0 }}>
-                        {renderContent("incident reports")}
-                    </CardActions>
+                    {store.selectedShift.incidentReports.length > 0 ?
+                        <CardActions sx={{ pt: 0 }}>
+                            {renderContent("incident reports")}
+                        </CardActions>
+                        : null
+                    }
                 </Card>
             </Grid>
 

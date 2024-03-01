@@ -34,18 +34,17 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
         } else {
             // Continue
         }
-    }, [store.selectedShift.hadnoverNotes]);
+    }, [store.selectedShift.handoverNotes]);
 
-    const updateHandoverNotes = (response) => {
+    const updateHandoverNotes = useCallback((response) => {
         dispatch({
             type: "setSelectedShift",
             data: {
                 ...response,
-                carer: store.selectedShift.carer
             }
         });
         setEditMode(false);
-    }
+    }, [dispatch, setEditMode, ])
 
     return isLoading ? <Loader /> : (
         <Form form={form}

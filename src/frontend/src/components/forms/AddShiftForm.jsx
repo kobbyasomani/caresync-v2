@@ -55,6 +55,7 @@ export const AddShiftForm = () => {
      * @returns {Object}
      */
     const getShiftTimeDefaults = useCallback(() => {
+        // TODO: Ensure the default time is always in the future.
         let defaultStart = plusHours(new Date(store.selectedDate.start), 7);
         let defaultEnd = plusHours(new Date(store.selectedDate.start), 15);
 
