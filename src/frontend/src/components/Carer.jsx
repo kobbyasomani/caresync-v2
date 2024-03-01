@@ -33,7 +33,7 @@ const Carer = (props) => {
                 borderRadius: `${theme.shape.borderRadius}px`,
                 p: "1rem"
             }}>
-                {userIsCoordinator ? (
+                {userIsCoordinator && removeCarer ? (
                     <Tooltip title="Remove carer" placement="left">
                         <IconButton onClick={confirmRemoveCarer}
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
@@ -51,7 +51,7 @@ const Carer = (props) => {
                 <ListItemText
                     primaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
                     secondaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                    primary={`${carer.firstName} ${carer.lastName}`}
+                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator ? <small>(coordinator)</small> : ""}</>}
                     secondary="(+61) 123 456 789"
                 />
             </ListItem >

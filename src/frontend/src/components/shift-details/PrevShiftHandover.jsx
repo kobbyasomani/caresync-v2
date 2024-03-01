@@ -16,7 +16,7 @@ const PrevShiftHandover = (props) => {
     const prevShiftStart = new Date(prevShift.shiftStartTime);
     const prevShiftEnd = new Date(prevShift.shiftEndTime);
 
-    const createIncidentReport = useCallback(() => {
+    const handleViewPreviousShift = useCallback(() => {
         dispatch({
             type: "setSelectedShift",
             data: prevShift
@@ -55,7 +55,7 @@ const PrevShiftHandover = (props) => {
 
     const renderPrevShiftButton = () => {
         return (
-            <ButtonPrimary onClick={createIncidentReport} >
+            <ButtonPrimary onClick={handleViewPreviousShift} >
                 View previous shift
             </ButtonPrimary >
         );

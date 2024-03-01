@@ -9,6 +9,7 @@ import IncidentReports from "./IncidentReports";
 import CreateIncidentReport from "./CreateIncidentReport";
 import IncidentReportDetails from "./IncidentReportDetails";
 import PrevShiftHandover from "./PrevShiftHandover";
+import CoordinatorNotes from "./CoordinatorNotes";
 import Loader from "../logo/Loader";
 
 import {
@@ -85,6 +86,8 @@ const ShiftDetails = ({ isLoading, children }) => {
                 return <IncidentReportDetails />
             case "prev shift handover":
                 return <PrevShiftHandover shiftUtils={shiftUtils}/>
+            case "coordinator notes":
+                return <CoordinatorNotes shiftUtils={shiftUtils}/>
             default:
                 return <Overview shiftUtils={shiftUtils} />
         }

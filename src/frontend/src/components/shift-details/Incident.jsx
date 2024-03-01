@@ -44,7 +44,7 @@ const Incident = ({ incident, index }) => {
                                     <>
                                         {incident.incidentReportText.slice(0, 240)}
                                         ... <span style={{ color: theme.palette.primary.main }}>
-                                            Read more
+                                            <small>Read more</small>
                                         </span>
                                     </>
                                 : "Could not load incident"}

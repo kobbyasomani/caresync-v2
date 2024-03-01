@@ -94,7 +94,7 @@ const Overview = (props) => {
                                 : <>
                                     {store.selectedShift.shiftNotes.shiftNotesText.slice(0, 520)}
                                     ... <span style={{ color: theme.palette.primary.main }}>
-                                        Read more
+                                        <small>Read more</small>
                                     </span>
                                 </>
                             }
@@ -150,7 +150,7 @@ const Overview = (props) => {
                                     <>
                                         {store.selectedShift.handoverNotes.slice(0, 350)}
                                         ... <span style={{ color: theme.palette.primary.main }}>
-                                            Read more
+                                            <small>Read more</small>
                                         </span>
                                     </>
                                 )
@@ -202,8 +202,8 @@ const Overview = (props) => {
                         backgroundColor: theme.palette.primary.light,
                         border: "none", position: "relative"
                     }}>
-                        <CardContent>
-                            <>
+                        <CardActionArea onClick={() => viewPanel("coordinator notes")}>
+                            <CardContent>
                                 <AssignmentIcon sx={{
                                     position: "absolute",
                                     right: "0.5rem", top: "0.5rem",
@@ -213,10 +213,18 @@ const Overview = (props) => {
                                     Notes from Coordinator
                                 </Typography>
                                 <Typography variant="body1">
-                                    {store.selectedShift.coordinatorNotes}
+                                    {store.selectedShift.coordinatorNotes.length <= 300 ?
+                                        store.selectedShift.coordinatorNotes
+                                        : <>
+                                            {store.selectedShift.coordinatorNotes.slice(0, 300)}
+                                            ... <span style={{ color: theme.palette.primary.main }}>
+                                                <small>Read more</small>
+                                            </span>
+                                        </>
+                                    }
                                 </Typography>
-                            </>
-                        </CardContent>
+                            </CardContent>
+                        </CardActionArea>
                     </Card>
                 </Grid>) : null
             }
