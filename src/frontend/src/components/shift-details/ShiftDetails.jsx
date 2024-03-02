@@ -59,8 +59,8 @@ const ShiftDetails = ({ isLoading, children }) => {
             && (shiftUtils.isLastShift
                 || plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2) > getCurrentTime()
                 || shiftUtils.nextShiftHasStarted === false);
-        shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? plusHours(shiftEndTime, editWindow).toLocaleString("en-AU", { timeZone: "UTC", dateStyle: "long", timeStyle: "short" }) :
-            plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2);
+        shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? plusHours(shiftEndTime, editWindow).toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" })
+            : plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2);
 
         return shiftUtils;
 
@@ -85,9 +85,9 @@ const ShiftDetails = ({ isLoading, children }) => {
             case "incident report details":
                 return <IncidentReportDetails />
             case "prev shift handover":
-                return <PrevShiftHandover shiftUtils={shiftUtils}/>
+                return <PrevShiftHandover shiftUtils={shiftUtils} />
             case "coordinator notes":
-                return <CoordinatorNotes shiftUtils={shiftUtils}/>
+                return <CoordinatorNotes shiftUtils={shiftUtils} />
             default:
                 return <Overview shiftUtils={shiftUtils} />
         }
