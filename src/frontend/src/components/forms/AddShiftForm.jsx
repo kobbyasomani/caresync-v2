@@ -5,7 +5,7 @@ import { getCarers } from "../../utils/apiUtils";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { plusHours } from "../../utils/dateUtils";
+import { plusHours, isSameDate } from "../../utils/dateUtils";
 import baseURL from "../../utils/baseUrl";
 import Form from "./Form";
 import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
@@ -55,14 +55,15 @@ export const AddShiftForm = () => {
      * @returns {Object}
      */
     const getShiftTimeDefaults = useCallback(() => {
-        // TODO: Ensure the default time is always in the future.
-        let defaultStart = plusHours(new Date(store.selectedDate.start), 7);
-        let defaultEnd = plusHours(new Date(store.selectedDate.start), 15);
+        const currentDate = new Date();
+        const selectedDateStart = new Date(store.selectedDate.start);
+        let defaultStart = plusHours(selectedDateStart, 7);
+        let defaultEnd = plusHours(selectedDateStart, 15);
 
         if (store.shifts.length > 0) {
             /* Check for overlapping shifts and adjust times forward by one hour
             until a free 8-hour timespan is found. */
-            while (shiftsOverlap(defaultStart, defaultEnd)) {
+            while (shiftsOverlap(defaultStart, defaultEnd) || defaultStart < currentDate) {
                 defaultStart = plusHours(defaultStart, 1);
                 defaultEnd = plusHours(defaultEnd, 1);
             }
@@ -109,7 +110,7 @@ export const AddShiftForm = () => {
         if (form.inputs.shiftStartTime > form.inputs.shiftEndTime) {
             throw new Error("Shift end time cannot be before shift start time.")
         }
-        // Shift must have a duration
+        // Shift must have a duration > 0
         if (form.inputs.shiftStartTime.toLocaleString()
             === form.inputs.shiftEndTime.toLocaleString()) {
             throw new Error("Shift cannot have the same start time and end time.")
@@ -118,7 +119,7 @@ export const AddShiftForm = () => {
         if (form.inputs.shiftStartTime < new Date()) {
             throw new Error("Shift start time cannot be in the past.")
         }
-        // New Shift end time cannot be in the past
+        // New Shift cannot end in the past
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
         }

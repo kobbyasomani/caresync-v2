@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { compareDates, dateAsObj, minusHours } from "../../utils/dateUtils";
+import { isSameDate, dateAsObj, minusHours } from "../../utils/dateUtils";
 
 import Shift from "../Shift";
 import { ButtonPrimary } from "../root/Buttons";
@@ -23,7 +23,7 @@ const SelectShiftByDate = () => {
             const selected = store.selectedDate;
             let shiftsForDate = [];
             for (const shift of shifts) {
-                const datesAreEqual = compareDates(
+                const datesAreEqual = isSameDate(
                     dateAsObj(shift.shiftStartTime), dateAsObj(selected.start));
                 if (datesAreEqual) {
                     shiftsForDate.push(shift);

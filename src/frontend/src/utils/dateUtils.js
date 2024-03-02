@@ -18,7 +18,7 @@ const getYearMonthDay = (dateObj) => {
  * @param {*} dateObj2 The second date object.
  * @returns A boolean indicating whether the two dates are the same (year, month, and day).
  */
-const compareDates = (dateObj1, dateObj2) => {
+const isSameDate = (dateObj1, dateObj2) => {
     const date1 = getYearMonthDay(dateObj1);
     const date2 = getYearMonthDay(dateObj2);
     // console.log(`${date1} === ${date2} : ${date1 === date2}`);
@@ -38,22 +38,22 @@ const dateAsObj = (date) => {
  * Adds a variable number of hours to a date.
  * @param {Date} date 
  * @param {number} hours 
- * @returns The date with the specified number of hours added to it.
+ * @returns A copy of the date with the specified number of hours added to it.
  */
 const plusHours = (date, hours) => {
-    const newDate = new Date(date.setHours(date.getHours() + hours));
-    return newDate;
+    let newDate = new Date(date);
+    return new Date(newDate.setHours(date.getHours() + hours, 0, 0, 0, 0));
 }
 
 /**
  * Subtracts a variable number of hours fom a date.
  * @param {Date} date 
  * @param {number} hours 
- * @returns The date with the specified number of hours subtracted from it.
+ * @returns A copy of the date with the specified number of hours subtracted from it.
  */
 const minusHours = (date, hours) => {
-    const newDate = new Date(date.setHours(date.getHours() - hours));
-    return newDate;
+    let newDate = new Date(date);
+    return new Date(newDate.setHours(date.getHours() - hours, 0, 0, 0));
 }
 
 /**
@@ -67,7 +67,7 @@ const zeroSeconds = (date) => {
 
 export {
     getYearMonthDay,
-    compareDates,
+    isSameDate,
     dateAsObj,
     plusHours,
     minusHours,

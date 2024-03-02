@@ -138,7 +138,6 @@ const CareTeamList = () => {
                 <Alert severity={alert.severity}>
                     {alert.message}
                 </Alert>
-
             ) : null}
 
             {userIsCoordinator ?
