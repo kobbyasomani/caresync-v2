@@ -57,8 +57,8 @@ export const AddShiftForm = () => {
     const getShiftTimeDefaults = useCallback(() => {
         const currentDate = new Date();
         const selectedDateStart = new Date(store.selectedDate.start);
-        let defaultStart = plusHours(selectedDateStart, 7);
-        let defaultEnd = plusHours(selectedDateStart, 15);
+        let defaultStart = selectedDateStart > currentDate ? plusHours(selectedDateStart, 7) : currentDate;
+        let defaultEnd = plusHours(defaultStart, 8);
 
         if (store.shifts.length > 0) {
             /* Check for overlapping shifts and adjust times forward by one hour

@@ -86,7 +86,7 @@ const CalendarDayGrid = () => {
         <>
             <FullCalendar
                 ref={calendarRef}
-                editable
+                editable={false}
                 selectable
                 select={handleSelect}
                 eventClick={handleEventClick}
@@ -128,6 +128,7 @@ const CalendarDayGrid = () => {
                     meridiem: "short"
                 }}
                 eventColor="#79589fff"
+                eventOrderStrict={true}
                 data-testid="calendar"
             />
         </>

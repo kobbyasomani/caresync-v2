@@ -54,10 +54,10 @@ const Modal = ({ title, text, alert, actions, children, ...rest }) => {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                {modalStore.activeModal?.alert}
                 <DialogContentText sx={{ mb: 2 }}>
                     {text || modalStore.activeModal.text}
                 </DialogContentText>
+                {modalStore.activeModal?.alert}
                 {children || "Nested content goes here {children}"}
             </DialogContent>
             {/* <DialogActions>

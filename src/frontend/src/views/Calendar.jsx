@@ -295,6 +295,8 @@ export const Calendar = () => {
                                 Upcoming Shift
                             </Typography>
                             <Shift featured shift={store.featuredShift} />
+                            {/* //TODO: Set the selected date to today when adding a shift from the Upcoming Shift card  */}
+                            {/* //TODO: Will require lifting CalendarDayGrid ref into this component to access API  */}
                             <ButtonAddShift variant={{ xs: "full", xl: "icon-only" }} />
                         </section>
                     ) : (
