@@ -12,7 +12,7 @@ import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
 import Loader from "../logo/Loader";
 
 import {
-    TextField, Alert, Stack,
+    TextField, Alert, Stack, Box,
     FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
 import TimePicker from "../DateTimePicker";
@@ -198,8 +198,12 @@ export const AddShiftForm = () => {
             modalDispatch({
                 type: "setActiveModal",
                 data: {
-                    title: `New shift for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
-                    text: "Enter the details for a new shift on this date."
+                    title: `New shift for ${defaultShiftTime.start.toLocaleDateString()}`,
+                    text: "Enter the details for a new shift on this date.",
+                    alert: !isSameDate(form.inputs.shiftStartTime, new Date(store.selectedDate.start)) ? <Alert severity="warning" sx={{ mb: 1 }}>
+                        You can't add new shifts on {new Date(store.selectedDate.start).toLocaleDateString("en-AU", { dateStyle: "long" })}.
+                        The next available date has been selected.
+                    </Alert> : null
                 }
             });
         }
@@ -285,11 +289,11 @@ export const AddShiftForm = () => {
                         );
                     })}
                     < br />
-                    <div className="journey-options">
-                        <ButtonPrimary onClick={manageShift}>
+                    <Stack direction="row" justifyContent="center">
+                        <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
                             Manage shift
                         </ButtonPrimary>
-                    </div>
+                    </Stack>
                 </div>
             ) : (
                 null

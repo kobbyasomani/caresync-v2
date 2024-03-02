@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
  * @param {*} actions Any additional action elements (e.g., buttons) to be displayed at the bottom of the modal.
  * @returns A modal element populated with the passed props and children.
  */
-const Modal = ({ title, text, actions, children, ...rest }) => {
+const Modal = ({ title, text, alert, actions, children, ...rest }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -44,7 +44,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
             aria-labelledby="modal-title"
             {...rest}>
             <DialogTitle sx={{ pt: 3 }}>
-                <Typography variant="h2" component="p" id="modal-title" sx={{ fontWeight: "bold", mt: 1 }}>
+                <Typography variant="h2" component="p" id="modal-title" sx={{ fontWeight: "bold", mt: 3 }}>
                     {title || modalStore.activeModal.title}
                 </Typography>
                 <IconButton className="close-modal"
@@ -54,6 +54,7 @@ const Modal = ({ title, text, actions, children, ...rest }) => {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
+                {modalStore.activeModal?.alert}
                 <DialogContentText sx={{ mb: 2 }}>
                     {text || modalStore.activeModal.text}
                 </DialogContentText>

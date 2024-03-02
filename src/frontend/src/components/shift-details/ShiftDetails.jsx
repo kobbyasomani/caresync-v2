@@ -154,16 +154,19 @@ const ShiftDetails = ({ isLoading, children }) => {
                                     severity={shiftUtils.isPending ? "info"
                                         : shiftUtils.isInProgress ? "success"
                                             : "warning"}>
-                                    This shift {shiftUtils.isPending ? "is pending"
-                                        : shiftUtils.isInProgress ? "is in progress"
+                                    This shift {shiftUtils.isPending ? "is pending. "
+                                        : shiftUtils.isInProgress ? "is in progress. "
                                             : `has ended. `}
-                                    {shiftUtils.userIsCarer ? "You can add notes until "
-                                        : "Notes can be added or amended until "}
-                                    {shiftUtils.editWindowEndTime.toLocaleString(
-                                        "en-AU", { dateStyle: "long", timeStyle: "short" })}
+                                    {shiftUtils.hasEnded ? (
+                                        <>
+                                            {shiftUtils.userIsCarer ? "You can add notes until "
+                                                : "Notes can be added or amended until "}
+                                            {shiftUtils.editWindowEndTime.toLocaleString(
+                                                "en-AU", { dateStyle: "long", timeStyle: "short" })}
+                                        </>
+                                    ) : null}
                                 </Alert>
                             </Tooltip>
-
                         </Grid>
                     ) : null
                 }
