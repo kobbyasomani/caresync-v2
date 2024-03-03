@@ -57,7 +57,9 @@ export const AddShiftForm = () => {
     const getShiftTimeDefaults = useCallback(() => {
         const currentDate = new Date();
         const selectedDateStart = new Date(store.selectedDate.start);
-        let defaultStart = selectedDateStart > currentDate ? plusHours(selectedDateStart, 7) : currentDate;
+        let defaultStart = selectedDateStart > currentDate ?
+            plusHours(selectedDateStart, 7)
+            : new Date(new Date(currentDate).setHours(0, 0, 0, 0));
         let defaultEnd = plusHours(defaultStart, 8);
 
         if (store.shifts.length > 0) {
