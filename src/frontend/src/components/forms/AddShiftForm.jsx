@@ -12,7 +12,7 @@ import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
 import Loader from "../logo/Loader";
 
 import {
-    TextField, Alert, Stack, Box,
+    TextField, Alert, Stack,
     FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
 import TimePicker from "../DateTimePicker";
@@ -203,13 +203,13 @@ export const AddShiftForm = () => {
                     title: `New shift for ${defaultShiftTime.start.toLocaleDateString()}`,
                     text: "Enter the details for a new shift on this date.",
                     alert: !isSameDate(form.inputs.shiftStartTime, new Date(store.selectedDate.start)) ? <Alert severity="warning" sx={{ mb: 1 }}>
-                        You can't add new shifts on {new Date(store.selectedDate.start).toLocaleDateString("en-AU", { dateStyle: "long" })}.
+                        You can't add new shifts for {new Date(store.selectedDate.start).toLocaleDateString("en-AU", { dateStyle: "long" })}.
                         The next available date has been selected.
                     </Alert> : null
                 }
             });
         }
-    }, [modalDispatch, carers, store.selectedDate.start]);
+    }, [modalDispatch, carers, store.selectedDate.start, defaultShiftTime.start, form.inputs.shiftStartTime]);
 
     useEffect(() => {
         const newDefaultTime = getShiftTimeDefaults();

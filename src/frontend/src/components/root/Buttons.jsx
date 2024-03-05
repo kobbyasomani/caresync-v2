@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { plusHours } from "../../utils/dateUtils";
 import { Theme as theme } from "../../styles/Theme";
 
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
@@ -160,7 +161,7 @@ export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...r
 }
 
 // Add Shift button (opens modal)
-export const ButtonAddShift = ({ variant }) => {
+export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [breakpoint, setBreakpoint] = useState('xs');
@@ -177,7 +178,11 @@ export const ButtonAddShift = ({ variant }) => {
     const [buttonVariant, setButtonVariant] = useState(buttonDefaults['xs']);
     const navigate = useNavigate();
 
-    const addShift = (() => {
+    const handleAddShift = (() => {
+        const currentDateStart = new Date().setHours(0, 0, 0, 0);
+        const currentDateEnd = plusHours(new Date(new Date().setHours(0, 0, 0, 0)), 24);
+        calendarApi().select(currentDateStart, currentDateEnd);
+
         modalDispatch({
             type: "open",
             data: "modal"
@@ -224,12 +229,12 @@ export const ButtonAddShift = ({ variant }) => {
                         backgroundColor: theme.palette.primary.dark,
                     },
                     position: "absolute", top: "0.5rem", right: "0.75rem",
-                }} onClick={addShift}>
+                }} onClick={handleAddShift}>
                     <MoreTimeIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
         ) : buttonVariant === "full" ? (
-            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={addShift}
+            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift}
                 sx={{
                     position: { xs: "absolute", lg: "relative" },
                     top: { xs: "0.5rem", lg: "initial" },

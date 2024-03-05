@@ -1,4 +1,4 @@
-import { React, useState, useRef, useEffect, useCallback } from "react";
+import { React, useState, forwardRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
@@ -11,7 +11,7 @@ import listPlugin from "@fullcalendar//list";
 import interactionPlugin from "@fullcalendar/interaction";
 
 
-const CalendarDayGrid = () => {
+const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
     // Selected date information state manager
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
@@ -20,11 +20,9 @@ const CalendarDayGrid = () => {
         view: "dayGridMonth",
         toggleText: "List view",
     });
-    const calendarRef = useRef(null);
-    const calendarApi = useCallback(() => calendarRef.current.getApi(), []);
 
     // Handle selecting a calendar day
-    const handleSelect = (info) => {
+    const handleSelect = useCallback((info) => {
         // Set the selected date in the calendar state
         dispatch({
             type: "setSelectedDate",
@@ -37,10 +35,10 @@ const CalendarDayGrid = () => {
         });
         // Navigate to Select Shift by Date
         navigate("/calendar/select-shift-by-date")
-    }
+    }, [dispatch, modalDispatch, navigate]);
 
     // Handle clicking a on a calendar event
-    const handleEventClick = (eventClickInfo) => {
+    const handleEventClick = useCallback((eventClickInfo) => {
         eventClickInfo.jsEvent.preventDefault();
         // Get the full shift data stored in the event
         const shift = eventClickInfo.event.extendedProps.fullShift;
@@ -53,9 +51,9 @@ const CalendarDayGrid = () => {
             type: "open",
             data: "drawer"
         });
-    }
+    }, [dispatch, modalDispatch]);
 
-    const toggleCalendarView = () => {
+    const toggleCalendarView = useCallback(() => {
         setCalendarView(prev => {
             const toggleText = prev.toggleText === "Grid view" ? "List view" : "Grid view";
             const view = prev.view === "dayGridMonth" ? "listMonth" : "dayGridMonth"
@@ -66,7 +64,7 @@ const CalendarDayGrid = () => {
                 toggleText: toggleText
             }
         });
-    };
+    }, [setCalendarView, calendarApi]);
 
     // Default the selected day to the current day
     useEffect(() => {
@@ -85,7 +83,7 @@ const CalendarDayGrid = () => {
     return (
         <>
             <FullCalendar
-                ref={calendarRef}
+                ref={ref}
                 editable={false}
                 selectable
                 select={handleSelect}
@@ -133,6 +131,6 @@ const CalendarDayGrid = () => {
             />
         </>
     );
-}
+});
 
 export default CalendarDayGrid;

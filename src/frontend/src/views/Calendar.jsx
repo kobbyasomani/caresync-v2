@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Outlet, useNavigate, Navigate } from "react-router-dom";
 import { getUserName } from "../utils/apiUtils";
 
@@ -12,7 +12,7 @@ import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 import Loader from "../components/logo/Loader";
 import { getCarers } from "../utils/apiUtils";
-import { ButtonAddShift } from "../components/root/Buttons";
+import { SidebarButtonAddShift } from "../components/root/Buttons";
 import ConfirmCancelShift from "../components/dialogs/ConfirmCancelShift";
 
 import {
@@ -56,6 +56,10 @@ export const Calendar = () => {
     const [shiftInProgress, setShiftInProgress] = useState({});
     const theme = useTheme();
     const navigate = useNavigate();
+
+    // Calendar ref and API
+    const calendarRef = useRef(null);
+    const calendarApi = useCallback(() => calendarRef.current.getApi(), []);
 
     // Get the name of the coordinator for display in the care team
     useEffect(() => {
@@ -295,16 +299,14 @@ export const Calendar = () => {
                                 Upcoming Shift
                             </Typography>
                             <Shift featured shift={store.featuredShift} />
-                            {/* //TODO: Set the selected date to today when adding a shift from the Upcoming Shift card  */}
-                            {/* //TODO: Will require lifting CalendarDayGrid ref into this component to access API  */}
-                            <ButtonAddShift variant={{ xs: "full", xl: "icon-only" }} />
+                            <SidebarButtonAddShift variant={{ xs: "full", xl: "icon-only" }} calendarApi={calendarApi} />
                         </section>
                     ) : (
                         <section>
                             <Typography variant="h3">
                                 No upcoming shift
                             </Typography>
-                            <ButtonAddShift variant={{ xl: "full" }} />
+                            <SidebarButtonAddShift variant={{ xl: "full" }} calendarApi={calendarApi} />
                         </section>
                     )}
                 </Box>
@@ -314,7 +316,7 @@ export const Calendar = () => {
                         xs: "auto / 1 / span 1 / span 12",
                         lg: "auto / 1 / span 1 / span 3"
                     }}
-                    sx={{ mb: { xs: "1rem", lg: 0 }}}>
+                    sx={{ mb: { xs: "1rem", lg: 0 } }}>
                     {store.previousShifts.length > 0 ? (
                         <section>
                             <Typography variant="h3">
@@ -337,7 +339,7 @@ export const Calendar = () => {
                 }}
                     sx={{ mb: { xs: 1, lg: 0 } }}>
                     <Box id="calendar">
-                        <CalendarDayGrid />
+                        <CalendarDayGrid ref={calendarRef} calendarApi={calendarApi} />
                     </Box>
                 </Box>
 
@@ -345,14 +347,13 @@ export const Calendar = () => {
                     <Outlet />
                 </Modal>
 
-                {
-                    store.selectedShift ?
-                        (
-                            <>
-                                <ShiftDetails isLoading={isLoading} />
-                                <ConfirmCancelShift />
-                            </>
-                        ) : null
+                {store.selectedShift ?
+                    (
+                        <>
+                            <ShiftDetails isLoading={isLoading} />
+                            <ConfirmCancelShift />
+                        </>
+                    ) : null
                 }
             </Box >
         ) : <Navigate to="/" />
