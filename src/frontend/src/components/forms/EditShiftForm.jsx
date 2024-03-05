@@ -203,11 +203,11 @@ export const EditShiftForm = () => {
                         );
                     })}
                     < br />
-                    <div className="journey-options">
-                        <ButtonPrimary onClick={manageShift}>
+                    <Stack direction="row" justifyContent="center">
+                        <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
                             Manage shift
                         </ButtonPrimary>
-                    </div>
+                    </Stack>
                 </div>
             ) : (
                 null

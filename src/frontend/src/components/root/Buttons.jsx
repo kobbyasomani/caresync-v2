@@ -179,7 +179,7 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
     const navigate = useNavigate();
 
     const handleAddShift = (() => {
-        const currentDateStart = new Date().setHours(0, 0, 0, 0);
+        const currentDateStart = new Date(new Date().setHours(0, 0, 0, 0));
         const currentDateEnd = plusHours(new Date(new Date().setHours(0, 0, 0, 0)), 24);
         calendarApi().select(currentDateStart, currentDateEnd);
 
