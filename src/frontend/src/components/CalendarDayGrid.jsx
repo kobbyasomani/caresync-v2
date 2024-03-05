@@ -5,11 +5,25 @@ import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
 import { getYearMonthDay, minusHours } from "../utils/dateUtils";
 
+import { styled } from "@mui/material";
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar//list";
 import interactionPlugin from "@fullcalendar/interaction";
 
+const StyleWrapper = styled('div')(({ theme }) => ({
+    "& .fc-toolbar-title": {
+        [theme.breakpoints.down("sm")]: {
+            fontSize: "1.25rem",
+        }
+    },
+    "& .fc-button": {
+        [theme.breakpoints.down("sm")]: {
+            padding: "0.15rem 0.3rem"
+        }
+    }
+}));
 
 const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
     // Selected date information state manager
@@ -81,7 +95,7 @@ const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
     }, [calendarApi, dispatch, store.selectedDate]);
 
     return (
-        <>
+        <StyleWrapper>
             <FullCalendar
                 ref={ref}
                 editable={false}
@@ -129,7 +143,7 @@ const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
                 eventOrderStrict={true}
                 data-testid="calendar"
             />
-        </>
+        </StyleWrapper>
     );
 });
 
