@@ -94,7 +94,7 @@ const Overview = (props) => {
                                 : <>
                                     {store.selectedShift.shiftNotes.shiftNotesText.slice(0, 520)}
                                     ... <span style={{ color: theme.palette.primary.main }}>
-                                        <small>Read more</small>
+                                        Read more
                                     </span>
                                 </>
                             }
@@ -104,7 +104,7 @@ const Overview = (props) => {
             case "incident reports":
                 if (store.selectedShift.incidentReports.length > 0) {
                     return (
-                        <List gap={2} sx={{ pt: 0 }}>
+                        <List gap={2} sx={{ py: 0 }}>
                             {store.selectedShift.incidentReports.slice(0, 3).map((report, index) => {
                                 return (
                                     <React.Fragment key={`${report._id}_listItem`}>
@@ -130,10 +130,15 @@ const Overview = (props) => {
                                 );
                             })}
                             {store.selectedShift.incidentReports.length > 3 ?
-                                <ListItem key="moreIncidentReports">
-                                    <Typography variant="body1">
-                                        And {store.selectedShift.incidentReports.length - 3} more...
-                                    </Typography>
+                                <ListItem key="moreIncidentReports" sx={{ px: 0, py: 0.5 }}>
+                                    <ListItemButton
+                                        sx={{ borderRadius: 1, px: 1 }}
+                                        onClick={() => viewPanel("incident reports")}
+                                    >
+                                        <Typography variant="body1" color={theme.palette.primary.main}>
+                                            And {store.selectedShift.incidentReports.length - 3} more...
+                                        </Typography>
+                                    </ListItemButton>
                                 </ListItem>
                                 : null
                             }
@@ -144,13 +149,20 @@ const Overview = (props) => {
                 if (store.selectedShift.handoverNotes) {
                     return (
                         <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                            {store.selectedShift.handoverNotes.length <= 350 ?
+                            {store.selectedShift.handoverNotes.length <= 350 && store.selectedShift.incidentReports.length <= 3 ?
                                 store.selectedShift.handoverNotes
-                                : (
+                                : store.selectedShift.incidentReports.length > 3 ? (
+                                    <>
+                                        {store.selectedShift.handoverNotes.slice(0, 470)}
+                                        ... <span style={{ color: theme.palette.primary.main }}>
+                                            Read more
+                                        </span>
+                                    </>
+                                ) : (
                                     <>
                                         {store.selectedShift.handoverNotes.slice(0, 350)}
                                         ... <span style={{ color: theme.palette.primary.main }}>
-                                            <small>Read more</small>
+                                            Read more
                                         </span>
                                     </>
                                 )
@@ -218,7 +230,7 @@ const Overview = (props) => {
                                         : <>
                                             {store.selectedShift.coordinatorNotes.slice(0, 300)}
                                             ... <span style={{ color: theme.palette.primary.main }}>
-                                                <small>Read more</small>
+                                                Read more
                                             </span>
                                         </>
                                     }
@@ -246,7 +258,7 @@ const Overview = (props) => {
                                         : <>
                                             {shiftUtils.prevShift.handoverNotes.slice(0, 300)}
                                             ... <span style={{ color: theme.palette.primary.main }}>
-                                                <small>Read more</small>
+                                                Read more
                                             </span>
                                         </>
                                     }

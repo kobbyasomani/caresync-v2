@@ -26,6 +26,7 @@ const Incident = ({ incident, index }) => {
     }, [modalDispatch, dispatch, incident]);
 
     return (
+        // TODO: Make incidents editable and deleteable
         <Card variant="outlined" className="incident" data-testid="incident"
             sx={{ display: "flex", alignItems: "center" }}>
             <CardActionArea onClick={openIncident}>
