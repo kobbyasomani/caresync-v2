@@ -304,6 +304,7 @@ export const AddShiftForm = () => {
         </>
     ) : (
         // If the client has no assigned carers, prompt the user to invite some
+        // TODO: Add the "Add Yourself" quick button to this button set
         <>
             <ButtonAddCarer />
         </>

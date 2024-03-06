@@ -62,6 +62,7 @@ const NavBar = () => {
                     {store.isAuth ? (
                         <Stack direction="row" gap={2} sx={{ ml: "auto" }}>
                             <Stack direction="row" gap={0.5} sx={{ alignItems: "center" }}>
+                                {/* // TODO: Add login credential editing modal for easier re-access of demo accounts */}
                                 <AccountCircleIcon />
                                 <Typography>
                                     {store.user.firstName}
