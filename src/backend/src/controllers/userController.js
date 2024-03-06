@@ -6,6 +6,7 @@ const User = require("../models/userModel");
 const Client = require("../models/clientModel");
 const Shift = require("../models/shiftModel");
 const emails = require("../services/email");
+const { v4: uuidv4 } = require("uuid");
 
 //----NEW ROUTE----//
 // @desc Register User
@@ -64,6 +65,75 @@ const registerUser = asyncHandler(async (req, res) => {
   } else {
     res.status(400);
     throw new Error("Invalid data");
+  }
+});
+
+//----NEW ROUTE----//
+// @desc Register demo User
+// @route GET /user/register-demo
+// @access public
+const registerDemoUser = asyncHandler(async (req, res) => {
+  // Generate demo firstname, lastname, email and password
+  const firstName = "Guest";
+  const lastName = "User";
+  const email = `${uuidv4()}@example.com`;
+  const password = `${uuidv4().slice(0, 9)}`;
+
+  // Password encryption
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // Create User
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+    isConfirmed: true
+  });
+
+  if (!user) {
+    res.status(400).json({
+      message: "The user could not be created at this time."
+    })
+  }
+
+  try {
+    const id = user.id;
+
+    // Create a login JWT token
+    const loginToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    // Compare entered password with stored password and return a cookie
+    if (user && (await bcrypt.compare(password, user.password))) {
+      res
+        .cookie("access_token", loginToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          domain: process.env.COOKIE_URL,
+          sameSite: "none",
+        })
+        .cookie("authenticated", "true", {
+          secure: process.env.NODE_ENV === "production",
+          domain: process.env.COOKIE_URL,
+          sameSite: "none",
+        })
+        .status(200).json({
+          message: "Logged in Successfully",
+          user: {
+            firstName: user.firstName,
+            _id: user._id,
+          },
+        });
+    } else {
+      res.status(400);
+      throw new Error("Invalid credentials");
+    }
+  }
+  catch (error) {
+    res.status(error.status).json({ message: error.message });
   }
 });
 
@@ -325,6 +395,7 @@ const getUserName = asyncHandler(async (req, res) => {
 
 module.exports = {
   registerUser,
+  registerDemoUser,
   loginUser,
   getUserClients,
   emailVerification,

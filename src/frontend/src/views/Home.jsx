@@ -5,14 +5,16 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
+import baseURL from "../utils/baseUrl";
 
-import { TextField, Typography, Container, useTheme } from "@mui/material";
+import { TextField, Typography, Container, useTheme, Box } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
     // Get the global state and set form state
     const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
+    const isDemo = process.env.REACT_APP_DEMO;
 
     // Responsive styles
     const theme = useTheme();
@@ -36,7 +38,23 @@ export default function Login() {
             type: "login",
             data: response.user
         });
-        navigate("/")
+        navigate("/");
+    }, [dispatch, navigate]);
+
+    const handleStartDemo = useCallback(() => {
+        fetch(`${baseURL}/user/register-demo`, {
+            credentials: "include"
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json);
+                dispatch({
+                    type: "login",
+                    data: json.user
+                })
+            }).then(() => {
+                navigate("/");
+            });
     }, [dispatch, navigate]);
 
     return store.isAuth ? (
@@ -84,12 +102,32 @@ export default function Login() {
                     required
                     mui="TextField" />
             </Form>
-            <Typography variant="h2" style={{ textAlign: "center" }}>Need an account?</Typography>
-            <Link to="/register" className="button-link">
-                <ButtonPrimary>
-                    Sign up
+            {isDemo ?
+                <Box maxWidth="sm" sx={{ mx: "auto" }}>
+                    <Typography variant="h2" style={{ textAlign: "center" }}>
+                        Create a demo account
+                    </Typography>
+                    <Typography variant="body1" sx={{ maxWidth: "50ch", mx: "auto", textAlign: "center" }}>
+                        Demo accounts use auto-generated credentials and are
+                        deleted after 30 days. Take note of your login details after
+                        starting the demo if you want to revisit the account again!
+                    </Typography>
+                </Box>
+                : <Typography variant="h2" style={{ textAlign: "center" }}>
+                    Need an account?
+                </Typography>}
+
+            {isDemo ? (
+                <ButtonPrimary onClick={handleStartDemo}>
+                    Start app demo
                 </ButtonPrimary>
-            </Link>
+            ) : (
+                <Link to="/register" className="button-link">
+                    <ButtonPrimary>
+                        Sign up
+                    </ButtonPrimary>
+                </Link>
+            )}
         </Container >
     );
 }

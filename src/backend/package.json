@@ -29,7 +29,8 @@
     "mongoose-type-email": "^1.1.2",
     "nodemailer": "^6.9.9",
     "pdfkit": "^0.13.0",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

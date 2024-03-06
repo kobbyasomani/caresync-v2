@@ -2,6 +2,7 @@ const express = require("express");
 const userRouter = express.Router();
 const {
   registerUser,
+  registerDemoUser,
   loginUser,
   getUserClients,
   emailVerification,
@@ -15,6 +16,10 @@ const { protect } = require("../middleware/authMiddleware");
 // Creates user and sends verification email
 // @param {firstName, lastName, email, password}
 userRouter.post("/register", registerUser);
+
+// Set up a temporary demo account
+// @param none (demo credentials will be created by the server)
+userRouter.get("/register-demo", registerDemoUser);
 
 // Resend a verification email to the user
 // @param {email, password}
