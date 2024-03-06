@@ -10,7 +10,7 @@ import AddClientForm from "../components/forms/AddClientForm";
 import { ButtonPrimary } from "../components/root/Buttons";
 import Loader from "../components/logo/Loader";
 
-import { Stack, Typography, Tabs, Tab, Box } from "@mui/material";
+import { Stack, Typography, Tabs, Tab, Box, Container } from "@mui/material";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
@@ -89,14 +89,14 @@ const SelectClient = () => {
             <Loader />
         </>
     ) : (
-        <>
+        <Container maxWdith="md">
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             {Object.keys(store.clients).length > 0
                 && (store.clients.carer.length > 0 || store.clients.coordinator.length > 0) ?
                 (
                     <>
                         <Typography variant="h2">Select a client</Typography>
-                        <Typography variant="body1">You can switch between clients you are caring or coordinating for.</Typography>
+                        <Typography variant="body1">You can switch between clients you are coordinating and/or caring for.</Typography>
                     </>
                 ) : null}
             <Tabs value={tabValue} onChange={handleChangeTabs}>
@@ -123,10 +123,15 @@ const SelectClient = () => {
                         ))}
                     </Stack>
                 ) : (
-                    <Typography variant="h3">
-                        You aren't currently the coordinator for any clients.<br />
-                        Add a client to get started.
-                    </Typography>
+                    <Stack gap={1}>
+                        <Typography variant="h4" sx={{ mt: 2 }} fontWeight="bold">
+                            You aren't currently the coordinator for any clients.<br />
+                        </Typography>
+                        <Typography variant="body1" maxWidth="60ch">
+                            Add a client to get started. You'll be able to create and manage
+                            their shifts and assign carers to them.
+                        </Typography>
+                    </Stack>
                 )}
             </TabPanel>
             <TabPanel value={tabValue} index={1} >
@@ -136,7 +141,20 @@ const SelectClient = () => {
                             <Client client={client} key={`caringFor_${client._id}`} />
                         ))}
                     </Stack>
-                ) : null}
+                ) : (
+                    <Stack gap={1}>
+                        <Typography variant="h4" sx={{ mt: 2 }} fontWeight="bold">
+                            You aren't currently the carer for any clients.<br />
+                        </Typography>
+                        <Typography variant="body1" maxWidth="60ch">
+                            A coordinator can assign you as a carer for a client,
+                            or you can assign yourself as a carer for your own client after
+                            adding them.
+                        </Typography>
+                    </Stack>
+
+                )
+                }
             </TabPanel>
             <ButtonPrimary onClick={openModal}>
                 Add client
@@ -149,7 +167,7 @@ const SelectClient = () => {
             >
                 <AddClientForm />
             </Modal>
-        </>
+        </Container>
     )
 }
 

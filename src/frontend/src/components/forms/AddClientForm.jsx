@@ -97,11 +97,13 @@ export const AddClient = () => {
                     < br />
                     <div className="journey-options">
                         <ActionButtonGroup>
+                            {/* //TODO: Fix bug where Back to Clients doesn't close modal or refresh clients */}
                             <Link to="/" onClick={switchClient} className="button-link">
                                 <ButtonSecondary>
                                     Back to clients
                                 </ButtonSecondary>
                             </Link>
+                            {/* //TODO: Fix bug when attempting to access calendar with no shifts for the first time */}
                             <Link to="/calendar" onClick={closeModal} className="button-link">
                                 <ButtonPrimary>
                                     View calendar

@@ -55,6 +55,7 @@ export const AddShiftForm = () => {
      * @returns {Object}
      */
     const getShiftTimeDefaults = useCallback(() => {
+        // TODO: Make sure shift start rolls over to the next day if next available time is midnight
         const currentDate = new Date();
         const selectedDateStart = new Date(store.selectedDate.start);
         let defaultStart = selectedDateStart > currentDate ?

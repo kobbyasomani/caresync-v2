@@ -16,7 +16,8 @@ const modalReducer = (state, action) => {
             return {
                 ...state,
                 [`${action.data}IsOpen`]: false,
-                prevDrawer: []
+                prevDrawer: [],
+                activeModal: {}
             }
         case "setActiveModal":
             return {

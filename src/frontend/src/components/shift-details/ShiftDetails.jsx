@@ -122,6 +122,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             role="presentation"
             onKeyDown={closeDrawer}
         >
+            {/* //TODO: Add buttons tp naviage between current, previous, and next shift */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
