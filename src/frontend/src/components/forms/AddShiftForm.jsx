@@ -64,7 +64,7 @@ export const AddShiftForm = () => {
             : new Date(new Date(currentDate).setHours(0, 0, 0, 0));
         let defaultEnd = plusHours(defaultStart, 8);
 
-        if (store.shifts.length > 0) {
+        if (store.shifts.length > 0 || defaultStart < currentDate) {
             /* Check for overlapping shifts and adjust times forward by one hour
             until a free 8-hour timespan is found. */
             while (shiftsOverlap(defaultStart, defaultEnd) || defaultStart < currentDate) {
