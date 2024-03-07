@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -29,7 +29,6 @@ export const AddClient = () => {
     const [alerts, setAlerts] = useState([]);
 
     const setNewClient = useCallback((client) => {
-        // console.log("setting new client...");
         // Show success alert
         setAlerts(prev => [...prev, `Client ${client.firstName} ${client.lastName} 
     was added. You can now coordinate their care using the calendar.`]);
@@ -41,17 +40,21 @@ export const AddClient = () => {
         });
     }, [dispatch]);
 
-    const switchClient = useCallback(() => {
+    const handleSwitchClient = useCallback(() => {
         dispatch({
             type: "setSelectedClient",
             data: ""
+        });
+        modalDispatch({
+            type: "close",
+            data: "modal"
         });
         navigate("/");
     }, [dispatch, navigate]);
 
     // Close the modal when navigating to the calendar
     const { modalDispatch } = useModalContext();
-    const closeModal = useCallback(() => {
+    const handleCloseModal = useCallback(() => {
         modalDispatch({
             type: "close",
             data: "modal"
@@ -97,14 +100,13 @@ export const AddClient = () => {
                     < br />
                     <div className="journey-options">
                         <ActionButtonGroup>
-                            {/* //TODO: Fix bug where Back to Clients doesn't close modal or refresh clients */}
-                            <Link to="/" onClick={switchClient} className="button-link">
+                            <Link to="/" onClick={handleSwitchClient} className="button-link">
                                 <ButtonSecondary>
                                     Back to clients
                                 </ButtonSecondary>
                             </Link>
                             {/* //TODO: Fix bug when attempting to access calendar with no shifts for the first time */}
-                            <Link to="/calendar" onClick={closeModal} className="button-link">
+                            <Link to="/calendar" onClick={handleCloseModal} className="button-link">
                                 <ButtonPrimary>
                                     View calendar
                                 </ButtonPrimary>
