@@ -89,7 +89,7 @@ const SelectClient = () => {
             <Loader />
         </>
     ) : (
-        <Container maxWdith="md">
+        <Container maxWidth="md">
             <Typography variant="h1">Hi, {store.user.firstName}</Typography>
             {Object.keys(store.clients).length > 0
                 && (store.clients.carer.length > 0 || store.clients.coordinator.length > 0) ?
