@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 import baseURL from "../../utils/baseUrl";
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -19,20 +19,31 @@ export const ConfirmCancelShift = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [alert, setAlert] = useState({});
-    const [isCancelled, setIsCancelled] = useState(false);
+
+    const shiftExists = useCallback(() => {
+        let shiftExists = false;
+        for (let shift of store.shifts) {
+            if (shift._id === store.selectedShift._id) {
+                shiftExists = true;
+            }
+        }
+        return shiftExists;
+    }, [store.shifts, store.selectedShift]);
+    const [isCancelled, setIsCancelled] = useState(!shiftExists());
+
     const cancelShift = useCallback(() => {
         fetch(`${baseURL}/shift/${store.selectedShift._id}`, {
             credentials: "include",
             method: "DELETE"
         }).then((response) => {
             if (response.status === 200) {
-                dispatch({
-                    type: "clearSelectedShift"
-                });
+                // dispatch({
+                //     type: "clearSelectedShift"
+                // });
                 setAlert({ severity: "success", message: "The shift has been cancelled." });
                 setIsCancelled(true);
             } else {
-                setAlert({ severity: "error", message: "The shift could not be cancelled. Please try again later." })
+                setAlert({ severity: "error", message: "The shift could not be cancelled. Please try again." })
             }
         }).then(() => {
             return getAllShifts(store.selectedClient._id);
@@ -54,12 +65,16 @@ export const ConfirmCancelShift = () => {
     }, [dispatch, modalDispatch, store.selectedClient._id, store.selectedShift._id]);
 
     const afterConfirm = useCallback(() => {
+        setAlert({});
+        setIsCancelled(false);
         dispatch({
             type: "clearSelectedShift",
         });
-        setAlert({});
-        setIsCancelled(false);
     }, [dispatch]);
+
+    useEffect(() => {
+        setIsCancelled(!shiftExists());
+    },[shiftExists, store.selectedShift])
 
     return Object.keys(store.selectedShift).length > 0 ? (
         <Confirmation title={isCancelled ? "Shift Cancelled" : "Confirm Cancel Shift"}
