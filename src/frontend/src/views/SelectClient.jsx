@@ -71,7 +71,7 @@ const SelectClient = () => {
                 });
                 setIsLoading(false);
             }).catch(error => console.error(error.message));
-    }, [dispatch]);
+    }, [dispatch, store.selectedClient]);
 
     // Modal state manager
     const { modalDispatch } = useModalContext();
