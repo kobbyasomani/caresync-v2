@@ -1,14 +1,15 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCarers } from "../../utils/apiUtils";
+import axios from "axios";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { plusHours, isSameDate } from "../../utils/dateUtils";
 import baseURL from "../../utils/baseUrl";
+import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
-import { ButtonPrimary, ButtonAddCarer } from "../root/Buttons";
+import { ButtonPrimary, ButtonSecondary, ButtonAddCarer } from "../root/Buttons";
 import Loader from "../logo/Loader";
 
 import {
@@ -152,12 +153,15 @@ export const AddShiftForm = () => {
                 });
 
                 // Show success alert
-                setAlerts(prev => [...prev, `A new shift was added for 
+                setAlerts(prev => [...prev, {
+                    message: `A new shift was added for 
                 ${store.selectedClient.firstName} ${store.selectedClient.lastName} on 
                 ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
                 from ${new Date(shift.shiftStartTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
                 – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
-                with carer ${shifts[shifts.length - 1].carer.firstName} ${shifts[shifts.length - 1].carer.lastName}.`]);
+                with carer ${shifts[shifts.length - 1].carer.firstName} ${shifts[shifts.length - 1].carer.lastName}.`,
+                    severity: "success"
+                }]);
 
                 // Finished loading
                 setIsLoading(false);
@@ -176,6 +180,33 @@ export const AddShiftForm = () => {
         });
         navigate("/calendar");
     }, [modalDispatch, navigate]);
+
+    // Add logged-in user to the care team if they are the coordinator
+    const addCoordinatorAsCarer = useCallback(() => {
+        axios.post("/carer/add-coordinator-as-carer", {
+            "coordinatorID": store.user._id,
+            "clientID": store.selectedClient._id
+        }).then(response => {
+            setAlerts(prev => {
+                return [...prev, {
+                    message: "You have been added to the care team.",
+                    severity: "success"
+                }]
+            });
+            getCarers(store.selectedClient._id).then(carers => {
+                setCarers(carers);
+                dispatch({
+                    type: "setCarers",
+                    data: carers
+                });
+            });
+        }).catch(error => setAlerts(prev => {
+            return [...prev, {
+                message: error.response.data.message,
+                severity: "error"
+            }]
+        }));
+    }, [store.user._id, store.selectedClient._id, dispatch]);
 
     // Get the carers for the selected client
     useEffect(() => {
@@ -281,22 +312,23 @@ export const AddShiftForm = () => {
                     placeholder="Some things to take note of during this shift are..."
                     mui="TextField" />
             </Form>
-            {/* Display alerts */}
             {alerts.length > 0 ? (
                 <div>
                     {alerts.map((alert, index) => {
                         return (
-                            <Alert severity="success" key={index}>
-                                {alert}
+                            <Alert severity={alert.severity} key={index}>
+                                {alert.message}
                             </Alert>
                         );
                     })}
-                    < br />
-                    <Stack direction="row" justifyContent="center">
-                        <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
-                            Manage shift
-                        </ButtonPrimary>
-                    </Stack>
+                    {store.shifts.length > 0 ?
+                        <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+                            <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
+                                Manage shift
+                            </ButtonPrimary>
+                        </Stack>
+                        : null
+                    }
                 </div>
             ) : (
                 null
@@ -305,10 +337,16 @@ export const AddShiftForm = () => {
     ) : (
         // If the client has no assigned carers, prompt the user to invite some
         // TODO: Add the "Add Yourself" quick button to this button set
-        <>
+        <Stack direction="row">
             <ButtonAddCarer />
-        </>
-
+            {store.selectedClient.coordinator === store.user._id
+                // Check thast user is not already a carer for the client
+                && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
+                <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                    Add yourself
+                </ButtonSecondary>
+            ) : (null)}
+        </Stack>
     )
 }
 

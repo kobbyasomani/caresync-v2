@@ -126,7 +126,7 @@ const CareTeamList = () => {
         <>
             <List>
                 <Stack spacing={2} key="carer-list">
-                    <Carer key={coordinator._id} carer={coordinator} />
+                    <Carer key={coordinator._id} carer={coordinator} removeCarer={() => removeCarer(coordinator)} />
                     {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator)
                         .map(carer => {
                             return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
