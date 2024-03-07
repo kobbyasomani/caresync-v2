@@ -26,6 +26,9 @@ export const ConfirmCancelShift = () => {
             method: "DELETE"
         }).then((response) => {
             if (response.status === 200) {
+                dispatch({
+                    type: "clearSelectedShift"
+                });
                 setAlert({ severity: "success", message: "The shift has been cancelled." });
                 setIsCancelled(true);
             } else {
@@ -42,6 +45,11 @@ export const ConfirmCancelShift = () => {
                 type: "setShifts",
                 data: shifts
             });
+            if (shifts.length === 0) {
+                dispatch({
+                    type: "clearShifts"
+                });
+            }
         }).catch((error) => { setAlert({ error: error.message }) });
     }, [dispatch, modalDispatch, store.selectedClient._id, store.selectedShift._id]);
 
