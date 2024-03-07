@@ -153,7 +153,7 @@ const Overview = (props) => {
                                 store.selectedShift.handoverNotes
                                 : store.selectedShift.incidentReports.length > 3 ? (
                                     <>
-                                        {store.selectedShift.handoverNotes.slice(0, 470)}
+                                        {store.selectedShift.handoverNotes.slice(0, 450)}
                                         ... <span style={{ color: theme.palette.primary.main }}>
                                             Read more
                                         </span>
