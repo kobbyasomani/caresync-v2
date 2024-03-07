@@ -33,7 +33,8 @@ const Carer = (props) => {
                 borderRadius: `${theme.shape.borderRadius}px`,
                 p: "1rem"
             }}>
-                {userIsCoordinator && removeCarer ? (
+                {userIsCoordinator && removeCarer
+                    && store.selectedClient.carers.map(carer => carer._id).includes(carer._id) ? (
                     <Tooltip title="Remove carer" placement="left">
                         <IconButton onClick={confirmRemoveCarer}
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
