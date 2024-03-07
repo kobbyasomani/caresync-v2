@@ -32,7 +32,9 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
             id: modalId
         });
         if (isConfirmed) {
-            afterConfirm();
+            if (afterConfirm) {
+                afterConfirm();
+            }
             setIsConfirmed(false);
         }
     }, [modalDispatch, modalId, isConfirmed, afterConfirm]);
