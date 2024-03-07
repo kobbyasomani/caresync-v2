@@ -64,8 +64,36 @@ export const EditShiftForm = () => {
         })
     }, [setForm]);
 
+    /**
+    * Returns whether or not the given start and end times overlap an existing shift.
+    * @param {Date} newShiftStart The start time of the proposed shift
+    * @param {Date} newShiftEnd The end time of the proposed shift
+    * @param {Boolean} throwError If true, will throw an error message containing the
+    * overlapping shift information when an overlap is found, rather than returning true.
+    */
+    const shiftsOverlap = useCallback((shiftId, newShiftStart, newShiftEnd, throwError) => {
+        let overlap = false;
+        for (let shift of store.shifts) {
+            if (shift._id === shiftId) {
+                continue;
+            }
+            const start = new Date(shift.shiftStartTime);
+            const end = new Date(shift.shiftEndTime);
+            if ((newShiftStart < end) && (newShiftEnd > start)) {
+                overlap = true;
+                if (throwError) {
+                    throw new Error(`The shift times overlap an existing shift for this client: 
+                        ${start.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" }).replace("at", "from")} –
+                        ${end.toLocaleTimeString("en-AU", { timeStyle: "short" })} with carer ${shift.carer.firstName} ${shift.carer.lastName[0]}.`);
+                }
+            }
+        }
+        return overlap;
+    }, [store.shifts]);
+
     // Additional validation
     const validation = useCallback((form) => {
+        setAlerts([]);
         // Shift must end after it starts
         if (form.inputs.shiftStartTime > form.inputs.shiftEndTime) {
             throw new Error("Shift end time cannot be before shift start time.")
@@ -83,6 +111,13 @@ export const EditShiftForm = () => {
         // Shift end time cannot be in the past
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
+        }
+        //  Shift cannot overlap an existing shift
+        try {
+            shiftsOverlap(store.selectedShift._id, form.inputs.shiftStartTime, form.inputs.shiftEndTime, true);
+        }
+        catch (error) {
+            throw new Error(error.message);
         }
     }, [store.selectedShift.shiftEndTime]);
 

@@ -30,7 +30,7 @@ export const AddShiftForm = () => {
      * Returns whether or not the given start and end times overlap an existing shift.
      * @param {Date} newShiftStart The start time of the proposed shift
      * @param {Date} newShiftEnd The end time of the proposed shift
-     * @param {boolean} throwError If true, will throw an error message containing the
+     * @param {Boolean} throwError If true, will throw an error message containing the
      * overlapping shift information when an overlap is found, rather than returning true.
      */
     const shiftsOverlap = useCallback((newShiftStart, newShiftEnd, throwError) => {
@@ -56,7 +56,6 @@ export const AddShiftForm = () => {
      * @returns {Object}
      */
     const getShiftTimeDefaults = useCallback(() => {
-        // TODO: Make sure shift start rolls over to the next day if next available time is midnight
         const currentDate = new Date();
         const selectedDateStart = new Date(store.selectedDate.start);
         let defaultStart = selectedDateStart > currentDate ?
