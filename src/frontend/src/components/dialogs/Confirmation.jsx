@@ -40,6 +40,7 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
     const handleConfirm = useCallback(async () => {
         await callback();
         if (!stayOpenOnConfirm) {
+            setIsConfirmed(true);
             closeConfirmation();
         } else {
             setIsConfirmed(true);

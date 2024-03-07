@@ -4,7 +4,7 @@ import { getUserName } from "../utils/apiUtils";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import SelectClient from "../components/SelectClient";
+import SelectClient from "../components/SwitchClient";
 import { getAllShifts } from "../utils/apiUtils";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";

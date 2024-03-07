@@ -14,6 +14,7 @@ export const AddClient = () => {
     const navigate = useNavigate();
 
     const { dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
 
     // Set the inital form state
     const initialState = {
@@ -50,10 +51,9 @@ export const AddClient = () => {
             data: "modal"
         });
         navigate("/");
-    }, [dispatch, navigate]);
+    }, [dispatch, navigate, modalDispatch]);
 
     // Close the modal when navigating to the calendar
-    const { modalDispatch } = useModalContext();
     const handleCloseModal = useCallback(() => {
         modalDispatch({
             type: "close",
@@ -105,7 +105,6 @@ export const AddClient = () => {
                                     Back to clients
                                 </ButtonSecondary>
                             </Link>
-                            {/* //TODO: Fix bug when attempting to access calendar with no shifts for the first time */}
                             <Link to="/calendar" onClick={handleCloseModal} className="button-link">
                                 <ButtonPrimary>
                                     View calendar

@@ -30,7 +30,7 @@ const ShiftDetails = ({ isLoading, children }) => {
     const getShiftUtils = useCallback(() => {
         const getCurrentTime = () => new Date();
         const shifts = store.shifts;
-        const lastShift = shifts[shifts.length - 1];
+        const lastShift = shifts.length > 0 ? shifts[shifts.length - 1] : null;
         const penultimateShift = shifts.length > 1 ? shifts[shifts.length - 2] : null;
         const shift = store.selectedShift;
         const shiftStartTime = new Date(shift.shiftStartTime);
@@ -44,11 +44,11 @@ const ShiftDetails = ({ isLoading, children }) => {
         };
 
         // Store the next, and previous shifts
-        shiftUtils.nextShift = shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
+        shiftUtils.nextShift = shifts.length === 0 || shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
         shiftUtils.prevShift = shifts.length > 1 && shifts[0] !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
 
         shiftUtils.userIsCarer = store.selectedShift._id && store.user._id === store.selectedShift.carer._id;
-        shiftUtils.isLastShift = shift._id === lastShift._id;
+        shiftUtils.isLastShift = shifts.length > 0 ? shift._id === lastShift._id : false;
         shiftUtils.isPenultimateShift = shift._id === penultimateShift?._id;
         shiftUtils.isPending = getCurrentTime() < shiftStartTime;
         shiftUtils.isInProgress = shiftStartTime < getCurrentTime() && shiftEndTime > getCurrentTime();
@@ -122,7 +122,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             role="presentation"
             onKeyDown={closeDrawer}
         >
-            {/* //TODO: Add buttons tp navigate between current, previous, and next shift */}
+            {/* //TODO: Add buttons to navigate between current, previous, and next shift */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
