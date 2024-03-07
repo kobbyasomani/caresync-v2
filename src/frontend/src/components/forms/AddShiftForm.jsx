@@ -50,7 +50,6 @@ export const AddShiftForm = () => {
         return overlap;
     }, [store.shifts]);
 
-
     /**
      * Returns an object containing the default shift start and end times as `Date` objects.
      * @returns {Object}
@@ -78,7 +77,7 @@ export const AddShiftForm = () => {
     const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
     const [initialState] = useState({
         inputs: {
-            carerID: "",
+            carerID: store.selectedClient.carers ? store.selectedClient.carers[0]?._id : "",
             shiftStartTime: defaultShiftTime.start,
             shiftEndTime: defaultShiftTime.end,
             coordinatorNotes: ""
@@ -197,6 +196,11 @@ export const AddShiftForm = () => {
                 dispatch({
                     type: "setCarers",
                     data: carers
+                });
+                setForm({
+                    type: "setForm",
+                    name: "carerID",
+                    value: store.user._id
                 });
             });
         }).catch(error => setAlerts(prev => {
