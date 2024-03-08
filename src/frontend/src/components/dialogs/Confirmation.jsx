@@ -51,10 +51,12 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                     closeConfirmation();
                 } else {
                     setIsConfirmed(true);
-                    setAlert({
-                        severity: "success",
-                        message: successAlert
-                    });
+                    if (successAlert) {
+                        setAlert({
+                            severity: "success",
+                            message: successAlert
+                        });
+                    }
                 }
             } catch (error) {
                 setAlert({
