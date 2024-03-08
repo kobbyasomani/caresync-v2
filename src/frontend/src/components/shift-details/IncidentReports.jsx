@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Incident from "./Incident";
@@ -10,6 +10,7 @@ const IncidentReports = (props) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { shiftUtils } = props;
+    const [incidentReports, setIncidentReports] = useState(store.selectedShift.incidentReports);
 
     const createIncidentReport = useCallback(() => {
         modalDispatch({
@@ -18,11 +19,11 @@ const IncidentReports = (props) => {
         })
     }, [modalDispatch]);
 
-    const renderContent = () => {
-        if (store.selectedShift.incidentReports.length > 0) {
+    const renderContent = useCallback(() => {
+        if (incidentReports.length > 0) {
             return (
                 <Stack spacing={2} sx={{ pt: 1 }}>
-                    {store.selectedShift.incidentReports.map((incident, index) => {
+                    {incidentReports.map((incident, index) => {
                         return <Incident key={incident._id} incident={incident} index={index + 1} />
                     })}
                 </Stack>
@@ -40,9 +41,9 @@ const IncidentReports = (props) => {
                 There are no incident reports for this shift.
             </Typography>
         )
-    };
+    },[incidentReports, shiftUtils]);
 
-    const renderAddReportButton = () => {
+    const renderAddReportButton = useCallback(() => {
         if (shiftUtils.userIsCarer
             && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             return (
@@ -51,7 +52,11 @@ const IncidentReports = (props) => {
                 </ButtonPrimary >
             );
         }
-    };
+    },[createIncidentReport, shiftUtils]);
+
+    useEffect(() => {
+        setIncidentReports(store.selectedShift.incidentReports);
+    }, [store.selectedShift]);
 
     return (
         <>

@@ -1,4 +1,4 @@
-import { React, useCallback } from "react";
+import { React, useCallback, useState } from "react";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -17,6 +17,7 @@ const Incident = ({ incident, index }) => {
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
     const modalId = `delete_incident_${incident._id}`;
+    const [shift, setShift] = useState(store.selectedShift);
 
     const openIncident = useCallback(() => {
         modalDispatch({
@@ -45,12 +46,14 @@ const Incident = ({ incident, index }) => {
         try {
             await deleteIncidentReport(store.selectedShift._id, incident._id)
                 .then(updatedShift => {
-                    getAllShifts(store.selectedClient._id).then(shifts => {
-                        dispatch({
-                            type: "setShifts",
-                            data: shifts
+                    setShift({ ...updatedShift });
+                    getAllShifts(store.selectedClient._id)
+                        .then(shifts => {
+                            dispatch({
+                                type: "setShifts",
+                                data: shifts
+                            });
                         });
-                    });
                 });
         } catch (error) {
             throw new Error(process.env.NODE_ENV === "development" ? error
@@ -63,7 +66,11 @@ const Incident = ({ incident, index }) => {
             type: "setSelectedIncidentReport",
             data: {}
         });
-    }, [dispatch]);
+        dispatch({
+            type: "setSelectedShift",
+            data: shift
+        });
+    }, [dispatch, shift]);
 
     return (
         <>
@@ -89,7 +96,7 @@ const Incident = ({ incident, index }) => {
                                         <>
                                             {incident.incidentReportText.slice(0, 240)}
                                             ... <span style={{ color: theme.palette.primary.main }}>
-                                                <small>Read more</small>
+                                                Read more
                                             </span>
                                         </>
                                     : "Could not load incident"}

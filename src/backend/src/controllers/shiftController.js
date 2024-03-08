@@ -397,7 +397,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
 
     // Get the index of the incident report object in the list of reports
     const incidentReportIndex = shift.incidentReports.findIndex(report => report.id === incidentId);
-    if (!incidentReportIndex) {
+    if (incidentReportIndex === -1) {
       res.status(404);
       throw new Error("The index of the incident report could not be found in the shift document.")
     }
@@ -407,7 +407,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
       shift.id,
       { $pull: { incidentReports: { _id: incidentId } } },
       { new: true }
-    );
+    ).populate("carer", "firstName lastName");
 
     // Delete the incident report from cloudinary
     // TODO: Fix this incident report selection!
