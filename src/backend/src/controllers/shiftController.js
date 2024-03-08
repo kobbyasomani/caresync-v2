@@ -270,7 +270,7 @@ const createShiftNotes = asyncHandler(async (req, res) => {
       {
         shiftNotes: {
           shiftNotesText: shiftNotes,
-          shiftNotesPDF: cloudinaryUploadResult.secure_url
+          shiftNotesPDF: cloudinaryUploadResult.secure_url || ""
         },
       },
       {
@@ -368,7 +368,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
       shift.id,
       {
         $set: {
-          "incidentReports.$[elem].incidentReportPDF": result.secure_url,
+          "incidentReports.$[elem].incidentReportPDF": result.secure_url || "",
           "incidentReports.$[elem].incidentReportText": incidentReport,
         }
       },
@@ -386,7 +386,7 @@ const createIncidentReport = asyncHandler(async (req, res) => {
         $push: {
           incidentReports: {
             incidentReportText: incidentReport,
-            incidentReportPDF: result.secure_url,
+            incidentReportPDF: result.secure_url || "",
           },
         },
       },
