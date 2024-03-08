@@ -2,7 +2,7 @@ import IncidentReportForm from "../forms/IncidentReportForm";
 import { Typography, Box } from "@mui/material";
 
 const CreateIncidentReport = (props) => {
-    const { shiftUtils } = props
+    const { shiftUtils } = props;
 
     const renderContent = () => {
         if (shiftUtils.userIsCarer) {

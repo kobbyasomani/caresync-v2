@@ -93,7 +93,7 @@ const Form = forwardRef((
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
-            handleErrors([`Error: ${error.response?.data.message || error.message}`]);
+            handleErrors([`Error: ${error.response?.data?.message || error.message}`]);
         });
     }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState, initialState, dontClear]);
 
@@ -124,7 +124,7 @@ const Form = forwardRef((
         // Make sure required form fields are not empty
         for (const [name, value] of Object.entries(form.inputs)) {
             // console.log(`checking ${name} field...`);
-            if (document.querySelector([`[name=${name}]`]).required) {
+            if (document.querySelector([`[name=${name}]`])?.required) {
                 const inputLabel = document.querySelector(`[name=${name}]`).labels[0].textContent
                 if (!value) {
                     errors.push(`${inputLabel} cannot be blank.\n`);

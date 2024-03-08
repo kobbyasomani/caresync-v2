@@ -124,7 +124,7 @@ const updateShift = asyncHandler(async (req, res) => {
       }
     ).populate("carer", "firstName lastName");
 
-    // Delete existing shift notes PDF from cloud storage if they have been edited or removed
+    // Delete existing shift notes PDF from cloud storage if they are being edited or removed
     if ("shiftNotes" in req.body) {
       const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
         /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
@@ -236,7 +236,7 @@ const createShiftNotes = asyncHandler(async (req, res) => {
     .select("firstName")
     .select("lastName");
 
-  // Delete existing shift notes PDF from cloud storage if they have been edited or removed
+  // Delete existing shift notes PDF from cloud storage if they are being edited
   const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
     /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
 
@@ -340,24 +340,65 @@ const createIncidentReport = asyncHandler(async (req, res) => {
     shift.client
   );
 
-  // Add new incident report to incident reports array.
-  const addIncidentReport = await Shift.findByIdAndUpdate(
-    req.params.shiftID,
-    {
-      $push: {
-        incidentReports: {
-          incidentReportText: incidentReport,
-          incidentReportPDF: result.secure_url,
+  // If the request body contains an incident report ID, update it rather than creating a new incident.
+  const incidentId = req.body.incidentId;
+  if (incidentId) {
+    // Get the index of the incident report object in the list of reports
+    const incidentReportIndex = shift.incidentReports.findIndex(report => report.id === incidentId);
+    if (incidentReportIndex === -1) {
+      res.status(404);
+      throw new Error("The index of the incident report could not be found in the shift document.")
+    }
+    // Delete the incident report from cloudinary
+    const incidentReportPDF_public_id = shift.incidentReports[incidentReportIndex]?.incidentReportPDF?.match(
+      /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+    if (incidentReportPDF_public_id) {
+      try {
+        cloudinaryDelete([incidentReportPDF_public_id]);
+      }
+      catch (error) {
+        throw new Error(error.message || "This incident report PDF could not be deleted.");
+      }
+    } else {
+      res.status(500);
+      throw new Error("Incident report PDF could not be found.");
+    };
+
+    // Update the incident report object in the database
+    const updateIncidentReport = await Shift.findByIdAndUpdate(
+      shift.id,
+      {
+        $set: {
+          "incidentReports.$[elem].incidentReportPDF": result.secure_url,
+          "incidentReports.$[elem].incidentReportText": incidentReport,
+        }
+      },
+      { new: true, arrayFilters: [{ "elem._id": incidentId }] }
+    ).populate("carer", "firstName lastName");
+    // Return the updated shift
+    if (updateIncidentReport) {
+      res.status(200).json(updateIncidentReport);
+    }
+  } else {
+    // Add new incident report to incident reports array.
+    const addIncidentReport = await Shift.findByIdAndUpdate(
+      req.params.shiftID,
+      {
+        $push: {
+          incidentReports: {
+            incidentReportText: incidentReport,
+            incidentReportPDF: result.secure_url,
+          },
         },
       },
-    },
-    {
-      new: true,
-    }
-  ).populate("carer", "firstName lastName");
+      {
+        new: true,
+      }
+    ).populate("carer", "firstName lastName");
 
-  //Return updated shift object
-  res.status(200).json(addIncidentReport);
+    //Return updated shift object
+    res.status(200).json(addIncidentReport);
+  }
 });
 
 //----NEW ROUTE----//
@@ -410,10 +451,8 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
     ).populate("carer", "firstName lastName");
 
     // Delete the incident report from cloudinary
-    // TODO: Fix this incident report selection!
     const incidentReportPDF_public_id = shift.incidentReports[incidentReportIndex]?.incidentReportPDF?.match(
       /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
-
     if (incidentReportPDF_public_id) {
       try {
         cloudinaryDelete([incidentReportPDF_public_id]);
