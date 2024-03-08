@@ -71,10 +71,10 @@ export const EditShiftForm = () => {
     * @param {Boolean} throwError If true, will throw an error message containing the
     * overlapping shift information when an overlap is found, rather than returning true.
     */
-    const shiftsOverlap = useCallback((shiftId, newShiftStart, newShiftEnd, throwError) => {
+    const shiftsOverlap = useCallback((shiftID, newShiftStart, newShiftEnd, throwError) => {
         let overlap = false;
         for (let shift of store.shifts) {
-            if (shift._id === shiftId) {
+            if (shift._id === shiftID) {
                 continue;
             }
             const start = new Date(shift.shiftStartTime);
@@ -119,7 +119,7 @@ export const EditShiftForm = () => {
         catch (error) {
             throw new Error(error.message);
         }
-    }, [store.selectedShift.shiftEndTime]);
+    }, [store.selectedShift.shiftEndTime, shiftsOverlap, store.selectedShift._id]);
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {

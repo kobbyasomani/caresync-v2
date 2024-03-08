@@ -7,7 +7,8 @@ const {
   updateShift,
   deleteShift,
   createShiftNotes,
-  createIncidentReport, 
+  createIncidentReport,
+  deleteIncidentReport, 
   createHandover
 
 } = require("../controllers/shiftController");
@@ -41,7 +42,7 @@ shiftRouter.route("/notes/:shiftID").post(protect, createShiftNotes)
 
 // Create an incident report
 // @param :shiftID url variable + {incidentReport}
-shiftRouter.route("/reports/:shiftID").post(protect, createIncidentReport )
+shiftRouter.route("/reports/:shiftID").post(protect, createIncidentReport ).delete(protect, deleteIncidentReport)
 
 
 

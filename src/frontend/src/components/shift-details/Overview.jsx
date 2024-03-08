@@ -11,7 +11,7 @@ import {
     List, ListItem, ListItemAvatar, ListItemText, ListItemButton
 } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
-import ReportIcon from '@mui/icons-material/Report';
+import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import ForumIcon from '@mui/icons-material/Forum';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
@@ -285,7 +285,7 @@ const Overview = (props) => {
                     <Tooltip title="View all incidents" placement="top" arrow>
                         <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                             <CardContent sx={{ flexGrow: 1 }}>
-                                <ReportIcon sx={{
+                                <ReportRoundedIcon sx={{
                                     position: "absolute", right: "0.5rem", top: "0.5rem",
                                     color: store.selectedShift.incidentReports.length > 0 ? theme.palette.error.main : "initial"
                                 }} />

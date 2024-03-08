@@ -360,6 +360,82 @@ const createIncidentReport = asyncHandler(async (req, res) => {
   res.status(200).json(addIncidentReport);
 });
 
+//----NEW ROUTE----//
+// @desc Delete Incident Report
+// @route DELETE /shift/reports/:shiftID
+// @access private
+const deleteIncidentReport = asyncHandler(async (req, res) => {
+  try {
+    // Get the incident ID from the request body
+    const incidentId = req.body.incidentId;
+    // Search for user with JWT token ID
+    const user = await User.findById(req.user.id);
+
+    // Find the shift
+    const shift = await Shift.findById(req.params.shiftID);
+    if (!shift) {
+      res.status(404);
+      throw new Error("The shift could not be found.");
+    }
+
+    // Make sure logged in user matches the carer for the shift
+    if (!shift.carer.toString().includes(user.id)) {
+      res.status(401);
+      throw new Error("User is not authorized");
+    }
+
+    // Make sure the shift has the specific incident report
+    const incidentReportShift = await Shift.findById(shift.id, {
+      incidentReports: {
+        $elemMatch: { _id: incidentId }
+      }
+    })
+    if (!incidentReportShift) {
+      res.status(404);
+      throw new Error("The incident report could not be found in the given shift.");
+    }
+
+    // Get the index of the incident report object in the list of reports
+    const incidentReportIndex = shift.incidentReports.findIndex(report => report.id === incidentId);
+    if (!incidentReportIndex) {
+      res.status(404);
+      throw new Error("The index of the incident report could not be found in the shift document.")
+    }
+
+    // Delete the incident report from the shift in database
+    const updatedShift = await Shift.findByIdAndUpdate(
+      shift.id,
+      { $pull: { incidentReports: { _id: incidentId } } },
+      { new: true }
+    );
+
+    // Delete the incident report from cloudinary
+    // TODO: Fix this incident report selection!
+    const incidentReportPDF_public_id = shift.incidentReports[incidentReportIndex]?.incidentReportPDF?.match(
+      /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+
+    if (incidentReportPDF_public_id) {
+      try {
+        cloudinaryDelete([incidentReportPDF_public_id]);
+      }
+      catch (error) {
+        throw new Error(error.message || "This incident report PDF could not be deleted.");
+      }
+    } else {
+      res.status(500);
+      throw new Error("Incident report PDF could not be found.");
+    };
+
+    if (updatedShift) {
+      res.status(200).json(updatedShift);
+    }
+  }
+  catch (error) {
+    res.status(error.status || 500);
+    throw new Error(error.message || "The incident could not be deleted at this time.")
+  }
+});
+
 module.exports = {
   getUserShifts,
   getClientShifts,
@@ -368,5 +444,6 @@ module.exports = {
   deleteShift,
   createShiftNotes,
   createIncidentReport,
+  deleteIncidentReport,
   createHandover
 };

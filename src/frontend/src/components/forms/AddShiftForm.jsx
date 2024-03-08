@@ -209,7 +209,7 @@ export const AddShiftForm = () => {
                 severity: "error"
             }]
         }));
-    }, [store.user._id, store.selectedClient._id, dispatch]);
+    }, [store.user._id, store.selectedClient._id, dispatch, setForm]);
 
     // Get the carers for the selected client
     useEffect(() => {

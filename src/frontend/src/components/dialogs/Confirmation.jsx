@@ -4,7 +4,7 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
 import {
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    IconButton
+    IconButton, Alert
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -16,14 +16,16 @@ import CloseIcon from "@mui/icons-material/Close";
  * @param {string} modalId The id of the modal to open or close
  * @param {string} cancelText The text to display on the cancel button
  * @param {string} confirmText The text to display on the confirm button
+ * @param {string} successAlert The alert message to display on successful confirmation
  * @param {boolean} stayOpenOnConfirm If true, the dialog will stay open after confirmation
  * @param {function} afterConfirm A callback function to execute after confirmation
  * @returns 
  */
-const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
+const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText, successAlert,
     stayOpenOnConfirm, afterConfirm, noDismiss, children, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [alert, setAlert] = useState({});
 
     const closeConfirmation = useCallback(() => {
         modalDispatch({
@@ -37,17 +39,32 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
             }
             setIsConfirmed(false);
         }
+        setAlert({});
     }, [modalDispatch, modalId, isConfirmed, afterConfirm]);
 
-    const handleConfirm = useCallback(async () => {
-        await callback();
-        if (!stayOpenOnConfirm) {
-            setIsConfirmed(true);
-            closeConfirmation();
-        } else {
-            setIsConfirmed(true);
+    const handleConfirm = useCallback(() => {
+        async function invokeCallback() {
+            try {
+                await Promise.resolve(callback());
+                if (!stayOpenOnConfirm) {
+                    setIsConfirmed(true);
+                    closeConfirmation();
+                } else {
+                    setIsConfirmed(true);
+                    setAlert({
+                        severity: "success",
+                        message: successAlert
+                    });
+                }
+            } catch (error) {
+                setAlert({
+                    severity: "error",
+                    message: error.message
+                });
+            }
         }
-    }, [callback, closeConfirmation, stayOpenOnConfirm]);
+        invokeCallback();
+    }, [callback, successAlert, closeConfirmation, stayOpenOnConfirm]);
 
     return (
         <>
@@ -72,6 +89,11 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                         {text}
                     </DialogContentText>
                     {children}
+                    {Object.keys(alert).length > 0 ?
+                        <Alert severity={alert.severity} sx={{ mt: 2 }}>
+                            {alert.message}
+                        </Alert>
+                        : null}
                 </DialogContent>
                 <DialogActions>
                     {!isConfirmed ? (
