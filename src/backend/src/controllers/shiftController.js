@@ -357,11 +357,10 @@ const createIncidentReport = asyncHandler(async (req, res) => {
         cloudinaryDelete([incidentReportPDF_public_id]);
       }
       catch (error) {
-        throw new Error(error.message || "This incident report PDF could not be deleted.");
+        console.log(error.message || "Cloudinary: This incident report PDF could not be deleted.");
       }
     } else {
-      res.status(500);
-      throw new Error("Incident report PDF could not be found.");
+      console.log("Cloudinary: Incident report PDF could not be found.");
     };
 
     // Update the incident report object in the database
@@ -458,11 +457,10 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
         cloudinaryDelete([incidentReportPDF_public_id]);
       }
       catch (error) {
-        throw new Error(error.message || "This incident report PDF could not be deleted.");
+        console.log(error.message || "This incident report PDF could not be deleted.");
       }
     } else {
-      res.status(500);
-      throw new Error("Incident report PDF could not be found.");
+      console.log("Incident report PDF could not be found.");
     };
 
     if (updatedShift) {
