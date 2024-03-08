@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useModalContext } from "../../utils/modalUtils"
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
+import Loader from "../logo/Loader";
 
 import {
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
@@ -26,6 +27,7 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
     const { modalStore, modalDispatch } = useModalContext();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [alert, setAlert] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const closeConfirmation = useCallback(() => {
         modalDispatch({
@@ -42,7 +44,7 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
         setAlert({});
     }, [modalDispatch, modalId, isConfirmed, afterConfirm]);
 
-    const handleConfirm = useCallback(() => {
+    const handleConfirm = useCallback(async () => {
         async function invokeCallback() {
             try {
                 await Promise.resolve(callback());
@@ -65,7 +67,9 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                 });
             }
         }
-        invokeCallback();
+        setIsLoading(true);
+        await invokeCallback();
+        setIsLoading(false);
     }, [callback, successAlert, closeConfirmation, stayOpenOnConfirm]);
 
     return (
@@ -87,23 +91,27 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                 ) : null}
                 <DialogTitle variant="h3" sx={{ paddingTop: 4 }}>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        {text}
-                    </DialogContentText>
-                    {children}
-                    {Object.keys(alert).length > 0 ?
-                        <Alert severity={alert.severity} sx={{ mt: 2 }}>
-                            {alert.message}
-                        </Alert>
-                        : null}
+                    {isLoading ? <Loader /> :
+                        <>
+                            <DialogContentText>
+                                {text}
+                            </DialogContentText>
+                            {children}
+                            {Object.keys(alert).length > 0 ?
+                                <Alert severity={alert.severity} sx={{ mt: 2 }}>
+                                    {alert.message}
+                                </Alert>
+                                : null}
+                        </>
+                    }
                 </DialogContent>
                 <DialogActions>
                     {!isConfirmed ? (
                         <>
-                            <ButtonPrimary onClick={closeConfirmation}>
+                            <ButtonPrimary onClick={closeConfirmation} disabled={isLoading}>
                                 {cancelText || "Cancel"}
                             </ButtonPrimary>
-                            <ButtonSecondary onClick={handleConfirm} color="error">
+                            <ButtonSecondary onClick={handleConfirm} color="error" disabled={isLoading}>
                                 {confirmText || "Confirm"}
                             </ButtonSecondary>
                         </>
