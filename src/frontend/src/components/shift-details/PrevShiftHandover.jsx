@@ -56,7 +56,7 @@ const PrevShiftHandover = (props) => {
     const renderPrevShiftButton = () => {
         return (
             <ButtonPrimary onClick={handleViewPreviousShift} >
-                View previous shift
+                Go to previous shift
             </ButtonPrimary >
         );
     };

@@ -24,6 +24,7 @@ export const AddShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
+    const [shiftCreated, setShiftCreated] = useState(false);
     const navigate = useNavigate();
 
     /**
@@ -77,7 +78,7 @@ export const AddShiftForm = () => {
     const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
     const [initialState] = useState({
         inputs: {
-            carerID: store.selectedClient.carers ? store.selectedClient.carers[0]?._id : "",
+            carerID: store.selectedClient.carers?.length > 0 ? store.selectedClient.carers[0]?._id : "",
             shiftStartTime: defaultShiftTime.start,
             shiftEndTime: defaultShiftTime.end,
             coordinatorNotes: ""
@@ -130,7 +131,8 @@ export const AddShiftForm = () => {
     }, [shiftsOverlap]);
 
     // Update shifts after successfully posting new shift
-    const updateShifts = useCallback((shift) => {
+    const handleUpdateShifts = useCallback((shift) => {
+        setIsLoading(true);
         // Update client shifts from the database
         fetch(`${baseURL}/shift/${store.selectedClient._id}`, {
             credentials: "include",
@@ -160,14 +162,14 @@ export const AddShiftForm = () => {
                 with carer ${shifts[shifts.length - 1].carer.firstName} ${shifts[shifts.length - 1].carer.lastName}.`,
                     severity: "success"
                 }]);
-
                 // Finished loading
+                setShiftCreated(true);
                 setIsLoading(false);
             });
     }, [dispatch, store.selectedClient]);
 
     // Close the modal and open the shift details drawer with the new shift
-    const manageShift = useCallback(() => {
+    const handleManageShift = useCallback(() => {
         modalDispatch({
             type: "close",
             data: "modal"
@@ -177,10 +179,12 @@ export const AddShiftForm = () => {
             data: "drawer"
         });
         navigate("/calendar");
+        setShiftCreated(false);
     }, [modalDispatch, navigate]);
 
     // Add logged-in user to the care team if they are the coordinator
     const addCoordinatorAsCarer = useCallback(() => {
+        setIsLoading(true);
         axios.post("/carer/add-coordinator-as-carer", {
             "coordinatorID": store.user._id,
             "clientID": store.selectedClient._id
@@ -202,6 +206,7 @@ export const AddShiftForm = () => {
                     name: "carerID",
                     value: store.user._id
                 });
+                setIsLoading(false);
             });
         }).catch(error => setAlerts(prev => {
             return [...prev, {
@@ -213,6 +218,7 @@ export const AddShiftForm = () => {
 
     // Get the carers for the selected client
     useEffect(() => {
+        setIsLoading(true);
         getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
             setIsLoading(false);
@@ -264,7 +270,7 @@ export const AddShiftForm = () => {
                 buttonText="Create shift"
                 postURL={`/shift/${store.selectedClient._id}`}
                 validation={validation}
-                callback={updateShifts}
+                callback={handleUpdateShifts}
                 initialState={initialState}
             >
                 <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
@@ -324,9 +330,9 @@ export const AddShiftForm = () => {
                             </Alert>
                         );
                     })}
-                    {store.shifts.length > 0 ?
+                    {store.shifts.length > 0 && shiftCreated ?
                         <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                            <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
+                            <ButtonPrimary onClick={handleManageShift} sx={{ my: 0 }}>
                                 Manage shift
                             </ButtonPrimary>
                         </Stack>
