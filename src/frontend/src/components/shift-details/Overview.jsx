@@ -172,7 +172,7 @@ const Overview = (props) => {
                 } break;
             default: break;
         }
-        if (shiftUtils.userIsCarer
+        if (shiftUtils.userIsShiftCarer
             && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             let content;
             switch (card) {
@@ -355,7 +355,7 @@ const Overview = (props) => {
                     <CardContent>
                         {Object.keys(shiftUtils).length > 0 && process.env.NODE_ENV === 'development' ? (
                             <>
-                                userIsCarer: {shiftUtils.userIsCarer.toString()}<br></br>
+                                userIsShiftCarer: {shiftUtils.userIsShiftCarer.toString()}<br></br>
                                 isLastShift: {shiftUtils.isLastShift.toString()}<br></br>
                                 isPenultimateShift: {shiftUtils.isPenultimateShift.toString()}<br></br>
                                 isPending: {shiftUtils.isPending.toString()}<br></br>

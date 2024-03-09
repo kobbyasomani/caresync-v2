@@ -78,6 +78,7 @@ export const AddShiftForm = () => {
     const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
     const [initialState] = useState({
         inputs: {
+            // TODO: Investigate why carerID still returns undefined in some instances
             carerID: store.selectedClient.carers?.length > 0 ? store.selectedClient.carers[0]?._id : "",
             shiftStartTime: defaultShiftTime.start,
             shiftEndTime: defaultShiftTime.end,

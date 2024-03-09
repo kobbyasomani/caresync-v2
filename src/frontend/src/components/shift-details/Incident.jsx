@@ -12,7 +12,7 @@ import {
 import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-const Incident = ({ incident, index }) => {
+const Incident = ({ incident, index, shiftUtils }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
@@ -104,15 +104,20 @@ const Incident = ({ incident, index }) => {
                         </Box>
                     </CardContent>
                 </CardActionArea>
-                <Tooltip title="Delete incident" placement="left">
-                    <IconButton size="small" className="delete-incident" onClick={handleConfirmDeleteIncident}
-                        sx={{
-                            color: theme.palette.error.light,
-                            position: "absolute", top: 5, right: 5
-                        }}>
-                        <DeleteForeverIcon />
-                    </IconButton>
-                </Tooltip>
+                {shiftUtils.userIsShiftCarer
+                    && (shiftUtils.isInProgress || shiftUtils.isInEditWindow) ?
+                    <Tooltip title="Delete incident" placement="left">
+                        <IconButton size="small" className="delete-incident" onClick={handleConfirmDeleteIncident}
+                            sx={{
+                                color: theme.palette.error.light,
+                                position: "absolute", top: 5, right: 5
+                            }}>
+                            <DeleteForeverIcon />
+                        </IconButton>
+                    </Tooltip>
+                    : null
+                }
+
             </Card>
             <Confirmation
                 modalId={modalId}

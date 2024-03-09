@@ -66,7 +66,7 @@ const HandoverNotes = (props) => {
                             <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                                 {store.selectedShift.handoverNotes}
                             </Typography>
-                            {shiftUtils.userIsCarer
+                            {shiftUtils.userIsShiftCarer
                                 && (shiftUtils.isInProgress || shiftUtils.isInEditWindow) ?
 
                                 <Stack direction="row" justifyContent="center" mt={4} gap={2}>
@@ -107,7 +107,7 @@ const HandoverNotes = (props) => {
 
             )
         }
-        if (shiftUtils.userIsCarer) {
+        if (shiftUtils.userIsShiftCarer) {
             switch (true) {
                 case shiftUtils.isInProgress
                     || shiftUtils.isInEditWindow

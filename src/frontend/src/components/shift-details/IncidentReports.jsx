@@ -24,12 +24,13 @@ const IncidentReports = (props) => {
             return (
                 <Stack spacing={2} sx={{ pt: 1 }}>
                     {incidentReports.map((incident, index) => {
-                        return <Incident key={incident._id} incident={incident} index={index + 1} />
+                        return <Incident key={incident._id} index={index + 1}
+                            incident={incident} shiftUtils={shiftUtils} />
                     })}
                 </Stack>
             )
         }
-        if (shiftUtils.userIsCarer && shiftUtils.isPending) {
+        if (shiftUtils.userIsShiftCarer && shiftUtils.isPending) {
             return (
                 < Typography variant="body1">
                     You'll be able to add incident reports once the shift starts.
@@ -41,10 +42,10 @@ const IncidentReports = (props) => {
                 There are no incident reports for this shift.
             </Typography>
         )
-    },[incidentReports, shiftUtils]);
+    }, [incidentReports, shiftUtils]);
 
     const renderAddReportButton = useCallback(() => {
-        if (shiftUtils.userIsCarer
+        if (shiftUtils.userIsShiftCarer
             && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             return (
                 <ButtonPrimary onClick={createIncidentReport} >
@@ -52,7 +53,7 @@ const IncidentReports = (props) => {
                 </ButtonPrimary >
             );
         }
-    },[createIncidentReport, shiftUtils]);
+    }, [createIncidentReport, shiftUtils]);
 
     useEffect(() => {
         setIncidentReports(store.selectedShift.incidentReports);

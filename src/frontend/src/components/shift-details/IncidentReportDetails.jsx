@@ -11,12 +11,14 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const IncidentReportDetails = () => {
+const IncidentReportDetails = ({ shiftUtils }) => {
     const { store } = useGlobalContext();
     const [incidentReport, setIncidentReport] = useState(store.selectedIncidentReport);
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const formRef = useRef(null);
+    const [isEditable, setIsEditable] = useState(shiftUtils.userIsShiftCarer
+        && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
 
     const toggleEditMode = useCallback((override) => {
         setEditMode(override || !editMode);
@@ -38,6 +40,11 @@ const IncidentReportDetails = () => {
         setIncidentReport(store.selectedIncidentReport);
     }, [store.selectedIncidentReport])
 
+    useEffect(() => {
+        setIsEditable(shiftUtils.userIsShiftCarer
+            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
+    }, [shiftUtils]);
+
     const renderContent = useCallback(() => {
         if (Object.keys(incidentReport).length > 0) {
             if (!editMode) {
@@ -46,16 +53,19 @@ const IncidentReportDetails = () => {
                         <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                             {incidentReport.incidentReportText}
                         </Typography>
-                        <Stack direction="row" justifyContent="center" mt={4} gap={2}>
-                            <ButtonPrimary onClick={toggleEditMode}
-                                sx={{ margin: "0" }} startIcon={<EditIcon />}>
-                                Edit incident
-                            </ButtonPrimary>
-                            <ButtonSecondary onClick={handleConfirmDeleteIncident}
-                                sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
-                                Delete incident
-                            </ButtonSecondary>
-                        </Stack>
+                        {isEditable ?
+                            <Stack direction="row" justifyContent="center" mt={4} gap={2}>
+                                <ButtonPrimary onClick={toggleEditMode}
+                                    sx={{ margin: "0" }} startIcon={<EditIcon />}>
+                                    Edit incident
+                                </ButtonPrimary>
+                                {/* // TODO: Implement delete incident from Incident Report Details (see IncidentReports) */}
+                                <ButtonSecondary onClick={handleConfirmDeleteIncident}
+                                    sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
+                                    Delete incident
+                                </ButtonSecondary>
+                            </Stack>
+                            : null}
                     </>
                 );
             } else {

@@ -47,7 +47,7 @@ const ShiftDetails = ({ isLoading, children }) => {
         shiftUtils.nextShift = shifts.length === 0 || shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
         shiftUtils.prevShift = shifts.length > 1 && shifts[0] !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
 
-        shiftUtils.userIsCarer = store.selectedShift._id && store.user._id === store.selectedShift.carer._id;
+        shiftUtils.userIsShiftCarer = store.selectedShift?._id && (store.user._id === store.selectedShift.carer._id);
         shiftUtils.isLastShift = shifts.length > 0 ? shift._id === lastShift._id : false;
         shiftUtils.isPenultimateShift = shift._id === penultimateShift?._id;
         shiftUtils.isPending = getCurrentTime() < shiftStartTime;
@@ -83,7 +83,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             case "create incident report":
                 return <CreateIncidentReport shiftUtils={shiftUtils} />
             case "incident report details":
-                return <IncidentReportDetails />
+                return <IncidentReportDetails shiftUtils={shiftUtils}/>
             case "prev shift handover":
                 return <PrevShiftHandover shiftUtils={shiftUtils} />
             case "coordinator notes":
@@ -160,7 +160,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                                             : `has ended. `}
                                     {shiftUtils.hasEnded ? (
                                         <>
-                                            {shiftUtils.userIsCarer ? "You can add notes until "
+                                            {shiftUtils.userIsShiftCarer ? "You can add notes until "
                                                 : "Notes can be added or amended until "}
                                             {shiftUtils.editWindowEndTime.toLocaleString(
                                                 "en-AU", { dateStyle: "long", timeStyle: "short" })}

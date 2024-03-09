@@ -5,7 +5,7 @@ const CreateIncidentReport = (props) => {
     const { shiftUtils } = props;
 
     const renderContent = () => {
-        if (shiftUtils.userIsCarer) {
+        if (shiftUtils.userIsShiftCarer) {
             switch (true) {
                 case (shiftUtils.isInProgress || shiftUtils.isInEditWindow):
                     return (
