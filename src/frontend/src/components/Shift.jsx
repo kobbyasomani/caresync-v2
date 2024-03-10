@@ -86,13 +86,13 @@ const Shift = ({ featured, shift }) => {
             <CardActions sx={{
                 width: "100%",
                 justifyContent: { xs: "flex-end", lg: "flex-start" },
+                [theme.breakpoints.down("sm")]: { display: "none" }
             }}>
                 <Box className="shift-buttons"
                     sx={{
                         display: "flex",
                         flexShrink: 0,
                         pr: 1,
-                        [theme.breakpoints.down("sm")]: { display: "none" },
                     }}>
                     <Tooltip title="Handover">
                         <IconButton className="shift-button-handover" data-testid="handover"

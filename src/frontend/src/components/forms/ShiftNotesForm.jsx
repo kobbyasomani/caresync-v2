@@ -29,7 +29,7 @@ const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, se
 
     const checkForChanges = useCallback((form) => {
         if (store.selectedShift.shiftNotes?.shiftNotesText === form.inputs.shiftNotes) {
-            throw new Error("No changes have been made. Select \"cancel edit\" to leave edit mode.");
+            throw new Error("No changes have been made. Select \"Cancel\" to leave edit mode.");
         } else {
             // Continue
         }

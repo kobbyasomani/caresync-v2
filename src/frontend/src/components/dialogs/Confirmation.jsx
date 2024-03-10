@@ -5,7 +5,7 @@ import Loader from "../logo/Loader";
 
 import {
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    IconButton, Alert
+    IconButton, Alert, Stack
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -89,8 +89,8 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                         <CloseIcon />
                     </IconButton>
                 ) : null}
-                <DialogTitle variant="h3" sx={{ paddingTop: 4 }}>{title}</DialogTitle>
-                <DialogContent>
+                <DialogTitle variant="h3" sx={{ pt: 5 }}>{title}</DialogTitle>
+                <DialogContent sx={{ pb: 1 }}>
                     {isLoading ? <Loader /> :
                         <>
                             <DialogContentText>

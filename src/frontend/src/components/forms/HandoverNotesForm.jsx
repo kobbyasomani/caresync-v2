@@ -30,7 +30,7 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
 
     const checkForChanges = useCallback((form) => {
         if (store.selectedShift.handoverNotes === form.inputs.handoverNotes) {
-            throw new Error("No changes have been made. Select \"cancel edit\" to leave edit mode.");
+            throw new Error("No changes have been made. Select \"Cancel\" to leave edit mode.");
         } else {
             // Continue
         }

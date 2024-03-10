@@ -7,7 +7,7 @@ import HandoverNotesForm from "../forms/HandoverNotesForm";
 import Confirmation from "../dialogs/Confirmation";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
-import { Typography, Box, Stack } from "@mui/material";
+import { Typography, Box, Stack, useTheme } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -15,9 +15,10 @@ import CancelIcon from '@mui/icons-material/Cancel';
 
 const HandoverNotes = (props) => {
     const { store, dispatch } = useGlobalContext();
-    const { setValue: modalDispatch } = useModalContext();
+    const { modalDispatch } = useModalContext();
     const { shiftUtils } = props;
     const modalId = `confirmClearHandoverNotes_${store.selectedShift._id}`;
+    const theme = useTheme();
 
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -72,11 +73,11 @@ const HandoverNotes = (props) => {
                                 <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                     <ButtonPrimary onClick={toggleEditMode}
                                         sx={{ margin: "0" }} startIcon={<EditIcon />}>
-                                        Edit handover notes
+                                        Edit
                                     </ButtonPrimary>
                                     <ButtonSecondary onClick={confirmClearHandoverNotes}
                                         sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
-                                        Clear handover notes
+                                        Clear
                                     </ButtonSecondary>
                                 </Stack>
                                 : null
@@ -94,11 +95,11 @@ const HandoverNotes = (props) => {
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={updateHandoverNotes} disabled={isLoading}
                                     sx={{ margin: "0" }} startIcon={<TaskIcon />}>
-                                    Save handover notes
+                                    Save
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={() => toggleEditMode(false)} disabled={isLoading}
                                     sx={{ margin: "0" }} startIcon={<CancelIcon />}>
-                                    Cancel edit
+                                    Cancel
                                 </ButtonSecondary>
                             </Stack>
                         </>
@@ -137,14 +138,25 @@ const HandoverNotes = (props) => {
             </Box >
 
             <Confirmation
-                title="Confirm Clear Handover Notes"
+                title="Confirm Clear Shift Handover Notes"
                 text={`Are you sure you want to clear the handover notes for this shift?
                         They will be permanently deleted.`}
                 callback={clearHandoverNotes}
                 modalId={modalId}
-                cancelText="Keep notes"
-                confirmText={<><DeleteForeverIcon /> Clear handover notes</>}
-            />
+                cancelText="Keep handover"
+                confirmText={<><DeleteForeverIcon /> Clear</>}
+            >
+                {store.selectedShift.handoverNotes ?
+                    <Typography variant="body1" sx={{ mt: 2 }}>
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo; </span>
+                        {store.selectedShift.handoverNotes.length <= 140 ?
+                            store.selectedShift.handoverNotes
+                            : <>{store.selectedShift.handoverNotes.slice(0, 140)} ...</>
+                        }
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}> &rdquo;</span>
+                    </Typography>
+                    : null}
+            </Confirmation>
         </>
     )
 }

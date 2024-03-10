@@ -32,7 +32,7 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
 
     const checkForChanges = useCallback((form) => {
         if (store.selectedIncidentReport.incidentReportText === form.inputs.incidentReport) {
-            throw new Error("No changes have been made. Select \"cancel edit\" to leave edit mode.");
+            throw new Error("No changes have been made. Select \"Cancel\" to leave edit mode.");
         } else {
             // Continue
         }

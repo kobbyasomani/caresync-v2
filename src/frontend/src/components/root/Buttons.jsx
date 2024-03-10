@@ -234,10 +234,10 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
                 </IconButton>
             </Tooltip>
         ) : buttonVariant === "full" ? (
-            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift}
+            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift} size={breakpoint === "sm" ? "small" : "medium"}
                 sx={{
                     position: { xs: "absolute", lg: "relative" },
-                    top: { xs: "0.5rem", lg: "initial" },
+                    top: { xs: "0.75rem", lg: "initial" },
                     right: { xs: "0.75rem", lg: "initial" },
                     margin: { lg: "0.5rem auto" },
                     display: "flex"

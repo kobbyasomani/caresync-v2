@@ -350,7 +350,8 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            <Grid item xs={12}>
+            {/* ShiftUtils display */}
+            {/* <Grid item xs={12}>
                 <Card variant="outlined">
                     <CardContent>
                         {Object.keys(shiftUtils).length > 0 && process.env.NODE_ENV === 'development' ? (
@@ -368,7 +369,7 @@ const Overview = (props) => {
                         }
                     </CardContent>
                 </Card>
-            </Grid>
+            </Grid> */}
 
             {/* The shift is editable if the user is the coordinator
             and the shift is in the future or in progress */}

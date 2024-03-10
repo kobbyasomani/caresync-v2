@@ -57,13 +57,15 @@ const Carer = (props) => {
                 />
             </ListItem >
 
-            <Confirmation title="Remove Carer"
+            <Confirmation title="Confirm Remove Carer"
                 text={`Are you sure you want to remove ${userIsShiftCarer ? "yourself" : `${carer.firstName} ${carer.lastName}`} 
                 from ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s care team?
                 ${userIsCoordinator && userIsShiftCarer ? "You will be removed as a carer but remain the coordinator for this client." : ""}`}
                 callback={removeCarer}
                 modalId={carer._id}
                 sx={{ ml: { sm: "2.5rem" } }}
+                cancelText="Keep carer"
+                confirmText="Remove"
             />
         </div>
     )

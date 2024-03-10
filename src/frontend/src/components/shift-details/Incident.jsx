@@ -74,7 +74,6 @@ const Incident = ({ incident, index, shiftUtils }) => {
 
     return (
         <>
-            {/* // TODO: Make incidents editable and deletable */}
             <Card variant="outlined" className="incident" data-testid="incident"
                 sx={{ display: "flex", alignItems: "center", position: "relative" }}>
                 <CardActionArea onClick={openIncident} sx={{ pl: 3 }}>
@@ -125,7 +124,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
                 text="Are you sure you want to delete this incident report? It will be permanently removed from the shift."
                 callback={handleDeleteIncident}
                 cancelText="Keep incident"
-                confirmText="Delete incident"
+                confirmText={<><DeleteForeverIcon />Delete</>}
                 successAlert="The incident report was successfully deleted."
                 stayOpenOnConfirm
                 afterConfirm={handleAfterConfirmDeleteIncident}

@@ -7,7 +7,7 @@ import ShiftNotesForm from "../forms/ShiftNotesForm";
 import { ButtonDownload, ButtonUpload, ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack } from "@mui/material";
+import { Typography, Box, Stack, useTheme } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -19,6 +19,7 @@ const ShiftNotes = (props) => {
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
+    const theme = useTheme();
 
     const { shiftUtils } = props;
     const modalId = `confirmClearShiftNotes_${store.selectedShift._id}`;
@@ -54,7 +55,7 @@ const ShiftNotes = (props) => {
     }, [store.selectedShift._id, dispatch]);
 
     const renderContent = () => {
-        if (store.selectedShift.shiftNotes) {
+        if (Object.keys(store.selectedShift.shiftNotes).length > 0) {
             return (
                 <>
                     {!editMode ? (
@@ -75,11 +76,11 @@ const ShiftNotes = (props) => {
                                 <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                     <ButtonPrimary onClick={updateShiftNotes} disabled={isLoading}
                                         sx={{ margin: "0" }} startIcon={<TaskIcon />}>
-                                        Save shift notes
+                                        Save
                                     </ButtonPrimary>
                                     <ButtonSecondary onClick={() => toggleEditMode(false)} disabled={isLoading}
                                         sx={{ margin: "0" }} startIcon={<CancelIcon />}>
-                                        Cancel edit
+                                        Cancel
                                     </ButtonSecondary>
                                 </Stack>
                             </>
@@ -87,11 +88,11 @@ const ShiftNotes = (props) => {
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={toggleEditMode}
                                     sx={{ margin: "0" }} startIcon={<EditIcon />}>
-                                    Edit shift notes
+                                    Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={confirmClearShiftNotes}
                                     sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
-                                    Clear shift notes
+                                    Clear
                                 </ButtonSecondary>
                             </Stack>
                         )
@@ -104,9 +105,18 @@ const ShiftNotes = (props) => {
                         They will be permanently deleted.`}
                         callback={clearShiftNotes}
                         modalId={modalId}
-                        cancelText="Keep notes"
-                        confirmText={<><DeleteForeverIcon /> Clear shift notes</>}
-                    />
+                        cancelText="Keep shift notes"
+                        confirmText={<><DeleteForeverIcon /> Clear</>}
+                    >
+                        <Typography variant="body1" sx={{ mt: 2 }}>
+                            <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo; </span>
+                            {store.selectedShift.shiftNotes.shiftNotesText.length <= 140 ?
+                                store.selectedShift.shiftNotes.shiftNotesText
+                                : <>{store.selectedShift.shiftNotes.shiftNotesText.slice(0, 140)} ...</>
+                            }
+                            <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}> &rdquo;</span>
+                        </Typography>
+                    </Confirmation>
                 </>
             );
         }

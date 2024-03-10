@@ -107,12 +107,11 @@ const IncidentReportDetails = ({ shiftUtils }) => {
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={toggleEditMode}
                                     sx={{ margin: "0" }} startIcon={<EditIcon />}>
-                                    Edit incident
+                                    Edit
                                 </ButtonPrimary>
-                                {/* // TODO: Implement delete incident from Incident Report Details (see IncidentReports) */}
                                 <ButtonSecondary onClick={handleConfirmDeleteIncident}
                                     sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
-                                    Delete incident
+                                    Delete
                                 </ButtonSecondary>
                             </Stack>
                             : null}
@@ -132,11 +131,11 @@ const IncidentReportDetails = ({ shiftUtils }) => {
                         <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                             <ButtonPrimary onClick={handleUpdateIncident} disabled={isLoading}
                                 sx={{ margin: "0" }} startIcon={<TaskIcon />}>
-                                Save incident
+                                Save
                             </ButtonPrimary>
                             <ButtonSecondary onClick={() => toggleEditMode(false)} disabled={isLoading}
                                 sx={{ margin: "0" }} startIcon={<CancelIcon />}>
-                                Cancel edit
+                                Cancel
                             </ButtonSecondary>
                         </Stack>
                     </>
@@ -169,7 +168,7 @@ const IncidentReportDetails = ({ shiftUtils }) => {
                 text="Are you sure you want to delete this incident report? It will be permanently removed from the shift."
                 callback={handleDeleteIncident}
                 cancelText="Keep incident"
-                confirmText="Delete incident"
+                confirmText={<><DeleteForeverIcon />Delete</>}
                 successAlert="The incident report was successfully deleted."
                 stayOpenOnConfirm
                 afterConfirm={handleAfterConfirmDeleteIncident}
