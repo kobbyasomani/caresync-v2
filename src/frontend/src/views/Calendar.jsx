@@ -94,7 +94,7 @@ export const Calendar = () => {
                 const shift = findInProgressShift(shifts);
                 setShiftInProgress(shift);
             }).then(() => setIsLoading(false));
-    }, [store.selectedClient, dispatch]);
+    }, [store.selectedClient, store.selectedShift, dispatch]);
 
     const handleSelectInProgressShift = () => {
         dispatch({

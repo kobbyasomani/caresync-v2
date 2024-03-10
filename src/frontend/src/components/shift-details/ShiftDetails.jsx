@@ -72,27 +72,6 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
     }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
 
-    const injectActiveDrawer = () => {
-        switch (modalStore.activeDrawer) {
-            case "shift notes":
-                return <ShiftNotes shiftUtils={shiftUtils} />
-            case "handover notes":
-                return <HandoverNotes shiftUtils={shiftUtils} />
-            case "incident reports":
-                return <IncidentReports shiftUtils={shiftUtils} />
-            case "create incident report":
-                return <CreateIncidentReport shiftUtils={shiftUtils} />
-            case "incident report details":
-                return <IncidentReportDetails shiftUtils={shiftUtils}/>
-            case "prev shift handover":
-                return <PrevShiftHandover shiftUtils={shiftUtils} />
-            case "coordinator notes":
-                return <CoordinatorNotes shiftUtils={shiftUtils} />
-            default:
-                return <Overview shiftUtils={shiftUtils} />
-        }
-    }
-
     const drawerContentWidth = "100%";
     const closeDrawer = useCallback((event) => {
         // Prevent non-Escape keypresses while drawer is open from closing it
@@ -103,10 +82,6 @@ const ShiftDetails = ({ isLoading, children }) => {
             type: "close",
             data: "drawer"
         });
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: ""
-        });
     }, [modalDispatch]);
 
     const backToPrevDrawer = useCallback(() => {
@@ -116,8 +91,32 @@ const ShiftDetails = ({ isLoading, children }) => {
         })
     }, [modalDispatch]);
 
-    const content = () => (
-        <Box
+    const renderContent = useCallback(() => {
+        // Log drawer state (history and active drawer)
+        // console.log(JSON.stringify(modalStore.drawerHistory), modalStore.activeDrawer);
+
+        const injectActiveDrawer = () => {
+            switch (modalStore.activeDrawer) {
+                case "shift notes":
+                    return <ShiftNotes shiftUtils={shiftUtils} />
+                case "handover notes":
+                    return <HandoverNotes shiftUtils={shiftUtils} />
+                case "incident reports":
+                    return <IncidentReports shiftUtils={shiftUtils} />
+                case "create incident report":
+                    return <CreateIncidentReport shiftUtils={shiftUtils} />
+                case "incident report details":
+                    return <IncidentReportDetails shiftUtils={shiftUtils} />
+                case "prev shift handover":
+                    return <PrevShiftHandover shiftUtils={shiftUtils} />
+                case "coordinator notes":
+                    return <CoordinatorNotes shiftUtils={shiftUtils} />
+                default:
+                    return <Overview shiftUtils={shiftUtils} />
+            }
+        }
+
+        return <Box
             sx={{ width: drawerContentWidth, p: 3, pt: 4 }}
             role="presentation"
             onKeyDown={closeDrawer}
@@ -192,11 +191,10 @@ const ShiftDetails = ({ isLoading, children }) => {
             }
 
             {injectActiveDrawer()}
-
             {children}
-
         </Box >
-    );
+    }, [backToPrevDrawer, closeDrawer,
+        children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, theme]);
 
     /* Sets whether the selected shift is in progress
     (determines whether carer can enter notes and reports) */
@@ -215,7 +213,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                 open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}
                 onClose={closeDrawer}
             >
-                {content()}
+                {renderContent()}
             </Drawer>
         </>
     )

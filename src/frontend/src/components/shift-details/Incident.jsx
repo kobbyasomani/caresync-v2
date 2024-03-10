@@ -132,12 +132,12 @@ const Incident = ({ incident, index, shiftUtils }) => {
             >
                 {Object.keys(store.selectedIncidentReport).length > 0 ?
                     <Typography variant="body1" sx={{ mt: 2 }}>
-                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo;</span>
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo; </span>
                         {incident.incidentReportText.length <= 140 ?
                             incident.incidentReportText
                             : <>{incident.incidentReportText.slice(0, 140)} ...</>
                         }
-                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&rdquo;</span>
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}> &rdquo;</span>
                     </Typography>
                     : null}
             </Confirmation>

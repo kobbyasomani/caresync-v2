@@ -1,24 +1,32 @@
 import React, { useState, useCallback, useRef, useEffect } from "react"
 
-import IncidentReportForm from "../forms/IncidentReportForm";
-import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
-
 import { useGlobalContext } from "../../utils/globalUtils";
-import { ButtonDownload } from "../root/Buttons";
-import { Typography, Box, Stack } from "@mui/material";
+import { useModalContext } from "../../utils/modalUtils";
+import { deleteIncidentReport, getAllShifts } from "../../utils/apiUtils";
+import { ButtonPrimary, ButtonSecondary, ButtonDownload } from "../root/Buttons"
+import IncidentReportForm from "../forms/IncidentReportForm";
+import Confirmation from "../dialogs/Confirmation";
+
+import { Typography, Box, Stack, useTheme } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const IncidentReportDetails = ({ shiftUtils }) => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
+
+    const [shift, setShift] = useState(store.selectedShift);
     const [incidentReport, setIncidentReport] = useState(store.selectedIncidentReport);
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const formRef = useRef(null);
     const [isEditable, setIsEditable] = useState(shiftUtils.userIsShiftCarer
         && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
+
+    const theme = useTheme();
+    const modalId = `delete_incident_${incidentReport._id}`;
+    const formRef = useRef(null);
 
     const toggleEditMode = useCallback((override) => {
         setEditMode(override || !editMode);
@@ -29,8 +37,50 @@ const IncidentReportDetails = ({ shiftUtils }) => {
     }, [formRef]);
 
     const handleConfirmDeleteIncident = useCallback(() => {
+        dispatch({
+            type: "setSelectedIncidentReport",
+            data: incidentReport
+        });
+        modalDispatch({
+            type: "open",
+            data: "confirmation",
+            id: modalId
+        });
+    }, [dispatch, incidentReport, modalDispatch, modalId]);
 
-    }, []);
+    const handleDeleteIncident = useCallback(async () => {
+        try {
+            await deleteIncidentReport(store.selectedShift._id, incidentReport._id)
+                .then(updatedShift => {
+                    setShift(updatedShift);
+                    getAllShifts(store.selectedClient._id)
+                        .then(shifts => {
+                            dispatch({
+                                type: "setShifts",
+                                data: shifts
+                            });
+                        });
+                });
+        } catch (error) {
+            throw new Error(process.env.NODE_ENV === "development" ? error
+                : "The incident report could not be deleted at this time.");
+        }
+    }, [dispatch, store.selectedShift._id, incidentReport._id, store.selectedClient._id]);
+
+    const handleAfterConfirmDeleteIncident = useCallback(() => {
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: "back"
+        });
+        dispatch({
+            type: "setSelectedIncidentReport",
+            data: {}
+        });
+        dispatch({
+            type: "setSelectedShift",
+            data: shift
+        });
+    }, [dispatch, shift, modalDispatch]);
 
     const handleChildLoadState = useCallback((childIsLoading) => {
         setIsLoading(childIsLoading);
@@ -94,7 +144,7 @@ const IncidentReportDetails = ({ shiftUtils }) => {
             }
         }
 
-    }, [incidentReport, editMode, toggleEditMode, isLoading,
+    }, [incidentReport, editMode, toggleEditMode, isEditable, isLoading,
         handleChildLoadState, handleConfirmDeleteIncident, handleUpdateIncident]);
 
     return (
@@ -112,6 +162,29 @@ const IncidentReportDetails = ({ shiftUtils }) => {
             <Box sx={{ pt: 1 }}>
                 {renderContent()}
             </Box>
+
+            <Confirmation
+                modalId={modalId}
+                title="Confirm delete incident"
+                text="Are you sure you want to delete this incident report? It will be permanently removed from the shift."
+                callback={handleDeleteIncident}
+                cancelText="Keep incident"
+                confirmText="Delete incident"
+                successAlert="The incident report was successfully deleted."
+                stayOpenOnConfirm
+                afterConfirm={handleAfterConfirmDeleteIncident}
+            >
+                {Object.keys(store.selectedIncidentReport).length > 0 ?
+                    <Typography variant="body1" sx={{ mt: 2 }}>
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo; </span>
+                        {incidentReport.incidentReportText.length <= 140 ?
+                            incidentReport.incidentReportText
+                            : <>{incidentReport.incidentReportText.slice(0, 140)} ...</>
+                        }
+                        <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}> &rdquo;</span>
+                    </Typography>
+                    : null}
+            </Confirmation>
         </>
     )
 }

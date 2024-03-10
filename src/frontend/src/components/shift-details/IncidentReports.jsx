@@ -24,8 +24,11 @@ const IncidentReports = (props) => {
             return (
                 <Stack spacing={2} sx={{ pt: 1 }}>
                     {incidentReports.map((incident, index) => {
-                        return <Incident key={incident._id} index={index + 1}
-                            incident={incident} shiftUtils={shiftUtils} />
+                        return <Incident
+                            key={incident._id}
+                            index={index + 1}
+                            incident={incident}
+                            shiftUtils={shiftUtils} />
                     })}
                 </Stack>
             )

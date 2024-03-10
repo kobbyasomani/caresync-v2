@@ -408,6 +408,11 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
   try {
     // Get the incident ID from the request body
     const incidentId = req.body.incidentId;
+    if (!incidentId) {
+      res.status(400);
+      throw new Error("The request body does not contain an incidentId")
+    }
+
     // Search for user with JWT token ID
     const user = await User.findById(req.user.id);
 

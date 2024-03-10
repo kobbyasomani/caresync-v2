@@ -16,11 +16,12 @@ const modalReducer = (state, action) => {
             return {
                 ...state,
                 [`${action.data}IsOpen`]: false,
-                prevDrawer: [],
-                activeModal: {
+                drawerHistory: action.data === "drawer" ? [] : state.drawerHistory,
+                activeDrawer: action.data === "drawer" ? "" : state.activeDrawer,
+                activeModal: action.data === "modal" ? {
                     ...state.activeModal,
                     alert: null
-                }
+                } : state.activeModal
             }
         case "setActiveModal":
             return {
@@ -28,18 +29,24 @@ const modalReducer = (state, action) => {
                 activeModal: action.data
             }
         case "setActiveDrawer":
-            // console.log(state.prevDrawer);
             if (action.data === "back") {
+                if (state.drawerHistory.length > 0) {
+                    return {
+                        ...state,
+                        activeDrawer: state.drawerHistory[state.drawerHistory.length - 1],
+                        drawerHistory: state.drawerHistory.slice(0, -1),
+                    }
+                } else {
+                    return state
+                }
+            } else {
+                const newActiveDrawer = action.data;
+                const clearHistory = newActiveDrawer === "";
                 return {
                     ...state,
-                    prevDrawer: state.prevDrawer[state.prevDrawer.length - 1] === "" ? [] : state.prevDrawer.slice(0, state.prevDrawer.length - 1),
-                    activeDrawer: state.prevDrawer[state.prevDrawer.length - 1],
+                    drawerHistory: clearHistory ? [] : [...state.drawerHistory, state.activeDrawer],
+                    activeDrawer: newActiveDrawer
                 }
-            }
-            return {
-                ...state,
-                prevDrawer: [...state.prevDrawer, state.activeDrawer],
-                activeDrawer: action.data
             }
         case "closeAllModals":
             return {
@@ -48,7 +55,6 @@ const modalReducer = (state, action) => {
                 drawerIsOpen: false,
                 confirmationIsOpen: false,
             }
-
         default: return state
     }
 }
