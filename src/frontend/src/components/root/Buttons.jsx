@@ -178,7 +178,7 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
     const [buttonVariant, setButtonVariant] = useState(buttonDefaults['xs']);
     const navigate = useNavigate();
 
-    const handleAddShift = (() => {
+    const handleAddShift = useCallback(() => {
         const currentDateStart = new Date(new Date().setHours(0, 0, 0, 0));
         const currentDateEnd = plusHours(new Date(new Date().setHours(0, 0, 0, 0)), 24);
         calendarApi().select(currentDateStart, currentDateEnd);
@@ -188,7 +188,7 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
             data: "modal"
         });
         navigate("/calendar/add-shift");
-    });
+    }, [calendarApi, modalDispatch, navigate]);
 
     // Get the current breakpoint token key
     function getBreakpoint() {

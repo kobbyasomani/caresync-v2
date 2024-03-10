@@ -44,7 +44,7 @@ export const AddClient = () => {
     const handleSwitchClient = useCallback(() => {
         dispatch({
             type: "setSelectedClient",
-            data: ""
+            data: {}
         });
         modalDispatch({
             type: "close",

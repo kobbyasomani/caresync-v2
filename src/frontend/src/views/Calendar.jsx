@@ -206,12 +206,16 @@ export const Calendar = () => {
         }
     }, [dispatch, modalDispatch, store]);
 
-    // Get the list of carers for selelcted client and set them in state
+    // Get the list of carers for selected client and set them in state
     useEffect(() => {
         getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
+            dispatch({
+                type: "setCarers",
+                data: carers
+            });
         });
-    }, [store.selectedClient]);
+    }, [store.selectedClient._id, dispatch]);
 
     return isLoading ? <Loader /> : (
         store.selectedClient && store.shifts ? (

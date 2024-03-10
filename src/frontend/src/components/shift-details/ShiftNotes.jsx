@@ -55,7 +55,7 @@ const ShiftNotes = (props) => {
     }, [store.selectedShift._id, dispatch]);
 
     const renderContent = () => {
-        if (Object.keys(store.selectedShift.shiftNotes).length > 0) {
+        if (store.selectedShift?.shiftNotes) {
             return (
                 <>
                     {!editMode ? (

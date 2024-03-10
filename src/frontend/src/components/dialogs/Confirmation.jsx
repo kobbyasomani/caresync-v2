@@ -5,7 +5,7 @@ import Loader from "../logo/Loader";
 
 import {
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    IconButton, Alert, Stack
+    IconButton, Alert
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 

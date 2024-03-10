@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 export const AddShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [shiftCreated, setShiftCreated] = useState(false);
     const navigate = useNavigate();
 
@@ -78,7 +78,6 @@ export const AddShiftForm = () => {
     const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
     const [initialState] = useState({
         inputs: {
-            // TODO: Investigate why carerID still returns undefined in some instances
             carerID: store.selectedClient.carers?.length > 0 ? store.selectedClient.carers[0]?._id : "",
             shiftStartTime: defaultShiftTime.start,
             shiftEndTime: defaultShiftTime.end,
@@ -88,7 +87,7 @@ export const AddShiftForm = () => {
     });
     const [form, setForm] = useHandleForm(initialState);
     const [alerts, setAlerts] = useState([]);
-    const [carers, setCarers] = useState([]);
+    const [carers, setCarers] = useState(store.selectedClient.carers || []);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -216,15 +215,6 @@ export const AddShiftForm = () => {
             }]
         }));
     }, [store.user._id, store.selectedClient._id, dispatch, setForm]);
-
-    // Get the carers for the selected client
-    useEffect(() => {
-        setIsLoading(true);
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            setIsLoading(false);
-        });
-    }, [store.selectedClient]);
 
     useEffect(() => {
         // Set shift creation modal text

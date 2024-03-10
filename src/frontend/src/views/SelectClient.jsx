@@ -49,7 +49,7 @@ const SelectClient = () => {
     useEffect(() => {
         dispatch({
             type: "setSelectedClient",
-            data: ""
+            data: {}
         });
         dispatch({
             type: "clearShifts"

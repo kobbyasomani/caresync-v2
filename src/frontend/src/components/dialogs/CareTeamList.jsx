@@ -26,18 +26,6 @@ const CareTeamList = () => {
 
     const navigate = useNavigate();
 
-    // Set the modal text
-    useEffect(() => {
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`,
-                text: `These are the members of this client's care team. You can 
-                invite users to the care team or remove them from here.`
-            }
-        });
-    }, [modalDispatch, store.selectedClient]);
-
     // Opens carer invitation dialog
     const addCarer = useCallback(() => {
         navigate("/calendar/invite-carer");
@@ -121,6 +109,18 @@ const CareTeamList = () => {
             });
         })
     }, [dispatch, store.selectedClient._id, getCoordinator, store.selectedClient.coordinator]);
+
+    // Set the modal text
+    useEffect(() => {
+        modalDispatch({
+            type: "setActiveModal",
+            data: {
+                title: `Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`,
+                text: `These are the members of this client's care team. You can 
+                    invite users to, or remove them from, the client's care team here.`
+            }
+        });
+    }, [modalDispatch, store.selectedClient]);
 
     return isLoading ? <Loader /> : (
         <>

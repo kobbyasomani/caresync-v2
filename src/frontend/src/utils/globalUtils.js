@@ -62,8 +62,8 @@ const globalReducer = (state, action) => {
             }
         case "setSelectedClientById":
             function getClientById(id) {
-                if (!id) return "";
-                let foundClient;
+                if (!id) return {};
+                let foundClient = {};
                 const allClients = [
                     ...state.clients.coordinator,
                     ...state.clients.carer

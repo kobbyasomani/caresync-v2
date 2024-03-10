@@ -18,8 +18,8 @@ const getClient = async (clientId) => {
 
 /**
  * Gets the carers for a given client by client id
- * @param {string}clientId The id of the client whose carers are being retrieved.
- * @returns {array} An array of carer objects contaning the carer `_id`, 
+ * @param {string} clientId The id of the client whose carers are being retrieved.
+ * @returns {Array.<Object>} An array of carer objects contaning the carer `_id`, 
  * `firstName`, and `lastName` properties.
  */
 const getCarers = async (clientId) => {
