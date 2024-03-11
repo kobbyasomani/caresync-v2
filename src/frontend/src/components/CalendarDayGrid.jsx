@@ -1,4 +1,4 @@
-import { React, useState, forwardRef, useEffect, useCallback } from "react";
+import { React, forwardRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
@@ -25,15 +25,11 @@ const StyleWrapper = styled('div')(({ theme }) => ({
     }
 }));
 
-const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
+const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarView }, ref) => {
     // Selected date information state manager
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const navigate = useNavigate();
-    const [calendarView, setCalendarView] = useState({
-        view: "dayGridMonth",
-        toggleText: "List view",
-    });
 
     // Handle selecting a calendar day
     const handleSelect = useCallback((info) => {
@@ -66,19 +62,6 @@ const CalendarDayGrid = forwardRef(({ calendarApi }, ref) => {
             data: "drawer"
         });
     }, [dispatch, modalDispatch]);
-
-    const toggleCalendarView = useCallback(() => {
-        setCalendarView(prev => {
-            const toggleText = prev.toggleText === "Grid view" ? "List view" : "Grid view";
-            const view = prev.view === "dayGridMonth" ? "listMonth" : "dayGridMonth"
-
-            calendarApi().changeView(view);
-            return {
-                view: view,
-                toggleText: toggleText
-            }
-        });
-    }, [setCalendarView, calendarApi]);
 
     // Default the selected day to the current day
     useEffect(() => {

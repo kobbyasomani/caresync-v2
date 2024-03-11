@@ -57,9 +57,104 @@ export const Calendar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
 
+    const handleSelectInProgressShift = () => {
+        dispatch({
+            type: "setSelectedShift",
+            data: shiftInProgress
+        });
+        modalDispatch({
+            type: "open",
+            data: "drawer"
+        });
+    }
+
+    const openCareTeamList = useCallback(() => {
+        navigate("/calendar/care-team");
+        modalDispatch({
+            type: "open",
+            data: "modal"
+        });
+    }, [modalDispatch, navigate]);
+
     // Calendar ref and API
     const calendarRef = useRef(null);
-    const calendarApi = useCallback(() => calendarRef.current.getApi(), []);
+    const calendarApi = useCallback(() => {
+        return calendarRef.current.getApi();
+    }, []);
+    const [calendarView, setCalendarView] = useState({
+        view: "dayGridMonth",
+        toggleText: "List view",
+        userView: null
+    });
+
+    const getScreenSize = useCallback(() => {
+        let size = "xs";
+        switch (true) {
+            case window.innerWidth < theme.breakpoints.values.sm:
+                size = "xs"; break;
+            case window.innerWidth < theme.breakpoints.values.md:
+                size = "sm"; break;
+            case window.innerWidth < theme.breakpoints.values.lg:
+                size = "md"; break;
+            case window.innerWidth < theme.breakpoints.values.xl:
+                size = "lg"; break;
+            default:
+                size = "xl"; break;
+        }
+        return size;
+    }, [theme.breakpoints.values]);
+    const [screenSize, setScreenSize] = useState(getScreenSize());
+
+    const toggleCalendarView = useCallback(() => {
+        setCalendarView(prev => {
+            const toggleText = prev.toggleText === "Grid view" ? "List view" : "Grid view";
+            const view = prev.view === "dayGridMonth" ? "listMonth" : "dayGridMonth"
+            return {
+                view: view,
+                toggleText: toggleText,
+                userView: view
+            }
+        });
+    }, [setCalendarView]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenSize(getScreenSize());
+        }
+        window.addEventListener("resize", handleResize);
+        // Cleanup
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        }
+    }, [getScreenSize]);
+
+    useEffect(() => {
+        if (calendarRef.current !== null) {
+            if (["xs"].includes(screenSize)) {
+                setCalendarView(prev => {
+                    return {
+                        ...prev,
+                        view: "listMonth",
+                        toggleText: "Grid view"
+                    }
+                });
+            } else {
+                setCalendarView(prev => {
+                    return {
+                        ...prev,
+                        view: prev.userView,
+                        toggleText: prev.userView === "dayGridMonth" ? "List view" : "Grid view"
+                    }
+                });
+            }
+        }
+    }, [screenSize, calendarApi]);
+
+    useEffect(() => {
+        if (calendarRef.current) {
+            calendarApi().changeView(calendarView.view);
+        }
+    }, [calendarView, calendarApi]);
 
     // Get the name of the coordinator for display in the care team
     useEffect(() => {
@@ -95,17 +190,6 @@ export const Calendar = () => {
                 setShiftInProgress(shift);
             }).then(() => setIsLoading(false));
     }, [store.selectedClient, store.selectedShift, dispatch]);
-
-    const handleSelectInProgressShift = () => {
-        dispatch({
-            type: "setSelectedShift",
-            data: shiftInProgress
-        });
-        modalDispatch({
-            type: "open",
-            data: "drawer"
-        });
-    }
 
     // Set the featured shift (closest upcoming)
     useEffect(() => {
@@ -184,14 +268,6 @@ export const Calendar = () => {
             data: prevShifts
         });
     }, [store.shifts, store.selectedClient, dispatch]);
-
-    const openCareTeamList = useCallback(() => {
-        navigate("/calendar/care-team");
-        modalDispatch({
-            type: "open",
-            data: "modal"
-        });
-    }, [modalDispatch, navigate]);
 
     // Logout user if auth fails
     useEffect(() => {
@@ -343,7 +419,13 @@ export const Calendar = () => {
                 }}
                     sx={{ mb: { xs: 1, lg: 0 } }}>
                     <Box id="calendar">
-                        <CalendarDayGrid ref={calendarRef} calendarApi={calendarApi} />
+                        <CalendarDayGrid
+                            ref={calendarRef}
+                            calendarApi={calendarApi}
+                            calendarView={calendarView}
+                            setCalendarView={setCalendarView}
+                            toggleCalendarView={toggleCalendarView}
+                        />
                     </Box>
                 </Box>
 
