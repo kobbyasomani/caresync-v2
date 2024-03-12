@@ -70,13 +70,12 @@ export const ButtonAddCarer = () => {
 
     // Navigate to carer invitation dialog
     const addCarer = useCallback(() => {
-        navigate("/calendar/invite-carer");
-
-        // Make sure the modal is open
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "invite-carer"
         });
+        navigate("/calendar/invite-carer");
     }, [navigate, modalDispatch]);
 
     return (
@@ -185,7 +184,8 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
 
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "add-shift"
         });
         navigate("/calendar/add-shift");
     }, [calendarApi, modalDispatch, navigate]);

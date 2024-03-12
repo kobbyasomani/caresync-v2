@@ -17,14 +17,15 @@ const Carer = (props) => {
     const { carer, removeCarer } = props;
     const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
     const userIsShiftCarer = store.user._id === carer._id;
+    const modalId = `confirmRemoveCarer_${carer._id}`;
 
-    const confirmRemoveCarer = useCallback(() => {
+    const handleConfirmRemoveCarer = useCallback(() => {
         modalDispatch({
             type: "open",
             data: "confirmation",
-            id: carer._id
+            id: modalId
         });
-    }, [modalDispatch, carer._id]);
+    }, [modalDispatch, modalId]);
 
     return (
         <div>
@@ -36,7 +37,7 @@ const Carer = (props) => {
                 {userIsCoordinator && removeCarer
                     && store.selectedClient.carers.map(carer => carer._id).includes(carer._id) ? (
                     <Tooltip title="Remove carer" placement="left">
-                        <IconButton onClick={confirmRemoveCarer}
+                        <IconButton onClick={handleConfirmRemoveCarer}
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
                             <PersonRemoveIcon />
                         </IconButton>
@@ -62,7 +63,7 @@ const Carer = (props) => {
                 from ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s care team?
                 ${userIsCoordinator && userIsShiftCarer ? "You will be removed as a carer but remain the coordinator for this client." : ""}`}
                 callback={removeCarer}
-                modalId={carer._id}
+                modalId={modalId}
                 sx={{ ml: { sm: "2.5rem" } }}
                 cancelText="Keep carer"
                 confirmText="Remove"

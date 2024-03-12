@@ -19,6 +19,8 @@ import SelectClient from "./views/SelectClient";
 import Calendar from "./views/Calendar";
 import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
 import CareTeamList from "./components/dialogs/CareTeamList";
+import MyAccount from "./components/dialogs/MyAccount";
+import ConfirmCancelShift from "./components/dialogs/ConfirmCancelShift";
 
 import AddShiftForm from "./components/forms/AddShiftForm";
 import EditShiftForm from "./components/forms/EditShiftForm";
@@ -50,6 +52,10 @@ const router = createBrowserRouter([
                 element: <Calendar />,
                 children: [
                   {
+                    path: "/calendar/my-account",
+                    element: <MyAccount />
+                  },
+                  {
                     path: "/calendar/select-shift-by-date",
                     element: <SelectShiftByDate />
                   },
@@ -60,6 +66,10 @@ const router = createBrowserRouter([
                   {
                     path: "/calendar/edit-shift",
                     element: <EditShiftForm />
+                  },
+                  {
+                    path: "/calendar/cancel-shift",
+                    element: <ConfirmCancelShift />
                   },
                   {
                     path: "/calendar/care-team",

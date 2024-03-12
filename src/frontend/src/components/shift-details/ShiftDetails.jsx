@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj, plusHours } from "../../utils/dateUtils";
@@ -26,6 +28,7 @@ const ShiftDetails = ({ isLoading, children }) => {
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
     const [shiftUtils, setShiftUtils] = useState({});
+    const navigate = useNavigate();
 
     const getShiftUtils = useCallback(() => {
         const getCurrentTime = () => new Date();
@@ -82,7 +85,8 @@ const ShiftDetails = ({ isLoading, children }) => {
             type: "close",
             data: "drawer"
         });
-    }, [modalDispatch]);
+        navigate("/calendar")
+    }, [modalDispatch, navigate]);
 
     const backToPrevDrawer = useCallback(() => {
         modalDispatch({

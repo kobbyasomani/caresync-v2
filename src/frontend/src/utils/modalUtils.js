@@ -7,21 +7,51 @@ const modalReducer = (state, action) => {
     // console.log("Modal Reducer:", action.type, action.data, action.id);
     switch (action.type) {
         case "open":
-            return {
-                ...state,
-                [`${action.data}IsOpen`]: true,
-                id: action.id ? action.id : ""
+            switch (action.data) {
+                case "drawer":
+                    // console.log(`Open ${action.data}`);
+                    return {
+                        ...state,
+                        [`${action.data}IsOpen`]: true,
+                        id: "drawer"
+                    }
+                case "modal":
+                case "confirmation":
+                    if (action.id) {
+                        // console.log(`Open ${action.id}`);
+                        return {
+                            ...state,
+                            [`${action.data}IsOpen`]: true,
+                            [`${action.data}Id`]: action.id || ""
+                        }
+                    } else {
+                        return state;
+                    }
+                default: return state;
             }
         case "close":
-            return {
-                ...state,
-                [`${action.data}IsOpen`]: false,
-                drawerHistory: action.data === "drawer" ? [] : state.drawerHistory,
-                activeDrawer: action.data === "drawer" ? "" : state.activeDrawer,
-                activeModal: action.data === "modal" ? {
-                    ...state.activeModal,
-                    alert: null
-                } : state.activeModal
+            switch (action.data) {
+                case "drawer":
+                    // console.log(`Close ${action.data}`);
+                    return {
+                        ...state,
+                        [`${action.data}IsOpen`]: false,
+                        drawerHistory: [],
+                        activeDrawer: ""
+                    }
+                case "modal":
+                case "confirmation":
+                    // console.log(`Close ${state[`${action.data}Id`]}`);
+                    return {
+                        ...state,
+                        [`${action.data}IsOpen`]: false,
+                        activeModal: {
+                            data: {},
+                            alert: null
+                        },
+                        [`${action.data}Id`]: ""
+                    }
+                default: return state;
             }
         case "setActiveModal":
             return {
@@ -51,9 +81,11 @@ const modalReducer = (state, action) => {
         case "closeAllModals":
             return {
                 ...state,
-                modalIsOpen: false,
                 drawerIsOpen: false,
+                modalIsOpen: false,
                 confirmationIsOpen: false,
+                modalId: "",
+                confirmationId: ""
             }
         default: return state
     }

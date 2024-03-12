@@ -32,37 +32,32 @@ const Overview = (props) => {
         });
     }, [modalDispatch]);
 
-    const editShift = useCallback(() => {
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: "Edit your shift",
-                text: `You can make changes to your shift start and end times, assigned carer,
-                and coordinator notes before the shift start time.`
-            }
-        });
+    const handleEditShift = useCallback(() => {
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "edit-shift"
         });
         navigate("/calendar/edit-shift")
     }, [modalDispatch, navigate]);
 
-    const openCareTeamList = useCallback(() => {
-        navigate("/calendar/care-team");
+    const handleOpenCareTeamList = useCallback(() => {
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "care-team-list"
         });
+        navigate("/calendar/care-team");
     }, [modalDispatch, navigate]);
 
-    const confirmCancelShift = useCallback(() => {
+    const handleConfirmCancelShift = useCallback(() => {
         modalDispatch({
             type: "open",
             data: "confirmation",
             id: `confirmCancelShift_${store.selectedShift._id}`
         });
-    }, [modalDispatch, store.selectedShift._id]);
+        navigate("/calendar/cancel-shift");
+    }, [modalDispatch, store.selectedShift._id, navigate]);
 
     const openIncident = useCallback((incident) => {
         modalDispatch({
@@ -324,7 +319,7 @@ const Overview = (props) => {
 
             <Grid item xs={12}>
                 <Card variant="outlined" id="care-team-card">
-                    <CardActionArea onClick={openCareTeamList}>
+                    <CardActionArea onClick={handleOpenCareTeamList}>
                         <CardContent>
                             <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Shift Carers</Typography>
@@ -378,10 +373,10 @@ const Overview = (props) => {
                     || new Date(store.selectedShift.shiftEndTime) > new Date()) ? (
                 <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
                     <Stack direction="row" gap={2} justifyContent="center">
-                        <ButtonPrimary onClick={editShift} sx={{ margin: "0" }}>
+                        <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}>
                             Edit shift
                         </ButtonPrimary>
-                        <ButtonSecondary onClick={confirmCancelShift}
+                        <ButtonSecondary onClick={handleConfirmCancelShift}
                             sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
                             Cancel shift
                         </ButtonSecondary>

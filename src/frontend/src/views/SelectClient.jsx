@@ -75,10 +75,11 @@ const SelectClient = () => {
 
     // Modal state manager
     const { modalDispatch } = useModalContext();
-    const openModal = () => {
+    const handleAddClient = () => {
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "add-client"
         });
     }
 
@@ -156,11 +157,11 @@ const SelectClient = () => {
                 )
                 }
             </TabPanel>
-            <ButtonPrimary onClick={openModal}>
+            <ButtonPrimary onClick={handleAddClient}>
                 Add client
             </ButtonPrimary>
 
-            <Modal
+            <Modal modalId="add-client"
                 title="Add Client"
                 text="You'll be the coordinator for this client and can 
             create and manage their care shifts."

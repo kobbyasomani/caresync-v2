@@ -16,7 +16,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
-    const modalId = `delete_incident_${incident._id}`;
+    const modalId = `confirmDeleteIncident_${incident._id}`;
     const [shift, setShift] = useState(store.selectedShift);
 
     const openIncident = useCallback(() => {

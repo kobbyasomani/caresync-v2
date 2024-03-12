@@ -19,11 +19,12 @@ const CoordinatorNotes = (props) => {
     const [coordinator, setCoordinator] = useState({});
 
     const openCareTeamList = useCallback(() => {
-        navigate("/calendar/care-team");
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "care-team-list"
         });
+        navigate("/calendar/care-team");
     }, [modalDispatch, navigate]);
 
     const renderContent = () => {

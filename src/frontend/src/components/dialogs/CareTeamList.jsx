@@ -6,6 +6,7 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { getCarers, getUserName } from "../../utils/apiUtils";
 import { getAllShifts } from "../../utils/apiUtils";
+import Modal from "../Modal";
 
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Carer from "../Carer";
@@ -27,9 +28,14 @@ const CareTeamList = () => {
     const navigate = useNavigate();
 
     // Opens carer invitation dialog
-    const addCarer = useCallback(() => {
+    const handleAddCarer = useCallback(() => {
+        modalDispatch({
+            type: "open",
+            data: "modal",
+            id: "invite-carer"
+        });
         navigate("/calendar/invite-carer");
-    }, [navigate]);
+    }, [modalDispatch, navigate]);
 
     // Add logged-in user to the care team if they are the coordinator
     const addCoordinatorAsCarer = useCallback(() => {
@@ -110,53 +116,46 @@ const CareTeamList = () => {
         })
     }, [dispatch, store.selectedClient._id, getCoordinator, store.selectedClient.coordinator]);
 
-    // Set the modal text
-    useEffect(() => {
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: `Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`,
-                text: `These are the members of this client's care team. You can 
-                    invite users to, or remove them from, the client's care team here.`
-            }
-        });
-    }, [modalDispatch, store.selectedClient]);
-
-    return isLoading ? <Loader /> : (
-        <>
-            <List>
-                <Stack spacing={2} key="carer-list">
-                    <Carer key={coordinator._id} carer={coordinator} removeCarer={() => removeCarer(coordinator)} />
-                    {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator)
-                        .map(carer => {
-                            return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
-                        }) : null}
-                </Stack>
-            </List>
-
-            {Object.keys(alert).length > 0 ? (
-                <Alert severity={alert.severity}>
-                    {alert.message}
-                </Alert>
-            ) : null}
-
-            {userIsCoordinator ?
-                (<Stack direction="row">
-                    <ButtonPrimary onClick={addCarer}
-                        startIcon={<PersonAddIcon />}>
-                        Add Carer
-                    </ButtonPrimary>
-                    {store.selectedClient.coordinator === store.user._id
-                        && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
-                        <ButtonSecondary onClick={addCoordinatorAsCarer}>
-                            Add yourself
-                        </ButtonSecondary>
-                    ) : (null)
-                    }
-                </Stack>) : null
-            }
-        </>
-    )
+    return <Modal modalId="care-team-list"
+        title={`Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`}
+        text={`These are the members of this client's care team. You can 
+                invite users to, or remove them from, the client's care team here.`}
+        hasEndpoint
+    >
+        {isLoading ? <Loader /> : (
+            <>
+                <List>
+                    <Stack spacing={2} key="carer-list">
+                        <Carer key={coordinator._id} carer={coordinator} removeCarer={() => removeCarer(coordinator)} />
+                        {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator)
+                            .map(carer => {
+                                return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
+                            }) : null}
+                    </Stack>
+                </List>
+                {Object.keys(alert).length > 0 ? (
+                    <Alert severity={alert.severity}>
+                        {alert.message}
+                    </Alert>
+                ) : null
+                }
+                {userIsCoordinator ?
+                    (<Stack direction="row">
+                        <ButtonPrimary onClick={handleAddCarer}
+                            startIcon={<PersonAddIcon />}>
+                            Add Carer
+                        </ButtonPrimary>
+                        {store.selectedClient.coordinator === store.user._id
+                            && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
+                            <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                                Add yourself
+                            </ButtonSecondary>
+                        ) : (null)
+                        }
+                    </Stack>) : null}
+            </>
+        )}
+    </Modal >
 }
 
 export default CareTeamList

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -6,12 +6,14 @@ import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
+import Modal from "../Modal";
 
 import { TextField, Alert } from "@mui/material";
 
 export const InviteCarerForm = () => {
     const { store } = useGlobalContext();
-    const { modalStore, modalDispatch } = useModalContext();
+    const { modalDispatch } = useModalContext();
+    const modalId = "invite-carer";
     const navigate = useNavigate();
 
     // Set the inital form state
@@ -32,30 +34,38 @@ export const InviteCarerForm = () => {
         the user to join ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s care team.`]);
     }, [form.inputs.email, store.selectedClient]);
 
-    // Set modal text
-    useEffect(() => {
-        modalDispatch({
-            type: "setActiveModal",
-            data: {
-                title: "Invite a care team member",
-                text: `Send an invitation to another user to join ${store.selectedClient.firstName} 
-                ${store.selectedClient.lastName}'s care team. The user must have an existing 
-                CareSync account that uses the same email address.`
-            }
-        })
-    }, [modalDispatch, modalStore.activeModal, store.selectedClient]);
-
     // Close the modal
-    const closeModal = useCallback(() => {
+    const handleCloseModal = useCallback(() => {
         modalDispatch({
             type: "close",
-            data: "modal"
+            data: "modal",
+            id: modalId
         });
         navigate("/calendar")
     }, [modalDispatch, navigate]);
 
+    const handleReturnToCareTeam = useCallback(() => {
+        modalDispatch({
+            type: "close",
+            data: "modal",
+            id: modalId
+        });
+        modalDispatch({
+            type: "open",
+            data: "modal",
+            id: "care-team-list"
+        });
+        navigate("/calendar/care-team")
+    }, [modalDispatch, navigate]);
+
     return (
-        <>
+        <Modal modalId={modalId}
+            title="Invite a care team member"
+            text={`Send an invitation to another user to join ${store.selectedClient.firstName} 
+    ${store.selectedClient.lastName}'s care team. The user must have an existing 
+    CareSync account that uses the same email address.`}
+            hasEndpoint
+        >
             <Form form={form}
                 setForm={setForm}
                 legend="Invite a carer"
@@ -72,7 +82,7 @@ export const InviteCarerForm = () => {
                     required
                     mui="TextField" />
             </Form>
-            <ButtonSecondary onClick={() => navigate(-1)}>
+            <ButtonSecondary onClick={handleReturnToCareTeam}>
                 Back to Care Team
             </ButtonSecondary>
             {/* Display alerts */}
@@ -85,14 +95,14 @@ export const InviteCarerForm = () => {
                             </Alert>
                         );
                     })}
-                    <ButtonPrimary onClick={closeModal}>
+                    <ButtonPrimary onClick={handleCloseModal}>
                         Close
                     </ButtonPrimary>
                 </div>
             ) : (
                 null
             )}
-        </>
+        </Modal>
     )
 }
 

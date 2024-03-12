@@ -8,12 +8,10 @@ import SelectClient from "../components/SwitchClient";
 import { getAllShifts } from "../utils/apiUtils";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
-import Modal from "../components/Modal";
 import ShiftDetails from "../components/shift-details/ShiftDetails";
 import Loader from "../components/logo/Loader";
 import { getCarers } from "../utils/apiUtils";
 import { SidebarButtonAddShift } from "../components/root/Buttons";
-import ConfirmCancelShift from "../components/dialogs/ConfirmCancelShift";
 
 import {
     Typography, Stack, Box, IconButton, Tooltip, Button,
@@ -72,7 +70,8 @@ export const Calendar = () => {
         navigate("/calendar/care-team");
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "care-team-list"
         });
     }, [modalDispatch, navigate]);
 
@@ -432,17 +431,11 @@ export const Calendar = () => {
                     </Box>
                 </Box>
 
-                <Modal>
-                    <Outlet />
-                </Modal>
+                <Outlet />
 
                 {store.selectedShift ?
-                    (
-                        <>
-                            <ShiftDetails isLoading={isLoading} />
-                            <ConfirmCancelShift />
-                        </>
-                    ) : null
+                    <ShiftDetails isLoading={isLoading} />
+                    : null
                 }
             </Box >
         ) : <Navigate to="/" />

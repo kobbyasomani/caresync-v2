@@ -41,7 +41,8 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
         // Open the modal
         modalDispatch({
             type: "open",
-            data: "modal"
+            data: "modal",
+            id: "select-shift-by-date"
         });
         // Navigate to Select Shift by Date
         navigate("/calendar/select-shift-by-date")

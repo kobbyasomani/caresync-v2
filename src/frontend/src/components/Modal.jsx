@@ -1,12 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useCallback } from "react";
 import { useModalContext } from "../utils/modalUtils";
 
 import {
     Dialog,
+    DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogTitle,
+    DialogActions,
     useMediaQuery,
     useTheme,
     IconButton,
@@ -16,30 +19,39 @@ import CloseIcon from "@mui/icons-material/Close";
 
 /**
  * A re-usable modal.
+ * @param {string} modalId The id of the modal. Used for targeting open/close actions when
+ * multiple modals are rendered simultaneously.
  * @param {string} title The title (h2) to be displayed in the modal.
  * @param {string} text Descriptive text to be displayed above the modal content.
+ * @param {object} alert An alert object to be displayed in the modal.
  * @param {*} actions Any additional action elements (e.g., buttons) to be displayed at the bottom of the modal.
+ * @param {boolean} hasEndpoint If true, the modal will navigate 'back' in history on close.
  * @returns A modal element populated with the passed props and children.
  */
-const Modal = ({ title, text, alert, actions, children, ...rest }) => {
+const Modal = ({ modalId, title, text, alert, actions, hasEndpoint, children, ...rest }) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     const { modalStore, modalDispatch } = useModalContext();
     const isOpen = modalStore.modalIsOpen;
+    const navigate = useNavigate();
 
-    const closeModal = useCallback(() => {
+    const handleCloseModal = useCallback(() => {
         modalDispatch({
             type: "close",
-            data: "modal"
+            data: "modal",
+            id: modalId
         });
-    }, [modalDispatch]);
+        if (hasEndpoint) {
+            navigate("/calendar");
+        }
+    }, [modalDispatch, modalId, hasEndpoint, navigate]);
 
     return (
         <Dialog className={isOpen ? "modal open" : "modal closed"}
             fullScreen={fullScreen}
-            open={isOpen}
-            onClose={closeModal}
+            open={isOpen && modalId === modalStore.modalId}
+            onClose={handleCloseModal}
             maxWidth="xs"
             aria-labelledby="modal-title"
             {...rest}>
@@ -48,7 +60,7 @@ const Modal = ({ title, text, alert, actions, children, ...rest }) => {
                     {title || modalStore.activeModal.title}
                 </Typography>
                 <IconButton className="close-modal"
-                    onClick={closeModal}
+                    onClick={handleCloseModal}
                     sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
                     <CloseIcon />
                 </IconButton>
@@ -58,11 +70,11 @@ const Modal = ({ title, text, alert, actions, children, ...rest }) => {
                     {text || modalStore.activeModal.text}
                 </DialogContentText>
                 {modalStore.activeModal?.alert}
-                {children || "Nested content goes here {children}"}
+                {children}
             </DialogContent>
-            {/* <DialogActions>
-                {actions || null}
-            </DialogActions> */}
+            <DialogActions>
+                {actions}
+            </DialogActions>
         </Dialog>
     );
 }

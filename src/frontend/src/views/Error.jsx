@@ -16,12 +16,7 @@ export default function Error() {
 prevent them being already-open when navigating to another view */
     useEffect(() => {
         modalDispatch({
-            type: "close",
-            data: "modal"
-        });
-        modalDispatch({
-            type: "close",
-            data: "drawer"
+            type: "closeAllModals",
         });
     }, [modalDispatch]);
 

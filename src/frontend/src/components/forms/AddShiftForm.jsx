@@ -11,6 +11,7 @@ import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ButtonAddCarer } from "../root/Buttons";
 import Loader from "../logo/Loader";
+import Modal from "../Modal";
 
 import {
     TextField, Alert, Stack,
@@ -23,6 +24,7 @@ import dayjs from "dayjs";
 export const AddShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const [modalData, setModalData] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [shiftCreated, setShiftCreated] = useState(false);
     const navigate = useNavigate();
@@ -216,32 +218,33 @@ export const AddShiftForm = () => {
         }));
     }, [store.user._id, store.selectedClient._id, dispatch, setForm]);
 
-    useEffect(() => {
+    const populateModal = useCallback(() => {
         // Set shift creation modal text
         if (carers.length === 0) {
             // If the client has no assigned carers, prompt the user to invite some
-            modalDispatch({
-                type: "setActiveModal",
-                data: {
-                    title: "No carers assigned",
-                    text: `It looks like this client doesn't have any carers assigned yet.
+            setModalData({
+                title: "No carers assigned",
+                text: `It looks like this client doesn't have any carers assigned yet.
                 Add some before creating a shift.`
-                }
             });
         } else {
-            modalDispatch({
-                type: "setActiveModal",
-                data: {
-                    title: `New shift for ${defaultShiftTime.start.toLocaleDateString()}`,
-                    text: "Enter the details for a new shift on this date.",
-                    alert: !isSameDate(form.inputs.shiftStartTime, new Date(store.selectedDate.start)) ? <Alert severity="warning" sx={{ mb: 1 }}>
-                        You can't add new shifts for {new Date(store.selectedDate.start).toLocaleDateString("en-AU", { dateStyle: "long" })}.
+            setModalData({
+                title: `New shift for ${defaultShiftTime.start.toLocaleDateString()}`,
+                text: "Enter the details for a new shift on this date.",
+                alert: !isSameDate(form.inputs.shiftStartTime, new Date(store.selectedDate.start)) ?
+                    <Alert severity="warning" sx={{ mb: 1 }}>
+                        You can't add new shifts for {new Date(store.selectedDate.start)
+                            .toLocaleDateString("en-AU", { dateStyle: "long" })}.
                         The next available date has been selected.
-                    </Alert> : null
-                }
+                    </Alert>
+                    : null
             });
         }
-    }, [modalDispatch, carers, store.selectedDate.start, defaultShiftTime.start, form.inputs.shiftStartTime]);
+    }, [carers, store.selectedDate.start, defaultShiftTime.start, form.inputs.shiftStartTime]);
+
+    useEffect(() => {
+        populateModal();
+    }, [store.selectedDate, populateModal]);
 
     useEffect(() => {
         const newDefaultTime = getShiftTimeDefaults();
@@ -253,104 +256,112 @@ export const AddShiftForm = () => {
         setShiftTime("End", dayjs(newDefaultTime.end));
     }, [getShiftTimeDefaults, setShiftTime]);
 
-    return isLoading ? <Loader /> : carers.length > 0 ? (
-        <>
-            <Form form={form}
-                setForm={setForm}
-                legend="New shift details"
-                buttonText="Create shift"
-                postURL={`/shift/${store.selectedClient._id}`}
-                validation={validation}
-                callback={handleUpdateShifts}
-                initialState={initialState}
-            >
-                <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
-                <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
-                <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
-                    <TimePicker label="Shift Start Time"
-                        inputProps={{ name: "shiftStartTime", required: true }}
-                        time={form.inputs.shiftStartTime}
-                        setTime={setShiftTime}
-                        minDate={dayjs(new Date())}
-                    />
-                    <TimePicker label="Shift End Time"
-                        inputProps={{ name: "shiftEndTime", required: true }}
-                        time={form.inputs.shiftEndTime}
-                        setTime={setShiftTime}
-                        minDate={dayjs(new Date())}
-                    />
-                </Stack>
-                <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
-                <FormControl fullWidth>
-                    <InputLabel id="carer-select">Select Carer</InputLabel>
-                    <Select
-                        labelId="carer-select"
-                        id="carer-select"
-                        label="Select Carer"
-                        required
-                        mui="Select"
-                        value={form.inputs.carerID}
-                        name="carerID"
-                        onChange={selectCarer}
-                        inputProps={{ id: "carerID-input" }}
+    return <Modal modalId="add-shift"
+        title={modalData.title}
+        text={modalData.text}
+        alert={modalData.alert}
+        hasEndpoint
+    >
+        {isLoading ? <Loader />
+            : carers.length > 0 ? (
+                <>
+                    <Form form={form}
+                        setForm={setForm}
+                        legend="New shift details"
+                        buttonText="Create shift"
+                        postURL={`/shift/${store.selectedClient._id}`}
+                        validation={validation}
+                        callback={handleUpdateShifts}
+                        initialState={initialState}
                     >
-                        {carers.map(carer => {
-                            return (
-                                <MenuItem value={carer._id} key={carer._id}>
-                                    {`${carer.firstName} ${carer.lastName}`}
-                                </MenuItem>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-                <TextField multiline
-                    minRows={3}
-                    label="Coordinator Notes"
-                    id="coordinator-notes"
-                    type="text"
-                    name="coordinatorNotes"
-                    placeholder="Some things to take note of during this shift are..."
-                    mui="TextField" />
-            </Form>
-            {alerts.length > 0 ? (
-                <div>
-                    {alerts.map((alert, index) => {
-                        return (
-                            <Alert severity={alert.severity} key={index}>
-                                {alert.message}
-                            </Alert>
-                        );
-                    })}
-                    {store.shifts.length > 0 && shiftCreated ?
-                        <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                            <ButtonPrimary onClick={handleManageShift} sx={{ my: 0 }}>
-                                Manage shift
-                            </ButtonPrimary>
+                        <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
+                        <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
+                        <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
+                            <TimePicker label="Shift Start Time"
+                                inputProps={{ name: "shiftStartTime", required: true }}
+                                time={form.inputs.shiftStartTime}
+                                setTime={setShiftTime}
+                                minDate={dayjs(new Date())}
+                            />
+                            <TimePicker label="Shift End Time"
+                                inputProps={{ name: "shiftEndTime", required: true }}
+                                time={form.inputs.shiftEndTime}
+                                setTime={setShiftTime}
+                                minDate={dayjs(new Date())}
+                            />
                         </Stack>
-                        : null
-                    }
-                </div>
+                        <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
+                        <FormControl fullWidth>
+                            <InputLabel id="carer-select">Select Carer</InputLabel>
+                            <Select
+                                labelId="carer-select"
+                                id="carer-select"
+                                label="Select Carer"
+                                required
+                                mui="Select"
+                                value={form.inputs.carerID}
+                                name="carerID"
+                                onChange={selectCarer}
+                                inputProps={{ id: "carerID-input" }}
+                            >
+                                {carers.map(carer => {
+                                    return (
+                                        <MenuItem value={carer._id} key={carer._id}>
+                                            {`${carer.firstName} ${carer.lastName}`}
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                        <TextField multiline
+                            minRows={3}
+                            label="Coordinator Notes"
+                            id="coordinator-notes"
+                            type="text"
+                            name="coordinatorNotes"
+                            placeholder="Some things to take note of during this shift are..."
+                            mui="TextField" />
+                    </Form>
+                    {alerts.length > 0 ? (
+                        <div>
+                            {alerts.map((alert, index) => {
+                                return (
+                                    <Alert severity={alert.severity} key={index}>
+                                        {alert.message}
+                                    </Alert>
+                                );
+                            })}
+                            {store.shifts.length > 0 && shiftCreated ?
+                                <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
+                                    <ButtonPrimary onClick={handleManageShift} sx={{ my: 0 }}>
+                                        Manage shift
+                                    </ButtonPrimary>
+                                </Stack>
+                                : null
+                            }
+                        </div>
+                    ) : (
+                        null
+                    )}
+                </>
             ) : (
-                null
+                // If the client has no assigned carers, prompt the user to invite some
+                <Stack direction="row">
+                    <ButtonAddCarer />
+                    {store.selectedClient.coordinator === store.user._id
+                        // If there are carers, check that user is not already a carer for the client
+                        && ((store.selectedClient.carers?.length > 0
+                            && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id))
+                            // Or, if there are no carers
+                            || store.selectedClient.carers?.length === 0
+                            || !store.selectedClient.carers) ? (
+                        <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                            Add yourself
+                        </ButtonSecondary>
+                    ) : null}
+                </Stack>
             )}
-        </>
-    ) : (
-        // If the client has no assigned carers, prompt the user to invite some
-        <Stack direction="row">
-            <ButtonAddCarer />
-            {store.selectedClient.coordinator === store.user._id
-                // If there are carers, check that user is not already a carer for the client
-                && ((store.selectedClient.carers?.length > 0
-                    && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id))
-                    // Or, if there are no carers
-                    || store.selectedClient.carers?.length === 0
-                    || !store.selectedClient.carers) ? (
-                <ButtonSecondary onClick={addCoordinatorAsCarer}>
-                    Add yourself
-                </ButtonSecondary>
-            ) : null}
-        </Stack>
-    )
+    </Modal>
 }
 
 export default AddShiftForm;

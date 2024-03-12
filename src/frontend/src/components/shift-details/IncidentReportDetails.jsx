@@ -25,7 +25,7 @@ const IncidentReportDetails = ({ shiftUtils }) => {
         && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
 
     const theme = useTheme();
-    const modalId = `delete_incident_${incidentReport._id}`;
+    const modalId = `confirmDeleteIncident_${incidentReport._id}`;
     const formRef = useRef(null);
 
     const toggleEditMode = useCallback((override) => {

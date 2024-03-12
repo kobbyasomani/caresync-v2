@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useModalContext } from "../../utils/modalUtils"
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Loader from "../logo/Loader";
@@ -19,15 +21,17 @@ import CloseIcon from "@mui/icons-material/Close";
  * @param {string} confirmText The text to display on the confirm button
  * @param {string} successAlert The alert message to display on successful confirmation
  * @param {boolean} stayOpenOnConfirm If true, the dialog will stay open after confirmation
+ * @param {boolean} hasEndpoint If true, the modal will navigate 'back' in history on close.
  * @param {function} afterConfirm A callback function to execute after confirmation
  * @returns 
  */
 const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText, successAlert,
-    stayOpenOnConfirm, afterConfirm, noDismiss, children, ...rest }) => {
+    stayOpenOnConfirm, hasEndpoint, afterConfirm, noDismiss, children, ...rest }) => {
     const { modalStore, modalDispatch } = useModalContext();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [alert, setAlert] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const closeConfirmation = useCallback(() => {
         modalDispatch({
@@ -41,8 +45,11 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
             }
             setIsConfirmed(false);
         }
+        if (hasEndpoint) {
+            navigate(-1);
+        }
         setAlert({});
-    }, [modalDispatch, modalId, isConfirmed, afterConfirm]);
+    }, [modalDispatch, modalId, isConfirmed, afterConfirm, hasEndpoint, navigate]);
 
     const handleConfirm = useCallback(async () => {
         async function invokeCallback() {
@@ -73,56 +80,54 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
     }, [callback, successAlert, closeConfirmation, stayOpenOnConfirm]);
 
     return (
-        <>
-            <Dialog
-                maxWidth="xs"
-                open={modalStore.confirmationIsOpen && modalStore.id === modalId}
-                onClose={closeConfirmation}
-                aria-labelledby={title}
-                aria-describedby={text}
-                {...rest}
-            >
-                {!noDismiss ? (
-                    <IconButton className="close-modal"
-                        onClick={closeConfirmation}
-                        sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
-                        <CloseIcon />
-                    </IconButton>
-                ) : null}
-                <DialogTitle variant="h3" sx={{ pt: 5 }}>{title}</DialogTitle>
-                <DialogContent sx={{ pb: 1 }}>
-                    {isLoading ? <Loader /> :
-                        <>
-                            <DialogContentText>
-                                {text}
-                            </DialogContentText>
-                            {children}
-                            {Object.keys(alert).length > 0 ?
-                                <Alert severity={alert.severity} sx={{ mt: 2 }}>
-                                    {alert.message}
-                                </Alert>
-                                : null}
-                        </>
-                    }
-                </DialogContent>
-                <DialogActions>
-                    {!isConfirmed ? (
-                        <>
-                            <ButtonPrimary onClick={closeConfirmation} disabled={isLoading}>
-                                {cancelText || "Cancel"}
-                            </ButtonPrimary>
-                            <ButtonSecondary onClick={handleConfirm} color="error" disabled={isLoading}>
-                                {confirmText || "Confirm"}
-                            </ButtonSecondary>
-                        </>
-                    ) : (
-                        <ButtonPrimary onClick={closeConfirmation}>
-                            Close
+        <Dialog
+            maxWidth="xs"
+            open={modalStore.confirmationIsOpen && modalStore.confirmationId === modalId}
+            onClose={closeConfirmation}
+            aria-labelledby={title}
+            aria-describedby={text}
+            {...rest}
+        >
+            {!noDismiss ? (
+                <IconButton className="close-modal"
+                    onClick={closeConfirmation}
+                    sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+            <DialogTitle variant="h3" sx={{ pt: 5 }}>{title}</DialogTitle>
+            <DialogContent sx={{ pb: 1 }}>
+                {isLoading ? <Loader /> :
+                    <>
+                        <DialogContentText>
+                            {text}
+                        </DialogContentText>
+                        {children}
+                        {Object.keys(alert).length > 0 ?
+                            <Alert severity={alert.severity} sx={{ mt: 2 }}>
+                                {alert.message}
+                            </Alert>
+                            : null}
+                    </>
+                }
+            </DialogContent>
+            <DialogActions>
+                {!isConfirmed ? (
+                    <>
+                        <ButtonPrimary onClick={closeConfirmation} disabled={isLoading}>
+                            {cancelText || "Cancel"}
                         </ButtonPrimary>
-                    )}
-                </DialogActions>
-            </Dialog>
-        </>
+                        <ButtonSecondary onClick={handleConfirm} color="error" disabled={isLoading}>
+                            {confirmText || "Confirm"}
+                        </ButtonSecondary>
+                    </>
+                ) : (
+                    <ButtonPrimary onClick={closeConfirmation}>
+                        Close
+                    </ButtonPrimary>
+                )}
+            </DialogActions>
+        </Dialog>
     )
 }
 

@@ -79,6 +79,7 @@ ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
             cancelText="Keep shift"
             stayOpenOnConfirm
             afterConfirm={afterConfirm}
+            hasEndpoint
         >
             <Box mt={2}>
                 <Typography variant="body1">
