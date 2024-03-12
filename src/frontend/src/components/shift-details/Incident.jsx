@@ -88,12 +88,13 @@ const Incident = ({ incident, index, shiftUtils }) => {
                             </Typography>
                         </Box>
                         <Box>
-                            <Typography variant="body1" className="shift-carer">
+                            <Typography variant="body1" className="incident-report-summary"
+                                sx={{ whiteSpace: "pre-line" }}>
                                 {incident ?
-                                    incident.incidentReportText.length <= 240 ?
+                                    incident.incidentReportText.length <= 140 ?
                                         incident.incidentReportText :
                                         <>
-                                            {incident.incidentReportText.slice(0, 240)}
+                                            {incident.incidentReportText.slice(0, 140)}
                                             ... <span style={{ color: theme.palette.primary.main }}>
                                                 Read more
                                             </span>
