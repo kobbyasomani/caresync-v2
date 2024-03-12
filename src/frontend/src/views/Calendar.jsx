@@ -84,7 +84,7 @@ export const Calendar = () => {
     const [calendarView, setCalendarView] = useState({
         view: "dayGridMonth",
         toggleText: "List view",
-        userView: null
+        userView: "dayGridMonth"
     });
 
     const getScreenSize = useCallback(() => {
@@ -147,6 +147,7 @@ export const Calendar = () => {
                     }
                 });
             }
+            calendarApi().render();
         }
     }, [screenSize, calendarApi]);
 
@@ -309,8 +310,10 @@ export const Calendar = () => {
                         <SelectClient />
                         <Tooltip title="Care Team" placement="left">
                             <IconButton color="primary" size="large"
+                                aria-label="care team"
                                 sx={{
-                                    ml: "auto", backgroundColor: "#eef1f6ff",
+                                    ml: "auto",
+                                    backgroundColor: theme.palette.primary.light,
                                     display: { lg: "none" }
                                 }}
                                 variant="contained"

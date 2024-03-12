@@ -12,7 +12,7 @@ import {
     useMediaQuery, useTheme
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const NavBar = () => {
     const { store, dispatch } = useGlobalContext();
@@ -69,11 +69,11 @@ const NavBar = () => {
                                         color="inherit"
                                         aria-label="my account"
                                     >
-                                        <AccountCircleIcon />
+                                        <AccountBoxIcon />
                                     </IconButton>
                                 ) : (
                                     <Button id="my-account"
-                                        startIcon={<AccountCircleIcon />}
+                                        startIcon={<AccountBoxIcon />}
                                         color="inherit"
                                         aria-label="my account"
                                     >
