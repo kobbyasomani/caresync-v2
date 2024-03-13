@@ -377,7 +377,7 @@ const getUserClients = asyncHandler(async (req, res) => {
 //----NEW ROUTE----//
 // @desc Get user id, firstName, and lastName
 // @route POST /user/name
-// @access public
+// @access private
 const getUserName = asyncHandler(async (req, res) => {
   const id = req.body.id;
   const user = await User.findOne({ _id: id }).select("_id firstName lastName");
@@ -395,22 +395,64 @@ const getUserName = asyncHandler(async (req, res) => {
 
 //----NEW ROUTE----//
 // @desc Get all user fields except for password
-// @route GET /user/my-account/:id
+// @route GET /user/my-account
 // @access private
 const getUser = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  // Users can only retrieve all account fields related to their own acount
-  if (id !== req.user.id) {
-    res.status(401);
-    throw new Error("The user is not allowed to access this account.")
-  }
-  const user = await User.findOne({ _id: id }).select("-password");
+  const user = req.user;
 
   if (user) {
-    res.status(200).json(user);
+    res.status(200).json({
+      _id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      isConfirmed: user.isConfirmed,
+      createdAt: user.createdAt
+    });
   } else {
     res.status(404);
     throw new Error("The user could not be found.");
+  }
+});
+
+//----NEW ROUTE----//
+// @desc Update the given user fields
+// @route PUT /user/my-account
+// @access private
+const updateUser = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const updateFields = { ...req.body };
+
+  if (!user) {
+    res.status(404);
+    throw new Error("The user could not be found.");
+  }
+
+  // Check that fields are valid for update, exist, and prevent them from being left blank/nullified
+  const validFields = ["firstName", "lastName", "email", "password"];
+  const fieldsToUpdate = {};
+  for (const field in updateFields) {
+    if (validFields.includes(field) && updateFields[field]) {
+      fieldsToUpdate[field] = { $exists: true };
+    }
+  }
+
+  // If the password has been updated, salt and hash the new password before setting it
+  if (password in Object.keys(updateFields)) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(updateFields.password, salt);
+    updateFields.password = hashedPassword;
+  }
+
+  const updatedUser = User.findByIdAndUpdate({ _id: user.id, ...fieldsToUpdate },
+    { $set: updateFields },
+    { new: true });
+
+  if (updatedUser) {
+    res.status(200).json(updatedUser);
+  } else {
+    res.status(500);
+    throw new Error("The account could not be updated at this time. Please try again later.")
   }
 });
 
@@ -422,5 +464,6 @@ module.exports = {
   emailVerification,
   resendVerification,
   getUserName,
-  getUser
+  getUser,
+  updateUser
 };

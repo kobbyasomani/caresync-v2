@@ -13,6 +13,7 @@ import {
     Table, TableBody, TableRow, TableCell
 } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
 const MyAccount = () => {
     const { store } = useGlobalContext();
@@ -35,6 +36,7 @@ const MyAccount = () => {
     const handleGetUserData = useCallback(async () => {
         getUser(store.user._id).then(user => {
             setUserData(user);
+            setError("");
         }).catch(error => {
             setError(error.message);
         });
@@ -51,12 +53,14 @@ const MyAccount = () => {
             hasEndpoint
             actions={
                 <>
-                    {Object.keys(userData).length > 0 ? <ButtonPrimary>Edit account details</ButtonPrimary> : null}
+                    {Object.keys(userData).length > 0 ?
+                        <ButtonPrimary startIcon={<EditRoundedIcon />}>Edit account details</ButtonPrimary>
+                        : null}
                     <ButtonSecondary onClick={handleCloseMyAccountModal}>Close</ButtonSecondary>
                 </>}
         >
             {isLoading ? <Loader />
-                : Object.keys(userData).length < 1 ?
+                : error ?
                     <>
                         <Alert severity="error">
                             {error ? error : "The user could not be fetched a this time."}
@@ -71,7 +75,7 @@ const MyAccount = () => {
                                 <TableRow>
                                     <TableCell>
                                         <Typography variant="body1" >
-                                            <span style={{ color: theme.palette.primary.main }}>First name: </span>
+                                            <span style={{ color: theme.palette.primary.main }}>First name</span>
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
@@ -82,8 +86,8 @@ const MyAccount = () => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body1">
-                                            <span style={{ color: theme.palette.primary.main }}>Last name: </span>
+                                        <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                            Last name
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
@@ -94,8 +98,8 @@ const MyAccount = () => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body1">
-                                            <span style={{ color: theme.palette.primary.main }}>Email: </span>
+                                        <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                            Email
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
@@ -106,13 +110,25 @@ const MyAccount = () => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>
-                                        <Typography variant="body1">
-                                            <span style={{ color: theme.palette.primary.main }}>Password: </span>
+                                        <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                            Password
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
                                         <Typography variant="body1">
                                             ************
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                            Signup date
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body1">
+                                            {new Date(userData.createdAt).toLocaleDateString("en-AU", { dateStyle: "long" })}
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

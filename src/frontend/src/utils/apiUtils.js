@@ -66,12 +66,33 @@ const getUserName = async (userId) => {
  * @param {string} userId The id of the user whose account information should be retrieved.
  * @returns {object} An object containing the _id, firstName, lastName, email, and isConfirmed fields. 
  */
-const getUser = async (userId) => {
-    const user = await fetch(`${baseURL}/user/my-account/${userId}`, {
+const getUser = async () => {
+    const user = await fetch(`${baseURL}/user/my-account`, {
         credentials: "include",
     }).then(response => {
         if (response.status !== 200) {
-            throw new Error("Your account details could not be fetched.");
+            throw new Error("Your account details could not be fetched at this time.");
+        } else {
+            return response.json()
+        }
+    });
+    return user;
+};
+
+/**
+ * Updates the given user fields for the current user.
+ * @param {object} fields The key value pairs of user fields to update. Only firstName, lasName,
+ * email, and password are valid fields.
+ * @returns {object} An object containing the updated _id, firstName, lastName, email, and isConfirmed fields. 
+ */
+const updateUser = async (fields) => {
+    const user = await fetch(`${baseURL}/user/my-account`, {
+        credentials: "include",
+        method: "PUT",
+        body: JSON.stringify(fields)
+    }).then(response => {
+        if (response.status !== 200) {
+            throw new Error("Your account could not be updated at this time.");
         } else {
             return response.json()
         }
@@ -134,6 +155,7 @@ export {
     getAllShifts,
     getUserName,
     getUser,
+    updateUser,
     updateShift,
     deleteIncidentReport
 }

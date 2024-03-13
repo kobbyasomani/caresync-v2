@@ -8,7 +8,8 @@ const {
   emailVerification,
   resendVerification,
   getUserName,
-  getUser
+  getUser,
+  updateUser
   // authUser,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
@@ -40,11 +41,13 @@ userRouter.get("/", protect, getUserClients);
 
 // Get the human-readable name (first and last) of a user with a given id
 // @param {id}
-userRouter.post("/name", getUserName);
+userRouter.post("/name", protect, getUserName);
 
 // Get all user fields excluding the password
-// @param {id}
-userRouter.get("/my-account/:id", protect, getUser);
+// @param :id
+// Update the given user fields
+// @param {firstName, lastName, email, password}
+userRouter.route("/my-account").get(protect, getUser).put(protect, updateUser);
 
 // Authenticates the user when accessing protected client-side routes
 // @param none (pulls user id from jwt token)
