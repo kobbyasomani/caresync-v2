@@ -375,7 +375,7 @@ const getUserClients = asyncHandler(async (req, res) => {
 });
 
 //----NEW ROUTE----//
-// @desc Get user data
+// @desc Get user id, firstName, and lastName
 // @route POST /user/name
 // @access public
 const getUserName = asyncHandler(async (req, res) => {
@@ -393,6 +393,27 @@ const getUserName = asyncHandler(async (req, res) => {
   }
 });
 
+//----NEW ROUTE----//
+// @desc Get all user fields except for password
+// @route GET /user/my-account/:id
+// @access private
+const getUser = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  // Users can only retrieve all account fields related to their own acount
+  if (id !== req.user.id) {
+    res.status(401);
+    throw new Error("The user is not allowed to access this account.")
+  }
+  const user = await User.findOne({ _id: id }).select("-password");
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("The user could not be found.");
+  }
+});
+
 module.exports = {
   registerUser,
   registerDemoUser,
@@ -401,4 +422,5 @@ module.exports = {
   emailVerification,
   resendVerification,
   getUserName,
+  getUser
 };

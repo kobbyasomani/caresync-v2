@@ -283,6 +283,7 @@ export const Calendar = () => {
     }, [dispatch, modalDispatch, store]);
 
     // Get the list of carers for selected client and set them in state
+    // TODO: Update carers whenever the Care Team List is closed
     useEffect(() => {
         getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);

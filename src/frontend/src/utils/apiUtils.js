@@ -62,6 +62,24 @@ const getUserName = async (userId) => {
 };
 
 /**
+ * Returns all user fields except the password for the current user.
+ * @param {string} userId The id of the user whose account information should be retrieved.
+ * @returns {object} An object containing the _id, firstName, lastName, email, and isConfirmed fields. 
+ */
+const getUser = async (userId) => {
+    const user = await fetch(`${baseURL}/user/my-account/${userId}`, {
+        credentials: "include",
+    }).then(response => {
+        if (response.status !== 200) {
+            throw new Error("Your account details could not be fetched.");
+        } else {
+            return response.json()
+        }
+    });
+    return user;
+};
+
+/**
  * Updates the given shift by id and returns an updated shift object.
  * @param {string}shiftID The id of the shift to update.
  * @param {json}body The key value pairs of fields to be updated in the shift object.
@@ -115,6 +133,7 @@ export {
     getCarers,
     getAllShifts,
     getUserName,
+    getUser,
     updateShift,
     deleteIncidentReport
 }

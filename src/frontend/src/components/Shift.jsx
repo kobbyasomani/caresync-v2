@@ -88,6 +88,7 @@ const Shift = ({ featured, shift }) => {
                 justifyContent: { xs: "flex-end", lg: "flex-start" },
                 [theme.breakpoints.down("sm")]: { display: "none" }
             }}>
+                {/* //TODO: Highlight button (fill colour) if the report type has text in the shift */}
                 <Box className="shift-buttons"
                     sx={{
                         display: "flex",

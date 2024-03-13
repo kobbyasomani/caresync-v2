@@ -72,9 +72,11 @@ const Modal = ({ modalId, title, text, alert, actions, hasEndpoint, children, ..
                 {modalStore.activeModal?.alert}
                 {children}
             </DialogContent>
-            <DialogActions>
-                {actions}
-            </DialogActions>
+            {actions ?
+                <DialogActions sx={{ pt: 0, pb: 2 }}>
+                    {actions}
+                </DialogActions>
+                : null}
         </Dialog>
     );
 }
