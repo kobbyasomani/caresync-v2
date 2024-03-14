@@ -8,7 +8,7 @@ import IncidentReportForm from "../forms/IncidentReportForm";
 import Confirmation from "../dialogs/Confirmation";
 
 import { Typography, Box, Stack, useTheme } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -106,7 +106,7 @@ const IncidentReportDetails = ({ shiftUtils }) => {
                         {isEditable ?
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={toggleEditMode}
-                                    sx={{ margin: "0" }} startIcon={<EditIcon />}>
+                                    sx={{ margin: "0" }} startIcon={<EditRoundedIcon />}>
                                     Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={handleConfirmDeleteIncident}

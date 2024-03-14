@@ -420,8 +420,8 @@ const getUser = asyncHandler(async (req, res) => {
 // @route PUT /user/my-account
 // @access private
 const updateUser = asyncHandler(async (req, res) => {
-  const user = req.user;
-  const updateFields = { ...req.body };
+  const user = await User.findById(req.user.id);
+  const formFields = { ...req.body };
 
   if (!user) {
     res.status(404);
@@ -430,29 +430,40 @@ const updateUser = asyncHandler(async (req, res) => {
 
   // Check that fields are valid for update, exist, and prevent them from being left blank/nullified
   const validFields = ["firstName", "lastName", "email", "password"];
-  const fieldsToUpdate = {};
-  for (const field in updateFields) {
-    if (validFields.includes(field) && updateFields[field]) {
-      fieldsToUpdate[field] = { $exists: true };
+  const updateFields = {};
+  for (const field in formFields) {
+    if (validFields.includes(field) && formFields[field] !== "") {
+      updateFields[field] = formFields[field];
     }
   }
 
   // If the password has been updated, salt and hash the new password before setting it
-  if (password in Object.keys(updateFields)) {
+  if ("password" in formFields && formFields.password) {
+    const samePassword = await bcrypt.compare(formFields.password, user.password);
+    if (samePassword) {
+      res.status(400);
+      throw new Error("The new password you have entered is the same as your existing one.");
+    }
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(updateFields.password, salt);
+    const hashedPassword = await bcrypt.hash(formFields.password, salt);
     updateFields.password = hashedPassword;
+
+    const hashSuccessful = await bcrypt.compare(formFields.password, updateFields.password);
+    if (!hashSuccessful) {
+      res.status(500);
+      throw new Error("The password could not be updated at this time. Please try again.");
+    }
   }
 
-  const updatedUser = User.findByIdAndUpdate({ _id: user.id, ...fieldsToUpdate },
+  const updatedUser = await User.findByIdAndUpdate(user.id,
     { $set: updateFields },
-    { new: true });
+    { new: true }).select("_id firstName lastName email isConfirmed createdAt").lean();
 
   if (updatedUser) {
     res.status(200).json(updatedUser);
   } else {
     res.status(500);
-    throw new Error("The account could not be updated at this time. Please try again later.")
+    throw new Error("The account could not be updated at this time. Please try again.");
   }
 });
 

@@ -8,9 +8,9 @@ import {
     Typography, Box, IconButton, Tooltip, useTheme
 } from "@mui/material"
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import ForumIcon from '@mui/icons-material/Forum';
+import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import DescriptionIcon from '@mui/icons-material/Description';
-import ReportIcon from '@mui/icons-material/Report';
+import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 
 const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
@@ -98,7 +98,7 @@ const Shift = ({ featured, shift }) => {
                     <Tooltip title="Handover">
                         <IconButton className="shift-button-handover" data-testid="handover"
                             onClick={() => openShift("handover notes")}>
-                            <ForumIcon />
+                            <ForumRoundedIcon />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Shift Notes">
@@ -110,7 +110,7 @@ const Shift = ({ featured, shift }) => {
                     <Tooltip title="Incident Reports">
                         <IconButton className="shift-button-incidents" data-testid="incidents"
                             onClick={() => openShift("incident reports")}>
-                            <ReportIcon />
+                            <ReportRoundedIcon />
                         </IconButton>
                     </Tooltip>
                 </Box>

@@ -10,9 +10,9 @@ import {
     Avatar, Card, CardContent, CardActionArea, CardActions,
     List, ListItem, ListItemAvatar, ListItemText, ListItemButton
 } from "@mui/material"
-import EditIcon from '@mui/icons-material/Edit';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
-import ForumIcon from '@mui/icons-material/Forum';
+import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -243,7 +243,7 @@ const Overview = (props) => {
                     }}>
                         <CardActionArea onClick={() => viewPanel("prev shift handover")}>
                             <CardContent>
-                                <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
+                                <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
                                 <Typography variant="h6" component="p">
                                     Handover from previous shift
                                 </Typography>
@@ -267,7 +267,7 @@ const Overview = (props) => {
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={() => viewPanel("shift notes")}>
                         <CardContent>
-                            <EditIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
+                            <EditRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Shift Notes</Typography>
                             {renderContent("shift notes")}
                         </CardContent>
@@ -309,7 +309,7 @@ const Overview = (props) => {
                 <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
-                            <ForumIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
+                            <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
                             <Typography variant="h5" component="p">Handover</Typography>
                             {renderContent("handover")}
                         </CardContent>

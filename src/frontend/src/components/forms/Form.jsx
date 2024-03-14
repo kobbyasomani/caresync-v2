@@ -12,6 +12,9 @@ import { Box, Stack } from "@mui/material";
 
 /**
  * A resuable controlled form component that manages inputs with a reducer function.
+ * 
+ * If the component receives a `ref`, this `ref` will be passed to the sumbmit button so that it can be
+ * triggered by a higher level component using the `ref.current.click()` method.
  * @param {object} form The local form state object.
  * @param {object} initialState The inital state of the form.
  * @param {function} setForm The form reducer update function.
@@ -34,7 +37,7 @@ import { Box, Stack } from "@mui/material";
  * @param {*} children The child elements of the form (e.g., labels and inputs)
  * @param {function} setParentIsLoading A function to update the load state of the parent.
  * @param {boolean} dontClear If true, will not clear the form on submission.
- * @returns
+ * @returns {object} The JSON data returned by the API call if successfull.
  */
 const Form = forwardRef((
     { form,
@@ -60,10 +63,10 @@ const Form = forwardRef((
     const [formFeedback, setFormFeedback] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const updateLoadState = useCallback((isLoading) => {
+    const updateLoadState = useCallback((isLoading, errors) => {
         setIsLoading(isLoading);
         if (setParentIsLoading) {
-            setParentIsLoading(isLoading);
+            setParentIsLoading(isLoading, errors);
         }
     }, [setIsLoading, setParentIsLoading]);
 
@@ -89,11 +92,11 @@ const Form = forwardRef((
                 // console.log("executing form callback...");
                 callback(response.data);
             }
-        }).then(() => {
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
             handleErrors([`Error: ${error.response?.data?.message || error.message}`]);
+            updateLoadState(false, [`Error: ${error.response?.data?.message || error.message}`]);
         });
     }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState, initialState, dontClear]);
 
@@ -145,7 +148,6 @@ const Form = forwardRef((
         // If there are errors, cancel form submission and set them
         if (errors.length > 0) {
             return handleErrors(errors);
-            ;
         } else {
             handleErrors([]);
         }
@@ -162,7 +164,7 @@ const Form = forwardRef((
                     {legend ? <legend>{legend}</legend> : null}
                     {/* Pass the input handler and state value to form input elements */}
                     {Children.map(children, (child) => {
-                        if (child.props.mui === "TextField" || child.props.mui === "TextArea") {
+                        if (child?.props.mui === "TextField" || child?.props.mui === "TextArea") {
                             // console.log(child);
                             return cloneElement(child, {
                                 size: "small",
@@ -173,7 +175,7 @@ const Form = forwardRef((
                                     value: form.inputs[child.props.name]
                                 }
                             });
-                        } else if (child.props.mui === "Select") {
+                        } else if (child?.props.mui === "Select") {
                             // console.log(child);
                             // return cloneElement(child, {
                             //     fullWidth: true,
