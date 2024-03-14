@@ -28,7 +28,7 @@ const NavBar = () => {
             data: "modal",
             id: "my-account"
         });
-        navigate("/calendar/my-account")
+        // navigate("/calendar/my-account")
     }, [modalDispatch, navigate]);
 
     const handleLogout = useCallback(() => {

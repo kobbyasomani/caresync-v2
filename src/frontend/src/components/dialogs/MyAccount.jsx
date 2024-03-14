@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef, forwardRef } from "react"
-import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -151,7 +150,6 @@ const MyAccount = () => {
     const formRef = useRef(null);
 
     const theme = useTheme();
-    const navigate = useNavigate();
 
     const handleCloseMyAccountModal = useCallback(() => {
         modalDispatch({
@@ -162,8 +160,7 @@ const MyAccount = () => {
         setError("");
         setFormErrors([]);
         setAlert({});
-        navigate(-1);
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const handleGetUserData = useCallback(async () => {
         getUser(store.user._id).then(user => {
@@ -194,7 +191,6 @@ const MyAccount = () => {
         <Modal modalId={"my-account"}
             title="My Account"
             text="View and modify your account information including your name, email address, and password."
-            hasEndpoint
             actions={
                 <>
                     {Object.keys(userData).length > 0 ?

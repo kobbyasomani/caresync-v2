@@ -45,11 +45,17 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "/",
-                element: <SelectClient />
+                element: <>
+                  <MyAccount />
+                  <SelectClient />
+                </>
               },
               {
                 path: "/calendar",
-                element: <Calendar />,
+                element: <>
+                  <SelectClient />
+                  <Calendar />
+                </>,
                 children: [
                   {
                     path: "/calendar/my-account",
