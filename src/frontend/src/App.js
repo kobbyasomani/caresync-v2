@@ -53,14 +53,10 @@ const router = createBrowserRouter([
               {
                 path: "/calendar",
                 element: <>
-                  <SelectClient />
+                  <MyAccount />
                   <Calendar />
                 </>,
                 children: [
-                  {
-                    path: "/calendar/my-account",
-                    element: <MyAccount />
-                  },
                   {
                     path: "/calendar/select-shift-by-date",
                     element: <SelectShiftByDate />
