@@ -1,6 +1,7 @@
 import React from "react";
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
 
@@ -9,13 +10,13 @@ import PersonIcon from '@mui/icons-material/Person';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { Theme as theme } from "../styles/Theme";
 
-const Client = () => {
+const SwitchClient = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { _id, firstName, lastName } = store.selectedClient;
     const navigate = useNavigate();
 
-    const switchClient = useCallback(() => {
+    const handleSwitchClient = useCallback(() => {
         // Unset selected client
         dispatch({
             type: "setSelectedClient",
@@ -42,7 +43,7 @@ const Client = () => {
         <Tooltip title="Switch Client" placement="bottom" >
             <Card variant="outlined" id={_id} className="client selected" sx={{ width: "100%" }}>
                 <CardActionArea
-                    onClick={switchClient}
+                    onClick={handleSwitchClient}
                     sx={{
                         display: "grid",
                         gridTemplate: "repeat(2, auto) / auto 1fr",
@@ -68,4 +69,4 @@ const Client = () => {
     );
 }
 
-export default Client;
+export default SwitchClient;

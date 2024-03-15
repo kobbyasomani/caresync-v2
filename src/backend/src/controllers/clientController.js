@@ -52,8 +52,6 @@ const updateClient = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user.id);
 
- 
-
   // Make sure logged in user matches the coordinator user
   if (client.coordinator.toString() !== user.id) {
     res.status(401);

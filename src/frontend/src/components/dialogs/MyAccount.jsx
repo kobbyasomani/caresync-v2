@@ -98,7 +98,7 @@ const EditAccountForm = forwardRef((
             severity: "success",
             message: "Your account was successfully updated."
         });
-    }, [setEditMode, setUserData, handleGetUserData, setParentAlert]);
+    }, [setEditMode, setUserData, handleGetUserData, setParentAlert, dispatch]);
 
     return <Form form={form}
         ref={formRef}

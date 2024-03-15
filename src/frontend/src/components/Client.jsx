@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../utils/globalUtils";
+import { getClient } from "../utils/apiUtils";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
@@ -28,13 +30,14 @@ const Client = ({ client }) => {
         }
     }, [client]);
 
-    const handleSelectClient = (event) => {
+    const handleSelectClient = useCallback(async (event) => {
+        const clientData = await getClient(client._id);
         dispatch({
-            type: "setSelectedClientById",
-            data: client._id
+            type: "setSelectedClient",
+            data: clientData
         });
         navigate("/calendar");
-    }
+    }, [client._id, dispatch, navigate]);
 
     useEffect(() => {
         getNextShiftDate();
