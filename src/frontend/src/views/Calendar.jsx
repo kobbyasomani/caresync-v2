@@ -3,7 +3,7 @@ import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import { getAllShifts } from "../utils/apiUtils";
+import { getClient, getAllShifts } from "../utils/apiUtils";
 import { findPreviousShifts, findInProgressShift, findNextUpcomingShift } from "../utils/calendarUtils";
 import SwitchClient from "../components/SwitchClient";
 import Shift from "../components/Shift";
@@ -26,7 +26,7 @@ const CareTeamMember = ({ carer }) => {
     const theme = useTheme();
 
     const userIsCoordinator = (userId) => {
-        return userId === store.selectedClient.coordinator;
+        return userId === store.selectedClient.coordinator._id;
     };
     return (
         <Stack direction="row" gap={1}>
@@ -53,6 +53,47 @@ export const Calendar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
 
+    const handleRefreshClient = useCallback(() => {
+        if (client._id) {
+            getClient(client._id).then((client) => {
+                dispatch({
+                    type: "setSelectedClient",
+                    data: client
+                })
+            });
+        }
+    }, [dispatch, client._id]);
+
+    const handleRefreshCalendar = useCallback(() => {
+        if (store.selectedClient?._id) {
+            setClient(store.selectedClient);
+            getAllShifts(store.selectedClient._id)
+                .then((shifts) => {
+                    // console.log(store.selectedClient);
+                    // Set all shifts
+                    dispatch({
+                        type: "setShifts",
+                        data: shifts
+                    });
+                    // Set previous shifts
+                    const prevShifts = findPreviousShifts(shifts);
+                    dispatch({
+                        type: "setPreviousShifts",
+                        data: prevShifts
+                    });
+                    //Set in-progress shift
+                    const shiftInProgress = findInProgressShift(shifts);
+                    setShiftInProgress(shiftInProgress);
+                    // Set featured shift (next upcoming)
+                    const featuredShift = findNextUpcomingShift(shifts);
+                    dispatch({
+                        type: "setFeaturedShift",
+                        data: featuredShift
+                    });
+                }).then(() => setIsLoading(false));
+        }
+    }, [dispatch, store.selectedClient, setClient]);
+
     const handleSelectInProgressShift = () => {
         dispatch({
             type: "setSelectedShift",
@@ -65,13 +106,14 @@ export const Calendar = () => {
     }
 
     const handleOpenCareTeamList = useCallback(() => {
+        handleRefreshClient();
         navigate("/calendar/care-team");
         modalDispatch({
             type: "open",
             data: "modal",
             id: "care-team-list"
         });
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch, navigate, handleRefreshClient]);
 
     // Calendar ref and API
     const calendarRef = useRef(null);
@@ -114,36 +156,6 @@ export const Calendar = () => {
         });
     }, [setCalendarView]);
 
-    const handleRefreshCalendar = useCallback(() => {
-        if (store.selectedClient?._id) {
-            setClient(store.selectedClient);
-            getAllShifts(store.selectedClient._id)
-                .then((shifts) => {
-                    // console.log(store.selectedClient);
-                    // Set all shifts
-                    dispatch({
-                        type: "setShifts",
-                        data: shifts
-                    });
-                    // Set previous shifts
-                    const prevShifts = findPreviousShifts(shifts);
-                    dispatch({
-                        type: "setPreviousShifts",
-                        data: prevShifts
-                    });
-                    //Set in-progress shift
-                    const shiftInProgress = findInProgressShift(shifts);
-                    setShiftInProgress(shiftInProgress);
-                    // Set featured shift (next upcoming)
-                    const featuredShift = findNextUpcomingShift(shifts);
-                    dispatch({
-                        type: "setFeaturedShift",
-                        data: featuredShift
-                    });
-                }).then(() => setIsLoading(false));
-        }
-    }, [dispatch, store.selectedClient, setClient]);
-
     useEffect(() => {
         const handleResize = () => {
             setScreenSize(getScreenSize());
@@ -184,10 +196,14 @@ export const Calendar = () => {
         }
     }, [calendarView, calendarApi]);
 
-    // Fetch all client shifts and add them to state
+    useEffect(() => {
+        handleRefreshClient();
+    }, [handleRefreshClient, store.refreshCalendar]);
+
+    // Refresh the calendar when user, client, or refresh state change
     useEffect(() => {
         handleRefreshCalendar();
-    }, [handleRefreshCalendar, store.user, store.selectedClient]);
+    }, [handleRefreshCalendar, store.user, store.selectedClient, store.refreshCalendar]);
 
     // Logout user if auth fails
     useEffect(() => {
@@ -201,8 +217,6 @@ export const Calendar = () => {
             });
         }
     }, [dispatch, modalDispatch, store]);
-
-    // TODO: Update carers whenever the Care Team List is closed
 
     return isLoading ? <Loader /> : (
         store.selectedClient?._id && store.shifts.length > 0 ? (
@@ -285,7 +299,7 @@ export const Calendar = () => {
                         padding: 2,
                         position: "relative",
                     }}>
-                    {store.featuredShift?._id > 0 ? (
+                    {store.featuredShift?._id ? (
                         <section>
                             <Typography variant="h3" sx={{ mb: 1 }}>
                                 Upcoming Shift

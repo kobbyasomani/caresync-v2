@@ -4,8 +4,6 @@ import axios from "axios";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { getCarers, getUserName } from "../../utils/apiUtils";
-import { getAllShifts } from "../../utils/apiUtils";
 import Modal from "../Modal";
 
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
@@ -20,10 +18,11 @@ const CareTeamList = () => {
     const { modalDispatch } = useModalContext();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [coordinator, setCoordinator] = useState({});
-    const [carers, setCarers] = useState([])
     const [alert, setAlert] = useState({});
-    const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
+    const [client, setClient] = useState(store.selectedClient);
+    const [carers, setCarers] = useState(client.carers);
+    const [coordinator, setCoordinator] = useState(client.coordinator);
+    const userIsCoordinator = store.selectedClient.isCoordinator;
 
     const navigate = useNavigate();
 
@@ -47,12 +46,8 @@ const CareTeamList = () => {
                 message: "You have been added to the care team.",
                 severity: "success"
             });
-            getCarers(store.selectedClient._id).then(carers => {
-                setCarers(carers);
-                dispatch({
-                    type: "setCarers",
-                    data: carers
-                });
+            dispatch({
+                type: "refreshCalendar",
             });
         }).catch(error => setAlert({
             message: error.response.data.message,
@@ -63,58 +58,33 @@ const CareTeamList = () => {
     // Remove a carer from the selected client
     const removeCarer = useCallback((carer) => {
         axios.delete(`carer/remove/${store.selectedClient._id}/${carer._id}`)
-            .then(response => {
-                getCarers(store.selectedClient._id).then(carers => {
-                    let message;
-                    if (carer._id === store.user._id) {
-                        message = "You were removed from the care team."
-                    } else {
-                        message = `${carer.firstName} ${carer.lastName} was removed from the care team.`;
-                    }
-                    setAlert({
-                        message: message,
-                        severity: "success"
-                    });
-                    setCarers(carers);
-                    dispatch({
-                        type: "setCarers",
-                        data: carers
-                    });
-                    getAllShifts(store.selectedClient._id)
-                        .then(shifts => {
-                            dispatch({
-                                type: "setShifts",
-                                data: shifts
-                            });
-                        });
+            .then(() => {
+                let message;
+                if (carer._id === store.user._id) {
+                    message = "You were removed from the care team."
+                } else {
+                    message = `${carer.firstName} ${carer.lastName} was removed from the care team.`;
+                }
+                setAlert({
+                    message: message,
+                    severity: "success"
                 });
+                dispatch({
+                    type: "refreshCalendar",
+                })
             }).catch(error => setAlert({
                 message: error.response.data.message,
                 severity: "error"
             }));
     }, [store.selectedClient, store.user._id, dispatch]);
 
-    const getCoordinator = useCallback(async () => {
-        const coordinator = await getUserName(store.selectedClient.coordinator);
-        return coordinator
-    }, [store.selectedClient.coordinator]);
-
     // Update carers on component load
     useEffect(() => {
-        setIsLoading(true);
-        getCoordinator(store.selectedClient.coordinator).then((coordinator) => {
-            setCoordinator(coordinator);
-            getCarers(store.selectedClient._id).then(carers => {
-                setCarers(carers);
-                dispatch({
-                    type: "setCarers",
-                    data: carers
-                });
-            }).then(() => {
-                setIsLoading(false);
-            });
-        })
-    }, [dispatch, store.selectedClient._id, getCoordinator, store.selectedClient.coordinator]);
+        setClient(store.selectedClient)
+        setCoordinator(client.coordinator);
+        setCarers(client.carers);
+        setIsLoading(false);
+    }, [client, store.selectedClient]);
 
     return <Modal modalId="care-team-list"
         title={`Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`}
@@ -127,14 +97,14 @@ const CareTeamList = () => {
                 <List>
                     <Stack spacing={2} key="carer-list">
                         <Carer key={coordinator._id} carer={coordinator} removeCarer={() => removeCarer(coordinator)} />
-                        {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator)
+                        {carers.length > 0 ? carers.filter(carer => carer._id !== store.selectedClient.coordinator._id)
                             .map(carer => {
                                 return <Carer key={carer._id} carer={carer} removeCarer={() => removeCarer(carer)} />
                             }) : null}
                     </Stack>
                 </List>
                 {Object.keys(alert).length > 0 ? (
-                    <Alert severity={alert.severity}>
+                    <Alert severity={alert.severity} sx={{ mt: 1 }}>
                         {alert.message}
                     </Alert>
                 ) : null
@@ -145,7 +115,7 @@ const CareTeamList = () => {
                             startIcon={<PersonAddIcon />}>
                             Add Carer
                         </ButtonPrimary>
-                        {store.selectedClient.coordinator === store.user._id
+                        {store.selectedClient.coordinator._id === store.user._id
                             && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
                             <ButtonSecondary onClick={addCoordinatorAsCarer}>
                                 Add yourself

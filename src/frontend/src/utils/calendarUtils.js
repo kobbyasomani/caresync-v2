@@ -6,22 +6,8 @@
  * @returns {Array<object>}
  */
 const findPreviousShifts = (shifts) => {
-    if (shifts.length === 0) {
-        return
-    }
-    let prevShifts = [];
-    const shiftsDesc = [...shifts].reverse();
     const now = new Date();
-    for (let i = 0; i < shifts.length; i++) {
-        const shift = shiftsDesc[i];
-        const shiftDate = new Date(shift.shiftStartTime);
-        if (shiftDate < now) {
-            prevShifts.push(shift)
-        } else {
-            break;
-        }
-    }
-    return prevShifts;
+    return shifts.filter(shift => new Date(shift.shiftStartTime) < now);
 }
 
 /**
@@ -34,6 +20,7 @@ const findPreviousShifts = (shifts) => {
 const findInProgressShift = (shifts) => {
     const now = new Date();
     let shiftInProgress = {};
+
     for (const shift of shifts) {
         const shiftStart = new Date(shift.shiftStartTime);
         const shiftEnd = new Date(shift.shiftEndTime);
@@ -47,23 +34,23 @@ const findInProgressShift = (shifts) => {
 
 /**
  * Returns the next future shift from a given array of shift objects.
- * @param {Array<object>} shifts The array of shift objects. Each shift must have a `shiftStartTime`
- * property in a format that can be converted to a JavaScript `Date` object.
+ * @param {Array<object>} shifts The array of shift objects. Each shift must have a
+ * `shiftStartTime` property in a format that can be converted to a JavaScript `Date` object.
  * @returns {object}
  */
 const findNextUpcomingShift = (shifts) => {
-    let upcomingShift = {};
+    let upcomingShift = null;
+    const now = new Date();
+
     for (const shift of shifts) {
         const shiftStartDate = new Date(shift.shiftStartTime);
-        const now = new Date();
         if (shiftStartDate > now && upcomingShift === null) {
             upcomingShift = shift;
-        }
-        if (shiftStartDate > now && shiftStartDate < upcomingShift) {
-            upcomingShift = shift;
+            break;
         }
     }
-    return upcomingShift;
+
+    return upcomingShift || {};
 }
 
 export {

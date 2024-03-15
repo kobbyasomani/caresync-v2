@@ -133,6 +133,7 @@ function App() {
           featuredShift: localStorage.featuredShift,
           previousShifts: localStorage.previousShifts,
           selectedShift: localStorage.selectedShift,
+          refreshCalendar: localStorage.refreshCalendar
         };
         // Set global state to defaults if not in localStorage
       } else {

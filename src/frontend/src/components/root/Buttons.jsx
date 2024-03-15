@@ -219,7 +219,7 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
         };
     }, [breakpoint, buttonDefaults, variant, buttonVariant]);
 
-    return store.selectedClient.coordinator === store.user._id ? (
+    return store.selectedClient.coordinator._id === store.user._id ? (
         buttonVariant === "icon-only" ? (
             <Tooltip title="Add Shift" placement="right">
                 <IconButton sx={{

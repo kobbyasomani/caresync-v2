@@ -1,10 +1,8 @@
 import React, { forwardRef, useCallback, cloneElement, Children, useState, } from "react";
-import {
-    useHandleFormInput,
-    useHandleFormErrors
-} from "../../utils/formUtils";
 import axios from "axios";
 
+import { useHandleFormInput, useHandleFormErrors } from "../../utils/formUtils";
+import { useGlobalContext } from "../../utils/globalUtils";
 import { ButtonPrimary } from "../root/Buttons";
 import Loader from "../logo/Loader";
 
@@ -15,29 +13,29 @@ import { Box, Stack } from "@mui/material";
  * 
  * If the component receives a `ref`, this `ref` will be passed to the sumbmit button so that it can be
  * triggered by a higher level component using the `ref.current.click()` method.
- * @param {object} form The local form state object.
- * @param {object} initialState The inital state of the form.
- * @param {function} setForm The form reducer update function.
+ * @param {Object} form The local form state object.
+ * @param {Object} initialState The inital state of the form.
+ * @param {Function} setForm The form reducer update function.
  *  Pass as an object with two props: `inputs` and `errors`. 
  * `inputs: {}` is an object containing input name-value pairs. 
  * `errors: []` is an array of error message strings.
- * @param {string} legend [optional] A legend to display at the top of the form fieldset.
- * @param {string} buttonText Text for the form submit button.
- * @param {string} buttonVariant set the mui button variant.
+ * @param {String} legend [optional] A legend to display at the top of the form fieldset.
+ * @param {String} buttonText Text for the form submit button.
+ * @param {String} buttonVariant set the mui button variant.
  * One of 'text', 'contained', or 'outlined' (defaults to contained).
- * @param {boolean} hideSubmitButton If true, the submit button will be hidden. This
+ * @param {Boolean} hideSubmitButton If true, the submit button will be hidden. This
  * is useful in instances where a higher-level component is managing the form submission.
- * @param {string} postURL The API endpoint to submit the form to.
- * @param {string} method The HTTP request method to use.
- * @param {function} validation Additional validation to perform before submitting form.
+ * @param {String} postURL The API endpoint to submit the form to.
+ * @param {String} method The HTTP request method to use.
+ * @param {Function} validation Additional validation to perform before submitting form.
  * The provided function should throw errors based on conditional statements, which the
  * form will catch and display to the user. The validator function recieves the form state as an arg.
- * @param {function} callback [optional] A function to be called after form submission
+ * @param {Function} callback [optional] A function to be called after form submission
  * that takes the API json response as an argument.
  * @param {*} children The child elements of the form (e.g., labels and inputs)
- * @param {function} setParentIsLoading A function to update the load state of the parent.
- * @param {boolean} dontClear If true, will not clear the form on submission.
- * @returns {object} The JSON data returned by the API call if successfull.
+ * @param {Function} setParentIsLoading A function to update the load state of the parent.
+ * @param {Boolean} dontClear If true, will not clear the form on submission.
+ * @returns {Object} The JSON data returned by the API call if successfull.
  */
 const Form = forwardRef((
     { form,
@@ -55,7 +53,7 @@ const Form = forwardRef((
         setParentIsLoading,
         dontClear
     }, formRef) => {
-    // console.log(form.inputs);
+    const { dispatch } = useGlobalContext();
 
     // Handle form state and controlled inputs.
     const handleInput = useHandleFormInput(setForm);
@@ -80,25 +78,25 @@ const Form = forwardRef((
             method: method || "post",
             data: form.inputs
         }).then(response => {
-            // Clear the form after successful submission
             if (!dontClear) {
                 setForm({
                     type: initialState ? "initForm" : "clearForm",
                     data: initialState || null
                 });
             }
-            // If a callback is passed, return it and pass it the response data
             if (callback) {
-                // console.log("executing form callback...");
                 callback(response.data);
             }
+            dispatch({
+                type: "refreshCalendar"
+            });
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
             handleErrors([`Error: ${error.response?.data?.message || error.message}`]);
             updateLoadState(false, [`Error: ${error.response?.data?.message || error.message}`]);
         });
-    }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState, initialState, dontClear]);
+    }, [callback, form.inputs, handleErrors, method, postURL, setForm, updateLoadState, initialState, dontClear, dispatch]);
 
     /**
      * Resend user verification email
@@ -111,7 +109,6 @@ const Form = forwardRef((
         }).then(response => {
             setFormFeedback(response.data.message);
         }).catch(error => {
-            // Render validation error messages
             handleErrors([`Error: ${error.response.data.message}`]);;
         });
     }, [form.inputs.email, handleErrors]);
@@ -123,10 +120,8 @@ const Form = forwardRef((
     const handleSubmit = useCallback((event) => {
         event.preventDefault();
         let errors = [];
-
         // Make sure required form fields are not empty
         for (const [name, value] of Object.entries(form.inputs)) {
-            // console.log(`checking ${name} field...`);
             if (document.querySelector([`[name=${name}]`])?.required) {
                 const inputLabel = document.querySelector(`[name=${name}]`).labels[0].textContent
                 if (!value) {
@@ -134,24 +129,20 @@ const Form = forwardRef((
                 }
             }
         }
-
         // Perform additional validation if any has been provided.
         try {
             if (validation) {
-                // console.log("Performing additional validation...");
                 validation(form);
             }
         } catch (error) {
             errors.push(error.message);
         }
-
         // If there are errors, cancel form submission and set them
         if (errors.length > 0) {
             return handleErrors(errors);
         } else {
             handleErrors([]);
         }
-
         // If there are no errors submit the form
         submitForm();
     }, [form, handleErrors, validation, submitForm]);

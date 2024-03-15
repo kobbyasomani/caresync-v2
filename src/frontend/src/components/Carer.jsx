@@ -15,7 +15,7 @@ const Carer = (props) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { carer, removeCarer } = props;
-    const userIsCoordinator = store.user._id === store.selectedClient.coordinator;
+    const userIsCoordinator = store.user._id === store.selectedClient.coordinator._id;
     const userIsShiftCarer = store.user._id === carer._id;
     const modalId = `confirmRemoveCarer_${carer._id}`;
 
@@ -53,7 +53,7 @@ const Carer = (props) => {
                 <ListItemText
                     primaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
                     secondaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator ? <small>(coordinator)</small> : ""}</>}
+                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator._id ? <small>(coordinator)</small> : ""}</>}
                     secondary="(+61) 123 456 789"
                 />
             </ListItem >

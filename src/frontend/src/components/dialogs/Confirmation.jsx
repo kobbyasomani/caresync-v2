@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../utils/globalUtils";
 
 import { useModalContext } from "../../utils/modalUtils"
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
@@ -27,6 +28,7 @@ import CloseIcon from "@mui/icons-material/Close";
  */
 const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText, successAlert,
     stayOpenOnConfirm, hasEndpoint, afterConfirm, noDismiss, children, ...rest }) => {
+    const { dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [alert, setAlert] = useState({});
@@ -77,7 +79,10 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
         setIsLoading(true);
         await invokeCallback();
         setIsLoading(false);
-    }, [callback, successAlert, closeConfirmation, stayOpenOnConfirm]);
+        dispatch({
+            type: "refreshCalendar"
+        });
+    }, [callback, successAlert, closeConfirmation, stayOpenOnConfirm, dispatch]);
 
     return (
         <Dialog

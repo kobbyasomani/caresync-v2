@@ -79,7 +79,7 @@ const SelectShiftByDate = () => {
             ) : (
                 null
             )}
-            {store.selectedClient.coordinator === store.user._id
+            {store.selectedClient.coordinator._id === store.user._id
                 //Hide the 'add shift' button on past days
                 && dateAsObj(store.selectedDate.start) > minusHours(new Date(), 24) ? (
                 <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift}>

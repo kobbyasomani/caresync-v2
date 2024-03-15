@@ -72,7 +72,6 @@ const NavBar = () => {
                     ))}
                     {store.isAuth ? (
                         <Stack direction="row" gap={1} sx={{ ml: "auto" }}>
-                            {/* // TODO: Add login credential editing modal for easier re-access of demo accounts */}
                             <Tooltip title="My Account">
                                 {xsScreen ? (
                                     <IconButton id="my-account"

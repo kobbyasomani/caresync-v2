@@ -20,6 +20,7 @@ const emptyStore = {
     selectedShift: {},
     selectedShiftInProgress: false,
     selectedIncidentReport: {},
+    refreshCalendar: ""
 }
 
 /**
@@ -146,6 +147,11 @@ const globalReducer = (state, action) => {
             return {
                 ...state,
                 selectedIncidentReport: action.data
+            }
+        case "refreshCalendar":
+            return {
+                ...state,
+                refreshCalendar: new Date().toLocaleString()
             }
         default: return state;
     }

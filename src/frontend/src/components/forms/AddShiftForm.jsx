@@ -348,7 +348,7 @@ export const AddShiftForm = () => {
                 // If the client has no assigned carers, prompt the user to invite some
                 <Stack direction="row">
                     <ButtonAddCarer />
-                    {store.selectedClient.coordinator === store.user._id
+                    {store.selectedClient.coordinator._id === store.user._id
                         // If there are carers, check that user is not already a carer for the client
                         && ((store.selectedClient.carers?.length > 0
                             && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id))

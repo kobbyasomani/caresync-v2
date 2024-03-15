@@ -143,7 +143,7 @@ const getClientInfo = asyncHandler(async (req, res) => {
     .select("lastName");
   client.coordinator = coordinator[0];
 
-  res.status(200).json({ client });
+  res.status(200).json(client);
 });
 
 module.exports = {
