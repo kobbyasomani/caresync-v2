@@ -134,6 +134,10 @@ const ShiftDetails = ({ isLoading, children }) => {
                             {store.selectedClient.firstName} {store.selectedClient.lastName}
                         </Typography>
                     </Stack>
+                    <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                        {`with carer ${store.selectedShift.carer.firstName} 
+                            ${store.selectedShift.carer.lastName}`}
+                    </Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h2" component="p">

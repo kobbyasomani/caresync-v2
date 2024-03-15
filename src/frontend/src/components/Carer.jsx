@@ -32,12 +32,13 @@ const Carer = (props) => {
             <ListItem sx={{
                 border: `1px solid ${theme.palette.divider}`,
                 borderRadius: `${theme.shape.borderRadius}px`,
-                p: "1rem"
+                px: "1rem",
+                py: "1.25rem",
             }}>
                 {userIsCoordinator && removeCarer
                     && store.selectedClient.carers.map(carer => carer._id).includes(carer._id) ? (
                     <Tooltip title="Remove carer" placement="left">
-                        <IconButton onClick={handleConfirmRemoveCarer}
+                        <IconButton onClick={handleConfirmRemoveCarer} aria-label="Remove carer"
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
                             <PersonRemoveIcon />
                         </IconButton>
@@ -53,7 +54,13 @@ const Carer = (props) => {
                 <ListItemText
                     primaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
                     secondaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator._id ? <small>(coordinator)</small> : ""}</>}
+                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator._id ?
+                        <small style={{
+                            position: "absolute",
+                            top: "0.25rem", left: "0.5rem",
+                            color: theme.palette.primary.main,
+                            fontWeight: "bold"
+                        }}>Coordinator</small> : ""}</>}
                     secondary="(+61) 123 456 789"
                 />
             </ListItem >
