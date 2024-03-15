@@ -400,12 +400,14 @@ const Overview = (props) => {
             <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
                 <Stack direction="row" gap={2} justifyContent="center">
                     <Tooltip title="Go to previous shift">
-                        <IconButton color="primary" aria-label="Go to previous shift"
-                            onClick={() => handleViewAdjacentShift("prev")}
-                            sx={{ marginRight: "auto" }}
-                            disabled={Boolean(!shiftUtils.prevShift)}>
-                            <ArrowBackRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton color="primary" aria-label="Go to previous shift"
+                                onClick={() => handleViewAdjacentShift("prev")}
+                                sx={{ marginRight: "auto" }}
+                                disabled={Boolean(!shiftUtils.prevShift)}>
+                                <ArrowBackRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     {shiftUtils.isPending || shiftUtils.isInProgress ?
                         <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
@@ -420,12 +422,14 @@ const Overview = (props) => {
                         </ButtonSecondary>
                         : null}
                     <Tooltip title="Go to next shift">
-                        <IconButton color="primary" aria-label="Go to next shift"
-                            onClick={() => handleViewAdjacentShift("next")}
-                            sx={{ marginLeft: "auto" }}
-                            disabled={Boolean(!shiftUtils.nextShift)}>
-                            <ArrowForwardRoundedIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton color="primary" aria-label="Go to next shift"
+                                onClick={() => handleViewAdjacentShift("next")}
+                                sx={{ marginLeft: "auto" }}
+                                disabled={Boolean(!shiftUtils.nextShift)}>
+                                <ArrowForwardRoundedIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </Stack>
             </Grid>

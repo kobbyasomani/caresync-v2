@@ -329,9 +329,11 @@ export const Calendar = () => {
                                 Recent Shifts
                             </Typography>
                             <Stack spacing={2} sx={{ mt: 1 }}>
-                                {store.previousShifts.slice(0, 3).map(shift => {
-                                    return <Shift key={shift._id} shift={shift} />
-                                })}
+                                {[...store.previousShifts].reverse().slice(0, 3)
+                                    .filter(shift => shift._id !== shiftInProgress._id)
+                                    .map(shift => {
+                                        return <Shift key={shift._id} shift={shift} />
+                                    })}
                             </Stack>
                         </section>
                     ) : (

@@ -41,7 +41,8 @@ const Shift = ({ featured, shift }) => {
     }, [modalDispatch, dispatch, shift]);
 
     return (
-        <Card variant="outlined" className={featured ? "shift featured" : "shift"} data-testid="card"
+        <Card variant="outlined" className={featured ? "shift featured" : "shift"}
+            data-testid="card" id={`shift_${shift._id}`}
             sx={{
                 display: "flex",
                 alignItems: "center",
