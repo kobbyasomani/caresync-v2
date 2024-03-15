@@ -66,7 +66,7 @@ export const Calendar = () => {
         });
     }
 
-    const openCareTeamList = useCallback(() => {
+    const handleOpenCareTeamList = useCallback(() => {
         navigate("/calendar/care-team");
         modalDispatch({
             type: "open",
@@ -283,8 +283,7 @@ export const Calendar = () => {
     }, [dispatch, modalDispatch, store]);
 
     // Get the list of carers for selected client and set them in state
-    // TODO: Update carers whenever the Care Team List is closed
-    useEffect(() => {
+    const handleUpdateCarers = useCallback(() => {
         getCarers(store.selectedClient._id).then(carers => {
             setCarers(carers);
             dispatch({
@@ -292,7 +291,12 @@ export const Calendar = () => {
                 data: carers
             });
         });
-    }, [store.selectedClient._id, dispatch]);
+    }, [dispatch, store.selectedClient._id]);
+
+    // TODO: Update carers whenever the Care Team List is closed
+    useEffect(() => {
+        handleUpdateCarers();
+    }, [handleUpdateCarers]);
 
     return isLoading ? <Loader /> : (
         store.selectedClient && store.shifts ? (
@@ -300,7 +304,6 @@ export const Calendar = () => {
                 gridTemplateColumns="repeat(12, 1fr)"
                 gap={2}
             >
-
                 <Box sx={{ mt: { lg: "1rem" } }}
                     gridArea={{
                         xs: "auto / 1 / span 1 / span 12",
@@ -318,7 +321,7 @@ export const Calendar = () => {
                                 }}
                                 variant="contained"
                                 id="care-team-button"
-                                onClick={openCareTeamList}
+                                onClick={handleOpenCareTeamList}
                             >
                                 <Diversity3Icon />
                             </IconButton>
@@ -334,7 +337,7 @@ export const Calendar = () => {
                     sx={{ display: { xs: "none", lg: "initial" }, mt: "auto" }}>
                     <section style={{ mt: 0 }}>
                         <Card variant="outlined">
-                            <CardActionArea onClick={openCareTeamList}>
+                            <CardActionArea onClick={handleOpenCareTeamList}>
                                 <CardContent>
                                     <Typography variant="h3" mb={1}>
                                         Care Team

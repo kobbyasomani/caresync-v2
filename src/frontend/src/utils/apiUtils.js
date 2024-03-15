@@ -1,7 +1,9 @@
 import baseURL from "./baseUrl";
 
 /**
- * Returns a client object using a given client id
+ * Returns a client object using a given client id. Includes the client's
+ * `_id`, `firstName`, `lastName`, `isCoordinator` (boolean), coordinator: { _id, firstName, lastName }` and
+ * `carers: [{ _id, firstName, lastName }]`.
  * @param {string}clientId The id of the client to return.
  * @returns 
  */

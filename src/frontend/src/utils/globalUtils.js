@@ -75,7 +75,7 @@ const globalReducer = (state, action) => {
                 });
                 return foundClient;
             }
-            const client = getClientById(action.data)
+            const client = getClientById(action.data);
             return {
                 ...state,
                 selectedClient: client

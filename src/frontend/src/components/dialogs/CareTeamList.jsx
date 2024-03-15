@@ -116,8 +116,6 @@ const CareTeamList = () => {
         })
     }, [dispatch, store.selectedClient._id, getCoordinator, store.selectedClient.coordinator]);
 
-    // TODO: Update carers whenever the Care Team List is closed (may have changed)
-
     return <Modal modalId="care-team-list"
         title={`Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`}
         text={`These are the members of this client's care team. You can 

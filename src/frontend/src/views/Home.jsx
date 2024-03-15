@@ -47,7 +47,6 @@ export default function Login() {
         })
             .then((response) => response.json())
             .then((json) => {
-                console.log(json);
                 dispatch({
                     type: "login",
                     data: json.user

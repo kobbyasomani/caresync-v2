@@ -38,6 +38,7 @@ const EditAccountForm = forwardRef((
         },
         errors: []
     }
+    const { dispatch } = useGlobalContext();
     const [form, setForm] = useHandleForm(initialState);
 
     const handleChildLoadState = useCallback((childIsLoading, errors) => {
@@ -64,7 +65,7 @@ const EditAccountForm = forwardRef((
         if (form.inputs.password) {
             // Make sure a conifrmation has been added
             if (!form.inputs.confirmPassword) {
-                throw new Error("Confirm your new password by typing it in the 'Confirm password' field as well.");
+                throw new Error("Confirm your new password by typing it in the 'Confirm new password' field as well.");
             }
             // Make sure password confirmation matches
             if (form.inputs.password !== form.inputs.confirmPassword) {
@@ -84,6 +85,14 @@ const EditAccountForm = forwardRef((
             // If not, fetch them
             setUserData(handleGetUserData());
         }
+        dispatch({
+            type: "setUser",
+            data: {
+                _id: json._id,
+                firstName: json.firstName,
+                lastName: json.lastName
+            }
+        });
         setEditMode(false);
         setParentAlert({
             severity: "success",
@@ -129,7 +138,7 @@ const EditAccountForm = forwardRef((
             name="password"
             mui="TextField" />
         <TextField
-            label="Confirm password"
+            label="Confirm new password"
             id="confirm-password"
             type="password"
             name="confirmPassword"

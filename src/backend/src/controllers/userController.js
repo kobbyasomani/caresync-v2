@@ -76,7 +76,7 @@ const registerDemoUser = asyncHandler(async (req, res) => {
   // Generate demo firstname, lastname, email and password
   const firstName = "Guest";
   const lastName = "User";
-  const email = `${uuidv4()}@example.com`;
+  const email = `${uuidv4().slice(0, 9)}@example.com`;
   const password = `${uuidv4().slice(0, 9)}`;
 
   // Password encryption

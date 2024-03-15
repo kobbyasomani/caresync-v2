@@ -28,12 +28,11 @@ const Client = ({ client }) => {
         }
     }, [client]);
 
-    const selectClient = (event) => {
+    const handleSelectClient = (event) => {
         dispatch({
             type: "setSelectedClientById",
-            data: event.currentTarget.id
+            data: client._id
         });
-        // Redirect to calendar after selecting a client
         navigate("/calendar");
     }
 
@@ -42,13 +41,12 @@ const Client = ({ client }) => {
     }, [getNextShiftDate]);
 
     return (
-        <Card variant="outlined" id={client._id} className="client"
-            onClick={selectClient}>
+        <Card variant="outlined" id={client._id} className="client">
             <CardActionArea sx={{
                 display: "flex",
                 justifyContent: "flex-start",
                 alignItems: "center"
-            }}>
+            }} onClick={handleSelectClient}>
                 <CardMedia sx={{ px: 2 }}>
                     <Avatar sx={{ backgroundColor: theme.palette.primary.main }}>
                         <PersonIcon fontSize="large" />
