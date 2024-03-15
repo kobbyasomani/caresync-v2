@@ -187,7 +187,7 @@ export const Calendar = () => {
     // Fetch all client shifts and add them to state
     useEffect(() => {
         handleRefreshCalendar();
-    }, [handleRefreshCalendar, store.user, store.selectedClient, store.shifts]);
+    }, [handleRefreshCalendar, store.user, store.selectedClient]);
 
     // Logout user if auth fails
     useEffect(() => {
