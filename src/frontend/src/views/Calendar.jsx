@@ -357,7 +357,7 @@ export const Calendar = () => {
 
                 <Outlet />
 
-                {store.selectedShift ?
+                {store.selectedShift?._id ?
                     <ShiftDetails isLoading={isLoading} />
                     : null
                 }

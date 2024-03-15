@@ -27,12 +27,12 @@ const ShiftDetails = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
+    const [shifts, setShifts] = useState(store.shifts);
     const [shiftUtils, setShiftUtils] = useState({});
     const navigate = useNavigate();
 
     const getShiftUtils = useCallback(() => {
         const getCurrentTime = () => new Date();
-        const shifts = store.shifts;
         const lastShift = shifts.length > 0 ? shifts[shifts.length - 1] : null;
         const penultimateShift = shifts.length > 1 ? shifts[shifts.length - 2] : null;
         const shift = store.selectedShift;
@@ -45,7 +45,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             const index = shifts.findIndex(element => element._id === shift._id);
             return index;
         };
-
+        shiftUtils.index = getShiftIndex(shift);
         // Store the next, and previous shifts
         shiftUtils.nextShift = shifts.length === 0 || shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
         shiftUtils.prevShift = shifts.length > 1 && shifts[0] !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
@@ -67,16 +67,17 @@ const ShiftDetails = ({ isLoading, children }) => {
 
         return shiftUtils;
 
-    }, [store.user._id, store.shifts, store.selectedShift]);
+    }, [shifts, store.user._id, store.selectedShift]);
 
     useEffect(() => {
+        setShifts(store.shifts);
         if (Object.keys(store.selectedShift).length > 0) {
             setShiftUtils(getShiftUtils());
         }
     }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
 
     const drawerContentWidth = "100%";
-    const closeDrawer = useCallback((event) => {
+    const handleCloseDrawer = useCallback((event) => {
         // Prevent non-Escape keypresses while drawer is open from closing it
         if (event.type === 'keydown' && (event.key !== 'Escape')) {
             return;
@@ -121,11 +122,14 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
 
         return <Box
-            sx={{ width: drawerContentWidth, p: 3, pt: 4 }}
+            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 4, lg: 5 } }}
             role="presentation"
-            onKeyDown={closeDrawer}
+            onKeyDown={handleCloseDrawer}
         >
-            {/* //TODO: Add buttons to navigate between current, previous, and next shift */}
+            {/* 
+            //TODO: Add buttons to navigate between current, previous, and next shift
+            //TODO: Investigate selected shift not updating when notes are edited 
+            */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
@@ -181,7 +185,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             </Grid>
 
             <IconButton className="close-modal"
-                onClick={closeDrawer}
+                onClick={handleCloseDrawer}
                 sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
                 <CloseIcon />
             </IconButton>
@@ -201,7 +205,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             {injectActiveDrawer()}
             {children}
         </Box >
-    }, [backToPrevDrawer, closeDrawer,
+    }, [backToPrevDrawer, handleCloseDrawer,
         children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, theme]);
 
     /* Sets whether the selected shift is in progress
@@ -219,7 +223,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                 // variant="persistent"
                 anchor="right"
                 open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}
-                onClose={closeDrawer}
+                onClose={handleCloseDrawer}
             >
                 {renderContent()}
             </Drawer>

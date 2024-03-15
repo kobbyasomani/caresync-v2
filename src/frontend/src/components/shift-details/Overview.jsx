@@ -8,7 +8,8 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import {
     useTheme, Grid, Box, Typography, Stack, Divider, Tooltip,
     Avatar, Card, CardContent, CardActionArea, CardActions,
-    List, ListItem, ListItemAvatar, ListItemText, ListItemButton
+    List, ListItem, ListItemAvatar, ListItemText, ListItemButton,
+    IconButton, useMediaQuery,
 } from "@mui/material"
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
@@ -17,6 +18,9 @@ import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 
 const Overview = (props) => {
     const { store, dispatch } = useGlobalContext();
@@ -24,6 +28,7 @@ const Overview = (props) => {
     const { shiftUtils } = props;
     const theme = useTheme();
     const navigate = useNavigate();
+    const smScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     const viewPanel = useCallback((panel) => {
         modalDispatch({
@@ -70,6 +75,27 @@ const Overview = (props) => {
         });
 
     }, [modalDispatch, dispatch]);
+
+    const handleViewAdjacentShift = useCallback((direction) => {
+        let selectedShift;
+        const prevShift = shiftUtils.prevShift;
+        const nextShift = shiftUtils.nextShift;
+        if ((direction === "prev" && prevShift === null)
+            || (direction === "next" && nextShift === null)) {
+            return;
+        } else {
+            selectedShift = direction === "prev" ? prevShift : nextShift;
+            // TODO: Make this a smoother transition
+            dispatch({
+                type: "setSelectedShift",
+                data: selectedShift
+            });
+            modalDispatch({
+                type: "setActiveDrawer",
+                data: ""
+            });
+        }
+    }, [dispatch, modalDispatch, shiftUtils]);
 
     const renderContent = (card) => {
         if (shiftUtils.isPending) {
@@ -345,6 +371,7 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
+            {/* //TODO: Double-check shift edit window logic to constrain it to 8 hours within shift. */}
             {/* ShiftUtils display */}
             {/* <Grid item xs={12}>
                 <Card variant="outlined">
@@ -358,7 +385,9 @@ const Overview = (props) => {
                                 isInProgress: {shiftUtils.isInProgress.toString()}<br></br>
                                 hasEnded: {shiftUtils.hasEnded.toString()}<br></br>
                                 isInEditWindow: {shiftUtils.isInEditWindow.toString()}<br></br>
-                                nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}
+                                nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}<br></br>
+                                prevShift: {shiftUtils.prevShift ? new Date(shiftUtils.prevShift?.shiftStartTime).toLocaleString() : "null"}<br></br>
+                                nextShift: {shiftUtils.nextShift ? new Date(shiftUtils.nextShift?.shiftStartTime).toLocaleString() : "null"}
                             </>
                         ) : null
                         }
@@ -367,22 +396,39 @@ const Overview = (props) => {
             </Grid> */}
 
             {/* The shift is editable if the user is the coordinator
-            and the shift is in the future or in progress */}
-            {store.selectedShift.coordinator === store.user._id
-                && (new Date(store.selectedShift.shiftStartTime) > new Date()
-                    || new Date(store.selectedShift.shiftEndTime) > new Date()) ? (
-                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
-                    <Stack direction="row" gap={2} justifyContent="center">
-                        <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}>
-                            Edit shift
+                and the shift is pending or in progress. */}
+            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
+                <Stack direction="row" gap={2} justifyContent="center">
+                    <Tooltip title="Go to previous shift">
+                        <IconButton color="primary" aria-label="Go to previous shift"
+                            onClick={() => handleViewAdjacentShift("prev")}
+                            sx={{ marginRight: "auto" }}
+                            disabled={Boolean(!shiftUtils.prevShift)}>
+                            <ArrowBackRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
+                    {shiftUtils.isPending || shiftUtils.isInProgress ?
+                        <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
+                            startIcon={<EditCalendarRoundedIcon />}>
+                            {smScreen ? "Edit" : "Edit shift"}
                         </ButtonPrimary>
+                        : null}
+                    {shiftUtils.isPending ?
                         <ButtonSecondary onClick={handleConfirmCancelShift}
                             sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
-                            Cancel shift
+                            {smScreen ? "Cancel" : "Cancel shift"}
                         </ButtonSecondary>
-                    </Stack>
-                </Grid>
-            ) : null}
+                        : null}
+                    <Tooltip title="Go to next shift">
+                        <IconButton color="primary" aria-label="Go to next shift"
+                            onClick={() => handleViewAdjacentShift("next")}
+                            sx={{ marginLeft: "auto" }}
+                            disabled={Boolean(!shiftUtils.nextShift)}>
+                            <ArrowForwardRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
+            </Grid>
         </Grid>
     ) : (
         <Typography variant="body1">
