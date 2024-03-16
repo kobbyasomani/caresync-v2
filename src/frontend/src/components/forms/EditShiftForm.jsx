@@ -113,6 +113,12 @@ export const EditShiftForm = () => {
         if (form.inputs.shiftEndTime < new Date()) {
             throw new Error("Shift end time cannot be in the past.")
         }
+        if (String(form.inputs.shiftStartTime) === String(new Date(store.selectedShift.shiftStartTime))
+            && String(form.inputs.shiftEndTime) === String(new Date(store.selectedShift.shiftEndTime))
+            && form.inputs.carer === store.selectedShift.carer._id
+            && form.inputs.coordinatorNotes === store.selectedShift.coordinatorNotes) {
+            throw new Error("No fields have been modified. Make some changes if you want to update the shift.");
+        }
         //  Shift cannot overlap an existing shift
         try {
             shiftsOverlap(store.selectedShift._id, form.inputs.shiftStartTime, form.inputs.shiftEndTime, true);
@@ -120,7 +126,7 @@ export const EditShiftForm = () => {
         catch (error) {
             throw new Error(error.message);
         }
-    }, [store.selectedShift.shiftEndTime, shiftsOverlap, store.selectedShift._id]);
+    }, [store.selectedShift, shiftsOverlap]);
 
     // Update shifts after successfully posting new shift
     const updateShifts = useCallback((shift) => {

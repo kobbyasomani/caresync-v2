@@ -403,7 +403,6 @@ const Overview = (props) => {
                         <span>
                             <IconButton color="primary" aria-label="Go to previous shift"
                                 onClick={() => handleViewAdjacentShift("prev")}
-                                sx={{ marginRight: "auto" }}
                                 disabled={Boolean(!shiftUtils.prevShift)}>
                                 <ArrowBackRoundedIcon />
                             </IconButton>
@@ -425,7 +424,6 @@ const Overview = (props) => {
                         <span>
                             <IconButton color="primary" aria-label="Go to next shift"
                                 onClick={() => handleViewAdjacentShift("next")}
-                                sx={{ marginLeft: "auto" }}
                                 disabled={Boolean(!shiftUtils.nextShift)}>
                                 <ArrowForwardRoundedIcon />
                             </IconButton>
