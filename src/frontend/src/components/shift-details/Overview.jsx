@@ -9,9 +9,9 @@ import {
     useTheme, Grid, Box, Typography, Stack, Divider, Tooltip,
     Avatar, Card, CardContent, CardActionArea, CardActions,
     List, ListItem, ListItemAvatar, ListItemText, ListItemButton,
-    IconButton, useMediaQuery,
+    useMediaQuery,
 } from "@mui/material"
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import DescriptionIcon from '@mui/icons-material/Description';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import ForumRoundedIcon from '@mui/icons-material/ForumRounded';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
@@ -270,7 +270,11 @@ const Overview = (props) => {
                 <Card variant="outlined" id="shift-notes-card">
                     <CardActionArea onClick={() => viewPanel("shift notes")}>
                         <CardContent>
-                            <EditRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
+                            <DescriptionIcon sx={{
+                                position: "absolute", right: "0.5rem", top: "0.5rem",
+                                color: store.selectedShift.shiftNotes?.shiftNotesText ?
+                                    theme.palette.primary.main : theme.palette.grey[500]
+                            }} />
                             <Typography variant="h5" component="p">Shift Notes</Typography>
                             {renderContent("shift notes")}
                         </CardContent>
@@ -285,7 +289,8 @@ const Overview = (props) => {
                             <CardContent sx={{ flexGrow: 1 }}>
                                 <ReportRoundedIcon sx={{
                                     position: "absolute", right: "0.5rem", top: "0.5rem",
-                                    color: store.selectedShift.incidentReports.length > 0 ? theme.palette.error.main : "initial"
+                                    color: store.selectedShift.incidentReports.length > 0 ?
+                                        theme.palette.error.main : theme.palette.grey[500]
                                 }} />
                                 <Typography variant="h5" component="p">
                                     Incidents {store.selectedShift.incidentReports.length > 0 ?
@@ -312,7 +317,11 @@ const Overview = (props) => {
                 <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
                     <CardActionArea onClick={() => viewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
-                            <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
+                            <ForumRoundedIcon sx={{
+                                position: "absolute", right: "0.5rem", top: "0.5rem",
+                                color: store.selectedShift.handoverNotes ?
+                                    theme.palette.primary.main : theme.palette.grey[500]
+                            }} />
                             <Typography variant="h5" component="p">Handover</Typography>
                             {renderContent("handover")}
                         </CardContent>
@@ -324,7 +333,10 @@ const Overview = (props) => {
                 <Card variant="outlined" id="care-team-card">
                     <CardActionArea onClick={handleOpenCareTeamList}>
                         <CardContent>
-                            <Diversity3Icon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem" }} />
+                            <Diversity3Icon sx={{
+                                position: "absolute", right: "0.5rem", top: "0.5rem",
+                                color: theme.palette.primary.main
+                            }} />
                             <Typography variant="h5" component="p">Shift Carers</Typography>
                             <List dense>
                                 {[1,].map(item => {

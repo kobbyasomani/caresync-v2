@@ -21,10 +21,9 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 
 const ShiftDetails = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
@@ -157,11 +156,11 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
 
         return <Box
-            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 8 }, mt: 2 }}
+            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 8 }, mt: 1 }}
             role="presentation"
             onKeyDown={handleCloseDrawer}
         >
-            <Box item xs={12} sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
+            <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
                 <Tooltip title="Previous shift" placement="left" arrow>
                     <span>
                         <IconButton color="primary" aria-label="Go to previous shift"
@@ -193,19 +192,19 @@ const ShiftDetails = ({ isLoading, children }) => {
                 </Tooltip>
             </Box>
 
-            <IconButton className="close-modal"
-                onClick={handleCloseDrawer}
-                sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
-                <CloseIcon />
-            </IconButton>
-
-            {modalStore.activeDrawer ? (
-                <IconButton className="prev-modal"
-                    onClick={backToPrevDrawer}
-                    sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
-                    <ArrowBackIcon />
+            <Box sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
+                {modalStore.activeDrawer ? (
+                    <IconButton className="prev-modal"
+                        onClick={backToPrevDrawer}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                ) : (null)}
+                <IconButton className="close-modal"
+                    onClick={handleCloseDrawer}>
+                    <CloseIcon />
                 </IconButton>
-            ) : (null)}
+            </Box>
+
             {/* //TODO: Investigate selected shift not updating when notes are edited */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
@@ -239,7 +238,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                         <Grid item xs={12}>
                             <Tooltip title={shiftUtils.hasEnded ? `Shifts notes, incident reports, and handover can be added  
                             within eight hours of the shift ending time or in the first two hours of the next shift, whichever is earlier.` : ""}>
-                                <Alert icon={<EventNoteIcon />}
+                                <Alert icon={<TodayRoundedIcon />}
                                     severity={shiftUtils.isPending ? "info"
                                         : shiftUtils.isInProgress ? "success"
                                             : "warning"}>

@@ -18,7 +18,7 @@ import {
 } from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 
 // Care team member component (Care team mini-list in Calendar view)
 const CareTeamMember = ({ carer }) => {
@@ -207,7 +207,7 @@ export const Calendar = () => {
     // Refresh the calendar when user, client, or refresh state change
     useEffect(() => {
         handleRefreshCalendar();
-    }, [handleRefreshCalendar, store.user, store.selectedClient, store.refreshCalendar]);
+    }, [handleRefreshCalendar, store.user, store.selectedClient, store.selectedShift, store.refreshCalendar]);
 
     // Logout user if auth fails
     useEffect(() => {
@@ -285,7 +285,7 @@ export const Calendar = () => {
                             lg: "auto / 1 / span 1 / span 3"
                         }}>
                         <Button onClick={handleSelectInProgressShift}
-                            variant="contained" size="large" startIcon={<EventNoteIcon />}
+                            variant="contained" size="large" startIcon={<TodayRoundedIcon />}
                             sx={{ textAlign: "left", textTransform: "capitalize", width: "100%" }}>
                             View shift in progress
                         </Button>

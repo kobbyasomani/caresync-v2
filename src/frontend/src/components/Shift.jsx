@@ -14,12 +14,10 @@ import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 
 const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
-    // Get modal dispatch method to toggle modal from shift card
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
 
-    // Open the shift details drawer and close the modal
-    const openShift = useCallback((subPanel) => {
+    const openShift = useCallback((event, subPanel) => {
         dispatch({
             type: "setSelectedShift",
             data: shift
@@ -85,32 +83,42 @@ const Shift = ({ featured, shift }) => {
             </CardActionArea>
             {/* Show shift buttons only on larger screen sizes */}
             <CardActions sx={{
-                width: "100%",
-                justifyContent: { xs: "flex-end", lg: "flex-start" },
+                width: "100%", justifyContent: { xs: "flex-end", lg: "flex-start" },
                 [theme.breakpoints.down("sm")]: { display: "none" }
             }}>
-                {/* //TODO: Highlight button (fill colour) if the report type has text in the shift */}
                 <Box className="shift-buttons"
                     sx={{
                         display: "flex",
                         flexShrink: 0,
                         pr: 1,
                     }}>
-                    <Tooltip title="Handover">
-                        <IconButton className="shift-button-handover" data-testid="handover"
-                            onClick={() => openShift("handover notes")}>
-                            <ForumRoundedIcon />
-                        </IconButton>
-                    </Tooltip>
                     <Tooltip title="Shift Notes">
                         <IconButton className="shift-button-notes" data-testid="notes"
-                            onClick={() => openShift("shift notes")}>
+                            onClick={() => openShift("shift notes")}
+                            sx={{
+                                color: shift.shiftNotes?.shiftNotesText ?
+                                    theme.palette.primary.main : "inital"
+                            }}>
                             <DescriptionIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Handover">
+                        <IconButton className="shift-button-handover" data-testid="handover"
+                            onClick={() => openShift("handover notes")}
+                            sx={{
+                                color: shift.handoverNotes ?
+                                    theme.palette.primary.main : "inital"
+                            }}>
+                            <ForumRoundedIcon />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Incident Reports">
                         <IconButton className="shift-button-incidents" data-testid="incidents"
-                            onClick={() => openShift("incident reports")}>
+                            onClick={() => openShift("incident reports")}
+                            sx={{
+                                color: shift.incidentReports?.length > 0 ?
+                                    theme.palette.error.main : "inital"
+                            }}>
                             <ReportRoundedIcon />
                         </IconButton>
                     </Tooltip>
