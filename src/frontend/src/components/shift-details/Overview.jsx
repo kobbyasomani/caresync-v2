@@ -18,8 +18,6 @@ import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 
 const Overview = (props) => {
@@ -75,27 +73,6 @@ const Overview = (props) => {
         });
 
     }, [modalDispatch, dispatch]);
-
-    const handleViewAdjacentShift = useCallback((direction) => {
-        let selectedShift;
-        const prevShift = shiftUtils.prevShift;
-        const nextShift = shiftUtils.nextShift;
-        if ((direction === "prev" && prevShift === null)
-            || (direction === "next" && nextShift === null)) {
-            return;
-        } else {
-            selectedShift = direction === "prev" ? prevShift : nextShift;
-            // TODO: Make this a smoother transition
-            dispatch({
-                type: "setSelectedShift",
-                data: selectedShift
-            });
-            modalDispatch({
-                type: "setActiveDrawer",
-                data: ""
-            });
-        }
-    }, [dispatch, modalDispatch, shiftUtils]);
 
     const renderContent = (card) => {
         if (shiftUtils.isPending) {
@@ -399,15 +376,6 @@ const Overview = (props) => {
                 and the shift is pending or in progress. */}
             <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
                 <Stack direction="row" gap={2} justifyContent="center">
-                    <Tooltip title="Go to previous shift">
-                        <span>
-                            <IconButton color="primary" aria-label="Go to previous shift"
-                                onClick={() => handleViewAdjacentShift("prev")}
-                                disabled={Boolean(!shiftUtils.prevShift)}>
-                                <ArrowBackRoundedIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
                     {shiftUtils.isPending || shiftUtils.isInProgress ?
                         <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
                             startIcon={<EditCalendarRoundedIcon />}>
@@ -420,15 +388,6 @@ const Overview = (props) => {
                             {smScreen ? "Cancel" : "Cancel shift"}
                         </ButtonSecondary>
                         : null}
-                    <Tooltip title="Go to next shift">
-                        <span>
-                            <IconButton color="primary" aria-label="Go to next shift"
-                                onClick={() => handleViewAdjacentShift("next")}
-                                disabled={Boolean(!shiftUtils.nextShift)}>
-                                <ArrowForwardRoundedIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
                 </Stack>
             </Grid>
         </Grid>
