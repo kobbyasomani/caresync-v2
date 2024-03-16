@@ -18,7 +18,8 @@ const emptyStore = {
     previousShifts: [],
     selectedDate: {},
     selectedShift: {},
-    selectedShiftInProgress: false,
+    inProgressShift: {},
+    selectedShiftIsInProgress: false,
     selectedIncidentReport: {},
     refreshCalendar: ""
 }
@@ -127,10 +128,15 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedShift: {}
             }
-        case "setSelectedShiftInProgress":
+        case "setInProgressShift":
             return {
                 ...state,
-                selectedShiftInProgress: action.data
+                inProgressShift: action.data
+            }
+        case "setSelectedShiftIsInProgress":
+            return {
+                ...state,
+                selectedShiftIsInProgress: action.data
             }
         case "clearShifts":
             return {
@@ -140,7 +146,8 @@ const globalReducer = (state, action) => {
                 previousShifts: [],
                 selectedDate: {},
                 selectedShift: {},
-                selectedShiftInProgress: false,
+                inProgressShift: {},
+                selectedShiftIsInProgress: false,
                 selectedIncidentReport: {},
             }
         case "setSelectedIncidentReport":

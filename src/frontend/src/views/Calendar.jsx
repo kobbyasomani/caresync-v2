@@ -49,7 +49,7 @@ export const Calendar = () => {
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [client, setClient] = useState(store.selectedClient);
-    const [shiftInProgress, setShiftInProgress] = useState({});
+    const [inProgressShift, setInProgressShift] = useState({});
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -82,8 +82,12 @@ export const Calendar = () => {
                         data: prevShifts
                     });
                     //Set in-progress shift
-                    const shiftInProgress = findInProgressShift(shifts);
-                    setShiftInProgress(shiftInProgress);
+                    const inProgressShift = findInProgressShift(shifts);
+                    setInProgressShift(inProgressShift);
+                    dispatch({
+                        type: "setInProgressShift",
+                        data: inProgressShift
+                    });
                     // Set featured shift (next upcoming)
                     const featuredShift = findNextUpcomingShift(shifts);
                     dispatch({
@@ -97,7 +101,7 @@ export const Calendar = () => {
     const handleSelectInProgressShift = () => {
         dispatch({
             type: "setSelectedShift",
-            data: shiftInProgress
+            data: inProgressShift
         });
         modalDispatch({
             type: "open",
@@ -274,8 +278,8 @@ export const Calendar = () => {
                     </section>
                 </Box>
 
-                {shiftInProgress ? (
-                    <Box id="shiftInProgress"
+                {inProgressShift ? (
+                    <Box id="inProgressShift"
                         gridArea={{
                             xs: "auto / 1 / span 1 / span 12",
                             lg: "auto / 1 / span 1 / span 3"
@@ -330,7 +334,7 @@ export const Calendar = () => {
                             </Typography>
                             <Stack spacing={2} sx={{ mt: 1 }}>
                                 {[...store.previousShifts].reverse().slice(0, 3)
-                                    .filter(shift => shift._id !== shiftInProgress._id)
+                                    .filter(shift => shift._id !== inProgressShift._id)
                                     .map(shift => {
                                         return <Shift key={shift._id} shift={shift} />
                                     })}

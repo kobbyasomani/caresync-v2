@@ -24,6 +24,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 
 const ShiftDetails = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
@@ -92,6 +93,17 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
     }, [dispatch, modalDispatch, shiftUtils]);
 
+    const handleViewInProgressShift = useCallback(() => {
+        dispatch({
+            type: "setSelectedShift",
+            data: store.inProgressShift
+        });
+        modalDispatch({
+            type: "setActiveDrawer",
+            data: ""
+        });
+    }, [dispatch, modalDispatch, store.inProgressShift]);
+
     useEffect(() => {
         setShifts(store.shifts);
         if (Object.keys(store.selectedShift).length > 0) {
@@ -145,12 +157,12 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
 
         return <Box
-            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 6, lg: 7 } }}
+            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 8 }, mt: 2 }}
             role="presentation"
             onKeyDown={handleCloseDrawer}
         >
-            <Box item xs={12} sx={{ position: "absolute", top: "0.5rem", left: { xs: "0.5rem", lg: "1rem" } }}>
-                <Tooltip title="Go to previous shift" placement="left">
+            <Box item xs={12} sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
+                <Tooltip title="Previous shift" placement="left" arrow>
                     <span>
                         <IconButton color="primary" aria-label="Go to previous shift"
                             onClick={() => handleViewAdjacentShift("prev")}
@@ -159,7 +171,18 @@ const ShiftDetails = ({ isLoading, children }) => {
                         </IconButton>
                     </span>
                 </Tooltip>
-                <Tooltip title="Go to next shift" placement="right">
+                {Boolean(store.inProgressShift?._id) ?
+                    <Tooltip title="In-progress shift" arrow>
+                        <span>
+                            <IconButton color="primary" aria-label="Go to in-progress shift"
+                                onClick={handleViewInProgressShift}
+                                disabled={store.inProgressShift && (shiftUtils._id === store.inProgressShift._id)}>
+                                <TodayRoundedIcon />
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                    : null}
+                <Tooltip title="Next shift" placement="right" arrow>
                     <span>
                         <IconButton color="primary" aria-label="Go to next shift"
                             onClick={() => handleViewAdjacentShift("next")}
@@ -172,21 +195,17 @@ const ShiftDetails = ({ isLoading, children }) => {
 
             <IconButton className="close-modal"
                 onClick={handleCloseDrawer}
-                sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>
+                sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
                 <CloseIcon />
             </IconButton>
 
-            {
-                modalStore.activeDrawer ? (
-                    <IconButton className="prev-modal"
-                        onClick={backToPrevDrawer}
-                        sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
-                        <ArrowBackIcon />
-                    </IconButton>
-                ) : (
-                    null
-                )
-            }
+            {modalStore.activeDrawer ? (
+                <IconButton className="prev-modal"
+                    onClick={backToPrevDrawer}
+                    sx={{ position: "absolute", top: "0.5rem", right: "3rem" }}>
+                    <ArrowBackIcon />
+                </IconButton>
+            ) : (null)}
             {/* //TODO: Investigate selected shift not updating when notes are edited */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
@@ -245,14 +264,14 @@ const ShiftDetails = ({ isLoading, children }) => {
             {injectActiveDrawer()}
             {children}
         </Box >
-    }, [backToPrevDrawer, handleCloseDrawer,
-        children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, theme]);
+    }, [backToPrevDrawer, handleCloseDrawer, handleViewAdjacentShift, handleViewInProgressShift,
+        children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, store.inProgressShift, theme]);
 
     /* Sets whether the selected shift is in progress
     (determines whether carer can enter notes and reports) */
     useEffect(() => {
         dispatch({
-            type: "setSelectedShiftInProgress",
+            type: "setSelectedShiftIsInProgress",
             data: shiftUtils.isInProgress
         });
     }, [store.selectedShift, dispatch, shiftUtils]);
