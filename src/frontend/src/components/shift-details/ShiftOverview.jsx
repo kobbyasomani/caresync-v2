@@ -24,6 +24,7 @@ const ShiftOverview = (props) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { shiftUtils } = props;
+
     const theme = useTheme();
     const navigate = useNavigate();
     const smScreen = useMediaQuery(theme.breakpoints.down("md"));

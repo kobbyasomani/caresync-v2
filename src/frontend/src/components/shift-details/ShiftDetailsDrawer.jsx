@@ -16,7 +16,7 @@ import Loader from "../logo/Loader";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, Alert,
-    Tooltip, useTheme
+    Tooltip, useTheme, Fade
 } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
@@ -32,6 +32,13 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
     const [shifts, setShifts] = useState(store.shifts);
     const [shiftUtils, setShiftUtils] = useState({});
     const navigate = useNavigate();
+
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [transition, setTransition] = useState({
+        in: null,
+        out: null,
+        time: 200
+    });
 
     const getShiftUtils = useCallback(() => {
         const currentTime = new Date();
@@ -74,44 +81,40 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
 
     }, [shifts, store.user._id, store.selectedShift]);
 
-    const handleViewAdjacentShift = useCallback((direction) => {
+    const handleViewShift = useCallback((direction) => {
         let selectedShift;
         const prevShift = shiftUtils.prevShift;
         const nextShift = shiftUtils.nextShift;
         if ((direction === "prev" && prevShift === null)
-            || (direction === "next" && nextShift === null)) {
+            || (direction === "next" && nextShift === null)
+            || (direction === "in-progress" && Object.keys(store.inProgressShift).length === 0)) {
             return;
         } else {
-            selectedShift = direction === "prev" ? prevShift : nextShift;
-            // TODO: Make transitioning between shifts smoother
-            dispatch({
-                type: "setSelectedShift",
-                data: selectedShift
-            });
-            modalDispatch({
-                type: "setActiveDrawer",
-                data: ""
+            selectedShift = direction === "prev" ? prevShift
+                : direction === "next" ? nextShift
+                    : store.inProgressShift;
+            if (transition.timeout) {
+                clearTimeout(transition.timeout);
+            }
+            setIsTransitioning(true);
+            setTransition(prev => {
+                return {
+                    ...prev,
+                    timeout: setTimeout(() => {
+                        dispatch({
+                            type: "setSelectedShift",
+                            data: selectedShift
+                        });
+                        modalDispatch({
+                            type: "setActiveDrawer",
+                            data: ""
+                        });
+                        setIsTransitioning(false);
+                    }, transition.time)
+                }
             });
         }
-    }, [dispatch, modalDispatch, shiftUtils]);
-
-    const handleViewInProgressShift = useCallback(() => {
-        dispatch({
-            type: "setSelectedShift",
-            data: store.inProgressShift
-        });
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: ""
-        });
-    }, [dispatch, modalDispatch, store.inProgressShift]);
-
-    useEffect(() => {
-        setShifts(store.shifts);
-        if (Object.keys(store.selectedShift).length > 0) {
-            setShiftUtils(getShiftUtils());
-        }
-    }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
+    }, [dispatch, modalDispatch, shiftUtils, transition, store.inProgressShift]);
 
     const drawerContentWidth = "100%";
     const handleCloseDrawer = useCallback((event) => {
@@ -126,12 +129,61 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
         navigate("/calendar")
     }, [modalDispatch, navigate]);
 
-    const backToPrevDrawer = useCallback(() => {
+    const handleBackToPrevDrawer = useCallback(() => {
         modalDispatch({
             type: "setActiveDrawer",
             data: "back"
         })
     }, [modalDispatch]);
+
+    const renderShiftNav = useCallback(() => {
+        return <>
+            <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
+                <Tooltip title="Previous shift" placement="left">
+                    <span>
+                        <IconButton color="primary" aria-label="Go to previous shift"
+                            onClick={() => handleViewShift("prev")}
+                            disabled={Boolean(!shiftUtils.prevShift)}>
+                            <ArrowBackRoundedIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                {Boolean(store.inProgressShift?._id) ?
+                    <Tooltip title="In-progress shift">
+                        <span>
+                            <IconButton color="primary" aria-label="Go to in-progress shift"
+                                onClick={() => handleViewShift("in-progress")}
+                                disabled={shiftUtils.isInProgress}>
+                                <TodayRoundedIcon />
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                    : null}
+                <Tooltip title="Next shift" placement="right">
+                    <span>
+                        <IconButton color="primary" aria-label="Go to next shift"
+                            onClick={() => handleViewShift("next")}
+                            disabled={Boolean(!shiftUtils.nextShift)}>
+                            <ArrowForwardRoundedIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            </Box>
+
+            <Box sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
+                {modalStore.activeDrawer ? (
+                    <IconButton className="prev-modal"
+                        onClick={handleBackToPrevDrawer}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                ) : (null)}
+                <IconButton className="close-modal"
+                    onClick={handleCloseDrawer}>
+                    <CloseIcon />
+                </IconButton>
+            </Box></>
+    }, [handleBackToPrevDrawer, handleCloseDrawer, handleViewShift,
+        modalStore.activeDrawer, shiftUtils, store.inProgressShift]);
 
     const renderContent = useCallback(() => {
         const injectActiveDrawer = () => {
@@ -158,53 +210,7 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
         return <Box
             sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 7.5 }, mt: 1 }}
             role="presentation"
-            onKeyDown={handleCloseDrawer}
-        >
-            <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
-                <Tooltip title="Previous shift" placement="left">
-                    <span>
-                        <IconButton color="primary" aria-label="Go to previous shift"
-                            onClick={() => handleViewAdjacentShift("prev")}
-                            disabled={Boolean(!shiftUtils.prevShift)}>
-                            <ArrowBackRoundedIcon />
-                        </IconButton>
-                    </span>
-                </Tooltip>
-                {Boolean(store.inProgressShift?._id) ?
-                    <Tooltip title="In-progress shift">
-                        <span>
-                            <IconButton color="primary" aria-label="Go to in-progress shift"
-                                onClick={handleViewInProgressShift}
-                                disabled={store.inProgressShift && (shiftUtils._id === store.inProgressShift._id)}>
-                                <TodayRoundedIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-                    : null}
-                <Tooltip title="Next shift" placement="right">
-                    <span>
-                        <IconButton color="primary" aria-label="Go to next shift"
-                            onClick={() => handleViewAdjacentShift("next")}
-                            disabled={Boolean(!shiftUtils.nextShift)}>
-                            <ArrowForwardRoundedIcon />
-                        </IconButton>
-                    </span>
-                </Tooltip>
-            </Box>
-
-            <Box sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
-                {modalStore.activeDrawer ? (
-                    <IconButton className="prev-modal"
-                        onClick={backToPrevDrawer}>
-                        <ArrowBackIcon />
-                    </IconButton>
-                ) : (null)}
-                <IconButton className="close-modal"
-                    onClick={handleCloseDrawer}>
-                    <CloseIcon />
-                </IconButton>
-            </Box>
-
+            onKeyDown={handleCloseDrawer}>
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>
@@ -262,11 +268,17 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
             {injectActiveDrawer()}
             {children}
         </Box >
-    }, [backToPrevDrawer, handleCloseDrawer, handleViewAdjacentShift, handleViewInProgressShift,
-        children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, store.inProgressShift, theme]);
+    }, [handleCloseDrawer, children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, theme]);
 
-    /* Sets whether the selected shift is in progress
-    (determines whether carer can enter notes and reports) */
+    useEffect(() => {
+        setShifts(store.shifts);
+        if (Object.keys(store.selectedShift).length > 0) {
+            setShiftUtils(getShiftUtils());
+        }
+    }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
+
+    /* Sets whether the selected shift is in progress,
+    determining whether carer can enter notes and reports) */
     useEffect(() => {
         dispatch({
             type: "setSelectedShiftIsInProgress",
@@ -280,9 +292,11 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
                 // variant="persistent"
                 anchor="right"
                 open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}
-                onClose={handleCloseDrawer}
-            >
-                {renderContent()}
+                onClose={handleCloseDrawer}>
+                {renderShiftNav()}
+                <Fade in={!isTransitioning}>
+                    {renderContent()}
+                </Fade>
             </Drawer>
         </>
     )
