@@ -360,7 +360,6 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            {/* //TODO: Correct edit window logic to constrain it to within 8 hours of shift end at most. */}
             {/* ShiftUtils display */}
             {/* <Grid item xs={12}>
                 <Card variant="outlined">
@@ -374,9 +373,9 @@ const Overview = (props) => {
                                 isInProgress: {shiftUtils.isInProgress.toString()}<br></br>
                                 hasEnded: {shiftUtils.hasEnded.toString()}<br></br>
                                 isInEditWindow: {shiftUtils.isInEditWindow.toString()}<br></br>
-                                nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}<br></br>
                                 prevShift: {shiftUtils.prevShift ? new Date(shiftUtils.prevShift?.shiftStartTime).toLocaleString() : "null"}<br></br>
-                                nextShift: {shiftUtils.nextShift ? new Date(shiftUtils.nextShift?.shiftStartTime).toLocaleString() : "null"}
+                                nextShift: {shiftUtils.nextShift ? new Date(shiftUtils.nextShift?.shiftStartTime).toLocaleString() : "null"}<br></br>
+                                nextShiftHasStarted: {shiftUtils.nextShiftHasStarted.toString()}
                             </>
                         ) : null
                         }

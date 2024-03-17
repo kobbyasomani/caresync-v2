@@ -34,7 +34,7 @@ const ShiftDetails = ({ isLoading, children }) => {
     const navigate = useNavigate();
 
     const getShiftUtils = useCallback(() => {
-        const getCurrentTime = () => new Date();
+        const currentTime = new Date();
         const lastShift = shifts.length > 0 ? shifts[shifts.length - 1] : null;
         const penultimateShift = shifts.length > 1 ? shifts[shifts.length - 2] : null;
         const shift = store.selectedShift;
@@ -42,6 +42,7 @@ const ShiftDetails = ({ isLoading, children }) => {
         const shiftEndTime = new Date(shift.shiftEndTime);
         const shiftUtils = { _id: shift._id };
         const editWindow = 8; // Time in hours
+        const shiftEndTimePlusEditWindow = plusHours(shiftEndTime, editWindow);
 
         const getShiftIndex = (shift) => {
             const index = shifts.findIndex(element => element._id === shift._id);
@@ -50,22 +51,24 @@ const ShiftDetails = ({ isLoading, children }) => {
         shiftUtils.index = getShiftIndex(shift);
         // Store the next, and previous shifts
         shiftUtils.nextShift = shifts.length === 0 || shift._id === lastShift._id ? null : shifts[getShiftIndex(shift) + 1];
+        const nextShiftStart = shiftUtils.nextShift ? new Date(shiftUtils.nextShift.shiftStartTime) : null;
+        const nextShiftStartPlusTwoHours = shiftUtils.nextShift ? plusHours(new Date(shiftUtils.nextShift.shiftStartTime), 2) : null;
         shiftUtils.prevShift = shifts.length > 1 && shifts[0] !== shift._id ? shifts[getShiftIndex(shift) - 1] : null;
 
         shiftUtils.userIsShiftCarer = store.selectedShift?._id && (store.user._id === store.selectedShift.carer._id);
         shiftUtils.isLastShift = shifts.length > 0 ? shift._id === lastShift._id : false;
         shiftUtils.isPenultimateShift = shift._id === penultimateShift?._id;
-        shiftUtils.isPending = getCurrentTime() < shiftStartTime;
-        shiftUtils.isInProgress = shiftStartTime < getCurrentTime() && shiftEndTime > getCurrentTime();
-        shiftUtils.hasEnded = getCurrentTime() > shiftEndTime;
-        shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift)
-            && getCurrentTime() > new Date(shiftUtils.nextShift.shiftStartTime);
-        shiftUtils.isInEditWindow = shiftUtils.hasEnded && plusHours(shiftEndTime, editWindow) > getCurrentTime()
+        shiftUtils.isPending = currentTime < shiftStartTime;
+        shiftUtils.isInProgress = shiftStartTime < currentTime && shiftEndTime > currentTime;
+        shiftUtils.hasEnded = currentTime > shiftEndTime;
+        shiftUtils.nextShiftHasStarted = Boolean(shiftUtils.nextShift) && currentTime > nextShiftStart;
+        shiftUtils.isInEditWindow = shiftUtils.hasEnded && shiftEndTimePlusEditWindow > currentTime
             && (shiftUtils.isLastShift
-                || plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2) > getCurrentTime()
+                || nextShiftStartPlusTwoHours > currentTime
                 || shiftUtils.nextShiftHasStarted === false);
-        shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? plusHours(shiftEndTime, editWindow).toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" })
-            : plusHours(new Date(shiftUtils.nextShift?.shiftStartTime), 2);
+        shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? shiftEndTimePlusEditWindow.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" })
+            : shiftEndTimePlusEditWindow < nextShiftStartPlusTwoHours ?
+                shiftEndTimePlusEditWindow : nextShiftStartPlusTwoHours;
 
         return shiftUtils;
 
@@ -131,9 +134,6 @@ const ShiftDetails = ({ isLoading, children }) => {
     }, [modalDispatch]);
 
     const renderContent = useCallback(() => {
-        // Log drawer state (history and active drawer)
-        // console.log(JSON.stringify(modalStore.drawerHistory), modalStore.activeDrawer);
-
         const injectActiveDrawer = () => {
             switch (modalStore.activeDrawer) {
                 case "shift notes":
@@ -156,12 +156,12 @@ const ShiftDetails = ({ isLoading, children }) => {
         }
 
         return <Box
-            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 8 }, mt: 1 }}
+            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 7.5 }, mt: 1 }}
             role="presentation"
             onKeyDown={handleCloseDrawer}
         >
             <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
-                <Tooltip title="Previous shift" placement="left" arrow>
+                <Tooltip title="Previous shift" placement="left">
                     <span>
                         <IconButton color="primary" aria-label="Go to previous shift"
                             onClick={() => handleViewAdjacentShift("prev")}
@@ -171,7 +171,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                     </span>
                 </Tooltip>
                 {Boolean(store.inProgressShift?._id) ?
-                    <Tooltip title="In-progress shift" arrow>
+                    <Tooltip title="In-progress shift">
                         <span>
                             <IconButton color="primary" aria-label="Go to in-progress shift"
                                 onClick={handleViewInProgressShift}
@@ -181,7 +181,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                         </span>
                     </Tooltip>
                     : null}
-                <Tooltip title="Next shift" placement="right" arrow>
+                <Tooltip title="Next shift" placement="right">
                     <span>
                         <IconButton color="primary" aria-label="Go to next shift"
                             onClick={() => handleViewAdjacentShift("next")}
@@ -236,7 +236,7 @@ const ShiftDetails = ({ isLoading, children }) => {
                     (
                         <Grid item xs={12}>
                             <Tooltip title={shiftUtils.hasEnded ? `Shifts notes, incident reports, and handover can be added  
-                            within eight hours of the shift ending time or in the first two hours of the next shift, whichever is earlier.` : ""}>
+                            within eight hours of the shift ending time, or in the first two hours of the next shift, whichever is earlier.` : ""}>
                                 <Alert icon={<TodayRoundedIcon />}
                                     severity={shiftUtils.isPending ? "info"
                                         : shiftUtils.isInProgress ? "success"
