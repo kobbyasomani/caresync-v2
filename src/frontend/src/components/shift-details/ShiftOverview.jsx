@@ -20,7 +20,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 
-const Overview = (props) => {
+const ShiftOverview = (props) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const { shiftUtils } = props;
@@ -409,4 +409,4 @@ const Overview = (props) => {
     )
 };
 
-export default Overview
+export default ShiftOverview

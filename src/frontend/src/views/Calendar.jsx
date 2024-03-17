@@ -8,7 +8,7 @@ import { findPreviousShifts, findInProgressShift, findNextUpcomingShift } from "
 import SwitchClient from "../components/SwitchClient";
 import Shift from "../components/Shift";
 import CalendarDayGrid from "../components/CalendarDayGrid";
-import ShiftDetails from "../components/shift-details/ShiftDetails";
+import ShiftDetailsDrawer from "../components/shift-details/ShiftDetailsDrawer";
 import Loader from "../components/logo/Loader";
 import { SidebarButtonAddShift } from "../components/root/Buttons";
 
@@ -364,7 +364,7 @@ export const Calendar = () => {
                 <Outlet />
 
                 {store.selectedShift?._id ?
-                    <ShiftDetails isLoading={isLoading} />
+                    <ShiftDetailsDrawer isLoading={isLoading} />
                     : null
                 }
             </Box >

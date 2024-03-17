@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj, plusHours } from "../../utils/dateUtils";
-import Overview from "./Overview";
+import Overview from "./ShiftOverview";
 import ShiftNotes from "./ShiftNotes";
 import HandoverNotes from "./HandoverNotes";
 import IncidentReports from "./IncidentReports";
@@ -25,7 +25,7 @@ import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
-const ShiftDetails = ({ isLoading, children }) => {
+const ShiftDetailsDrawer = ({ isLoading, children }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
@@ -83,7 +83,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             return;
         } else {
             selectedShift = direction === "prev" ? prevShift : nextShift;
-            // TODO: Make transitioning between shifts a smoother transition
+            // TODO: Make transitioning between shifts smoother
             dispatch({
                 type: "setSelectedShift",
                 data: selectedShift
@@ -288,4 +288,4 @@ const ShiftDetails = ({ isLoading, children }) => {
     )
 }
 
-export default ShiftDetails;
+export default ShiftDetailsDrawer;
