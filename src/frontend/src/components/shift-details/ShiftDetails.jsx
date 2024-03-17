@@ -80,7 +80,7 @@ const ShiftDetails = ({ isLoading, children }) => {
             return;
         } else {
             selectedShift = direction === "prev" ? prevShift : nextShift;
-            // TODO: Make this a smoother transition
+            // TODO: Make transitioning between shifts a smoother transition
             dispatch({
                 type: "setSelectedShift",
                 data: selectedShift

@@ -135,6 +135,11 @@ export const AddShiftForm = () => {
     // Update shifts after successfully posting new shift
     const handleUpdateShifts = useCallback((shift) => {
         setIsLoading(true);
+        // Set the newly created shift as the selected shift
+        dispatch({
+            type: "setSelectedShift",
+            data: shift
+        });
         // Update client shifts from the database
         fetch(`${baseURL}/shift/${store.selectedClient._id}`, {
             credentials: "include",
@@ -147,13 +152,6 @@ export const AddShiftForm = () => {
                     type: "setShifts",
                     data: shifts
                 })
-
-                // Set the newly created shift as the selected shift
-                dispatch({
-                    type: "setSelectedShift",
-                    data: shifts[shifts.length - 1]
-                });
-
                 // Show success alert
                 setAlerts(prev => [...prev, {
                     message: `A new shift was added for 

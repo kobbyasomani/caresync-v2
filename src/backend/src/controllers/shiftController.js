@@ -88,9 +88,12 @@ const createShift = asyncHandler(async (req, res) => {
     shiftEndTime: shiftEndTime,
   });
 
+  const updatedShift = await Shift.findById(shift._id)
+    .populate("carer", "firstName lastName");
+
   // Return shift info
   if (shift) {
-    res.status(201).json(shift);
+    res.status(201).json(updatedShift);
   } else {
     res.status(400);
     throw new Error("Invalid data");
