@@ -117,3 +117,20 @@ fieldset {
         flex-grow: 1;
     }
 }
+
+.incident {
+
+    .delete-incident,
+    .incident-icon {
+        transition: opacity 100ms ease-out;
+        opacity: 50%;
+    }
+
+    &:hover {
+
+        .delete-incident,
+        .incident-icon {
+            opacity: 100%;
+        }
+    }
+}

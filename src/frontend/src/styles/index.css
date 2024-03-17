@@ -87,4 +87,14 @@ fieldset legend {
   flex-grow: 1;
 }
 
+.incident .delete-incident,
+.incident .incident-icon {
+  transition: opacity 100ms ease-out;
+  opacity: 50%;
+}
+.incident:hover .delete-incident,
+.incident:hover .incident-icon {
+  opacity: 100%;
+}
+
 /*# sourceMappingURL=index.css.map */

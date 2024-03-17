@@ -205,7 +205,6 @@ const ShiftDetails = ({ isLoading, children }) => {
                 </IconButton>
             </Box>
 
-            {/* //TODO: Investigate selected shift not updating when notes are edited */}
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>
                 <Grid item xs={12}>
                     <Stack direction="row" spacing={1}>

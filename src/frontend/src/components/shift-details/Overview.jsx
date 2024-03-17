@@ -360,7 +360,7 @@ const Overview = (props) => {
                 </Card>
             </Grid>
 
-            {/* //TODO: Double-check shift edit window logic to constrain it to 8 hours within shift. */}
+            {/* //TODO: Correct edit window logic to constrain it to within 8 hours of shift end at most. */}
             {/* ShiftUtils display */}
             {/* <Grid item xs={12}>
                 <Card variant="outlined">

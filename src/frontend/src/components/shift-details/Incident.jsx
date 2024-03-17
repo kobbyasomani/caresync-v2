@@ -79,9 +79,9 @@ const Incident = ({ incident, index, shiftUtils }) => {
                 <CardActionArea onClick={openIncident} sx={{ pl: 3 }}>
                     <CardContent sx={{ pt: 1.5 }}>
                         <Box sx={{ display: "flex" }}>
-                            <ReportRoundedIcon sx={{
+                            <ReportRoundedIcon className="incident-icon" sx={{
                                 mr: "0.5rem", position: "absolute", top: 5, left: 2,
-                                color: theme.palette.primary.light, width: "2rem"
+                                color: theme.palette.primary.main, width: "2rem"
                             }} />
                             <Typography variant="h6" component="p" className="shift-date" fontWeight="bold">
                                 {incident ? `Incident ${index}` : "Could not load incident number"}

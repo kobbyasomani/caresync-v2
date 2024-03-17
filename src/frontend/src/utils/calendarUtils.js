@@ -19,17 +19,17 @@ const findPreviousShifts = (shifts) => {
  */
 const findInProgressShift = (shifts) => {
     const now = new Date();
-    let shiftInProgress = {};
+    let inProgressShift = {};
 
     for (const shift of shifts) {
         const shiftStart = new Date(shift.shiftStartTime);
         const shiftEnd = new Date(shift.shiftEndTime);
         if ((now >= shiftStart) && (now <= shiftEnd)) {
-            shiftInProgress = shift;
+            inProgressShift = shift;
             break;
         }
     }
-    return shiftInProgress;
+    return inProgressShift;
 };
 
 /**

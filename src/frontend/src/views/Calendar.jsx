@@ -278,7 +278,7 @@ export const Calendar = () => {
                     </section>
                 </Box>
 
-                {inProgressShift ? (
+                {inProgressShift?._id ? (
                     <Box id="inProgressShift"
                         gridArea={{
                             xs: "auto / 1 / span 1 / span 12",
