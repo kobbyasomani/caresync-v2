@@ -337,7 +337,7 @@ const Overview = (props) => {
                                 position: "absolute", right: "0.5rem", top: "0.5rem",
                                 color: theme.palette.primary.main
                             }} />
-                            <Typography variant="h5" component="p">Shift Carers</Typography>
+                            <Typography variant="h5" component="p">Shift Carer</Typography>
                             <List dense>
                                 {[1,].map(item => {
                                     return (
