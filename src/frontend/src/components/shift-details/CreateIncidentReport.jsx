@@ -1,5 +1,6 @@
 import IncidentReportForm from "../forms/IncidentReportForm";
-import { Typography, Box } from "@mui/material";
+
+import { Typography, Box, Grow } from "@mui/material";
 
 const CreateIncidentReport = (props) => {
     const { shiftUtils } = props;
@@ -30,9 +31,11 @@ const CreateIncidentReport = (props) => {
     return (
         <>
             <Typography variant="h3" component="p">Incident Reports</Typography>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-            </Box>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                </Box>
+            </Grow>
         </>
     )
 }

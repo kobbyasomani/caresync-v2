@@ -20,6 +20,7 @@ const Shift = ({ featured, shift }) => {
 
     const handleOpenShift = useCallback((event, subPanel) => {
         event.preventDefault();
+        event.stopPropagation();
         dispatch({
             type: "setSelectedShift",
             data: shift
@@ -30,14 +31,9 @@ const Shift = ({ featured, shift }) => {
         });
         modalDispatch({
             type: "open",
-            data: "drawer"
+            data: "drawer",
+            view: subPanel || ""
         });
-        if (subPanel) {
-            modalDispatch({
-                type: "setActiveDrawer",
-                data: subPanel || ""
-            });
-        }
     }, [modalDispatch, dispatch, shift]);
 
     return (

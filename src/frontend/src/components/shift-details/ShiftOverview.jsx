@@ -29,11 +29,13 @@ const ShiftOverview = (props) => {
     const navigate = useNavigate();
     const smScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-    const viewPanel = useCallback((panel) => {
+    const handleViewPanel = useCallback((panel) => {
         modalDispatch({
             type: "setActiveDrawer",
             data: panel
         });
+        const drawer = document.getElementById("shift-details-drawer").querySelector(".MuiDrawer-paper");
+        drawer.scrollTo(0, 0);
     }, [modalDispatch]);
 
     const handleEditShift = useCallback(() => {
@@ -132,7 +134,7 @@ const ShiftOverview = (props) => {
                                 <ListItem key="moreIncidentReports" sx={{ px: 0, py: 0.5 }}>
                                     <ListItemButton
                                         sx={{ borderRadius: 1, px: 1 }}
-                                        onClick={() => viewPanel("incident reports")}
+                                        onClick={() => handleViewPanel("incident reports")}
                                     >
                                         <Typography variant="body1" color={theme.palette.primary.main}>
                                             And {store.selectedShift.incidentReports.length - 3} more...
@@ -213,7 +215,7 @@ const ShiftOverview = (props) => {
                         backgroundColor: theme.palette.primary.light,
                         border: "none", position: "relative"
                     }}>
-                        <CardActionArea onClick={() => viewPanel("coordinator notes")}>
+                        <CardActionArea onClick={() => handleViewPanel("coordinator notes")}>
                             <CardContent>
                                 <AssignmentIcon sx={{
                                     position: "absolute",
@@ -245,7 +247,7 @@ const ShiftOverview = (props) => {
                         backgroundColor: theme.palette.grey[200],
                         border: "none", position: "relative"
                     }}>
-                        <CardActionArea onClick={() => viewPanel("prev shift handover")}>
+                        <CardActionArea onClick={() => handleViewPanel("prev shift handover")}>
                             <CardContent>
                                 <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
                                 <Typography variant="h6" component="p">
@@ -269,7 +271,7 @@ const ShiftOverview = (props) => {
             }
             <Grid item xs={12}>
                 <Card variant="outlined" id="shift-notes-card">
-                    <CardActionArea onClick={() => viewPanel("shift notes")}>
+                    <CardActionArea onClick={() => handleViewPanel("shift notes")}>
                         <CardContent>
                             <DescriptionIcon sx={{
                                 position: "absolute", right: "0.5rem", top: "0.5rem",
@@ -286,7 +288,7 @@ const ShiftOverview = (props) => {
             <Grid item xs={12} md={6} display={"flex"}>
                 <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
                     <Tooltip title="View all incidents" placement="top" arrow>
-                        <CardActionArea onClick={() => viewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                        <CardActionArea onClick={() => handleViewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                             <CardContent sx={{ flexGrow: 1 }}>
                                 <ReportRoundedIcon sx={{
                                     position: "absolute", right: "0.5rem", top: "0.5rem",
@@ -316,7 +318,7 @@ const ShiftOverview = (props) => {
 
             <Grid item xs={12} md={6} display={"flex"}>
                 <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
-                    <CardActionArea onClick={() => viewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                    <CardActionArea onClick={() => handleViewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
                         <CardContent sx={{ flexGrow: 1 }}>
                             <ForumRoundedIcon sx={{
                                 position: "absolute", right: "0.5rem", top: "0.5rem",

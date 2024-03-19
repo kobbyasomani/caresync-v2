@@ -7,7 +7,7 @@ import Form from "./Form";
 import Loader from "../logo/Loader";
 
 import { TextField } from "@mui/material";
-
+import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
 const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading }, formRef) => {
     const { store, dispatch } = useGlobalContext();
@@ -44,13 +44,15 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
             }
         });
         setEditMode(false);
-    }, [dispatch, setEditMode, ])
+    }, [dispatch, setEditMode,])
 
     return isLoading ? <Loader /> : (
         <Form form={form}
             setForm={setForm}
-            legend={editMode ? "Edit your handover notes" : "Add handover notes for this client's next shift"}
-            buttonText="Update handover notes"
+            legend={editMode ? "Edit your handover notes" : `Add handover notes for ${store.selectedClient.firstName}'s next care shift`}
+            buttonText={<><PublishRoundedIcon /> {
+                store.selectedShift.handoverNotes ?
+                    "Update handover notes" : "Submit handover notes"}</>}
             postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}
             method="put"
             callback={updateHandoverNotes}

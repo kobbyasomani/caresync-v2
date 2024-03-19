@@ -7,7 +7,7 @@ import ShiftNotesForm from "../forms/ShiftNotesForm";
 import { ButtonDownload, ButtonUpload, ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack, useTheme } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Grow, Fade } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -164,13 +164,18 @@ const ShiftNotes = (props) => {
 
     return (
         <>
-            <Stack direction="row" alignItems="flex-end" sx={{ position: "relative" }}>
-                <Typography variant="h3" component="p">Shift Notes</Typography>
-                {renderHeaderButtons()}
-            </Stack>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-            </Box>
+            <Fade in={true}>
+                <Stack direction="row" alignItems="flex-end" sx={{ position: "relative" }}>
+                    <Typography variant="h3" component="p">Shift Notes</Typography>
+                    {renderHeaderButtons()}
+                </Stack>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                </Box>
+            </Grow>
+
         </>
     )
 }

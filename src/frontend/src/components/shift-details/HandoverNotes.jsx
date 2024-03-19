@@ -7,7 +7,7 @@ import HandoverNotesForm from "../forms/HandoverNotesForm";
 import Confirmation from "../dialogs/Confirmation";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
-import { Typography, Box, Stack, useTheme } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Fade, Grow } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -132,11 +132,14 @@ const HandoverNotes = (props) => {
 
     return (
         <>
-            <Typography variant="h3" component="p">Handover Notes</Typography>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-            </Box >
-
+            <Fade in={true}>
+                <Typography variant="h3" component="p">Handover Notes</Typography>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                </Box >
+            </Grow>
             <Confirmation
                 title="Confirm Clear Shift Handover Notes"
                 text={`Are you sure you want to clear the handover notes for this shift?

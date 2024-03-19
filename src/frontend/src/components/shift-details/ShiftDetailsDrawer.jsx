@@ -137,6 +137,7 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
     }, [modalDispatch]);
 
     const renderShiftNav = useCallback(() => {
+        // TODO: Add a 'Home' button to return to the shift overview from any sub-view
         return <>
             <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
                 <Tooltip title="Previous shift" placement="left">
@@ -289,6 +290,7 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
     return isLoading ? <Loader /> : (
         <>
             <Drawer
+                id="shift-details-drawer"
                 // variant="persistent"
                 anchor="right"
                 open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}

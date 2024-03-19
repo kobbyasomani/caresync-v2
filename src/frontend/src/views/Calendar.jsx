@@ -105,7 +105,8 @@ export const Calendar = () => {
         });
         modalDispatch({
             type: "open",
-            data: "drawer"
+            data: "drawer",
+            view: ""
         });
     }
 
@@ -287,7 +288,7 @@ export const Calendar = () => {
                         <Button onClick={handleSelectInProgressShift}
                             variant="contained" size="large" startIcon={<TodayRoundedIcon />}
                             sx={{ textAlign: "left", textTransform: "capitalize", width: "100%" }}>
-                            View shift in progress
+                            View in-progress shift
                         </Button>
                     </Box>
                 ) : null}

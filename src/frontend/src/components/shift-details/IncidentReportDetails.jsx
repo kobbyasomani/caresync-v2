@@ -7,7 +7,7 @@ import { ButtonPrimary, ButtonSecondary, ButtonDownload } from "../root/Buttons"
 import IncidentReportForm from "../forms/IncidentReportForm";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack, useTheme } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Fade, Grow } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -148,20 +148,23 @@ const IncidentReportDetails = ({ shiftUtils }) => {
 
     return (
         <>
-            <Stack direction="row" alignItems="flex-end">
-                <Typography variant="h3" component="p">Incident Report</Typography>
-                {Object.keys(incidentReport).length > 0 ? (
-                    <ButtonDownload
-                        tooltip="Download Incident Report"
-                        filename="Incident Report"
-                        resourceURL={incidentReport.incidentReportPDF}
-                    />
-                ) : null}
-            </Stack>
-            <Box sx={{ pt: 1 }}>
-                {renderContent()}
-            </Box>
-
+            <Fade in={true}>
+                <Stack direction="row" alignItems="flex-end">
+                    <Typography variant="h3" component="p">Incident Report</Typography>
+                    {Object.keys(incidentReport).length > 0 ? (
+                        <ButtonDownload
+                            tooltip="Download Incident Report"
+                            filename="Incident Report"
+                            resourceURL={incidentReport.incidentReportPDF}
+                        />
+                    ) : null}
+                </Stack>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ pt: 1 }}>
+                    {renderContent()}
+                </Box>
+            </Grow>
             <Confirmation
                 modalId={modalId}
                 title="Confirm delete incident"

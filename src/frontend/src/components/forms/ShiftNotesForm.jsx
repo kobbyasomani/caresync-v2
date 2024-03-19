@@ -7,7 +7,7 @@ import Form from "./Form";
 import Loader from "../logo/Loader";
 
 import { TextField } from "@mui/material";
-
+import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
 const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading }, formRef) => {
     const { store, dispatch } = useGlobalContext();
@@ -47,7 +47,7 @@ const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, se
         <Form form={form}
             setForm={setForm}
             legend={editMode ? "Edit your shift notes" : "Add and submit your shift notes"}
-            buttonText="Submit shift notes"
+            buttonText={<><PublishRoundedIcon />Submit shift notes</>}
             postURL={`${baseURL}/shift/notes/${store.selectedShift._id}`}
             callback={submitShiftNotes}
             validation={checkForChanges}

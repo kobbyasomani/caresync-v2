@@ -8,6 +8,7 @@ import Form from "./Form";
 import Loader from "../logo/Loader";
 
 import { TextField } from "@mui/material";
+import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
 const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMode, ...rest }, formRef) => {
     const { store, dispatch } = useGlobalContext();
@@ -70,7 +71,7 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
             ref={formRef}
             setForm={setForm}
             legend={editMode ? "Edit your incident report" : "Create a new incident report"}
-            buttonText="Submit incident report"
+            buttonText={<><PublishRoundedIcon /> Submit incident report</>}
             postURL={`${baseURL}/shift/reports/${store.selectedShift._id}`}
             callback={createIncidentReport}
             setParentIsLoading={handleChildLoadState}

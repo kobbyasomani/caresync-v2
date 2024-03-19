@@ -4,7 +4,8 @@ import { useModalContext } from "../../utils/modalUtils";
 import Incident from "./Incident";
 
 import { ButtonPrimary } from "../root/Buttons";
-import { Typography, Stack, Box } from "@mui/material";
+import { Typography, Stack, Box, Fade, Grow } from "@mui/material";
+import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
 
 const IncidentReports = (props) => {
     const { store } = useGlobalContext();
@@ -12,7 +13,7 @@ const IncidentReports = (props) => {
     const { shiftUtils } = props;
     const [incidentReports, setIncidentReports] = useState(store.selectedShift.incidentReports);
 
-    const createIncidentReport = useCallback(() => {
+    const handleCreateIncidentReport = useCallback(() => {
         modalDispatch({
             type: "setActiveDrawer",
             data: "create incident report"
@@ -51,12 +52,12 @@ const IncidentReports = (props) => {
         if (shiftUtils.userIsShiftCarer
             && (shiftUtils.isInProgress || shiftUtils.isInEditWindow)) {
             return (
-                <ButtonPrimary onClick={createIncidentReport} >
+                <ButtonPrimary onClick={handleCreateIncidentReport} startIcon={<ReportRoundedIcon />}>
                     Create Incident Report
                 </ButtonPrimary >
             );
         }
-    }, [createIncidentReport, shiftUtils]);
+    }, [handleCreateIncidentReport, shiftUtils]);
 
     useEffect(() => {
         setIncidentReports(store.selectedShift.incidentReports);
@@ -64,11 +65,15 @@ const IncidentReports = (props) => {
 
     return (
         <>
-            <Typography variant="h3" component="p">Incident Reports</Typography>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-                {renderAddReportButton()}
-            </Box>
+            <Fade in={true}>
+                <Typography variant="h3" component="p">Incident Reports</Typography>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                    {renderAddReportButton()}
+                </Box>
+            </Grow>
         </>
     )
 }

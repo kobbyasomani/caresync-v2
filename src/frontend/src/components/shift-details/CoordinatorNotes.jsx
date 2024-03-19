@@ -8,7 +8,7 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Carer from "../Carer";
 import Loader from "../logo/Loader";
 
-import { Typography, Box, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Typography, Box, Stack, useMediaQuery, useTheme, Fade, Grow } from "@mui/material";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 
@@ -77,26 +77,32 @@ const CoordinatorNotes = (props) => {
 
     return isLoading ? <Loader /> : (
         <>
-            <Typography variant="h3" component="p">Coordinator Notes</Typography>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-            </Box>
-            <Box mt={2}>
-                <ShiftCoordinatorDetails />
-                <Stack direction="row" gap={2} justifyContent="center" mt={2}>
-                    {store.selectedClient.isCoordinator
-                        && (shiftUtils.isPending || shiftUtils.isInProgress) ?
-                        <ButtonPrimary onClick={handleEditShift} startIcon={<AssignmentIcon />}
+            <Fade in={true}>
+                <Typography variant="h3" component="p">Coordinator Notes</Typography>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                </Box>
+            </Grow>
+            <Grow in={true}>
+                <Box mt={2}>
+                    <ShiftCoordinatorDetails />
+                    <Stack direction="row" gap={2} justifyContent="center" mt={2}>
+                        {store.selectedClient.isCoordinator
+                            && (shiftUtils.isPending || shiftUtils.isInProgress) ?
+                            <ButtonPrimary onClick={handleEditShift} startIcon={<AssignmentIcon />}
+                                sx={{ margin: "0" }}>
+                                Edit notes
+                            </ButtonPrimary>
+                            : null}
+                        <ButtonSecondary onClick={handleOpenCareTeamList} startIcon={<Diversity3Icon />}
                             sx={{ margin: "0" }}>
-                            Edit notes
-                        </ButtonPrimary>
-                        : null}
-                    <ButtonSecondary onClick={handleOpenCareTeamList} startIcon={<Diversity3Icon />}
-                        sx={{ margin: "0" }}>
-                        {xsScreen ? "Care team" : "View full care team"}
-                    </ButtonSecondary>
-                </Stack>
-            </Box>
+                            {xsScreen ? "Care team" : "View full care team"}
+                        </ButtonSecondary>
+                    </Stack>
+                </Box>
+            </Grow>
         </>
     )
 }
