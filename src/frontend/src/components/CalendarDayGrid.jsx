@@ -120,7 +120,6 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
                 }}
                 eventColor="#79589fff"
                 eventOrderStrict={true}
-                data-testid="calendar"
             />
         </StyleWrapper>
     );

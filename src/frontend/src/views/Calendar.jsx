@@ -379,7 +379,7 @@ export const Calendar = () => {
                         lg: "1 / 4 / span 12 / span 9"
                     }}
                         sx={{ mb: { xs: 1, lg: 0 } }}>
-                        <Box id="calendar">
+                        <Box id="calendar" data-testid="calendar">
                             <CalendarDayGrid
                                 ref={calendarRef}
                                 calendarApi={calendarApi}

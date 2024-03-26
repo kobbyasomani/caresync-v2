@@ -84,11 +84,14 @@ const SelectClient = () => {
     }
 
     return isLoading ? (
-        <>
-            <Typography variant="h1">Hi, {store.user.firstName}</Typography>
-            <Typography variant="h2">Fetching clients...</Typography>
+        <Container maxWidth="md" sx={{ mt: 4 }}>
+            <Typography variant="h1" sx={{ fontSize: xsScreen ? theme.typography.h2 : theme.typography.h1 }}>
+                Hi, {store.user.firstName}</Typography>
+            <Typography variant="h2" sx={{
+                fontSize: xsScreen ? theme.typography.h3 : theme.typography.h2
+            }}> Fetching clients...</Typography>
             <Loader />
-        </>
+        </Container>
     ) : (
         <Container maxWidth="md" sx={{ mt: 4 }}>
             <Typography variant="h1" sx={{ fontSize: xsScreen ? theme.typography.h2 : theme.typography.h1 }}>
@@ -96,15 +99,15 @@ const SelectClient = () => {
             </Typography>
             {Object.keys(store.clients).length > 0
                 && (store.clients.carer.length > 0 || store.clients.coordinator.length > 0) ?
-                (
-                    <>
-                        <Typography variant="h2" sx={{ fontSize: xsScreen ? theme.typography.h3 : theme.typography.h2 }}>
-                            Select a client
-                        </Typography>
-                        <Typography variant="body1">You can switch between clients you are coordinating and/or caring for.</Typography>
-                    </>
+                (<>
+                    <Typography variant="h2" sx={{
+                        fontSize: xsScreen ? theme.typography.h3 : theme.typography.h2
+                    }}>
+                        Select a client
+                    </Typography>
+                    <Typography variant="body1">You can switch between clients you are coordinating and/or caring for.</Typography>
+                </>
                 ) : null}
-            {/* // TODO: Adjust tab font sizing at xs screen sizes */}
             <Tabs value={tabValue} onChange={handleChangeTabs} variant="scrollable">
                 <Tab label="Coordinating for" component="h3" icon={<AssignmentIcon />} iconPosition="start"
                     sx={{
