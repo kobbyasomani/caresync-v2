@@ -75,7 +75,7 @@ const CoordinatorNotes = () => {
     return isLoading ? <Loader /> : (
         <>
             <Fade in={true}>
-                <Typography variant="h3" component="p">Coordinator Notes</Typography>
+                <Typography variant="h3">Coordinator Notes</Typography>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

@@ -166,7 +166,7 @@ const ShiftNotes = () => {
         <>
             <Fade in={true}>
                 <Stack direction="row" alignItems="flex-end" sx={{ position: "relative" }}>
-                    <Typography variant="h3" component="p">Shift Notes</Typography>
+                    <Typography variant="h3">Shift Notes</Typography>
                     {renderHeaderButtons()}
                 </Stack>
             </Fade>

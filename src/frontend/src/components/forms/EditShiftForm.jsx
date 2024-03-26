@@ -8,7 +8,6 @@ import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
 import { ButtonSecondary } from "../root/Buttons";
 import Modal from "../Modal";
-import Loader from "../logo/Loader";
 
 import {
     TextField, Stack, FormControl, Select, InputLabel, MenuItem
@@ -21,7 +20,6 @@ export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const modalId = "edit-shift";
-    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     // Set the initial form and alert state
@@ -39,7 +37,7 @@ export const EditShiftForm = () => {
     const clearAlert = useCallback(() => {
         setAlert({});
     }, []);
-    const [shiftUpdated, setShiftUpdated] = useState(false);
+    const [shiftUpdated, setShiftUpdated] = useState(true);
     const [carers, setCarers] = useState([]);
 
     // Handle carer selection
@@ -147,8 +145,9 @@ export const EditShiftForm = () => {
                 setAlert({ severity: "success", message: "The shift was updated successfully." });
                 setShiftUpdated(true);
 
-                // Finished loading
-                setIsLoading(false);
+                getCarers(store.selectedClient._id).then(carers => {
+                    setCarers(carers);
+                });
             });
     }, [dispatch, store.selectedClient]);
 
@@ -175,19 +174,26 @@ export const EditShiftForm = () => {
         setShiftUpdated(false);
     }, [clearAlert, setForm]);
 
-    // Get the carers for the selected client
-    useEffect(() => {
-        setIsLoading(true);
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            setIsLoading(false);
-        });
-    }, [store.selectedClient]);
-
     useEffect(() => {
         setShiftTime("Start", dayjs(new Date(store.selectedShift.shiftStartTime)));
         setShiftTime("End", dayjs(new Date(store.selectedShift.shiftEndTime)));
-    }, [store.selectedShift, setShiftTime]);
+        setForm({
+            type: "setForm",
+            name: "carer",
+            value: store.selectedShift.carer._id
+        });
+        setForm({
+            type: "setForm",
+            name: "coordinatorNotes",
+            value: store.selectedShift.coordinatorNotes
+        });
+    }, [store.selectedShift, setForm, setShiftTime]);
+
+    useEffect(() => {
+        getCarers(store.selectedClient._id).then((carers) => {
+            setCarers(carers);
+        });
+    }, [carers.length, store.selectedClient._id]);
 
     return <Modal modalId={modalId}
         title="Edit shift details"
@@ -196,77 +202,72 @@ export const EditShiftForm = () => {
     has commenced.`}
         alert={{ severity: alert?.severity, message: alert?.message }}
         onClose={handleOnClose}
-    // alertPosition="bottom"
     >
-        {isLoading ? <Loader /> : (
-            <>
-                <Form form={form}
-                    setForm={setForm}
-                    legend="Update shift details"
-                    submitButtonText="Update shift"
-                    buttonSecondary={shiftUpdated ?
-                        <ButtonSecondary onClick={handleManageShift}>
-                            Manage shift
-                        </ButtonSecondary>
-                        : null}
-                    postURL={`/shift/${store.selectedShift._id}`}
-                    method="PUT"
-                    validation={handleValidation}
-                    callback={handleUpdateShifts}
-                    dontClear
+        <Form form={form}
+            setForm={setForm}
+            legend="Update shift details"
+            submitButtonText="Update shift"
+            buttonSecondary={shiftUpdated ?
+                <ButtonSecondary onClick={handleManageShift}>
+                    Manage shift
+                </ButtonSecondary>
+                : null}
+            postURL={`/shift/${store.selectedShift._id}`}
+            method="PUT"
+            validation={handleValidation}
+            callback={handleUpdateShifts}
+            dontClear
+        >
+            <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
+            <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
+            <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
+                <TimePicker label="Shift Start Time"
+                    inputProps={{ name: "shiftStartTime", required: true }}
+                    time={form.inputs.shiftStartTime}
+                    setTime={setShiftTime}
+                    minDate={dayjs(new Date())}
+                    // Cannot change the start time of an already-commenced shift
+                    disabled={new Date(store.selectedShift.shiftStartTime) < new Date()}
+                />
+                <TimePicker label="Shift End Time"
+                    inputProps={{ name: "shiftEndTime", required: true }}
+                    time={form.inputs.shiftEndTime}
+                    setTime={setShiftTime}
+                    minDate={dayjs(new Date())}
+                />
+            </Stack>
+            <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
+            <FormControl fullWidth>
+                <InputLabel id="carer-select">Select Carer</InputLabel>
+                <Select
+                    labelId="carer-select"
+                    id="carer-select"
+                    label="Select Carer"
+                    required
+                    mui="Select"
+                    value={form.inputs.carer}
+                    name="carer"
+                    onChange={selectCarer}
+                    inputProps={{ id: "carerID-input" }}
                 >
-                    <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
-                    <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
-                    <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
-                        <TimePicker label="Shift Start Time"
-                            inputProps={{ name: "shiftStartTime", required: true }}
-                            time={form.inputs.shiftStartTime}
-                            setTime={setShiftTime}
-                            minDate={dayjs(new Date())}
-                            // Cannot change the start time of an already-commenced shift
-                            disabled={new Date(store.selectedShift.shiftStartTime) < new Date()}
-                        />
-                        <TimePicker label="Shift End Time"
-                            inputProps={{ name: "shiftEndTime", required: true }}
-                            time={form.inputs.shiftEndTime}
-                            setTime={setShiftTime}
-                            minDate={dayjs(new Date())}
-                        />
-                    </Stack>
-                    <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
-                    <FormControl fullWidth>
-                        <InputLabel id="carer-select">Select Carer</InputLabel>
-                        <Select
-                            labelId="carer-select"
-                            id="carer-select"
-                            label="Select Carer"
-                            required
-                            mui="Select"
-                            value={form.inputs.carer}
-                            name="carer"
-                            onChange={selectCarer}
-                            inputProps={{ id: "carerID-input" }}
-                        >
-                            {carers.map(carer => {
-                                return (
-                                    <MenuItem value={carer._id} key={carer._id}>
-                                        {`${carer.firstName} ${carer.lastName}`}
-                                    </MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </FormControl>
-                    <TextField multiline
-                        minRows={3}
-                        label="Coordinator Notes"
-                        id="coordinator-notes"
-                        type="text"
-                        name="coordinatorNotes"
-                        placeholder="Some things to take note of during this shift are..."
-                        mui="TextField" />
-                </Form>
-            </>
-        )}
+                    {carers.map(carer => {
+                        return (
+                            <MenuItem value={carer._id} key={carer._id}>
+                                {`${carer.firstName} ${carer.lastName}`}
+                            </MenuItem>
+                        )
+                    })}
+                </Select>
+            </FormControl>
+            <TextField multiline
+                minRows={3}
+                label="Coordinator Notes"
+                id="coordinator-notes"
+                type="text"
+                name="coordinatorNotes"
+                placeholder="Some things to take note of during this shift are..."
+                mui="TextField" />
+        </Form>
     </Modal >
 }
 

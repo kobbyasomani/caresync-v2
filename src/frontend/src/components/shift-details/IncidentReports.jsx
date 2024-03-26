@@ -16,7 +16,7 @@ const IncidentReports = () => {
     const navigate = useNavigate();
 
     const handleCreateIncidentReport = useCallback(() => {
-        navigate("/calendar/shift-details/create-incident-report");
+        navigate("/calendar/shift-details/incident-reports/create-incident-report");
     }, [navigate]);
 
     const renderContent = useCallback(() => {
@@ -65,7 +65,7 @@ const IncidentReports = () => {
     return (
         <>
             <Fade in={true}>
-                <Typography variant="h3" component="p">Incident Reports</Typography>
+                <Typography variant="h3">Incident Reports</Typography>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

@@ -187,7 +187,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                         </IconButton>
                     </Tooltip>
                 ) : null}
-                <Tooltip title="Shift overview"
+                <Tooltip title="Shift Overview"
                     slotProps={{
                         popper: {
                             modifiers: [
@@ -237,7 +237,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h2" component="p">
+                    <Typography variant="h2">
                         Shift on {Object.keys(store.selectedShift).length > 0 ? (
                             dateAsObj(store.selectedShift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "long" })
                         ) : "D Month YYYY"

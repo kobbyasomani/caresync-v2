@@ -54,10 +54,18 @@ const NavBar = () => {
             <Container>
                 <Toolbar>
                     <Button component={RouterLink}
-                        to={store.isAuth && store.selectedClient ? "/calendar"
-                            : store.isAuth && !store.selectedClient ? "/"
-                                : "/"}>
-                        <IconSmall />
+                        to={store.isAuth && store.selectedClient?._id ? "/calendar"
+                            : store.isAuth && !store.selectedClient?._id ? "/"
+                                : "/"} startIcon={<IconSmall />}>
+                        <Typography variant="h5" component="h1"
+                            sx={{
+                                color: "white",
+                                textTransform: "none",
+                                position: { xs: "absolute", md: "static" },
+                                left: { xs: "-300%", md: "initial" }
+                            }}>
+                            CareSync
+                        </Typography>
                     </Button>
                     {navItems.filter(item => item.name && item.to).map((item, index) =>
                         <Button

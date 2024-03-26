@@ -5,7 +5,7 @@ import { useModalContext } from "../utils/modalUtils";
 
 import {
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    useMediaQuery, useTheme, IconButton, Typography, Alert, Grow
+    useMediaQuery, useTheme, IconButton, Alert, Grow
 } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -82,10 +82,8 @@ const Modal = ({ modalId, title, text, alert, alertPosition, actions,
             maxWidth="xs"
             aria-labelledby="modal-title"
             {...rest}>
-            <DialogTitle sx={{ pt: 3 }}>
-                <Typography variant="h2" component="p" id="modal-title" sx={{ fontWeight: "bold", mt: 3 }}>
-                    {title || modalStore.activeModal.title}
-                </Typography>
+            <DialogTitle variant="h2" sx={{ pt: 3, fontWeight: "bold", mt: 3 }} id="modal-title">
+                {title || modalStore.activeModal.title}
                 <IconButton className="close-modal"
                     onClick={handleCloseModal}
                     sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}>

@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { ButtonPrimary } from "../root/Buttons";
 
-import { Typography, Box, useTheme } from "@mui/material";
+import { Typography, Box, useTheme, Fade, Grow } from "@mui/material";
 
 const PrevShiftHandover = () => {
     const { store } = useGlobalContext();
@@ -19,7 +19,7 @@ const PrevShiftHandover = () => {
 
     const handleViewPreviousShift = useCallback(() => {
         navUtils.navigateToShift("prev");
-    }, [prevShift, navUtils]);
+    }, [navUtils]);
 
     const renderContent = () => {
         if (prevShift && prevShift.handoverNotes) {
@@ -57,11 +57,16 @@ const PrevShiftHandover = () => {
 
     return (
         <>
-            <Typography variant="h3" component="p">Previous Shift Handover</Typography>
-            <Box sx={{ mt: 1 }}>
-                {renderContent()}
-                {renderPrevShiftButton()}
-            </Box>
+            <Fade in={true}>
+                <Typography variant="h3">Previous Shift Handover</Typography>
+            </Fade>
+            <Grow in={true}>
+                <Box sx={{ mt: 1 }}>
+                    {renderContent()}
+                    {renderPrevShiftButton()}
+                </Box>
+            </Grow>
+
         </>
     )
 }

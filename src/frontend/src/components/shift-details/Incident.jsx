@@ -83,7 +83,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
                                 mr: "0.5rem", position: "absolute", top: 5, left: 2,
                                 color: theme.palette.primary.main, width: "2rem"
                             }} />
-                            <Typography variant="h6" component="p" className="shift-date" fontWeight="bold">
+                            <Typography variant="h6" component="h4" className="shift-date" fontWeight="bold">
                                 {incident ? `Incident ${index}` : "Could not load incident number"}
                             </Typography>
                         </Box>

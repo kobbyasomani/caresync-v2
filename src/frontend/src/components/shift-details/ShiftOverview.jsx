@@ -211,7 +211,7 @@ const ShiftOverview = () => {
                                         right: "0.5rem", top: "0.5rem",
                                         color: theme.palette.primary.main
                                     }} />
-                                    <Typography variant="h6" component="p" color={theme.palette.primary.dark}>
+                                    <Typography variant="h6" component="h3" color={theme.palette.primary.dark}>
                                         Notes from Coordinator
                                     </Typography>
                                     <Typography variant="body1">
@@ -239,7 +239,7 @@ const ShiftOverview = () => {
                             <CardActionArea onClick={() => handleViewPanel("prev-shift-handover")}>
                                 <CardContent>
                                     <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
-                                    <Typography variant="h6" component="p">
+                                    <Typography variant="h6" component="h3">
                                         Handover from previous shift
                                     </Typography>
                                     <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
@@ -267,7 +267,7 @@ const ShiftOverview = () => {
                                     color: store.selectedShift.shiftNotes?.shiftNotesText ?
                                         theme.palette.primary.main : theme.palette.grey[500]
                                 }} />
-                                <Typography variant="h5" component="p">Shift Notes</Typography>
+                                <Typography variant="h5" component="h3">Shift Notes</Typography>
                                 {renderContent("shift notes")}
                             </CardContent>
                         </CardActionArea>
@@ -284,7 +284,7 @@ const ShiftOverview = () => {
                                         color: store.selectedShift.incidentReports.length > 0 ?
                                             theme.palette.error.main : theme.palette.grey[500]
                                     }} />
-                                    <Typography variant="h5" component="p">
+                                    <Typography variant="h5" component="h3">
                                         Incidents {store.selectedShift.incidentReports.length > 0 ?
                                             `(${store.selectedShift.incidentReports.length})`
                                             : null}
@@ -314,7 +314,7 @@ const ShiftOverview = () => {
                                     color: store.selectedShift.handoverNotes ?
                                         theme.palette.primary.main : theme.palette.grey[500]
                                 }} />
-                                <Typography variant="h5" component="p">Handover</Typography>
+                                <Typography variant="h5" component="h3">Handover</Typography>
                                 {renderContent("handover")}
                             </CardContent>
                         </CardActionArea>
@@ -329,7 +329,7 @@ const ShiftOverview = () => {
                                     position: "absolute", right: "0.5rem", top: "0.5rem",
                                     color: theme.palette.primary.main
                                 }} />
-                                <Typography variant="h5" component="p">Shift Carer</Typography>
+                                <Typography variant="h5" component="h3">Shift Carer</Typography>
                                 <List dense>
                                     {[1,].map(item => {
                                         return (

@@ -21,7 +21,7 @@ import CoordinatorNotes from "./components/shift-details/CoordinatorNotes";
 import PrevShiftHandover from "./components/shift-details/PrevShiftHandover";
 import ShiftNotes from "./components/shift-details/ShiftNotes";
 import IncidentReports from "./components/shift-details/IncidentReports";
-import IncidentReportForm from "./components/forms/IncidentReportForm";
+import CreateIncidentReport from "./components/shift-details/CreateIncidentReport";
 import IncidentReportDetails from "./components/shift-details/IncidentReportDetails";
 import HandoverNotes from "./components/shift-details/HandoverNotes";
 
@@ -82,8 +82,8 @@ const router = createBrowserRouter([
                         element: <IncidentReportDetails />
                       },
                       {
-                        path: "/calendar/shift-details/create-incident-report",
-                        element: <IncidentReportForm />
+                        path: "/calendar/shift-details/incident-reports/create-incident-report",
+                        element: <CreateIncidentReport />
                       },
                       {
                         path: "/calendar/shift-details/handover-notes",

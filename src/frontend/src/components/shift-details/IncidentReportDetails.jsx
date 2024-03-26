@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react"
+import React, { useState, useCallback, useRef, useEffect, useMemo } from "react"
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -31,6 +31,12 @@ const IncidentReportDetails = () => {
     const modalId = `confirmDeleteIncident_${incidentReport._id}`;
     const formRef = useRef(null);
     const navigate = useNavigate();
+
+    const incidentReportIndex = useMemo(() => {
+        return store.selectedShift.incidentReports.indexOf(
+            store.selectedShift.incidentReports.find(
+                report => report._id === store.selectedIncidentReport._id)) + 1
+    }, [store.selectedShift, store.selectedIncidentReport]);
 
     const toggleEditMode = useCallback((override) => {
         setEditMode(override || !editMode);
@@ -89,15 +95,6 @@ const IncidentReportDetails = () => {
         setIsLoading(childIsLoading);
     }, []);
 
-    useEffect(() => {
-        setIncidentReport(store.selectedIncidentReport);
-    }, [store.selectedIncidentReport])
-
-    useEffect(() => {
-        setIsEditable(shiftUtils.userIsShiftCarer
-            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
-    }, [shiftUtils]);
-
     const renderContent = useCallback(() => {
         if (Object.keys(incidentReport).length > 0) {
             if (!editMode) {
@@ -145,15 +142,23 @@ const IncidentReportDetails = () => {
                 )
             }
         }
-
     }, [incidentReport, editMode, toggleEditMode, isEditable, isLoading,
         handleChildLoadState, handleConfirmDeleteIncident, handleUpdateIncident]);
+
+    useEffect(() => {
+        setIncidentReport(store.selectedIncidentReport);
+    }, [store.selectedIncidentReport])
+
+    useEffect(() => {
+        setIsEditable(shiftUtils.userIsShiftCarer
+            && (shiftUtils.isInProgress || shiftUtils.isInEditWindow));
+    }, [shiftUtils]);
 
     return (
         <>
             <Fade in={true}>
                 <Stack direction="row" alignItems="flex-end">
-                    <Typography variant="h3" component="p">Incident Report</Typography>
+                    <Typography variant="h3">Incident Report {incidentReportIndex}</Typography>
                     {Object.keys(incidentReport).length > 0 ? (
                         <ButtonDownload
                             tooltip="Download Incident Report"

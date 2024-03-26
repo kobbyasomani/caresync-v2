@@ -334,7 +334,7 @@ export const Calendar = () => {
                         }}>
                         {store.featuredShift?._id ? (
                             <section>
-                                <Typography variant="h3" sx={{ mb: 1 }}>
+                                <Typography variant="h3" component="h2" sx={{ mb: 1 }}>
                                     Upcoming Shift
                                 </Typography>
                                 <Shift featured shift={store.featuredShift} />
@@ -342,7 +342,7 @@ export const Calendar = () => {
                             </section>
                         ) : (
                             <section>
-                                <Typography variant="h3">
+                                <Typography variant="h3" component="h2">
                                     No upcoming shift
                                 </Typography>
                                 <SidebarButtonAddShift variant={{ xl: "full" }} calendarApi={calendarApi} />

@@ -133,7 +133,7 @@ const HandoverNotes = () => {
     return (
         <>
             <Fade in={true}>
-                <Typography variant="h3" component="p">Handover Notes</Typography>
+                <Typography variant="h3">Handover Notes</Typography>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

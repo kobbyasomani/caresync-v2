@@ -1,8 +1,10 @@
+import { useGlobalContext } from "../../utils/globalUtils";
 import IncidentReportForm from "../forms/IncidentReportForm";
 
 import { Typography, Box, Grow } from "@mui/material";
 
 const CreateIncidentReport = () => {
+    const { store } = useGlobalContext();
     const { shiftUtils } = store;
 
     const renderContent = () => {
@@ -30,7 +32,7 @@ const CreateIncidentReport = () => {
 
     return (
         <>
-            <Typography variant="h3" component="p">Incident Reports</Typography>
+            <Typography variant="h3">Incident Reports</Typography>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>
                     {renderContent()}
