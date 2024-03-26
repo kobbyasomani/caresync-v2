@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import "./styles/index.css"
 import axios from "axios";
-import baseURL from './utils/baseUrl';
+import { baseUrl_API } from './utils/baseUrl';
 
-axios.defaults.baseURL = baseURL;
+axios.defaults.baseUrl_API = baseUrl_API;
 axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import baseURL from "../../utils/baseUrl";
+import { baseUrl_API } from "../../utils/baseUrl";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { getAllShifts } from "../../utils/apiUtils";
@@ -33,7 +33,7 @@ export const ConfirmCancelShift = () => {
     const [isCancelled, setIsCancelled] = useState(!shiftExists());
 
     const cancelShift = useCallback(() => {
-        fetch(`${baseURL}/shift/${store.selectedShift._id}`, {
+        fetch(`${baseUrl_API}/shift/${store.selectedShift._id}`, {
             credentials: "include",
             method: "DELETE"
         }).then((response) => {

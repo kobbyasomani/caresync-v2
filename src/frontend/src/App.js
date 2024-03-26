@@ -181,9 +181,7 @@ function App() {
         text: `You can use the modalDispatch function to set the active modal 
 'title' and 'text' or pass them to the modal as props. The modal content in 
 the Calendar view will be the component returned by the URL path (/calendar/<path>).`
-      },
-      drawerHistory: [],
-      activeDrawer: "",
+      }
     });
     return (
       <ModalContext.Provider value={{ modalStore, modalDispatch }}>

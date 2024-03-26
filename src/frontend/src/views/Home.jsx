@@ -5,7 +5,7 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import { useHandleForm } from "../utils/formUtils";
-import baseURL from "../utils/baseUrl";
+import { baseUrl_API } from "../utils/baseUrl";
 
 import { TextField, Typography, Container, useTheme, Box } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
@@ -42,7 +42,7 @@ export default function Login() {
     }, [dispatch, navigate]);
 
     const handleStartDemo = useCallback(() => {
-        fetch(`${baseURL}/user/register-demo`, {
+        fetch(`${baseUrl_API}/user/register-demo`, {
             credentials: "include"
         })
             .then((response) => response.json())

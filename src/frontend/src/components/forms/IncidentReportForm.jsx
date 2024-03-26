@@ -2,7 +2,7 @@ import { useState, useCallback, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
-import baseURL from "../../utils/baseUrl";
+import { baseUrl_API } from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
 import Loader from "../logo/Loader";
@@ -70,7 +70,7 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
             setForm={setForm}
             legend={editMode ? "Edit your incident report" : "Create a new incident report"}
             submitButtonText={<><PublishRoundedIcon /> Submit incident report</>}
-            postURL={`${baseURL}/shift/reports/${store.selectedShift._id}`}
+            postURL={`${baseUrl_API}/shift/reports/${store.selectedShift._id}`}
             callback={handleCreateIncidentReport}
             setParentIsLoading={handleChildLoadState}
             validation={checkForChanges}

@@ -8,7 +8,7 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Loader from "../logo/Loader";
 import Form from "../forms/Form";
 import { useHandleForm } from "../../utils/formUtils";
-import baseURL from "../../utils/baseUrl";
+import { baseUrl_API } from "../../utils/baseUrl";
 
 import {
     Typography, useTheme, Alert, TextField,
@@ -106,7 +106,7 @@ const EditAccountForm = forwardRef((
         setForm={setForm}
         legend="Update your account details"
         hideSubmitButton
-        postURL={`${baseURL}/user/my-account`}
+        postURL={`${baseUrl_API}/user/my-account`}
         method="PUT"
         validation={handleValidation}
         callback={handleAfterSubmit}

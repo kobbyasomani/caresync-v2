@@ -1,4 +1,4 @@
-import baseURL from "./baseUrl";
+import { baseUrl_API } from "./baseUrl";
 
 /**
  * Returns a client object using a given client id. Includes the client's
@@ -8,7 +8,7 @@ import baseURL from "./baseUrl";
  * @returns {Object}
  */
 const getClient = async (clientId) => {
-    const client = await fetch(`${baseURL}/client/${clientId}`, {
+    const client = await fetch(`${baseUrl_API}/client/${clientId}`, {
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
@@ -34,7 +34,7 @@ const getCarers = async (clientId) => {
  * @returns {Array<Object>} An array of shift objects.
  */
 const getAllShifts = async (clientId) => {
-    const shifts = await fetch(`${baseURL}/shift/${clientId}`, {
+    const shifts = await fetch(`${baseUrl_API}/shift/${clientId}`, {
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const getAllShifts = async (clientId) => {
  * @returns {Object} A user object containing the _id, firstName, and lastName properties.
  */
 const getUserName = async (userId) => {
-    const userName = await fetch(`${baseURL}/user/name`, {
+    const userName = await fetch(`${baseUrl_API}/user/name`, {
         credentials: "include",
         method: "POST",
         headers: {
@@ -68,7 +68,7 @@ const getUserName = async (userId) => {
  * @returns {Object} An object containing the _id, firstName, lastName, email, and isConfirmed fields. 
  */
 const getUser = async () => {
-    const user = await fetch(`${baseURL}/user/my-account`, {
+    const user = await fetch(`${baseUrl_API}/user/my-account`, {
         credentials: "include",
     }).then(response => {
         if (response.status !== 200) {
@@ -87,7 +87,7 @@ const getUser = async () => {
  * @returns {Object} An object containing the updated _id, firstName, lastName, email, and isConfirmed fields. 
  */
 const updateUser = async (fields) => {
-    const user = await fetch(`${baseURL}/user/my-account`, {
+    const user = await fetch(`${baseUrl_API}/user/my-account`, {
         credentials: "include",
         method: "PUT",
         body: JSON.stringify(fields)
@@ -107,7 +107,7 @@ const updateUser = async (fields) => {
  * @param {json}body The key value pairs of fields to be updated in the shift object.
  */
 const updateShift = async (shiftID, body) => {
-    const updatedShift = await fetch(`${baseURL}/shift/${shiftID}`, {
+    const updatedShift = await fetch(`${baseUrl_API}/shift/${shiftID}`, {
         credentials: "include",
         method: "PUT",
         headers: {
@@ -125,7 +125,7 @@ const updateShift = async (shiftID, body) => {
  */
 const deleteIncidentReport = async (shiftID, incidentId) => {
     let error = null;
-    const response = await fetch(`${baseURL}/shift/reports/${shiftID}`, {
+    const response = await fetch(`${baseUrl_API}/shift/reports/${shiftID}`, {
         credentials: "include",
         method: "DELETE",
         headers: {

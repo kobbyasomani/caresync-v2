@@ -5,7 +5,6 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj, plusHours } from "../../utils/dateUtils";
 import Loader from "../logo/Loader";
-
 import EditShiftForm from "../forms/EditShiftForm";
 import ConfirmCancelShift from "../dialogs/ConfirmCancelShift";
 
@@ -80,39 +79,49 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
 
     }, [shifts, store.user._id, store.selectedShift, dispatch]);
 
-    const handleViewShift = useCallback((direction) => {
+    const handleNavigateToShift = useCallback((destination) => {
         let selectedShift;
         const prevShift = shiftUtils.prevShift;
         const nextShift = shiftUtils.nextShift;
-        if ((direction === "prev" && prevShift === null)
-            || (direction === "next" && nextShift === null)
-            || (direction === "in-progress" && Object.keys(store.inProgressShift).length === 0)) {
+        if ((destination === "prev" && prevShift === null)
+            || (destination === "next" && nextShift === null)
+            || (destination === "in-progress" && Object.keys(store.inProgressShift).length === 0)) {
             return;
         } else {
-            selectedShift = direction === "prev" ? prevShift
-                : direction === "next" ? nextShift
-                    : store.inProgressShift;
-            if (transition.timeout) {
-                clearTimeout(transition.timeout);
+            switch (true) {
+                case destination === "prev": selectedShift = prevShift; break;
+                case destination === "next": selectedShift = nextShift; break;
+                case destination === "in-progress": selectedShift = store.inProgressShift; break;
+                case (typeof destination === "string") && Boolean(destination.match(/[A-Za-z0-9]{24}/)):
+                    selectedShift = store.shifts.find(shift => shift._id === destination); break;
+                case destination?._id !== undefined:
+                    selectedShift = destination; break;
+                default:
+                    selectedShift = store?.selectedShift || {};
             }
-            setIsTransitioning(true);
-            setTimeout(() => {
-                setIsTransitioning(false);
-            }, transition.time * 1.5);
-            setTransition(prev => {
-                return {
-                    ...prev,
-                    timeout: setTimeout(() => {
-                        dispatch({
-                            type: "setSelectedShift",
-                            data: selectedShift
-                        });
-                        navigate("/calendar/shift-details");
-                    }, transition.time)
+            if (selectedShift) {
+                if (transition.timeout) {
+                    clearTimeout(transition.timeout);
                 }
-            });
+                setIsTransitioning(true);
+                setTimeout(() => {
+                    setIsTransitioning(false);
+                }, transition.time * 1.5);
+                setTransition(prev => {
+                    return {
+                        ...prev,
+                        timeout: setTimeout(() => {
+                            dispatch({
+                                type: "setSelectedShift",
+                                data: selectedShift
+                            });
+                            navigate("/calendar/shift-details");
+                        }, transition.time)
+                    }
+                });
+            }
         }
-    }, [dispatch, shiftUtils, transition, store.inProgressShift, navigate]);
+    }, [dispatch, shiftUtils, transition, store.shifts, store.inProgressShift, store.selectedShift, navigate]);
 
     const drawerContentWidth = "100%";
     const handleCloseDrawer = useCallback((event) => {
@@ -141,7 +150,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                 <Tooltip title="Previous shift" placement="left">
                     <span>
                         <IconButton color="primary" aria-label="Go to previous shift"
-                            onClick={() => handleViewShift("prev")}
+                            onClick={() => handleNavigateToShift("prev")}
                             disabled={Boolean(!shiftUtils.prevShift)}>
                             <ArrowBackRoundedIcon />
                         </IconButton>
@@ -151,7 +160,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                     <Tooltip title="In-progress shift">
                         <span>
                             <IconButton color="primary" aria-label="Go to in-progress shift"
-                                onClick={() => handleViewShift("in-progress")}
+                                onClick={() => handleNavigateToShift("in-progress")}
                                 disabled={shiftUtils.isInProgress}>
                                 <TodayRoundedIcon />
                             </IconButton>
@@ -161,7 +170,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                 <Tooltip title="Next shift" placement="right">
                     <span>
                         <IconButton color="primary" aria-label="Go to next shift"
-                            onClick={() => handleViewShift("next")}
+                            onClick={() => handleNavigateToShift("next")}
                             disabled={Boolean(!shiftUtils.nextShift)}>
                             <ArrowForwardRoundedIcon />
                         </IconButton>
@@ -181,7 +190,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                     <CloseIcon />
                 </IconButton>
             </Box></>
-    }, [location.pathname, modalStore.drawerIsOpen, handleBackToPrevDrawer, handleCloseDrawer, handleViewShift,
+    }, [location.pathname, modalStore.drawerIsOpen, handleBackToPrevDrawer, handleCloseDrawer, handleNavigateToShift,
         shiftUtils, store.inProgressShift]);
 
     const renderContent = useCallback(() => {
@@ -252,6 +261,14 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
             }
         </Box >
     }, [handleCloseDrawer, shiftUtils, store.selectedClient, store.selectedShift, theme]);
+
+    useEffect(() => {
+        dispatch({
+            type: "setNavUtil",
+            name: "navigateToShift",
+            function: handleNavigateToShift
+        });
+    }, [dispatch, shiftUtils, handleNavigateToShift]);
 
     useEffect(() => {
         modalDispatch({

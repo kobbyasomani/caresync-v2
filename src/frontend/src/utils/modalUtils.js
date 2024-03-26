@@ -13,8 +13,6 @@ const modalReducer = (state, action) => {
                     return {
                         ...state,
                         [`${action.data}IsOpen`]: true,
-                        id: "drawer",
-                        activeDrawer: action.view || ""
                     }
                 case "modal":
                 case "confirmation":
@@ -37,8 +35,6 @@ const modalReducer = (state, action) => {
                     return {
                         ...state,
                         [`${action.data}IsOpen`]: false,
-                        drawerHistory: [],
-                        // activeDrawer: ""
                     }
                 case "modal":
                 case "confirmation":
@@ -58,26 +54,6 @@ const modalReducer = (state, action) => {
             return {
                 ...state,
                 activeModal: action.data
-            }
-        case "setActiveDrawer":
-            if (action.data === "back") {
-                if (state.drawerHistory.length > 0) {
-                    return {
-                        ...state,
-                        activeDrawer: state.drawerHistory[state.drawerHistory.length - 1],
-                        drawerHistory: state.drawerHistory.slice(0, -1),
-                    }
-                } else {
-                    return state
-                }
-            } else {
-                const newActiveDrawer = action.data;
-                const clearHistory = newActiveDrawer === "";
-                return {
-                    ...state,
-                    drawerHistory: clearHistory ? [] : [...state.drawerHistory, state.activeDrawer],
-                    activeDrawer: newActiveDrawer
-                }
             }
         case "closeAllModals":
             return {

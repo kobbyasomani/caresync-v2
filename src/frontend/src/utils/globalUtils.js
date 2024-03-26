@@ -22,7 +22,8 @@ const emptyStore = {
     inProgressShift: {},
     selectedShiftIsInProgress: false,
     selectedIncidentReport: {},
-    refreshCalendar: ""
+    refreshCalendar: "",
+    navUtils: {}
 }
 
 /**
@@ -165,6 +166,14 @@ const globalReducer = (state, action) => {
             return {
                 ...state,
                 refreshCalendar: new Date().toLocaleString()
+            }
+        case "setNavUtil":
+            return {
+                ...state,
+                navUtils: {
+                    ...state.navUtils,
+                    [action.name]: action.function
+                }
             }
         default: return state;
     }

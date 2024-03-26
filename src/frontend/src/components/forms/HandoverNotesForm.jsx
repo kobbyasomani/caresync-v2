@@ -1,7 +1,7 @@
 import { useState, useCallback, forwardRef } from "react";
 
 import { useGlobalContext } from "../../utils/globalUtils";
-import baseURL from "../../utils/baseUrl";
+import { baseUrl_API } from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
 import Loader from "../logo/Loader";
@@ -53,7 +53,7 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
             submitButtonText={<><PublishRoundedIcon /> {
                 store.selectedShift.handoverNotes ?
                     "Update handover notes" : "Submit handover notes"}</>}
-            postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}
+            postURL={`${baseUrl_API}/shift/handover/${store.selectedShift._id}`}
             method="put"
             callback={updateHandoverNotes}
             validation={checkForChanges}

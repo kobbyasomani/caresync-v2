@@ -1,32 +1,25 @@
 import { useCallback, useMemo } from "react";
-import { useGlobalContext } from "../../utils/globalUtils";
-import { useModalContext } from "../../utils/modalUtils";
 
+import { useGlobalContext } from "../../utils/globalUtils";
 import { ButtonPrimary } from "../root/Buttons";
 
 import { Typography, Box, useTheme } from "@mui/material";
 
 const PrevShiftHandover = () => {
-    const { store, dispatch } = useGlobalContext();
-    const { modalDispatch } = useModalContext();
+    const { store } = useGlobalContext();
     const { shiftUtils } = store;
     const theme = useTheme();
+    const navUtils = store.navUtils;
 
-    const prevShift = useMemo(() => shiftUtils.prevShift, [shiftUtils]);
+    const prevShift = useMemo(() => {
+        return shiftUtils.prevShift
+    }, [shiftUtils]);
     const prevShiftStart = new Date(prevShift.shiftStartTime);
     const prevShiftEnd = new Date(prevShift.shiftEndTime);
 
     const handleViewPreviousShift = useCallback(() => {
-        dispatch({
-            type: "setSelectedShift",
-            data: prevShift
-        })
-        // TODO: Use navigate to update location rather than setActiveDrawer
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: ""
-        })
-    }, [dispatch, modalDispatch, prevShift]);
+        navUtils.navigateToShift("prev");
+    }, [prevShift, navUtils]);
 
     const renderContent = () => {
         if (prevShift && prevShift.handoverNotes) {
