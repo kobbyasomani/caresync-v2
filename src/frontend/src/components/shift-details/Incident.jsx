@@ -1,4 +1,5 @@
 import { React, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -19,16 +20,15 @@ const Incident = ({ incident, index, shiftUtils }) => {
     const modalId = `confirmDeleteIncident_${incident._id}`;
     const [shift, setShift] = useState(store.selectedShift);
 
-    const openIncident = useCallback(() => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: "incident report details"
-        });
+    const navigate = useNavigate();
+
+    const handleOpenIncident = useCallback(() => {
         dispatch({
             type: "setSelectedIncidentReport",
             data: incident
         });
-    }, [modalDispatch, dispatch, incident]);
+        navigate(`/calendar/shift-details/incident-reports/${incident._id}`);
+    }, [dispatch, incident, navigate]);
 
     const handleConfirmDeleteIncident = useCallback(() => {
         dispatch({
@@ -76,7 +76,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
         <>
             <Card variant="outlined" className="incident" data-testid="incident"
                 sx={{ display: "flex", alignItems: "center", position: "relative" }}>
-                <CardActionArea onClick={openIncident} sx={{ pl: 3 }}>
+                <CardActionArea onClick={handleOpenIncident} sx={{ pl: 3 }}>
                     <CardContent sx={{ pt: 1.5 }}>
                         <Box sx={{ display: "flex" }}>
                             <ReportRoundedIcon className="incident-icon" sx={{

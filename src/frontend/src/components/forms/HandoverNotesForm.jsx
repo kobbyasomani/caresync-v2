@@ -50,7 +50,7 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
         <Form form={form}
             setForm={setForm}
             legend={editMode ? "Edit your handover notes" : `Add handover notes for ${store.selectedClient.firstName}'s next care shift`}
-            buttonText={<><PublishRoundedIcon /> {
+            submitButtonText={<><PublishRoundedIcon /> {
                 store.selectedShift.handoverNotes ?
                     "Update handover notes" : "Submit handover notes"}</>}
             postURL={`${baseURL}/shift/handover/${store.selectedShift._id}`}

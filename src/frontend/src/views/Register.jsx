@@ -41,7 +41,7 @@ const Register = () => {
                 form={form}
                 setForm={setForm}
                 legend="Register an account"
-                buttonText="Register"
+                submitButtonText="Register"
                 postURL="/user/register"
                 callback={registerUser}
             >

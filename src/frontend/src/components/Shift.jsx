@@ -1,6 +1,6 @@
-import React from "react";
-import { useCallback } from "react";
-import { useModalContext } from "../utils/modalUtils";
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../utils/globalUtils";
 
 import {
@@ -15,8 +15,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const Shift = ({ featured, shift }) => {
     const { dispatch } = useGlobalContext();
-    const { modalDispatch } = useModalContext();
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const handleOpenShift = useCallback((event, subPanel) => {
         event.preventDefault();
@@ -25,16 +25,8 @@ const Shift = ({ featured, shift }) => {
             type: "setSelectedShift",
             data: shift
         });
-        modalDispatch({
-            type: "close",
-            data: "modal"
-        });
-        modalDispatch({
-            type: "open",
-            data: "drawer",
-            view: subPanel || ""
-        });
-    }, [modalDispatch, dispatch, shift]);
+        navigate(`/calendar/shift-details/${subPanel || ""}`);
+    }, [dispatch, shift, navigate]);
 
     return (
         <Card variant="outlined" className={featured ? "shift featured" : "shift"}
@@ -79,7 +71,7 @@ const Shift = ({ featured, shift }) => {
                     }}>
                     <Tooltip title="Coordinator Notes">
                         <IconButton className="shift-button-coordinator-notes" data-testid="coordinator-notes"
-                            onClick={(event) => handleOpenShift(event, "coordinator notes")}
+                            onClick={(event) => handleOpenShift(event, "coordinator-notes")}
                             sx={{
                                 color: shift.coordinatorNotes ?
                                     theme.palette.primary.main : "inital"
@@ -89,7 +81,7 @@ const Shift = ({ featured, shift }) => {
                     </Tooltip>
                     <Tooltip title="Shift Notes">
                         <IconButton className="shift-button-shift-notes" data-testid="notes"
-                            onClick={(event) => handleOpenShift(event, "shift notes")}
+                            onClick={(event) => handleOpenShift(event, "shift-notes")}
                             sx={{
                                 color: shift.shiftNotes?.shiftNotesText ?
                                     theme.palette.primary.main : "inital"
@@ -99,7 +91,7 @@ const Shift = ({ featured, shift }) => {
                     </Tooltip>
                     <Tooltip title="Handover">
                         <IconButton className="shift-button-handover" data-testid="handover"
-                            onClick={(event) => handleOpenShift(event, "handover notes")}
+                            onClick={(event) => handleOpenShift(event, "handover-notes")}
                             sx={{
                                 color: shift.handoverNotes ?
                                     theme.palette.primary.main : "inital"
@@ -109,7 +101,7 @@ const Shift = ({ featured, shift }) => {
                     </Tooltip>
                     <Tooltip title="Incident Reports">
                         <IconButton className="shift-button-incidents" data-testid="incidents"
-                            onClick={(event) => handleOpenShift(event, "incident reports")}
+                            onClick={(event) => handleOpenShift(event, "incident-reports")}
                             sx={{
                                 color: shift.incidentReports?.length > 0 ?
                                     theme.palette.error.main : "inital"

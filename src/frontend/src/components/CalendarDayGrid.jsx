@@ -44,9 +44,7 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
             data: "modal",
             id: "select-shift-by-date"
         });
-        // Navigate to Select Shift by Date
-        navigate("/calendar/select-shift-by-date")
-    }, [dispatch, modalDispatch, navigate]);
+    }, [dispatch, modalDispatch]);
 
     // Handle clicking a on a calendar event
     const handleEventClick = useCallback((eventClickInfo) => {
@@ -58,11 +56,8 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
             type: "setSelectedShift",
             data: shift
         });
-        modalDispatch({
-            type: "open",
-            data: "drawer"
-        });
-    }, [dispatch, modalDispatch]);
+        navigate("/calendar/shift-details");
+    }, [dispatch, navigate]);
 
     // Default the selected day to the current day
     useEffect(() => {

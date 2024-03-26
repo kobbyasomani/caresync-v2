@@ -6,10 +6,10 @@ import { ButtonPrimary } from "../root/Buttons";
 
 import { Typography, Box, useTheme } from "@mui/material";
 
-const PrevShiftHandover = (props) => {
+const PrevShiftHandover = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
     const theme = useTheme();
 
     const prevShift = useMemo(() => shiftUtils.prevShift, [shiftUtils]);
@@ -21,6 +21,7 @@ const PrevShiftHandover = (props) => {
             type: "setSelectedShift",
             data: prevShift
         })
+        // TODO: Use navigate to update location rather than setActiveDrawer
         modalDispatch({
             type: "setActiveDrawer",
             data: ""

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -13,9 +14,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const IncidentReportDetails = ({ shiftUtils }) => {
+const IncidentReportDetails = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const { shiftUtils } = store;
+    const location = useLocation();
 
     const [shift, setShift] = useState(store.selectedShift);
     const [incidentReport, setIncidentReport] = useState(store.selectedIncidentReport);
@@ -27,6 +30,7 @@ const IncidentReportDetails = ({ shiftUtils }) => {
     const theme = useTheme();
     const modalId = `confirmDeleteIncident_${incidentReport._id}`;
     const formRef = useRef(null);
+    const navigate = useNavigate();
 
     const toggleEditMode = useCallback((override) => {
         setEditMode(override || !editMode);
@@ -68,10 +72,6 @@ const IncidentReportDetails = ({ shiftUtils }) => {
     }, [dispatch, store.selectedShift._id, incidentReport._id, store.selectedClient._id]);
 
     const handleAfterConfirmDeleteIncident = useCallback(() => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: "back"
-        });
         dispatch({
             type: "setSelectedIncidentReport",
             data: {}
@@ -80,7 +80,10 @@ const IncidentReportDetails = ({ shiftUtils }) => {
             type: "setSelectedShift",
             data: shift
         });
-    }, [dispatch, shift, modalDispatch]);
+        if (location.pathname.includes(`/incident-reports/${store.selectedIncidentReport._id}`)) {
+            navigate("/calendar/shift-details/incident-reports", { replace: true });
+        }
+    }, [dispatch, shift, navigate, location.pathname, store.selectedIncidentReport._id]);
 
     const handleChildLoadState = useCallback((childIsLoading) => {
         setIsLoading(childIsLoading);

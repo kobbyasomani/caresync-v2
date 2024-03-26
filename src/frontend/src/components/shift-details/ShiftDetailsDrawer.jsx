@@ -1,18 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { dateAsObj, plusHours } from "../../utils/dateUtils";
-import Overview from "./ShiftOverview";
-import ShiftNotes from "./ShiftNotes";
-import HandoverNotes from "./HandoverNotes";
-import IncidentReports from "./IncidentReports";
-import CreateIncidentReport from "./CreateIncidentReport";
-import IncidentReportDetails from "./IncidentReportDetails";
-import PrevShiftHandover from "./PrevShiftHandover";
-import CoordinatorNotes from "./CoordinatorNotes";
 import Loader from "../logo/Loader";
+
+import EditShiftForm from "../forms/EditShiftForm";
+import ConfirmCancelShift from "../dialogs/ConfirmCancelShift";
 
 import {
     Grid, Box, Stack, Typography, Drawer, IconButton, Alert,
@@ -25,19 +20,19 @@ import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
-const ShiftDetailsDrawer = ({ isLoading, children }) => {
+const ShiftDetailsDrawer = ({ isLoading }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const theme = useTheme();
     const [shifts, setShifts] = useState(store.shifts);
     const [shiftUtils, setShiftUtils] = useState({});
+
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [transition, setTransition] = useState({
-        in: null,
-        out: null,
-        time: 200
+        time: 100
     });
 
     const getShiftUtils = useCallback(() => {
@@ -77,9 +72,13 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
             : shiftEndTimePlusEditWindow < nextShiftStartPlusTwoHours ?
                 shiftEndTimePlusEditWindow : nextShiftStartPlusTwoHours;
 
+        dispatch({
+            type: "SetShiftUtils",
+            data: shiftUtils
+        });
         return shiftUtils;
 
-    }, [shifts, store.user._id, store.selectedShift]);
+    }, [shifts, store.user._id, store.selectedShift, dispatch]);
 
     const handleViewShift = useCallback((direction) => {
         let selectedShift;
@@ -97,6 +96,9 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
                 clearTimeout(transition.timeout);
             }
             setIsTransitioning(true);
+            setTimeout(() => {
+                setIsTransitioning(false);
+            }, transition.time * 1.5);
             setTransition(prev => {
                 return {
                     ...prev,
@@ -105,16 +107,12 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
                             type: "setSelectedShift",
                             data: selectedShift
                         });
-                        modalDispatch({
-                            type: "setActiveDrawer",
-                            data: ""
-                        });
-                        setIsTransitioning(false);
+                        navigate("/calendar/shift-details");
                     }, transition.time)
                 }
             });
         }
-    }, [dispatch, modalDispatch, shiftUtils, transition, store.inProgressShift]);
+    }, [dispatch, shiftUtils, transition, store.inProgressShift, navigate]);
 
     const drawerContentWidth = "100%";
     const handleCloseDrawer = useCallback((event) => {
@@ -126,18 +124,18 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
             type: "close",
             data: "drawer"
         });
-        navigate("/calendar")
+        setTimeout(() => {
+            navigate("/calendar");
+        }, 200);
     }, [modalDispatch, navigate]);
 
     const handleBackToPrevDrawer = useCallback(() => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: "back"
-        })
-    }, [modalDispatch]);
+        // navigate(-1)
+        navigate(location.pathname.slice(0, location.pathname.lastIndexOf("/")));
+    }, [navigate, location.pathname]);
 
     const renderShiftNav = useCallback(() => {
-        // TODO: Add a 'Home' button to return to the shift overview from any sub-view
+        // TODO: Add a 'Home' button to return to the shift overview from any nested view
         return <>
             <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
                 <Tooltip title="Previous shift" placement="left">
@@ -172,42 +170,21 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
             </Box>
 
             <Box sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
-                {modalStore.activeDrawer ? (
+                {modalStore.drawerIsOpen && location.pathname !== "/calendar/shift-details" ? (
                     <IconButton className="prev-modal"
                         onClick={handleBackToPrevDrawer}>
                         <ArrowBackIcon />
                     </IconButton>
-                ) : (null)}
+                ) : null}
                 <IconButton className="close-modal"
                     onClick={handleCloseDrawer}>
                     <CloseIcon />
                 </IconButton>
             </Box></>
-    }, [handleBackToPrevDrawer, handleCloseDrawer, handleViewShift,
-        modalStore.activeDrawer, shiftUtils, store.inProgressShift]);
+    }, [location.pathname, modalStore.drawerIsOpen, handleBackToPrevDrawer, handleCloseDrawer, handleViewShift,
+        shiftUtils, store.inProgressShift]);
 
     const renderContent = useCallback(() => {
-        const injectActiveDrawer = () => {
-            switch (modalStore.activeDrawer) {
-                case "shift notes":
-                    return <ShiftNotes shiftUtils={shiftUtils} />
-                case "handover notes":
-                    return <HandoverNotes shiftUtils={shiftUtils} />
-                case "incident reports":
-                    return <IncidentReports shiftUtils={shiftUtils} />
-                case "create incident report":
-                    return <CreateIncidentReport shiftUtils={shiftUtils} />
-                case "incident report details":
-                    return <IncidentReportDetails shiftUtils={shiftUtils} />
-                case "prev shift handover":
-                    return <PrevShiftHandover shiftUtils={shiftUtils} />
-                case "coordinator notes":
-                    return <CoordinatorNotes shiftUtils={shiftUtils} />
-                default:
-                    return <Overview shiftUtils={shiftUtils} />
-            }
-        }
-
         return <Box
             sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 7.5 }, mt: 1 }}
             role="presentation"
@@ -265,18 +242,35 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
                     ) : null
                 }
             </Grid>
-
-            {injectActiveDrawer()}
-            {children}
+            <Outlet />
+            {store.selectedShift?._id ?
+                <>
+                    <EditShiftForm />
+                    <ConfirmCancelShift />
+                </>
+                : null
+            }
         </Box >
-    }, [handleCloseDrawer, children, modalStore, shiftUtils, store.selectedClient, store.selectedShift, theme]);
+    }, [handleCloseDrawer, shiftUtils, store.selectedClient, store.selectedShift, theme]);
+
+    useEffect(() => {
+        modalDispatch({
+            type: "open",
+            data: "drawer"
+        });
+    }, [modalDispatch]);
 
     useEffect(() => {
         setShifts(store.shifts);
-        if (Object.keys(store.selectedShift).length > 0) {
-            setShiftUtils(getShiftUtils());
+        if (store.selectedShift?._id) {
+            const updatedShiftUtils = getShiftUtils();
+            setShiftUtils(updatedShiftUtils);
+            dispatch({
+                type: "setShiftUtils",
+                data: updatedShiftUtils
+            });
         }
-    }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts]);
+    }, [store.selectedClient, getShiftUtils, store.selectedShift, store.shifts, dispatch]);
 
     /* Sets whether the selected shift is in progress,
     determining whether carer can enter notes and reports) */
@@ -287,20 +281,17 @@ const ShiftDetailsDrawer = ({ isLoading, children }) => {
         });
     }, [store.selectedShift, dispatch, shiftUtils]);
 
-    return isLoading ? <Loader /> : (
-        <>
-            <Drawer
-                id="shift-details-drawer"
-                // variant="persistent"
-                anchor="right"
-                open={modalStore.drawerIsOpen && Object.keys(store.selectedShift).length > 0}
-                onClose={handleCloseDrawer}>
-                {renderShiftNav()}
-                <Fade in={!isTransitioning}>
-                    {renderContent()}
-                </Fade>
-            </Drawer>
-        </>
+    return isLoading || !store.selectedShift?._id ? <Loader /> : (
+        <Drawer
+            id="shift-details-drawer"
+            anchor="right"
+            open={modalStore.drawerIsOpen}
+            onClose={handleCloseDrawer}>
+            {renderShiftNav()}
+            <Fade in={!isTransitioning}>
+                {renderContent()}
+            </Fade>
+        </Drawer>
     )
 }
 

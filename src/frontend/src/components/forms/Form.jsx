@@ -20,7 +20,8 @@ import { Box, Stack } from "@mui/material";
  * `inputs: {}` is an object containing input name-value pairs. 
  * `errors: []` is an array of error message strings.
  * @param {String} legend [optional] A legend to display at the top of the form fieldset.
- * @param {String} buttonText Text for the form submit button.
+ * @param {String} submitButtonText Text for the form submit button.
+ * @param {Object} buttonSecondary An optional secondary button to render in the form.
  * @param {String} buttonVariant set the mui button variant.
  * One of 'text', 'contained', or 'outlined' (defaults to contained).
  * @param {Boolean} hideSubmitButton If true, the submit button will be hidden. This
@@ -42,7 +43,8 @@ const Form = forwardRef((
         initialState,
         setForm,
         legend,
-        buttonText,
+        submitButtonText,
+        buttonSecondary,
         buttonVariant,
         postURL,
         method,
@@ -147,7 +149,6 @@ const Form = forwardRef((
         submitForm();
     }, [form, handleErrors, validation, submitForm]);
 
-
     return isLoading ? <Loader /> : (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
             <form>
@@ -194,20 +195,21 @@ const Form = forwardRef((
                             {formFeedback}
                         </div>) : null
                     }
-                    <Stack direction="row" gap={0}>
-                        {!hideSubmitButton ? (
+                    {!hideSubmitButton ? (
+                        <Stack direction="row">
                             <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
-                                {buttonText}
+                                {submitButtonText}
                             </ButtonPrimary>
-                        ) : <button ref={formRef} onClick={handleSubmit}
-                            style={{ opacity: 0 }}></button>
-                        }
-                        {form.errors?.includes("Error: Please confirm your email") ? (
-                            <ButtonPrimary onClick={sendVerificationEmail}>
-                                Resend verification email
-                            </ButtonPrimary>
-                        ) : (null)}
-                    </Stack>
+                            {buttonSecondary}
+                        </Stack>
+                    ) : <button ref={formRef} onClick={handleSubmit}
+                        style={{ opacity: 0 }}></button>
+                    }
+                    {form.errors?.includes("Error: Please confirm your email") ? (
+                        <ButtonPrimary onClick={sendVerificationEmail}>
+                            Resend verification email
+                        </ButtonPrimary>
+                    ) : (null)}
                 </fieldset>
             </form>
         </Box >

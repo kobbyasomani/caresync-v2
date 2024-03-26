@@ -5,7 +5,6 @@ const useModalContext = () => useContext(ModalContext);
 
 const modalReducer = (state, action) => {
     // console.log("Modal Reducer:", action.type, action.data, action.id);
-    // TODO: Fix history when the user opens a drawer to a non-home view (pass histoy array?)
     switch (action.type) {
         case "open":
             switch (action.data) {

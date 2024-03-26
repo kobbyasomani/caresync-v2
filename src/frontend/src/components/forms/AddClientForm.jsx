@@ -66,7 +66,7 @@ export const AddClient = () => {
             <Form form={form}
                 setForm={setForm}
                 legend="New client"
-                buttonText="Add client"
+                submitButtonText="Add client"
                 postURL="/client"
                 callback={setNewClient}
             >

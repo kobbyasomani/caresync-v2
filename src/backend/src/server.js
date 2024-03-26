@@ -29,6 +29,7 @@ app.use('/user', require('./routes/userRoutes'))
 app.use('/client', require('./routes/clientRoutes'))
 app.use('/carer', require('./routes/carerRoutes'))
 app.use('/shift', require('./routes/shiftRoutes'))
+// TODO: Add a Session model and the API routes for updating it to the backend server
 
 app.use(errorHandler)
 

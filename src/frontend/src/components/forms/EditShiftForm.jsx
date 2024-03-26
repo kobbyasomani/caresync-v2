@@ -6,22 +6,21 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Form from "./Form";
-import { ButtonPrimary } from "../root/Buttons";
+import { ButtonSecondary } from "../root/Buttons";
 import Modal from "../Modal";
 import Loader from "../logo/Loader";
 
 import {
-    TextField, Alert, Stack,
-    FormControl, Select, InputLabel, MenuItem
+    TextField, Stack, FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
 import TimePicker from "../DateTimePicker";
 import dayjs from "dayjs";
 import baseURL from "../../utils/baseUrl";
 
-
 export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const modalId = "edit-shift";
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -36,16 +35,12 @@ export const EditShiftForm = () => {
         errors: []
     }
     const [form, setForm] = useHandleForm(initialState);
-    const [alerts, setAlerts] = useState([]);
+    const [alert, setAlert] = useState({});
+    const clearAlert = useCallback(() => {
+        setAlert({});
+    }, []);
+    const [shiftUpdated, setShiftUpdated] = useState(false);
     const [carers, setCarers] = useState([]);
-
-    // Get the carers for the selected client
-    useEffect(() => {
-        getCarers(store.selectedClient._id).then(carers => {
-            setCarers(carers);
-            setIsLoading(false);
-        });
-    }, [store.selectedClient]);
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -93,8 +88,8 @@ export const EditShiftForm = () => {
     }, [store.shifts]);
 
     // Additional validation
-    const validation = useCallback((form) => {
-        setAlerts([]);
+    const handleValidation = useCallback((form) => {
+        clearAlert();
         // Shift must end after it starts
         if (form.inputs.shiftStartTime > form.inputs.shiftEndTime) {
             throw new Error("Shift end time cannot be before shift start time.")
@@ -126,10 +121,10 @@ export const EditShiftForm = () => {
         catch (error) {
             throw new Error(error.message);
         }
-    }, [store.selectedShift, shiftsOverlap]);
+    }, [store.selectedShift, shiftsOverlap, clearAlert]);
 
     // Update shifts after successfully posting new shift
-    const updateShifts = useCallback((shift) => {
+    const handleUpdateShifts = useCallback((shift) => {
         // Update client shifts from the database
         fetch(`${baseURL}/shift/${store.selectedClient._id}`, {
             credentials: "include",
@@ -149,8 +144,8 @@ export const EditShiftForm = () => {
                     data: shift
                 });
 
-                // Show success alert
-                setAlerts(prev => [...prev, `The shift was successfully updated.`]);
+                setAlert({ severity: "success", message: "The shift was updated successfully." });
+                setShiftUpdated(true);
 
                 // Finished loading
                 setIsLoading(false);
@@ -158,36 +153,66 @@ export const EditShiftForm = () => {
     }, [dispatch, store.selectedClient]);
 
     // Close the modal and open the shift details drawer with the new shift
-    const manageShift = useCallback(() => {
+    const handleManageShift = useCallback(() => {
         modalDispatch({
             type: "close",
-            data: "modal"
+            data: "modal",
+            id: modalId
         });
         modalDispatch({
             type: "open",
             data: "drawer"
         });
-        navigate("/calendar");
+        navigate("/calendar/shift-details");
     }, [modalDispatch, navigate]);
 
-    // console.log(form);
+    const handleOnClose = useCallback(() => {
+        clearAlert();
+        setForm({
+            type: "setFormErrors",
+            errors: []
+        });
+        setShiftUpdated(false);
+    }, [clearAlert, setForm]);
 
-    return <Modal modalId="edit-shift"
-        title="Edit your shift"
-        text={`You can make changes to your shift start and end times, assigned carer,
-    and coordinator notes before the shift start time.`}
-        hasEndpoint
+    // Get the carers for the selected client
+    useEffect(() => {
+        setIsLoading(true);
+        getCarers(store.selectedClient._id).then(carers => {
+            setCarers(carers);
+            setIsLoading(false);
+        });
+    }, [store.selectedClient]);
+
+    useEffect(() => {
+        setShiftTime("Start", dayjs(new Date(store.selectedShift.shiftStartTime)));
+        setShiftTime("End", dayjs(new Date(store.selectedShift.shiftEndTime)));
+    }, [store.selectedShift, setShiftTime]);
+
+    return <Modal modalId={modalId}
+        title="Edit shift details"
+        text={`Make changes to your shift start and end times, assigned carer,
+    and coordinator notes. A shift's start time cannot be changed after it
+    has commenced.`}
+        alert={{ severity: alert?.severity, message: alert?.message }}
+        onClose={handleOnClose}
+    // alertPosition="bottom"
     >
         {isLoading ? <Loader /> : (
             <>
                 <Form form={form}
                     setForm={setForm}
                     legend="Update shift details"
-                    buttonText="Update shift"
+                    submitButtonText="Update shift"
+                    buttonSecondary={shiftUpdated ?
+                        <ButtonSecondary onClick={handleManageShift}>
+                            Manage shift
+                        </ButtonSecondary>
+                        : null}
                     postURL={`/shift/${store.selectedShift._id}`}
                     method="PUT"
-                    validation={validation}
-                    callback={updateShifts}
+                    validation={handleValidation}
+                    callback={handleUpdateShifts}
                     dontClear
                 >
                     <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
@@ -240,29 +265,8 @@ export const EditShiftForm = () => {
                         placeholder="Some things to take note of during this shift are..."
                         mui="TextField" />
                 </Form>
-                {/* Display alerts */}
-                {alerts.length > 0 ? (
-                    <div>
-                        {alerts.map((alert, index) => {
-                            return (
-                                <Alert severity="success" key={index}>
-                                    {alert}
-                                </Alert>
-                            );
-                        })}
-                        < br />
-                        <Stack direction="row" justifyContent="center">
-                            <ButtonPrimary onClick={manageShift} sx={{ my: 0 }}>
-                                Manage shift
-                            </ButtonPrimary>
-                        </Stack>
-                    </div>
-                ) : (
-                    null
-                )}
             </>
-        )
-        }
+        )}
     </Modal >
 }
 

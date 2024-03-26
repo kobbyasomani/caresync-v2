@@ -13,10 +13,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const HandoverNotes = (props) => {
+const HandoverNotes = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
     const modalId = `confirmClearHandoverNotes_${store.selectedShift._id}`;
     const theme = useTheme();
 

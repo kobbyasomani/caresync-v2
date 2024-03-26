@@ -1,12 +1,8 @@
-import React from "react";
+import React, { useReducer, useEffect, useCallback } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
-import { useReducer, useEffect, useCallback } from "react"
-
-import {
-  createBrowserRouter,
-  RouterProvider
-} from "react-router-dom";
 import Root from "./views/Root";
 import Home from "./views/Home";
 import ProtectedRoute from "./views/ProtectedRoute";
@@ -17,14 +13,17 @@ import Help from "./views/Help";
 import Error from "./views/Error";
 import SelectClient from "./views/SelectClient";
 import Calendar from "./views/Calendar";
-import SelectShiftByDate from "./components/dialogs/SelectShiftByDate";
-import CareTeamList from "./components/dialogs/CareTeamList";
 import MyAccount from "./components/dialogs/MyAccount";
-import ConfirmCancelShift from "./components/dialogs/ConfirmCancelShift";
 
-import AddShiftForm from "./components/forms/AddShiftForm";
-import EditShiftForm from "./components/forms/EditShiftForm";
-import InviteCarerForm from "./components/forms/InviteCarerForm";
+import ShiftDetailsDrawer from "./components/shift-details/ShiftDetailsDrawer";
+import ShiftOverview from "./components/shift-details/ShiftOverview";
+import CoordinatorNotes from "./components/shift-details/CoordinatorNotes";
+import PrevShiftHandover from "./components/shift-details/PrevShiftHandover";
+import ShiftNotes from "./components/shift-details/ShiftNotes";
+import IncidentReports from "./components/shift-details/IncidentReports";
+import IncidentReportForm from "./components/forms/IncidentReportForm";
+import IncidentReportDetails from "./components/shift-details/IncidentReportDetails";
+import HandoverNotes from "./components/shift-details/HandoverNotes";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Theme as theme } from "./styles/Theme";
@@ -52,34 +51,45 @@ const router = createBrowserRouter([
               },
               {
                 path: "/calendar",
-                element: <>
-                  <MyAccount />
-                  <Calendar />
-                </>,
+                element: <Calendar />,
                 children: [
                   {
-                    path: "/calendar/select-shift-by-date",
-                    element: <SelectShiftByDate />
-                  },
-                  {
-                    path: "/calendar/add-shift",
-                    element: <AddShiftForm />
-                  },
-                  {
-                    path: "/calendar/edit-shift",
-                    element: <EditShiftForm />
-                  },
-                  {
-                    path: "/calendar/cancel-shift",
-                    element: <ConfirmCancelShift />
-                  },
-                  {
-                    path: "/calendar/care-team",
-                    element: <CareTeamList />
-                  },
-                  {
-                    path: "/calendar/invite-carer",
-                    element: <InviteCarerForm />
+                    path: "/calendar/shift-details",
+                    element: <ShiftDetailsDrawer />,
+                    children: [
+                      {
+                        path: "/calendar/shift-details",
+                        element: <ShiftOverview />,
+                      },
+                      {
+                        path: "/calendar/shift-details/coordinator-notes",
+                        element: <CoordinatorNotes />,
+                      },
+                      {
+                        path: "/calendar/shift-details/prev-shift-handover",
+                        element: <PrevShiftHandover />
+                      },
+                      {
+                        path: "/calendar/shift-details/shift-notes",
+                        element: <ShiftNotes />
+                      },
+                      {
+                        path: "/calendar/shift-details/incident-reports",
+                        element: <IncidentReports />,
+                      },
+                      {
+                        path: "/calendar/shift-details/incident-reports/:incident_id",
+                        element: <IncidentReportDetails />
+                      },
+                      {
+                        path: "/calendar/shift-details/create-incident-report",
+                        element: <IncidentReportForm />
+                      },
+                      {
+                        path: "/calendar/shift-details/handover-notes",
+                        element: <HandoverNotes />
+                      },
+                    ]
                   },
                 ]
               }
@@ -144,6 +154,7 @@ function App() {
     const [store, dispatch] = useReducer(globalReducer, initialState());
 
     // Set required global state values in localStorage any time their state changes
+    // TODO: Create database sessions instead of using localStorage
     useEffect(() => {
       // console.log("updating localStorage from store...");
       window.localStorage.setItem("careSync", JSON.stringify({

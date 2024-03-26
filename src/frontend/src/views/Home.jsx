@@ -77,7 +77,7 @@ export default function Login() {
                 form={form}
                 setForm={setForm}
                 legend="Sign in"
-                buttonText="Log in"
+                submitButtonText="Log in"
                 buttonVariant="outlined"
                 postURL="/user/login"
                 callback={loginUser}

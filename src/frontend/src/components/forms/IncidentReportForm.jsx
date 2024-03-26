@@ -1,7 +1,7 @@
 import { useState, useCallback, forwardRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
-import { useModalContext } from "../../utils/modalUtils";
 import baseURL from "../../utils/baseUrl";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
@@ -12,8 +12,8 @@ import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
 const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMode, ...rest }, formRef) => {
     const { store, dispatch } = useGlobalContext();
-    const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const initialFormState = {
         inputs: {
@@ -40,30 +40,28 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
     }, [store.selectedIncidentReport]);
 
     // After creating the incident report, update the selected shift and incident
-    const createIncidentReport = (response) => {
+    const handleCreateIncidentReport = (response) => {
         dispatch({
             type: "setSelectedShift",
             data: response
         });
+        const incidentReport = response.incidentReports[response.incidentReports.length - 1];
         if (!editMode) {
             dispatch({
                 type: "setSelectedIncidentReport",
-                data: response.incidentReports[response.incidentReports.length - 1]
+                data: incidentReport
             });
+            setTimeout(() => {
+                navigate(`/calendar/shift-details/incident-reports/${incidentReport._id}`, { replace: true });
+            }, 100);
         } else {
             dispatch({
                 type: "setSelectedIncidentReport",
                 data: response.incidentReports.filter(
                     report => report._id === store.selectedIncidentReport._id)[0]
             });
+            setEditMode(false);
         }
-        if (!editMode) {
-            modalDispatch({
-                type: "setActiveDrawer",
-                data: "back"
-            });
-        }
-        setEditMode(false);
     }
 
     return isLoading ? <Loader /> : (
@@ -71,9 +69,9 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
             ref={formRef}
             setForm={setForm}
             legend={editMode ? "Edit your incident report" : "Create a new incident report"}
-            buttonText={<><PublishRoundedIcon /> Submit incident report</>}
+            submitButtonText={<><PublishRoundedIcon /> Submit incident report</>}
             postURL={`${baseURL}/shift/reports/${store.selectedShift._id}`}
-            callback={createIncidentReport}
+            callback={handleCreateIncidentReport}
             setParentIsLoading={handleChildLoadState}
             validation={checkForChanges}
             {...rest}

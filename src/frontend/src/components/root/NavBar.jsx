@@ -40,10 +40,8 @@ const NavBar = () => {
 
     const navItems = [
         {
-            name: "Home",
-            to: store.isAuth && store.selectedClient ? "/calendar"
-                : store.isAuth && !store.selectedClient ? "/"
-                    : "/"
+            name: store.isAuth ? "Clients" : "Home",
+            to: "/"
         },
         {
             name: "About",
@@ -61,15 +59,16 @@ const NavBar = () => {
                                 : "/"}>
                         <IconSmall />
                     </Button>
-                    {navItems.map((item, index) => (
+                    {navItems.filter(item => item.name && item.to).map((item, index) =>
                         <Button
                             component={RouterLink}
                             to={item.to}
                             key={index}
-                            color="inherit">
+                            color="inherit"
+                        >
                             {item.name}
                         </Button>
-                    ))}
+                    )}
                     {store.isAuth ? (
                         <Stack direction="row" gap={1} sx={{ ml: "auto" }}>
                             <Tooltip title="My Account">

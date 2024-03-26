@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TimePicker from "../DateTimePicker";
+import dayjs from "dayjs";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { plusHours, isSameDate } from "../../utils/dateUtils";
+import { plusHours } from "../../utils/dateUtils";
 import baseURL from "../../utils/baseUrl";
 import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
@@ -14,20 +16,22 @@ import Loader from "../logo/Loader";
 import Modal from "../Modal";
 
 import {
-    TextField, Alert, Stack,
+    TextField, Stack, useTheme, useMediaQuery,
     FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
-import TimePicker from "../DateTimePicker";
-import dayjs from "dayjs";
+import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
+import MoreTimeIcon from '@mui/icons-material/MoreTime';
 
-
-export const AddShiftForm = () => {
+export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [modalData, setModalData] = useState({});
+    const modalId = "add-shift";
     const [isLoading, setIsLoading] = useState(false);
-    const [shiftCreated, setShiftCreated] = useState(false);
     const navigate = useNavigate();
+
+    const theme = useTheme();
+    const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     /**
      * Returns whether or not the given start and end times overlap an existing shift.
@@ -88,7 +92,10 @@ export const AddShiftForm = () => {
         errors: []
     });
     const [form, setForm] = useHandleForm(initialState);
-    const [alerts, setAlerts] = useState([]);
+    const [alert, setAlert] = useState({});
+    const clearAlert = useCallback(() => {
+        setAlert({});
+    }, []);
     const [carers, setCarers] = useState(store.selectedClient.carers || []);
 
     // Handle carer selection
@@ -135,6 +142,8 @@ export const AddShiftForm = () => {
     // Update shifts after successfully posting new shift
     const handleUpdateShifts = useCallback((shift) => {
         setIsLoading(true);
+        setNewShiftCreated(false);
+        clearAlert();
         // Set the newly created shift as the selected shift
         dispatch({
             type: "setSelectedShift",
@@ -153,7 +162,7 @@ export const AddShiftForm = () => {
                     data: shifts
                 })
                 // Show success alert
-                setAlerts(prev => [...prev, {
+                setAlert({
                     message: `A new shift was added for 
                 ${store.selectedClient.firstName} ${store.selectedClient.lastName} on 
                 ${new Date(shift.shiftStartTime).toLocaleDateString("en-AU", { dateStyle: "medium" })} 
@@ -161,26 +170,30 @@ export const AddShiftForm = () => {
                 – ${new Date(shift.shiftEndTime).toLocaleTimeString("en-AU", { timeStyle: "short" })} 
                 with carer ${shifts[shifts.length - 1].carer.firstName} ${shifts[shifts.length - 1].carer.lastName}.`,
                     severity: "success"
-                }]);
+                });
                 // Finished loading
-                setShiftCreated(true);
+                setNewShiftCreated(true);
                 setIsLoading(false);
             });
-    }, [dispatch, store.selectedClient]);
+    }, [dispatch, store.selectedClient, clearAlert, setNewShiftCreated]);
 
     // Close the modal and open the shift details drawer with the new shift
     const handleManageShift = useCallback(() => {
         modalDispatch({
             type: "close",
-            data: "modal"
+            data: "modal",
+            id: modalId
         });
-        modalDispatch({
-            type: "open",
-            data: "drawer"
-        });
-        navigate("/calendar");
-        setShiftCreated(false);
-    }, [modalDispatch, navigate]);
+        navigate("/calendar/shift-details");
+        setTimeout(() => {
+            setNewShiftCreated(false);
+            clearAlert();
+            modalDispatch({
+                type: "open",
+                data: "drawer"
+            });
+        }, 200);
+    }, [modalDispatch, navigate, clearAlert, setNewShiftCreated]);
 
     // Add logged-in user to the care team if they are the coordinator
     const addCoordinatorAsCarer = useCallback(() => {
@@ -189,11 +202,9 @@ export const AddShiftForm = () => {
             "coordinatorID": store.user._id,
             "clientID": store.selectedClient._id
         }).then(response => {
-            setAlerts(prev => {
-                return [...prev, {
-                    message: "You have been added to the care team.",
-                    severity: "success"
-                }]
+            setAlert({
+                message: "You have been added to the care team.",
+                severity: "success"
             });
             getCarers(store.selectedClient._id).then(carers => {
                 setCarers(carers);
@@ -208,12 +219,11 @@ export const AddShiftForm = () => {
                 });
                 setIsLoading(false);
             });
-        }).catch(error => setAlerts(prev => {
-            return [...prev, {
-                message: error.response.data.message,
-                severity: "error"
-            }]
-        }));
+        }).catch(error => setAlert({
+            message: error.response.data.message,
+            severity: "error"
+        }
+        ));
     }, [store.user._id, store.selectedClient._id, dispatch, setForm]);
 
     const populateModal = useCallback(() => {
@@ -228,17 +238,30 @@ export const AddShiftForm = () => {
         } else {
             setModalData({
                 title: `New shift for ${defaultShiftTime.start.toLocaleDateString()}`,
-                text: "Enter the details for a new shift on this date.",
-                alert: !isSameDate(form.inputs.shiftStartTime, new Date(store.selectedDate.start)) ?
-                    <Alert severity="warning" sx={{ mb: 1 }}>
-                        You can't add new shifts for {new Date(store.selectedDate.start)
-                            .toLocaleDateString("en-AU", { dateStyle: "long" })}.
-                        The next available date has been selected.
-                    </Alert>
-                    : null
+                text: newShiftCreated ? "Manage your new shift or create another."
+                    : "Enter the details for a new shift on this date.",
             });
         }
-    }, [carers, store.selectedDate.start, defaultShiftTime.start, form.inputs.shiftStartTime]);
+    }, [carers, defaultShiftTime.start, newShiftCreated]);
+
+    const handleOnClose = useCallback(() => {
+        clearAlert();
+        setNewShiftCreated(false);
+    }, [clearAlert, setNewShiftCreated]);
+
+    const renderActionButtons = useCallback(() => {
+        return <>
+            <ButtonPrimary startIcon={<EditCalendarRoundedIcon />} onClick={handleManageShift}>
+                Manage shift
+            </ButtonPrimary >
+            <ButtonSecondary startIcon={<MoreTimeIcon />} onClick={() => {
+                setNewShiftCreated(false);
+                clearAlert();
+            }}>
+                Create shift
+            </ButtonSecondary>
+        </>
+    }, [clearAlert, handleManageShift, setNewShiftCreated]);
 
     useEffect(() => {
         populateModal();
@@ -254,93 +277,83 @@ export const AddShiftForm = () => {
         setShiftTime("End", dayjs(newDefaultTime.end));
     }, [getShiftTimeDefaults, setShiftTime]);
 
-    return <Modal modalId="add-shift"
+    return <Modal modalId={modalId}
         title={modalData.title}
         text={modalData.text}
-        alert={modalData.alert}
-        hasEndpoint
+        alert={{ severity: alert?.severity, message: alert?.message }}
+        actions={newShiftCreated ?
+            xsScreen ?
+                <Stack direction="column" width="100%">
+                    {renderActionButtons()}
+                </Stack>
+                : renderActionButtons()
+            : null
+        }
+        onClose={handleOnClose}
     >
         {isLoading ? <Loader />
             : carers.length > 0 ? (
                 <>
-                    <Form form={form}
-                        setForm={setForm}
-                        legend="New shift details"
-                        buttonText="Create shift"
-                        postURL={`/shift/${store.selectedClient._id}`}
-                        validation={validation}
-                        callback={handleUpdateShifts}
-                        initialState={initialState}
-                    >
-                        <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
-                        <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
-                        <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
-                            <TimePicker label="Shift Start Time"
-                                inputProps={{ name: "shiftStartTime", required: true }}
-                                time={form.inputs.shiftStartTime}
-                                setTime={setShiftTime}
-                                minDate={dayjs(new Date())}
-                            />
-                            <TimePicker label="Shift End Time"
-                                inputProps={{ name: "shiftEndTime", required: true }}
-                                time={form.inputs.shiftEndTime}
-                                setTime={setShiftTime}
-                                minDate={dayjs(new Date())}
-                            />
-                        </Stack>
-                        <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
-                        <FormControl fullWidth>
-                            <InputLabel id="carer-select">Select Carer</InputLabel>
-                            <Select
-                                labelId="carer-select"
-                                id="carer-select"
-                                label="Select Carer"
-                                required
-                                mui="Select"
-                                value={form.inputs.carerID}
-                                name="carerID"
-                                onChange={selectCarer}
-                                inputProps={{ id: "carerID-input" }}
-                            >
-                                {carers.map(carer => {
-                                    return (
-                                        <MenuItem value={carer._id} key={carer._id}>
-                                            {`${carer.firstName} ${carer.lastName}`}
-                                        </MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                        <TextField multiline
-                            minRows={3}
-                            label="Coordinator Notes"
-                            id="coordinator-notes"
-                            type="text"
-                            name="coordinatorNotes"
-                            placeholder="Some things to take note of during this shift are..."
-                            mui="TextField" />
-                    </Form>
-                    {alerts.length > 0 ? (
-                        <div>
-                            {alerts.map((alert, index) => {
-                                return (
-                                    <Alert severity={alert.severity} key={index}>
-                                        {alert.message}
-                                    </Alert>
-                                );
-                            })}
-                            {store.shifts.length > 0 && shiftCreated ?
-                                <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}>
-                                    <ButtonPrimary onClick={handleManageShift} sx={{ my: 0 }}>
-                                        Manage shift
-                                    </ButtonPrimary>
-                                </Stack>
-                                : null
-                            }
-                        </div>
-                    ) : (
-                        null
-                    )}
+                    {!newShiftCreated ?
+                        <Form form={form}
+                            setForm={setForm}
+                            legend="New shift details"
+                            submitButtonText="Create shift"
+                            postURL={`/shift/${store.selectedClient._id}`}
+                            validation={validation}
+                            callback={handleUpdateShifts}
+                            initialState={initialState}
+                        >
+                            <label htmlFor="shiftStartTime" style={{ display: "none" }}>Shift Start Time</label>
+                            <label htmlFor="shiftEndTime" style={{ display: "none" }}>Shift End Time</label>
+                            <Stack spacing={2} sx={{ mt: 2, mb: 2 }}>
+                                <TimePicker label="Shift Start Time"
+                                    inputProps={{ name: "shiftStartTime", required: true }}
+                                    time={form.inputs.shiftStartTime}
+                                    setTime={setShiftTime}
+                                    minDate={dayjs(new Date())}
+                                />
+                                <TimePicker label="Shift End Time"
+                                    inputProps={{ name: "shiftEndTime", required: true }}
+                                    time={form.inputs.shiftEndTime}
+                                    setTime={setShiftTime}
+                                    minDate={dayjs(new Date())}
+                                />
+                            </Stack>
+                            <label htmlFor="carerID-input" style={{ display: "none" }}>Carer</label>
+                            <FormControl fullWidth>
+                                <InputLabel id="carer-select">Select Carer</InputLabel>
+                                <Select
+                                    labelId="carer-select"
+                                    id="carer-select"
+                                    label="Select Carer"
+                                    required
+                                    mui="Select"
+                                    value={form.inputs.carerID}
+                                    name="carerID"
+                                    onChange={selectCarer}
+                                    inputProps={{ id: "carerID-input" }}
+                                >
+                                    {carers.map(carer => {
+                                        return (
+                                            <MenuItem value={carer._id} key={carer._id}>
+                                                {`${carer.firstName} ${carer.lastName}`}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <TextField multiline
+                                minRows={3}
+                                label="Coordinator Notes"
+                                id="coordinator-notes"
+                                type="text"
+                                name="coordinatorNotes"
+                                placeholder="Some things to take note of during this shift are..."
+                                mui="TextField" />
+                        </Form>
+                        : null
+                    }
                 </>
             ) : (
                 // If the client has no assigned carers, prompt the user to invite some

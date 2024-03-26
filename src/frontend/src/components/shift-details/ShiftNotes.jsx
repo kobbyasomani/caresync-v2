@@ -13,7 +13,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const ShiftNotes = (props) => {
+const ShiftNotes = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [editMode, setEditMode] = useState(false);
@@ -21,7 +21,7 @@ const ShiftNotes = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const theme = useTheme();
 
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
     const modalId = `confirmClearShiftNotes_${store.selectedShift._id}`;
 
     const toggleEditMode = useCallback((override) => {

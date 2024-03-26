@@ -1,16 +1,14 @@
 import { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import Modal from "../Modal";
-
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Carer from "../Carer";
 import Loader from "../logo/Loader";
 
-import { List, Stack, Alert } from "@mui/material"
+import { List, Stack } from "@mui/material"
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const CareTeamList = () => {
@@ -19,25 +17,26 @@ const CareTeamList = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [alert, setAlert] = useState({});
+    const clearAlert = useCallback(() => {
+        setAlert({});
+    }, []);
     const [client, setClient] = useState(store.selectedClient);
     const [carers, setCarers] = useState(client.carers);
     const [coordinator, setCoordinator] = useState(client.coordinator);
     const userIsCoordinator = store.selectedClient.isCoordinator;
 
-    const navigate = useNavigate();
-
     // Opens carer invitation dialog
-    const handleAddCarer = useCallback(() => {
+    const handleInviteCarer = useCallback(() => {
         modalDispatch({
             type: "open",
             data: "modal",
             id: "invite-carer"
         });
-        navigate("/calendar/invite-carer");
-    }, [modalDispatch, navigate]);
+        clearAlert();
+    }, [modalDispatch, clearAlert]);
 
     // Add logged-in user to the care team if they are the coordinator
-    const addCoordinatorAsCarer = useCallback(() => {
+    const handleAddCoordinatorAsCarer = useCallback(() => {
         axios.post("/carer/add-coordinator-as-carer", {
             "coordinatorID": store.user._id,
             "clientID": store.selectedClient._id
@@ -78,6 +77,10 @@ const CareTeamList = () => {
             }));
     }, [store.selectedClient, store.user._id, dispatch]);
 
+    const handleOnClose = useCallback(() => {
+        clearAlert();
+    }, [clearAlert]);
+
     // Update carers on component load
     useEffect(() => {
         setClient(store.selectedClient)
@@ -90,7 +93,23 @@ const CareTeamList = () => {
         title={`Care team for ${store.selectedClient.firstName} ${store.selectedClient.lastName}`}
         text={`These are the members of this client's care team. You can 
                 invite users to, or remove them from, the client's care team here.`}
-        hasEndpoint
+        alert={{ severity: alert?.severity, message: alert?.message }}
+        actions={userIsCoordinator ?
+            (<>
+                <ButtonPrimary onClick={handleInviteCarer}
+                    startIcon={<PersonAddIcon />}>
+                    Add Carer
+                </ButtonPrimary>
+                {store.selectedClient.coordinator._id === store.user._id
+                    && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
+                    <ButtonSecondary onClick={handleAddCoordinatorAsCarer}>
+                        Add yourself
+                    </ButtonSecondary>
+                ) : (null)
+                }
+            </>)
+            : null}
+        onClose={handleOnClose}
     >
         {isLoading ? <Loader /> : (
             <>
@@ -103,26 +122,6 @@ const CareTeamList = () => {
                             }) : null}
                     </Stack>
                 </List>
-                {Object.keys(alert).length > 0 ? (
-                    <Alert severity={alert.severity} sx={{ mt: 1 }}>
-                        {alert.message}
-                    </Alert>
-                ) : null
-                }
-                {userIsCoordinator ?
-                    (<Stack direction="row">
-                        <ButtonPrimary onClick={handleAddCarer}
-                            startIcon={<PersonAddIcon />}>
-                            Add Carer
-                        </ButtonPrimary>
-                        {store.selectedClient.coordinator._id === store.user._id
-                            && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
-                            <ButtonSecondary onClick={addCoordinatorAsCarer}>
-                                Add yourself
-                            </ButtonSecondary>
-                        ) : (null)
-                        }
-                    </Stack>) : null}
             </>
         )}
     </Modal >

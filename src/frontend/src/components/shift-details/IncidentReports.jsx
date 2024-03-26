@@ -1,24 +1,23 @@
 import { useCallback, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../../utils/globalUtils";
-import { useModalContext } from "../../utils/modalUtils";
 import Incident from "./Incident";
 
 import { ButtonPrimary } from "../root/Buttons";
 import { Typography, Stack, Box, Fade, Grow } from "@mui/material";
 import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
 
-const IncidentReports = (props) => {
+const IncidentReports = () => {
     const { store } = useGlobalContext();
-    const { modalDispatch } = useModalContext();
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
     const [incidentReports, setIncidentReports] = useState(store.selectedShift.incidentReports);
 
+    const navigate = useNavigate();
+
     const handleCreateIncidentReport = useCallback(() => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: "create incident report"
-        })
-    }, [modalDispatch]);
+        navigate("/calendar/shift-details/create-incident-report");
+    }, [navigate]);
 
     const renderContent = useCallback(() => {
         if (incidentReports.length > 0) {

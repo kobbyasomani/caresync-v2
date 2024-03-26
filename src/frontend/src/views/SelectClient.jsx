@@ -100,6 +100,7 @@ const SelectClient = () => {
                         <Typography variant="body1">You can switch between clients you are coordinating and/or caring for.</Typography>
                     </>
                 ) : null}
+                {/* // TODO: Adjust tab font sizing at xs screen sizes */}
             <Tabs value={tabValue} onChange={handleChangeTabs}>
                 <Tab label="Coordinating for" component="h3" icon={<AssignmentIcon />} iconPosition="start"
                     sx={{

@@ -116,7 +116,7 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
                     </>
                 }
             </DialogContent>
-            <DialogActions>
+            <DialogActions sx={{ pb: 2 }}>
                 {!isConfirmed ? (
                     <>
                         <ButtonPrimary onClick={closeConfirmation} disabled={isLoading}>

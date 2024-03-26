@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -12,11 +12,10 @@ import { Typography, Box, Stack, useMediaQuery, useTheme, Fade, Grow } from "@mu
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 
-const CoordinatorNotes = (props) => {
+const CoordinatorNotes = () => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const navigate = useNavigate();
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
 
     const [isLoading, setIsLoading] = useState(true);
     const [coordinator, setCoordinator] = useState({});
@@ -30,8 +29,7 @@ const CoordinatorNotes = (props) => {
             data: "modal",
             id: "care-team-list"
         });
-        navigate("/calendar/care-team");
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const handleEditShift = useCallback(() => {
         modalDispatch({
@@ -39,8 +37,7 @@ const CoordinatorNotes = (props) => {
             data: "modal",
             id: "edit-shift"
         });
-        navigate("/calendar/edit-shift")
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const renderContent = () => {
         if (store.selectedShift.coordinatorNotes) {
@@ -103,6 +100,7 @@ const CoordinatorNotes = (props) => {
                     </Stack>
                 </Box>
             </Grow>
+            <Outlet />
         </>
     )
 }

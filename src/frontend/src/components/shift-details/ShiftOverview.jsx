@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -20,23 +20,18 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 
-const ShiftOverview = (props) => {
+const ShiftOverview = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
-    const { shiftUtils } = props;
+    const { shiftUtils } = store;
 
     const theme = useTheme();
     const navigate = useNavigate();
     const smScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     const handleViewPanel = useCallback((panel) => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: panel
-        });
-        const drawer = document.getElementById("shift-details-drawer").querySelector(".MuiDrawer-paper");
-        drawer.scrollTo(0, 0);
-    }, [modalDispatch]);
+        navigate(`/calendar/shift-details/${panel}`)
+    }, [navigate]);
 
     const handleEditShift = useCallback(() => {
         modalDispatch({
@@ -44,8 +39,7 @@ const ShiftOverview = (props) => {
             data: "modal",
             id: "edit-shift"
         });
-        navigate("/calendar/edit-shift")
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const handleOpenCareTeamList = useCallback(() => {
         modalDispatch({
@@ -53,8 +47,7 @@ const ShiftOverview = (props) => {
             data: "modal",
             id: "care-team-list"
         });
-        navigate("/calendar/care-team");
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const handleConfirmCancelShift = useCallback(() => {
         modalDispatch({
@@ -62,20 +55,15 @@ const ShiftOverview = (props) => {
             data: "confirmation",
             id: `confirmCancelShift_${store.selectedShift._id}`
         });
-        navigate("/calendar/cancel-shift");
-    }, [modalDispatch, store.selectedShift._id, navigate]);
+    }, [modalDispatch, store.selectedShift._id]);
 
     const openIncident = useCallback((incident) => {
-        modalDispatch({
-            type: "setActiveDrawer",
-            data: "incident report details"
-        });
         dispatch({
             type: "setSelectedIncidentReport",
             data: incident
         });
-
-    }, [modalDispatch, dispatch]);
+        navigate(`/calendar/shift-details/incident-reports/${incident._id}`);
+    }, [dispatch, navigate]);
 
     const renderContent = (card) => {
         if (shiftUtils.isPending) {
@@ -105,7 +93,7 @@ const ShiftOverview = (props) => {
             case "incident reports":
                 if (store.selectedShift.incidentReports.length > 0) {
                     return (
-                        <List gap={2} sx={{ py: 0 }}>
+                        <List gap={2} sx={{ py: 0, width: "100%" }}>
                             {store.selectedShift.incidentReports.slice(0, 3).map((report, index) => {
                                 return (
                                     <React.Fragment key={`${report._id}_listItem`}>
@@ -134,7 +122,7 @@ const ShiftOverview = (props) => {
                                 <ListItem key="moreIncidentReports" sx={{ px: 0, py: 0.5 }}>
                                     <ListItemButton
                                         sx={{ borderRadius: 1, px: 1 }}
-                                        onClick={() => handleViewPanel("incident reports")}
+                                        onClick={() => handleViewPanel("incident-reports")}
                                     >
                                         <Typography variant="body1" color={theme.palette.primary.main}>
                                             And {store.selectedShift.incidentReports.length - 3} more...
@@ -207,164 +195,165 @@ const ShiftOverview = (props) => {
         }
     }
 
-    return Object.keys(store.selectedShift).length > 0 ? (
-        <Grid container rowSpacing={2} columnSpacing={2}>
-            {store.selectedShift.coordinatorNotes ? (
+    return store.selectedShift?._id && shiftUtils?._id ? (
+        <>
+            <Grid container rowSpacing={2} columnSpacing={2}>
+                {store.selectedShift.coordinatorNotes ? (
+                    <Grid item xs={12}>
+                        <Card variant="outlined" sx={{
+                            backgroundColor: theme.palette.primary.light,
+                            border: "none", position: "relative"
+                        }}>
+                            <CardActionArea onClick={() => handleViewPanel("coordinator-notes")}>
+                                <CardContent>
+                                    <AssignmentIcon sx={{
+                                        position: "absolute",
+                                        right: "0.5rem", top: "0.5rem",
+                                        color: theme.palette.primary.main
+                                    }} />
+                                    <Typography variant="h6" component="p" color={theme.palette.primary.dark}>
+                                        Notes from Coordinator
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        {store.selectedShift.coordinatorNotes.length <= 300 ?
+                                            store.selectedShift.coordinatorNotes
+                                            : <>
+                                                {store.selectedShift.coordinatorNotes.slice(0, 300)}
+                                                ... <span style={{ color: theme.palette.primary.main }}>
+                                                    Read more
+                                                </span>
+                                            </>
+                                        }
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </Grid>) : null
+                }
+                {shiftUtils.prevShift && shiftUtils.prevShift.handoverNotes ? (
+                    <Grid item xs={12}>
+                        <Card variant="outlined" sx={{
+                            backgroundColor: theme.palette.grey[200],
+                            border: "none", position: "relative"
+                        }}>
+                            <CardActionArea onClick={() => handleViewPanel("prev-shift-handover")}>
+                                <CardContent>
+                                    <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
+                                    <Typography variant="h6" component="p">
+                                        Handover from previous shift
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                                        {shiftUtils.prevShift.handoverNotes.length <= 300 ?
+                                            shiftUtils.prevShift.handoverNotes
+                                            : <>
+                                                {shiftUtils.prevShift.handoverNotes.slice(0, 300)}
+                                                ... <span style={{ color: theme.palette.primary.main }}>
+                                                    Read more
+                                                </span>
+                                            </>
+                                        }
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </Grid>) : null
+                }
                 <Grid item xs={12}>
-                    <Card variant="outlined" sx={{
-                        backgroundColor: theme.palette.primary.light,
-                        border: "none", position: "relative"
-                    }}>
-                        <CardActionArea onClick={() => handleViewPanel("coordinator notes")}>
+                    <Card variant="outlined" id="shift-notes-card">
+                        <CardActionArea onClick={() => handleViewPanel("shift-notes")}>
                             <CardContent>
-                                <AssignmentIcon sx={{
-                                    position: "absolute",
-                                    right: "0.5rem", top: "0.5rem",
+                                <DescriptionIcon sx={{
+                                    position: "absolute", right: "0.5rem", top: "0.5rem",
+                                    color: store.selectedShift.shiftNotes?.shiftNotesText ?
+                                        theme.palette.primary.main : theme.palette.grey[500]
+                                }} />
+                                <Typography variant="h5" component="p">Shift Notes</Typography>
+                                {renderContent("shift notes")}
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6} display={"flex"}>
+                    <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
+                        <Tooltip title="View all incidents" placement="top" arrow>
+                            <CardActionArea onClick={() => handleViewPanel("incident-reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                    <ReportRoundedIcon sx={{
+                                        position: "absolute", right: "0.5rem", top: "0.5rem",
+                                        color: store.selectedShift.incidentReports.length > 0 ?
+                                            theme.palette.error.main : theme.palette.grey[500]
+                                    }} />
+                                    <Typography variant="h5" component="p">
+                                        Incidents {store.selectedShift.incidentReports.length > 0 ?
+                                            `(${store.selectedShift.incidentReports.length})`
+                                            : null}
+                                    </Typography>
+                                    {store.selectedShift.incidentReports.length === 0 ?
+                                        renderContent("incident reports")
+                                        : null
+                                    }
+                                </CardContent>
+                            </CardActionArea>
+                        </Tooltip>
+                        {store.selectedShift.incidentReports.length > 0 ?
+                            <CardActions sx={{ pt: 0 }}>
+                                {renderContent("incident reports")}
+                            </CardActions>
+                            : null
+                        }
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6} display={"flex"}>
+                    <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
+                        <CardActionArea onClick={() => handleViewPanel("handover-notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
+                                <ForumRoundedIcon sx={{
+                                    position: "absolute", right: "0.5rem", top: "0.5rem",
+                                    color: store.selectedShift.handoverNotes ?
+                                        theme.palette.primary.main : theme.palette.grey[500]
+                                }} />
+                                <Typography variant="h5" component="p">Handover</Typography>
+                                {renderContent("handover")}
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Card variant="outlined" id="care-team-card">
+                        <CardActionArea onClick={handleOpenCareTeamList}>
+                            <CardContent>
+                                <Diversity3Icon sx={{
+                                    position: "absolute", right: "0.5rem", top: "0.5rem",
                                     color: theme.palette.primary.main
                                 }} />
-                                <Typography variant="h6" component="p" color={theme.palette.primary.dark}>
-                                    Notes from Coordinator
-                                </Typography>
-                                <Typography variant="body1">
-                                    {store.selectedShift.coordinatorNotes.length <= 300 ?
-                                        store.selectedShift.coordinatorNotes
-                                        : <>
-                                            {store.selectedShift.coordinatorNotes.slice(0, 300)}
-                                            ... <span style={{ color: theme.palette.primary.main }}>
-                                                Read more
-                                            </span>
-                                        </>
-                                    }
-                                </Typography>
+                                <Typography variant="h5" component="p">Shift Carer</Typography>
+                                <List dense>
+                                    {[1,].map(item => {
+                                        return (
+                                            <ListItem key={`carer_${item}`}>
+                                                <ListItemAvatar>
+                                                    <Avatar sx={{ width: "2rem", height: "2rem", backgroundColor: theme.palette.primary.main }}>
+                                                        <PersonIcon />
+                                                    </Avatar>
+                                                </ListItemAvatar>
+                                                <ListItemText primaryTypographyProps={{ fontSize: theme.typography.htmlFontSize }}
+                                                    primary={Object.keys(store.selectedShift.carer).length > 0 ? `${store.selectedShift.carer.firstName} ${store.selectedShift.carer.lastName}` : "Firstname Lastname"}
+                                                    secondary="(+61) 123 456 789"
+                                                />
+                                            </ListItem>
+                                        )
+                                    })}
+                                </List>
                             </CardContent>
                         </CardActionArea>
                     </Card>
-                </Grid>) : null
-            }
-            {shiftUtils.prevShift && shiftUtils.prevShift.handoverNotes ? (
-                <Grid item xs={12}>
-                    <Card variant="outlined" sx={{
-                        backgroundColor: theme.palette.grey[200],
-                        border: "none", position: "relative"
-                    }}>
-                        <CardActionArea onClick={() => handleViewPanel("prev shift handover")}>
-                            <CardContent>
-                                <ForumRoundedIcon sx={{ position: "absolute", right: "0.5rem", top: "0.5rem", color: "grey" }} />
-                                <Typography variant="h6" component="p">
-                                    Handover from previous shift
-                                </Typography>
-                                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                                    {shiftUtils.prevShift.handoverNotes.length <= 300 ?
-                                        shiftUtils.prevShift.handoverNotes
-                                        : <>
-                                            {shiftUtils.prevShift.handoverNotes.slice(0, 300)}
-                                            ... <span style={{ color: theme.palette.primary.main }}>
-                                                Read more
-                                            </span>
-                                        </>
-                                    }
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-                </Grid>) : null
-            }
-            <Grid item xs={12}>
-                <Card variant="outlined" id="shift-notes-card">
-                    <CardActionArea onClick={() => handleViewPanel("shift notes")}>
-                        <CardContent>
-                            <DescriptionIcon sx={{
-                                position: "absolute", right: "0.5rem", top: "0.5rem",
-                                color: store.selectedShift.shiftNotes?.shiftNotesText ?
-                                    theme.palette.primary.main : theme.palette.grey[500]
-                            }} />
-                            <Typography variant="h5" component="p">Shift Notes</Typography>
-                            {renderContent("shift notes")}
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Grid>
+                </Grid>
 
-            <Grid item xs={12} md={6} display={"flex"}>
-                <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
-                    <Tooltip title="View all incidents" placement="top" arrow>
-                        <CardActionArea onClick={() => handleViewPanel("incident reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <ReportRoundedIcon sx={{
-                                    position: "absolute", right: "0.5rem", top: "0.5rem",
-                                    color: store.selectedShift.incidentReports.length > 0 ?
-                                        theme.palette.error.main : theme.palette.grey[500]
-                                }} />
-                                <Typography variant="h5" component="p">
-                                    Incidents {store.selectedShift.incidentReports.length > 0 ?
-                                        `(${store.selectedShift.incidentReports.length})`
-                                        : null}
-                                </Typography>
-                                {store.selectedShift.incidentReports.length === 0 ?
-                                    renderContent("incident reports")
-                                    : null
-                                }
-                            </CardContent>
-                        </CardActionArea>
-                    </Tooltip>
-                    {store.selectedShift.incidentReports.length > 0 ?
-                        <CardActions sx={{ pt: 0 }}>
-                            {renderContent("incident reports")}
-                        </CardActions>
-                        : null
-                    }
-                </Card>
-            </Grid>
-
-            <Grid item xs={12} md={6} display={"flex"}>
-                <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
-                    <CardActionArea onClick={() => handleViewPanel("handover notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
-                        <CardContent sx={{ flexGrow: 1 }}>
-                            <ForumRoundedIcon sx={{
-                                position: "absolute", right: "0.5rem", top: "0.5rem",
-                                color: store.selectedShift.handoverNotes ?
-                                    theme.palette.primary.main : theme.palette.grey[500]
-                            }} />
-                            <Typography variant="h5" component="p">Handover</Typography>
-                            {renderContent("handover")}
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Grid>
-
-            <Grid item xs={12}>
-                <Card variant="outlined" id="care-team-card">
-                    <CardActionArea onClick={handleOpenCareTeamList}>
-                        <CardContent>
-                            <Diversity3Icon sx={{
-                                position: "absolute", right: "0.5rem", top: "0.5rem",
-                                color: theme.palette.primary.main
-                            }} />
-                            <Typography variant="h5" component="p">Shift Carer</Typography>
-                            <List dense>
-                                {[1,].map(item => {
-                                    return (
-                                        <ListItem key={`carer_${item}`}>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{ width: "2rem", height: "2rem", backgroundColor: theme.palette.primary.main }}>
-                                                    <PersonIcon />
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primaryTypographyProps={{ fontSize: theme.typography.htmlFontSize }}
-                                                primary={Object.keys(store.selectedShift.carer).length > 0 ? `${store.selectedShift.carer.firstName} ${store.selectedShift.carer.lastName}` : "Firstname Lastname"}
-                                                secondary="(+61) 123 456 789"
-                                            />
-                                        </ListItem>
-                                    )
-                                })}
-                            </List>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Grid>
-
-            {/* ShiftUtils display */}
-            {/* <Grid item xs={12}>
+                {/* ShiftUtils display */}
+                {/* <Grid item xs={12}>
                 <Card variant="outlined">
                     <CardContent>
                         {Object.keys(shiftUtils).length > 0 && process.env.NODE_ENV === 'development' ? (
@@ -386,28 +375,31 @@ const ShiftOverview = (props) => {
                 </Card>
             </Grid> */}
 
-            {/* The shift is editable if the user is the coordinator
+                {/* The shift is editable if the user is the coordinator
                 and the shift is pending or in progress. */}
-            <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
-                <Stack direction="row" gap={2} justifyContent="center">
-                    {shiftUtils.isPending || shiftUtils.isInProgress ?
-                        <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
-                            startIcon={<EditCalendarRoundedIcon />}>
-                            {smScreen ? "Edit" : "Edit shift"}
-                        </ButtonPrimary>
-                        : null}
-                    {shiftUtils.isPending ?
-                        <ButtonSecondary onClick={handleConfirmCancelShift}
-                            sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
-                            {smScreen ? "Cancel" : "Cancel shift"}
-                        </ButtonSecondary>
-                        : null}
-                </Stack>
+                <Grid item xs={12} sx={{ gridArea: "auto / 1 / auto / span 2 " }}>
+                    <Stack direction="row" gap={2} justifyContent="center">
+                        {shiftUtils.isPending || shiftUtils.isInProgress ?
+                            <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
+                                startIcon={<EditCalendarRoundedIcon />}>
+                                {smScreen ? "Edit" : "Edit shift"}
+                            </ButtonPrimary>
+                            : null}
+                        {shiftUtils.isPending ?
+                            <ButtonSecondary onClick={handleConfirmCancelShift}
+                                sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
+                                {smScreen ? "Cancel" : "Cancel shift"}
+                            </ButtonSecondary>
+                            : null}
+                    </Stack>
+                </Grid>
             </Grid>
-        </Grid>
+            <Outlet />
+        </>
     ) : (
         <Typography variant="body1">
-            Shift not found.
+            Unable to load shift details.
+            {shiftUtils?._id}
         </Typography>
     )
 };

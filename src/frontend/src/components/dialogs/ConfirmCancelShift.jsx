@@ -1,5 +1,5 @@
-import React from "react";
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import baseURL from "../../utils/baseUrl";
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -19,6 +19,7 @@ export const ConfirmCancelShift = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [alert, setAlert] = useState({});
+    const navigate = useNavigate();
 
     const shiftExists = useCallback(() => {
         let shiftExists = false;
@@ -45,31 +46,34 @@ export const ConfirmCancelShift = () => {
         }).then(() => {
             return getAllShifts(store.selectedClient._id);
         }).then(shifts => {
-            modalDispatch({
-                type: "close",
-                data: "drawer"
-            });
             dispatch({
                 type: "setShifts",
                 data: shifts
             });
         }).catch((error) => { setAlert({ error: error.message }) });
-    }, [dispatch, modalDispatch, store.selectedClient._id, store.selectedShift._id]);
+    }, [dispatch, store.selectedClient._id, store.selectedShift._id]);
 
     const afterConfirm = useCallback(() => {
-        setAlert({});
-        setIsCancelled(false);
-        dispatch({
-            type: "clearSelectedShift",
+        // setAlert({});
+        // setIsCancelled(false);
+        modalDispatch({
+            type: "close",
+            data: "drawer"
         });
-    }, [dispatch]);
+        setTimeout(() => {
+            dispatch({
+                type: "clearSelectedShift",
+            });
+            navigate("/calendar");
+        }, 200);
+    }, [dispatch, modalDispatch, navigate]);
 
     useEffect(() => {
         setIsCancelled(!shiftExists());
     }, [shiftExists, store.selectedShift])
 
     return Object.keys(store.selectedShift).length > 0 ? (
-        <Confirmation title={isCancelled ? "Shift Cancelled" : "Confirm Cancel Shift"}
+        <Confirmation title={isCancelled ? "Shift cancelled" : "Confirm cancel shift"}
             text={isCancelled ? "The below shift has been cancelled." : `Are you sure you want to cancel this shift? It will be permanently removed from 
 ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
             callback={cancelShift}
@@ -79,7 +83,6 @@ ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
             cancelText="Keep shift"
             stayOpenOnConfirm
             afterConfirm={afterConfirm}
-            hasEndpoint
         >
             <Box mt={2}>
                 <Typography variant="body1">

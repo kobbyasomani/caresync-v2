@@ -1,9 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { isSameDate, dateAsObj, minusHours } from "../../utils/dateUtils";
+import { isSameDate, dateAsObj } from "../../utils/dateUtils";
 import { ButtonPrimary } from "../root/Buttons";
 import Modal from "../Modal";
 import Shift from "../Shift";
@@ -17,7 +16,6 @@ const SelectShiftByDate = () => {
     const { modalStore, modalDispatch } = useModalContext();
     const [modalData, setModalData] = useState({});
     const [shifts, setShifts] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const getShiftsForDate = () => {
@@ -57,8 +55,7 @@ const SelectShiftByDate = () => {
             data: "modal",
             id: "add-shift"
         });
-        navigate("/calendar/add-shift");
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     useEffect(() => {
         populateModal();
@@ -66,9 +63,9 @@ const SelectShiftByDate = () => {
 
     return (
         <Modal modalId="select-shift-by-date"
-        title={modalData.title}
-        text={modalData.text}
-        hasEndpoint
+            title={modalData.title}
+            text={modalData.text}
+            sx={{ zIndex: modalStore.drawerIsOpen ? 1100 : "1200" }}
         >
             {shifts.length > 0 ? (
                 <Stack spacing={2}>
@@ -79,9 +76,8 @@ const SelectShiftByDate = () => {
             ) : (
                 null
             )}
-            {store.selectedClient.coordinator._id === store.user._id
-                //Hide the 'add shift' button on past days
-                && dateAsObj(store.selectedDate.start) > minusHours(new Date(), 24) ? (
+            {store.selectedClient.isCoordinator
+                && dateAsObj(store.selectedDate.start) >= new Date(new Date().setHours(0, 0, 0, 0)) ? (
                 <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift}>
                     Add Shift
                 </ButtonPrimary>

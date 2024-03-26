@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -14,7 +13,6 @@ export const InviteCarerForm = () => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const modalId = "invite-carer";
-    const navigate = useNavigate();
 
     // Set the inital form state
     const initialState = {
@@ -41,8 +39,7 @@ export const InviteCarerForm = () => {
             data: "modal",
             id: modalId
         });
-        navigate("/calendar")
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     const handleReturnToCareTeam = useCallback(() => {
         modalDispatch({
@@ -55,8 +52,7 @@ export const InviteCarerForm = () => {
             data: "modal",
             id: "care-team-list"
         });
-        navigate("/calendar/care-team")
-    }, [modalDispatch, navigate]);
+    }, [modalDispatch]);
 
     return (
         <Modal modalId={modalId}
@@ -64,12 +60,11 @@ export const InviteCarerForm = () => {
             text={`Send an invitation to another user to join ${store.selectedClient.firstName} 
     ${store.selectedClient.lastName}'s care team. The user must have an existing 
     CareSync account that uses the same email address.`}
-            hasEndpoint
         >
             <Form form={form}
                 setForm={setForm}
                 legend="Invite a carer"
-                buttonText="Send invitation"
+                submitButtonText="Send invitation"
                 postURL={`/carer/invite/${store.selectedClient._id}`}
                 callback={invitationSent}
             >
