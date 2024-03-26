@@ -14,10 +14,11 @@ import {
 } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import TodayRoundedIcon from '@mui/icons-material/TodayRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 const ShiftDetailsDrawer = ({ isLoading }) => {
     const { store, dispatch } = useGlobalContext();
@@ -144,7 +145,6 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
     }, [navigate, location.pathname]);
 
     const renderShiftNav = useCallback(() => {
-        // TODO: Add a 'Home' button to return to the shift overview from any nested view
         return <>
             <Box sx={{ position: "absolute", top: "0.75rem", left: { xs: "0.5rem", lg: "1rem" } }}>
                 <Tooltip title="Previous shift" placement="left">
@@ -152,7 +152,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                         <IconButton color="primary" aria-label="Go to previous shift"
                             onClick={() => handleNavigateToShift("prev")}
                             disabled={Boolean(!shiftUtils.prevShift)}>
-                            <ArrowBackRoundedIcon />
+                            <ArrowBackIosRoundedIcon />
                         </IconButton>
                     </span>
                 </Tooltip>
@@ -172,7 +172,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
                         <IconButton color="primary" aria-label="Go to next shift"
                             onClick={() => handleNavigateToShift("next")}
                             disabled={Boolean(!shiftUtils.nextShift)}>
-                            <ArrowForwardRoundedIcon />
+                            <ArrowForwardIosRoundedIcon />
                         </IconButton>
                     </span>
                 </Tooltip>
@@ -180,15 +180,40 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
 
             <Box sx={{ position: "absolute", top: "0.75rem", right: "0.5rem" }}>
                 {modalStore.drawerIsOpen && location.pathname !== "/calendar/shift-details" ? (
-                    <IconButton className="prev-modal"
-                        onClick={handleBackToPrevDrawer}>
-                        <ArrowBackIcon />
-                    </IconButton>
+                    <Tooltip title="Back">
+                        <IconButton className="prev-modal" color="primary" aria-label="Back"
+                            onClick={handleBackToPrevDrawer}>
+                            <ArrowBackRoundedIcon />
+                        </IconButton>
+                    </Tooltip>
                 ) : null}
-                <IconButton className="close-modal"
-                    onClick={handleCloseDrawer}>
-                    <CloseIcon />
-                </IconButton>
+                <Tooltip title="Shift overview"
+                    slotProps={{
+                        popper: {
+                            modifiers: [
+                                {
+                                    name: "offset",
+                                    options: {
+                                        offset: [0, 12]
+                                    }
+                                }
+                            ]
+                        }
+                    }}>
+                    <span>
+                        <IconButton id="back-to-shift-overview" color="primary" aria-label="Shift overview"
+                            onClick={() => handleNavigateToShift()}
+                            disabled={location.pathname === "/calendar/shift-details"}>
+                            <HomeRoundedIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                <Tooltip title="Close">
+                    <IconButton className="close-modal" aria-label="Close shift details"
+                        onClick={handleCloseDrawer}>
+                        <CloseIcon />
+                    </IconButton>
+                </Tooltip>
             </Box></>
     }, [location.pathname, modalStore.drawerIsOpen, handleBackToPrevDrawer, handleCloseDrawer, handleNavigateToShift,
         shiftUtils, store.inProgressShift]);

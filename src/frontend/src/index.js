@@ -5,7 +5,7 @@ import "./styles/index.css"
 import axios from "axios";
 import { baseUrl_API } from './utils/baseUrl';
 
-axios.defaults.baseUrl_API = baseUrl_API;
+axios.defaults.baseURL = baseUrl_API;
 axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
