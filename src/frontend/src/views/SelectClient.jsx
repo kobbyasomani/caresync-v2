@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import { baseUrl_API } from "../utils/baseUrl";
+import { baseURL_API } from "../utils/baseURL";
 import Client from "../components/Client";
 import Modal from "../components/Modal";
 import AddClientForm from "../components/forms/AddClientForm";
@@ -58,7 +58,7 @@ const SelectClient = () => {
 
     // Fetch the list of clients for the logged-in user
     useEffect(() => {
-        fetch(`${baseUrl_API}/user`, {
+        fetch(`${baseURL_API}/user`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",

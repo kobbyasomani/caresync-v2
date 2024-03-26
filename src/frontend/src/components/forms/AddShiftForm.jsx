@@ -8,7 +8,7 @@ import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { plusHours } from "../../utils/dateUtils";
-import { baseUrl_API } from "../../utils/baseUrl";
+import { baseURL_API } from "../../utils/baseURL";
 import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ButtonAddCarer } from "../root/Buttons";
@@ -150,7 +150,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
             data: shift
         });
         // Update client shifts from the database
-        fetch(`${baseUrl_API}/shift/${store.selectedClient._id}`, {
+        fetch(`${baseURL_API}/shift/${store.selectedClient._id}`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",

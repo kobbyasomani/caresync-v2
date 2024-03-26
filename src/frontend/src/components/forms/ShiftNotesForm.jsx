@@ -1,7 +1,7 @@
 import React, { useCallback, useState, forwardRef } from "react";
 
 import { useGlobalContext } from "../../utils/globalUtils";
-import { baseUrl_API } from "../../utils/baseUrl";
+import { baseURL_API } from "../../utils/baseURL";
 import { useHandleForm } from "../../utils/formUtils";
 import Form from "./Form";
 import Loader from "../logo/Loader";
@@ -48,7 +48,7 @@ const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, se
             setForm={setForm}
             legend={editMode ? "Edit your shift notes" : "Add and submit your shift notes"}
             submitButtonText={<><PublishRoundedIcon />Submit shift notes</>}
-            postURL={`${baseUrl_API}/shift/notes/${store.selectedShift._id}`}
+            postURL={`${baseURL_API}/shift/notes/${store.selectedShift._id}`}
             callback={submitShiftNotes}
             validation={checkForChanges}
             hideSubmitButton={hideSubmitButton}

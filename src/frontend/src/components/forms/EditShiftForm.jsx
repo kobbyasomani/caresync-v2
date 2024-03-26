@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import TimePicker from "../DateTimePicker";
 import dayjs from "dayjs";
-import { baseUrl_API } from "../../utils/baseUrl";
+import { baseURL_API } from "../../utils/baseURL";
 
 export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
@@ -126,7 +126,7 @@ export const EditShiftForm = () => {
     // Update shifts after successfully posting new shift
     const handleUpdateShifts = useCallback((shift) => {
         // Update client shifts from the database
-        fetch(`${baseUrl_API}/shift/${store.selectedClient._id}`, {
+        fetch(`${baseURL_API}/shift/${store.selectedClient._id}`, {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
