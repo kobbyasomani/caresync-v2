@@ -19,7 +19,8 @@ import AddShiftForm from "../components/forms/AddShiftForm";
 
 import {
     Typography, Stack, Box, IconButton, Tooltip, Button,
-    Avatar, useTheme, Card, CardActionArea, CardContent
+    Avatar, useTheme, Card, CardActionArea, CardContent,
+    useMediaQuery
 } from "@mui/material"
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import PersonIcon from '@mui/icons-material/Person';
@@ -68,6 +69,7 @@ export const Calendar = () => {
     const [newShiftCreated, setNewShiftCreated] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
+    const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleRefreshClient = useCallback(() => {
         if (client._id) {
@@ -147,7 +149,7 @@ export const Calendar = () => {
         return calendarRef.current.getApi();
     }, []);
     const [calendarView, setCalendarView] = useState({
-        view: "dayGridMonth",
+        view: xsScreen ? "listMonth" : "dayGridMonth",
         toggleText: "List view",
         userView: "dayGridMonth"
     });
