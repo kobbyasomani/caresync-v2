@@ -23,7 +23,6 @@ const emptyStore = {
     selectedShiftIsInProgress: false,
     selectedIncidentReport: {},
     refreshCalendar: "",
-    navUtils: {}
 }
 
 /**

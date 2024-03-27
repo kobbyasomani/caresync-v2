@@ -136,14 +136,14 @@ function App() {
       if (localStorage) {
         return {
           ...localStorage,
-          isAuth: localStorage.isAuth,
-          user: localStorage.user,
-          selectedClient: localStorage.selectedClient,
-          shifts: localStorage.shifts,
-          featuredShift: localStorage.featuredShift,
-          previousShifts: localStorage.previousShifts,
-          selectedShift: localStorage.selectedShift,
-          refreshCalendar: localStorage.refreshCalendar
+          // isAuth: localStorage.isAuth,
+          // user: localStorage.user,
+          // selectedClient: localStorage.selectedClient,
+          // shifts: localStorage.shifts,
+          // featuredShift: localStorage.featuredShift,
+          // previousShifts: localStorage.previousShifts,
+          // selectedShift: localStorage.selectedShift,
+          // refreshCalendar: localStorage.refreshCalendar
         };
         // Set global state to defaults if not in localStorage
       } else {
