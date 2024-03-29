@@ -1,8 +1,9 @@
-import React, { useReducer, useEffect, useCallback } from "react";
+import React, { useState, useReducer, useEffect, useCallback } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
+import { createSession, generateEncryptionKey } from "./utils/apiUtils";
 import Root from "./views/Root";
 import Home from "./views/Home";
 import ProtectedRoute from "./views/ProtectedRoute";
@@ -152,6 +153,16 @@ function App() {
     }, []);
 
     const [store, dispatch] = useReducer(globalReducer, initialState());
+    const [encryptionKey, setEncryptionKey] = useState(null);
+
+    // Generate and set the encryption key in state on initial load
+    useEffect(() => {
+      const generateKey = async () => {
+        const key = await generateEncryptionKey();
+        setEncryptionKey(key);
+      }
+      generateKey();
+    }, []);
 
     // Set required global state values in localStorage any time their state changes
     // TODO: Create database sessions instead of using localStorage
@@ -160,7 +171,22 @@ function App() {
       window.localStorage.setItem("careSync", JSON.stringify({
         ...store,
       }));
-    }, [store]);
+      // // Serialise and encode the session data
+      // const sessionData = JSON.stringify(store);
+      // const encoder = new TextEncoder();
+      // const encodedSessionData = encoder.encode(sessionData);
+
+      // //Encrypt the session data
+      // const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      // const encryptedSessionData = window.crypto.subtle.encrypt(
+      //   { name: "AES-GCM", iv: iv },
+      //   process.env.REACT_APP_CRYPTO_SECRET,
+      //   encodedSessionData
+      // );
+
+      // // Post the encrypted session data to the server
+      // TODO: Write an API utility function to create and update the session in the database 
+    }, [store, encryptionKey]);
 
     return (
       <GlobalStateContext.Provider value={{ store, dispatch }}>

@@ -1,9 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
-const jwtDecode = require("jwt-decode");
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/userModel");
-const Session = require("../models/sessionModel");
+const { encryptionKey } = require("../utils/crypto.utils");
 
 //----NEW ROUTE----//
 // @desc Create a new user session

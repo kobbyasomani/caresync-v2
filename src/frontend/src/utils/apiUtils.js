@@ -150,6 +150,51 @@ const deleteIncidentReport = async (shiftID, incidentId) => {
     }
 };
 
+const createSession = async (sessionData) => {
+    fetch(`${baseURL_API}/session`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: sessionData
+    }).then(response => response.json())
+        .then(json => console.log(json));
+}
+
+/**
+ * Generates and returns a CryptoKey object for encrypting and decrypting data using the
+ * `REACT_APP_CRYPTO_PASS` and `REACT_APP_CRYPTO_SALT` environment variables.
+ */
+const generateEncryptionKey = async () => {
+    // Import the passphrase as a base key
+    const encryptionKey = await crypto.subtle.importKey(
+        "raw",
+        new TextEncoder().encode(process.env.REACT_APP_CRYPTO_PASS),
+        { name: "PBKDF2" },
+        false,
+        ["deriveKey"]
+    ).then(baseKey => {
+        // Derive encryption/decryption key from the base key
+        return crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: new TextEncoder().encode(process.env.REACT_APP_CRYPTO_SALT),
+                iterations: 100000,
+                hash: 'SHA-256'
+            },
+            baseKey,
+            {
+                name: 'AES-GCM',
+                length: 256
+            },
+            true,
+            ["encrypt", "decrypt"]
+        )
+    }).then(encryptionKey => encryptionKey);
+    return encryptionKey;
+}
+
 export {
     getClient,
     getCarers,
@@ -158,5 +203,7 @@ export {
     getUser,
     updateUser,
     updateShift,
-    deleteIncidentReport
+    deleteIncidentReport,
+    createSession,
+    generateEncryptionKey
 }

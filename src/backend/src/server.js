@@ -1,4 +1,6 @@
-const express = require("express");
+const express = require('express');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 require('dotenv').config()
 const { errorHandler } = require('./middleware/errorMiddleware')
 const cookieParser = require("cookie-parser");
@@ -7,8 +9,32 @@ const cloudinary = require('cloudinary').v2;
 
 
 // connectDB()
-
 const app = express();
+const store = new MongoDBStore(
+  {
+    uri: process.env.MONGO_URI,
+    collection: 'sessions'
+  },
+  function (error) {
+    if (error) {
+      console.log("Error:", error);
+    }
+  }
+);
+
+store.on('error', function (error) {
+  console.log("Error:", error);
+});
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week (in ms)
+  },
+  store: store,
+  resave: false,
+  saveUninitialized: false
+}));
 
 app.use(cookieParser());
 app.use(express.json())
