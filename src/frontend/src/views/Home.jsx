@@ -1,18 +1,19 @@
-import React from 'react';
-import { useMemo, useCallback } from "react";
-import { useGlobalContext } from "../utils/globalUtils";
+import React, { useMemo, useCallback } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import Form from "../components/forms/Form";
-import LogoLarge from '../components/logo/LogoLarge';
+
+import { useGlobalContext } from "../utils/globalUtils";
 import { useHandleForm } from "../utils/formUtils";
 import { baseURL_API } from "../utils/baseURL";
+import { encryptSessionData, createSession } from "../utils/apiUtils";
+import Form from "../components/forms/Form";
+import LogoLarge from '../components/logo/LogoLarge';
 
 import { TextField, Typography, Container, useTheme, Box } from "@mui/material";
 import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
     // Get the global state and set form state
-    const { store, dispatch } = useGlobalContext();
+    const { store, dispatch, crypto } = useGlobalContext();
     const navigate = useNavigate();
     const isDemo = process.env.REACT_APP_DEMO;
 
@@ -38,8 +39,14 @@ export default function Login() {
             type: "login",
             data: response.user
         });
-        navigate("/");
-    }, [dispatch, navigate]);
+        // Create the user session
+        encryptSessionData(store, crypto.key, crypto.iv)
+            .then(session => {
+                return createSession(session);
+            }).then(() => {
+                navigate("/");
+            });
+    }, [dispatch, navigate, store, crypto]);
 
     const handleStartDemo = useCallback(() => {
         fetch(`${baseURL_API}/user/register-demo`, {

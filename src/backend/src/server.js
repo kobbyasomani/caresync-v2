@@ -39,6 +39,7 @@ app.use(session({
 app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(express.raw({ type: 'application/octet-stream' }));
 
 cloudinary.config({
   secure: true

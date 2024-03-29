@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
-import { createSession, generateEncryptionKey } from "./utils/apiUtils";
+import { generateEncryptionKey, encryptSessionData, decryptSessionData } from "./utils/apiUtils";
 import Root from "./views/Root";
 import Home from "./views/Home";
 import ProtectedRoute from "./views/ProtectedRoute";
@@ -154,6 +154,7 @@ function App() {
 
     const [store, dispatch] = useReducer(globalReducer, initialState());
     const [encryptionKey, setEncryptionKey] = useState(null);
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
 
     // Generate and set the encryption key in state on initial load
     useEffect(() => {
@@ -171,25 +172,20 @@ function App() {
       window.localStorage.setItem("careSync", JSON.stringify({
         ...store,
       }));
-      // // Serialise and encode the session data
-      // const sessionData = JSON.stringify(store);
-      // const encoder = new TextEncoder();
-      // const encodedSessionData = encoder.encode(sessionData);
 
-      // //Encrypt the session data
-      // const iv = window.crypto.getRandomValues(new Uint8Array(12));
-      // const encryptedSessionData = window.crypto.subtle.encrypt(
-      //   { name: "AES-GCM", iv: iv },
-      //   process.env.REACT_APP_CRYPTO_SECRET,
-      //   encodedSessionData
-      // );
-
-      // // Post the encrypted session data to the server
-      // TODO: Write an API utility function to create and update the session in the database 
-    }, [store, encryptionKey]);
+      // TODO: Post the encrypted session data to the server
+      // const testSessionData = async () => {
+      //   if (encryptionKey) {
+      //     const encryptedSessionData = await encryptSessionData(store, encryptionKey, iv)
+      //     console.log(encryptedSessionData);
+      //     console.log(await decryptSessionData(encryptedSessionData, encryptionKey, iv));
+      //   }
+      // }
+      // testSessionData();
+    }, [store, encryptionKey, iv]);
 
     return (
-      <GlobalStateContext.Provider value={{ store, dispatch }}>
+      <GlobalStateContext.Provider value={{ store, dispatch, crypto: { key: encryptionKey, iv } }}>
         {children}
       </GlobalStateContext.Provider>
     );

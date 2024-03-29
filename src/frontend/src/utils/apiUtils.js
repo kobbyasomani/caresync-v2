@@ -150,14 +150,18 @@ const deleteIncidentReport = async (shiftID, incidentId) => {
     }
 };
 
-const createSession = async (sessionData) => {
+/**
+ * Posts encrypted session data to the server in the form of an `ArrayBuffer`.
+ * @param {ArrayBuffer} encryptedSessionData The session data to be uploaded.
+ */
+const createSession = async (encryptedSessionData) => {
     fetch(`${baseURL_API}/session`, {
         credentials: "include",
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/octet-stream"
         },
-        body: sessionData
+        body: encryptedSessionData
     }).then(response => response.json())
         .then(json => console.log(json));
 }
@@ -195,6 +199,55 @@ const generateEncryptionKey = async () => {
     return encryptionKey;
 }
 
+/**
+ * Takes the application's global context store and returns a UTF-8-encoded and
+ * AES-GCM encrypted version of it.
+ * @param {Object} store The global context store object containing the session data.
+ * @param {CryptoKey} encryptionKey The encryption key to use.
+ * @param {ArrayBuffer} iv The initialisation vector for the AES-GCM algorithm. Should be 96 bits long and generated at random (e.g., using the `crypto.getRandomValues` method).
+ * 
+ */
+const encryptSessionData = async (store, encryptionKey, iv) => {
+    // Serialise and encode the session data
+    const sessionData = JSON.stringify(store);
+    const encoder = new TextEncoder();
+    const encodedSessionData = encoder.encode(sessionData);
+
+    //Encrypt the session data
+    const encryptedSessionData = await window.crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: iv },
+        encryptionKey,
+        encodedSessionData
+    );
+    return (encryptedSessionData);
+}
+
+/**
+ * 
+ * Takes encrypted session data in the form of an `ArrayBuffer` and returns
+ * the session store in the form of an `Object`, which can be set as the initial
+ * state of the client global context store on application load.
+ * @param {ArrayBuffer} encryptedSessionData
+ * @param {CryptoKey} encryptionKey The encryption key to use.
+ * @param {ArrayBuffer} iv The initialisation vector for the AES-GCM algorithm. Should be 96 bits long and generated at random (e.g., using the `crypto.getRandomValues` method).
+ */
+const decryptSessionData = async (encryptedSessionData, encryptionKey, iv) => {
+    // Decrypt encoded data
+    const decryptedSessionData = await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv },
+        encryptionKey,
+        encryptedSessionData
+    );
+
+    //Decode data
+    const decoder = new TextDecoder();
+    const decodedSessionData = decoder.decode(decryptedSessionData);
+    const sessionStore = JSON.parse(decodedSessionData);
+    return sessionStore;
+}
+
+// TODO: Write an API utility function to create and update the session in the database 
+
 export {
     getClient,
     getCarers,
@@ -205,5 +258,7 @@ export {
     updateShift,
     deleteIncidentReport,
     createSession,
-    generateEncryptionKey
+    generateEncryptionKey,
+    encryptSessionData,
+    decryptSessionData
 }
