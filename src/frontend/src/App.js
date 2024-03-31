@@ -3,7 +3,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { GlobalStateContext, globalReducer, emptyStore } from "./utils/globalUtils";
 import { ModalContext, useModalReducer } from "./utils/modalUtils";
-import { generateEncryptionKey, encryptSessionData, decryptSessionData } from "./utils/apiUtils";
+import {
+  generateEncryptionKey, encryptSessionData, decryptSessionData,
+  readSession, uploadSession
+} from "./utils/apiUtils";
 import Root from "./views/Root";
 import Home from "./views/Home";
 import ProtectedRoute from "./views/ProtectedRoute";
@@ -47,7 +50,7 @@ const router = createBrowserRouter([
                 path: "/",
                 element: <>
                   <MyAccount />
-                  <SelectClient />
+                  <SelectClient readSession={readSession} />
                 </>
               },
               {
@@ -123,69 +126,79 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  /* FOR SECURITY: 
-  Refactor these hooks in future to set and fetch
-  authenticated session data from backend server */
-
   // Global state handler
   const GlobalProvider = ({ children }) => {
-    const initialState = useCallback(() => {
-      // Get global state values from localStorage on load if available
-      const localStorage = window.localStorage.careSync ?
-        JSON.parse(window.localStorage.getItem("careSync")) : null;
-      // Set the global state values from localStorage
-      if (localStorage) {
-        return {
-          ...localStorage,
-          // isAuth: localStorage.isAuth,
-          // user: localStorage.user,
-          // selectedClient: localStorage.selectedClient,
-          // shifts: localStorage.shifts,
-          // featuredShift: localStorage.featuredShift,
-          // previousShifts: localStorage.previousShifts,
-          // selectedShift: localStorage.selectedShift,
-          // refreshCalendar: localStorage.refreshCalendar
-        };
-        // Set global state to defaults if not in localStorage
-      } else {
-        return emptyStore;
-      }
-    }, []);
-
-    const [store, dispatch] = useReducer(globalReducer, initialState());
     const [encryptionKey, setEncryptionKey] = useState(null);
-    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+    const [iv] = useState(new Uint8Array(process.env.REACT_APP_CRYPTO_IV.split(',').map(Number)).buffer);
+    const [store, dispatch] = useReducer(globalReducer, emptyStore);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Generate and set the encryption key in state on initial load
+    /**
+     * Attempts to read session data for the logged-in user from the server. If a session is found,
+     * decrypts it, sets it in the global context store, and returns true. If no session
+     * is found, returns false.
+     * @returns {Boolean}
+     */
+    const loadSession = useCallback(() => {
+      setIsLoading(true);
+      readSession().then(sessionData => {
+        if (sessionData) {
+          decryptSessionData(sessionData, encryptionKey, iv)
+            .then(session => {
+              dispatch({
+                type: "setStore",
+                data: session
+              });
+              setIsLoading(false);
+              return true;
+            });
+        } else {
+          setIsLoading(false);
+          return false
+        }
+      });
+    }, [encryptionKey, iv]);
+
+    /**
+     * Encrypt the current global context store state and post it to the server.
+     */
+    const saveSession = useCallback(() => {
+      const encryptSession = async () => {
+        const encryptedSession = await encryptSessionData(store, encryptionKey, iv);
+        return encryptedSession;
+      }
+      encryptSession()
+        .then(session => {
+          uploadSession(session);
+        });
+    }, [encryptionKey, iv, store]);
+
     useEffect(() => {
       const generateKey = async () => {
         const key = await generateEncryptionKey();
         setEncryptionKey(key);
       }
-      generateKey();
+      generateKey()
     }, []);
 
-    // Set required global state values in localStorage any time their state changes
-    // TODO: Create database sessions instead of using localStorage
     useEffect(() => {
-      // console.log("updating localStorage from store...");
-      window.localStorage.setItem("careSync", JSON.stringify({
-        ...store,
-      }));
+      if (encryptionKey) {
+        loadSession()
+      }
+    }, [encryptionKey, loadSession]);
 
-      // TODO: Post the encrypted session data to the server
-      // const testSessionData = async () => {
-      //   if (encryptionKey) {
-      //     const encryptedSessionData = await encryptSessionData(store, encryptionKey, iv)
-      //     console.log(encryptedSessionData);
-      //     console.log(await decryptSessionData(encryptedSessionData, encryptionKey, iv));
-      //   }
-      // }
-      // testSessionData();
-    }, [store, encryptionKey, iv]);
+    useEffect(() => {
+      if (encryptionKey && store.isAuth) {
+        saveSession();
+      }
+    }, [store, encryptionKey, saveSession, store.isAuth]);
 
     return (
-      <GlobalStateContext.Provider value={{ store, dispatch, crypto: { key: encryptionKey, iv } }}>
+      <GlobalStateContext.Provider value={{
+        store, dispatch,
+        crypto: { key: encryptionKey, iv, saveSession, loadSession },
+        isLoading, setIsLoading
+      }}>
         {children}
       </GlobalStateContext.Provider>
     );
@@ -224,4 +237,4 @@ the Calendar view will be the component returned by the URL path (/calendar/<pat
   );
 }
 
-export default App;
+export default App

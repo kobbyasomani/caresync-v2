@@ -1,6 +1,17 @@
 import { baseURL_API } from "./baseURL";
 
 /**
+ * Log out the user. This will unset the `access_token` and `authenticated` cookies
+ * and destroy the user session.
+ * @returns {Promise<JSON>} The JSON reponse message from the server.
+ */
+const logoutUser = async () => {
+    const response = await fetch(`${baseURL_API}/user/logout`, { credentials: "include" });
+    const json = await response.json();
+    return json;
+}
+
+/**
  * Returns a client object using a given client id. Includes the client's
  * `_id`, `firstName`, `lastName`, `isCoordinator` (boolean), coordinator: { _id, firstName, lastName }` and
  * `carers: [{ _id, firstName, lastName }]`.
@@ -151,22 +162,6 @@ const deleteIncidentReport = async (shiftID, incidentId) => {
 };
 
 /**
- * Posts encrypted session data to the server in the form of an `ArrayBuffer`.
- * @param {ArrayBuffer} encryptedSessionData The session data to be uploaded.
- */
-const createSession = async (encryptedSessionData) => {
-    fetch(`${baseURL_API}/session`, {
-        credentials: "include",
-        method: "POST",
-        headers: {
-            "Content-Type": "application/octet-stream"
-        },
-        body: encryptedSessionData
-    }).then(response => response.json())
-        .then(json => console.log(json));
-}
-
-/**
  * Generates and returns a CryptoKey object for encrypting and decrypting data using the
  * `REACT_APP_CRYPTO_PASS` and `REACT_APP_CRYPTO_SALT` environment variables.
  */
@@ -200,55 +195,109 @@ const generateEncryptionKey = async () => {
 }
 
 /**
- * Takes the application's global context store and returns a UTF-8-encoded and
- * AES-GCM encrypted version of it.
+ * Takes the application's global context store and returns it as a `String`.
+ * The store object is converted to a `JSON` string, UTF-8-encoded, AES-GCM encrypted,
+ * and finally converted to a `Uint8Array` string for storage in the database.
  * @param {Object} store The global context store object containing the session data.
  * @param {CryptoKey} encryptionKey The encryption key to use.
  * @param {ArrayBuffer} iv The initialisation vector for the AES-GCM algorithm. Should be 96 bits long and generated at random (e.g., using the `crypto.getRandomValues` method).
- * 
+ * @returns The encrypted session data as a `String`.
  */
 const encryptSessionData = async (store, encryptionKey, iv) => {
-    // Serialise and encode the session data
-    const sessionData = JSON.stringify(store);
-    const encoder = new TextEncoder();
-    const encodedSessionData = encoder.encode(sessionData);
+    try {
+        // Serialise and encode the session data
+        const sessionData = JSON.stringify(store);
+        const encoder = new TextEncoder();
+        const encodedSessionData = encoder.encode(sessionData);
 
-    //Encrypt the session data
-    const encryptedSessionData = await window.crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv },
-        encryptionKey,
-        encodedSessionData
-    );
-    return (encryptedSessionData);
+        //Encrypt the session data
+        const encryptedSessionData = await window.crypto.subtle.encrypt(
+            { name: "AES-GCM", iv },
+            encryptionKey,
+            encodedSessionData
+        );
+        const encryptedSessionDataString = new Uint8Array(encryptedSessionData).toString();
+        return (encryptedSessionDataString);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
 }
 
 /**
  * 
- * Takes encrypted session data in the form of an `ArrayBuffer` and returns
- * the session store in the form of an `Object`, which can be set as the initial
- * state of the client global context store on application load.
- * @param {ArrayBuffer} encryptedSessionData
+ * Takes encrypted session data in the form of a `Uint8Array` string and returns
+ * the session store in the form of an `Object`, which can be set as the state value 
+ * of the client's global context store.
+ * @param {String} encryptedSessionDataString
  * @param {CryptoKey} encryptionKey The encryption key to use.
  * @param {ArrayBuffer} iv The initialisation vector for the AES-GCM algorithm. Should be 96 bits long and generated at random (e.g., using the `crypto.getRandomValues` method).
+ * @returns The session store as an `Object`.
  */
-const decryptSessionData = async (encryptedSessionData, encryptionKey, iv) => {
-    // Decrypt encoded data
-    const decryptedSessionData = await window.crypto.subtle.decrypt(
-        { name: "AES-GCM", iv },
-        encryptionKey,
-        encryptedSessionData
-    );
+const decryptSessionData = async (encryptedSessionDataString, encryptionKey, iv) => {
+    try {
+        // Convert encrypted data string back into an ArrayBuffer
+        const arrayBuffer = new Uint8Array(encryptedSessionDataString.split(",").map(Number)).buffer
 
-    //Decode data
-    const decoder = new TextDecoder();
-    const decodedSessionData = decoder.decode(decryptedSessionData);
-    const sessionStore = JSON.parse(decodedSessionData);
-    return sessionStore;
+        // Decrypt encoded data
+        const decryptedSessionData = await window.crypto.subtle.decrypt(
+            { name: "AES-GCM", iv },
+            encryptionKey,
+            arrayBuffer
+        );
+        //Decode data
+        const decoder = new TextDecoder();
+        const decodedSessionData = decoder.decode(decryptedSessionData);
+        const sessionStore = JSON.parse(decodedSessionData);
+        return sessionStore;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
 }
 
-// TODO: Write an API utility function to create and update the session in the database 
+/**
+ * Fetches the session data from the server and returns it as an `ArrayBuffer`.
+ */
+const readSession = async () => {
+    const sessionData = await fetch(`${baseURL_API}/session`, { credentials: "include" })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json()
+                    .then(json => {
+                        return json.sessionData;
+                    });
+            } else {
+                return null;
+            }
+        });
+    return sessionData;
+}
+
+/**
+ * Posts encrypted session data to the server in the form of an `ArrayBuffer` string.
+ * @param {String} encryptedSessionDataString The session data to be uploaded.
+ * @returns The JSON response from the server.
+ */
+const uploadSession = async (encryptedSessionDataString) => {
+    try {
+        fetch(`${baseURL_API}/session`, {
+            credentials: "include",
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ sessionData: encryptedSessionDataString })
+        }).then(response => response.json())
+            .catch(error => console.log(error));
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
 
 export {
+    logoutUser,
     getClient,
     getCarers,
     getAllShifts,
@@ -257,7 +306,8 @@ export {
     updateUser,
     updateShift,
     deleteIncidentReport,
-    createSession,
+    readSession,
+    uploadSession,
     generateEncryptionKey,
     encryptSessionData,
     decryptSessionData

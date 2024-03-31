@@ -41,7 +41,6 @@ const globalReducer = (state, action) => {
                 user: action.data
             }
         case "logout":
-            window.localStorage.setItem("careSync", JSON.stringify(emptyStore));
             return emptyStore;
         case "setIsAuth":
             return {
@@ -173,6 +172,10 @@ const globalReducer = (state, action) => {
                     ...state.navUtils,
                     [action.name]: action.function
                 }
+            }
+        case "setStore":
+            return {
+                ...action.data
             }
         default: return state;
     }

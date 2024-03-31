@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { logoutUser } from "../../utils/apiUtils";
 import IconSmall from "../logo/IconSmall";
 
 import {
@@ -31,11 +32,12 @@ const NavBar = () => {
     }, [modalDispatch]);
 
     const handleLogout = useCallback(() => {
-        dispatch({
-            type: "logout",
+        logoutUser().then(() => {
+            dispatch({
+                type: "logout",
+            });
+            navigate("/");
         });
-        navigate("/");
-        window.location.reload();
     }, [dispatch, navigate]);
 
     const navItems = [
@@ -43,6 +45,7 @@ const NavBar = () => {
             name: store.isAuth ? "Clients" : "Home",
             to: "/"
         },
+        // TODO: Add a nav link to the Calendar view
         {
             name: "About",
             to: "/about"

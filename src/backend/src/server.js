@@ -26,6 +26,17 @@ store.on('error', function (error) {
   console.log("Error:", error);
 });
 
+const corsOptions = {
+  // Valid front-end server origins
+  origin: process.env.ORIGIN_URL,
+  credentials: true
+}
+app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.json({ limit: '2mb' }))
+app.use(express.urlencoded({ extended: false }))
+// app.use(express.raw({ type: 'application/octet-stream' }));
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   cookie: {
@@ -36,28 +47,15 @@ app.use(session({
   saveUninitialized: false
 }));
 
-app.use(cookieParser());
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(express.raw({ type: 'application/octet-stream' }));
-
 cloudinary.config({
   secure: true
 });
-
-const corsOptions = {
-  // Valid front-end server origins
-  origin: process.env.ORIGIN_URL,
-  credentials: true
-}
-app.use(cors(corsOptions));
 
 app.use('/user', require('./routes/userRoutes'));
 app.use('/session', require('./routes/sessionRoutes'));
 app.use('/client', require('./routes/clientRoutes'));
 app.use('/carer', require('./routes/carerRoutes'));
 app.use('/shift', require('./routes/shiftRoutes'));
-// TODO: Add a Session model and the API routes for updating it to the backend server
 
 app.use(errorHandler);
 

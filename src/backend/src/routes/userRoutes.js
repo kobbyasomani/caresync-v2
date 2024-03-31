@@ -4,6 +4,7 @@ const {
   registerUser,
   registerDemoUser,
   loginUser,
+  logoutUser,
   getUserClients,
   emailVerification,
   resendVerification,
@@ -34,6 +35,10 @@ userRouter.post("/verification/:token", emailVerification);
 // Logs in user and returns JWT token
 // @param {email, password}
 userRouter.post("/login", loginUser);
+
+// Logs out the user and destroys their session
+// @param none
+userRouter.get("/logout", logoutUser);
 
 // Finds all user clients (both coordinator and carer)
 // @param none  (pulls user id from jwt token)

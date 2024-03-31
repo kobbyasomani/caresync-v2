@@ -326,7 +326,7 @@ const MyAccount = () => {
                             </Table>
                             <Typography variant="body2" sx={{ mt: 2 }}>
                                 Update your password if you want to access this demo account again after this session.
-                                Demo accounts will be deleted automatically after 30 days.
+                                <strong> Demo accounts will be deleted automatically after 30 days.</strong>
                             </Typography>
                             {alert?.message ?
                                 <Alert severity={alert.severity} sx={{ mt: 2 }}>

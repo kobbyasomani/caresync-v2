@@ -7,6 +7,7 @@ const Client = require("../models/clientModel");
 const Shift = require("../models/shiftModel");
 const emails = require("../services/email");
 const { v4: uuidv4 } = require("uuid");
+const { deleteSession } = require("../controllers/sessionController");
 
 //----NEW ROUTE----//
 // @desc Register User
@@ -256,7 +257,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-
   res.status(200).json({
     message: "Logged in Successfully",
     user: {
@@ -264,6 +264,23 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user._id,
     },
   });
+});
+
+//----NEW ROUTE----//
+// @desc Log out User
+// @route GET /user/logout
+// @access public
+const logoutUser = asyncHandler(async (req, res) => {
+  try {
+    res.clearCookie("authenticated");
+    res.clearCookie("access_token");
+    res.clearCookie("connect.sid");
+    deleteSession(req, res);
+  }
+  catch (error) {
+    res.status(500);
+    throw new Error(error.message);
+  }
 });
 
 //----NEW ROUTE----//
@@ -471,6 +488,7 @@ module.exports = {
   registerUser,
   registerDemoUser,
   loginUser,
+  logoutUser,
   getUserClients,
   emailVerification,
   resendVerification,

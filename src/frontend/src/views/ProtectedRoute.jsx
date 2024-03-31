@@ -1,23 +1,30 @@
 import { useEffect } from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+
 import { useGlobalContext } from "../utils/globalUtils";
 
 const ProtectedRoute = () => {
     const { store, dispatch } = useGlobalContext();
+    const navigate = useNavigate();
 
-    // Check the authentication cookie when attempting to access protected routes.
+    // Check if the user is authenticated when attempting to access protected routes.
     useEffect(() => {
-        if (store.isAuth === false) {
+        // TODO: Ping the server to check for authentication instead of relying on client cookie.
+        const auth = document.cookie.includes("authenticated=true");
+        dispatch({
+            type: "setIsAuth",
+            data: auth
+        });
+        if (!auth) {
             dispatch({
                 type: "logout",
-                data: document.cookie.includes("authenticated=true")
             });
+            navigate("/");
         }
-    }, [dispatch, store.isAuth]);
+    }, [dispatch, store.isAuth, navigate]);
 
-    return store.isAuth ? (
-        <Outlet />
-    ) : <Navigate to="/" replace />
+    return store.isAuth ? <Outlet />
+        : null
 }
 
 export default ProtectedRoute
