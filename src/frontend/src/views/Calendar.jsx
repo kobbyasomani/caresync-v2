@@ -87,7 +87,7 @@ export const Calendar = () => {
             if (!store.selectedClient._id) {
                 navigate("/");
             }
-        }, 3000);
+        }, 1000);
     }, [navigate, store.selectedClient._id]);
 
     const handleRefreshCalendar = useCallback(() => {

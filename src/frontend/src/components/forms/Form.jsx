@@ -74,7 +74,7 @@ const Form = forwardRef((
      * Submit form to the postURL using axios
      */
     const submitForm = useCallback(() => {
-        updateLoadState(true)
+        updateLoadState(true);
         axios({
             url: postURL,
             method: method || "post",
@@ -95,6 +95,7 @@ const Form = forwardRef((
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
+            console.log(error);
             handleErrors([`Error: ${error.response?.data?.message || error.message}`]);
             updateLoadState(false, [`Error: ${error.response?.data?.message || error.message}`]);
         });

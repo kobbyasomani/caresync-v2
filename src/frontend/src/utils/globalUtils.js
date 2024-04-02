@@ -9,6 +9,7 @@ const useGlobalContext = () => useContext(GlobalStateContext);
 
 // Global store in empty state
 const emptyStore = {
+    appIsLoading: true,
     isAuth: false,
     user: {},
     clients: {},
@@ -42,6 +43,11 @@ const globalReducer = (state, action) => {
             }
         case "logout":
             return emptyStore;
+        case "setAppIsLoading":
+            return {
+                ...state,
+                appIsLoading: action.data
+            }
         case "setIsAuth":
             return {
                 ...state,
@@ -175,6 +181,11 @@ const globalReducer = (state, action) => {
             }
         case "setStore":
             return {
+                ...action.data
+            }
+        case "updateStore":
+            return {
+                ...state,
                 ...action.data
             }
         default: return state;

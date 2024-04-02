@@ -32,18 +32,22 @@ const NavBar = () => {
     }, [modalDispatch]);
 
     const handleLogout = useCallback(() => {
+        dispatch({
+            type: "setAppIsLoading",
+            data: true
+        });
+        navigate("/");
         logoutUser().then(() => {
             dispatch({
                 type: "logout",
             });
-            navigate("/");
         });
     }, [dispatch, navigate]);
 
     const navItems = [
         {
             name: store.isAuth ? "Clients" : "Home",
-            to: "/"
+            to: store.isAuth ? "/clients" : "/"
         },
         // TODO: Add a nav link to the Calendar view
         {
@@ -58,7 +62,7 @@ const NavBar = () => {
                 <Toolbar>
                     <Button component={RouterLink}
                         to={store.isAuth && store.selectedClient?._id ? "/calendar"
-                            : store.isAuth && !store.selectedClient?._id ? "/"
+                            : store.isAuth && !store.selectedClient?._id ? "/clients"
                                 : "/"} startIcon={<IconSmall />}>
                         <Typography variant="h5" component="h1"
                             sx={{

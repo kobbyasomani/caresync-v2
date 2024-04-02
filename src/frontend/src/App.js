@@ -47,7 +47,7 @@ const router = createBrowserRouter([
             element: <ProtectedRoute />,
             children: [
               {
-                path: "/",
+                path: "/clients",
                 element: <>
                   <MyAccount />
                   <SelectClient readSession={readSession} />
@@ -131,32 +131,42 @@ function App() {
     const [encryptionKey, setEncryptionKey] = useState(null);
     const [iv] = useState(new Uint8Array(process.env.REACT_APP_CRYPTO_IV.split(',').map(Number)).buffer);
     const [store, dispatch] = useReducer(globalReducer, emptyStore);
-    const [isLoading, setIsLoading] = useState(true);
 
     /**
      * Attempts to read session data for the logged-in user from the server. If a session is found,
-     * decrypts it, sets it in the global context store, and returns true. If no session
-     * is found, returns false.
-     * @returns {Boolean}
+     * decrypts it, sets it in the global context store, and returns an `Object` with a `loaded` value
+     * of `true`. If no session is found, the truened `Object` will have a `loaded` value of `false`.
+     * @returns {Promise<Object>}
      */
     const loadSession = useCallback(() => {
-      setIsLoading(true);
-      readSession().then(sessionData => {
+      const earlyReturn = () => {
+        dispatch({
+          type: "setAppIsLoading",
+          data: false
+        });
+        return Promise.resolve({ loaded: false });
+      }
+      if (!document.cookie.includes("authenticated=true")) {
+        return earlyReturn();
+      }
+      const loadedSession = readSession().then(sessionData => {
         if (sessionData) {
           decryptSessionData(sessionData, encryptionKey, iv)
             .then(session => {
               dispatch({
-                type: "setStore",
-                data: session
+                type: "updateStore",
+                data: {
+                  ...session,
+                  appIsLoading: false
+                }
               });
-              setIsLoading(false);
-              return true;
+              return Promise.resolve({ loaded: true });
             });
         } else {
-          setIsLoading(false);
-          return false
+          return earlyReturn();
         }
       });
+      return loadedSession;
     }, [encryptionKey, iv]);
 
     /**
@@ -169,7 +179,7 @@ function App() {
       }
       encryptSession()
         .then(session => {
-          uploadSession(session);
+          return uploadSession(session);
         });
     }, [encryptionKey, iv, store]);
 
@@ -178,17 +188,19 @@ function App() {
         const key = await generateEncryptionKey();
         setEncryptionKey(key);
       }
-      generateKey()
+      if (!encryptionKey) {
+        generateKey();
+      }
     }, []);
 
     useEffect(() => {
-      if (encryptionKey) {
-        loadSession()
+      if (!store.isAuth && encryptionKey) {
+        loadSession();
       }
-    }, [encryptionKey, loadSession]);
+    }, [store.isAuth, encryptionKey, loadSession, dispatch]);
 
     useEffect(() => {
-      if (encryptionKey && store.isAuth) {
+      if (store.isAuth && encryptionKey) {
         saveSession();
       }
     }, [store, encryptionKey, saveSession, store.isAuth]);
@@ -197,7 +209,6 @@ function App() {
       <GlobalStateContext.Provider value={{
         store, dispatch,
         crypto: { key: encryptionKey, iv, saveSession, loadSession },
-        isLoading, setIsLoading
       }}>
         {children}
       </GlobalStateContext.Provider>

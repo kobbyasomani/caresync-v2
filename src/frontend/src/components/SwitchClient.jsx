@@ -23,7 +23,7 @@ const SwitchClient = () => {
             data: {}
         });
         // Navigate to client selection
-        navigate("/");
+        navigate("/clients");
     }, [dispatch, navigate])
 
     // Logout user if auth fails

@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { plusHours } from "../../utils/dateUtils";
+import { plusHours, isSameDate } from "../../utils/dateUtils";
 import { baseURL_API } from "../../utils/baseURL";
 import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
@@ -77,6 +77,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
                 defaultEnd = plusHours(defaultEnd, 1);
             }
         }
+        // TODO: Add warning alert if only available date is after selected date.
         return { start: dayjs(defaultStart).$d, end: dayjs(defaultEnd).$d }
     }, [store.shifts, store.selectedDate, shiftsOverlap])
 

@@ -41,7 +41,7 @@ const readSession = asyncHandler(async (req, res) => {
             throw new Error(error);
         }
     } else {
-        res.status(204)
+        res.status(202)
             .json({ message: "Started a new user session." });
     }
 });

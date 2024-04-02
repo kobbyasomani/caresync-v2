@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import React, { useMemo, useCallback, useEffect } from "react";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useHandleForm } from "../utils/formUtils";
@@ -13,9 +13,9 @@ import { ButtonPrimary } from "../components/root/Buttons";
 
 export default function Login() {
     // Get the global state and set form state
-    const { store, dispatch, crypto, isLoading } = useGlobalContext();
-    const { loadSession, saveSession } = crypto;
+    const { store, dispatch } = useGlobalContext();
     const navigate = useNavigate();
+    const location = useLocation();
     const isDemo = process.env.REACT_APP_DEMO;
 
     // Responsive styles
@@ -39,14 +39,8 @@ export default function Login() {
             type: "login",
             data: response.user
         });
-        loadSession().then(sessionLoaded => {
-            if (!sessionLoaded) {
-                return saveSession();
-            }
-        }).then(() => {
-            navigate("/");
-        });
-    }, [dispatch, navigate, loadSession, saveSession]);
+        navigate("/clients")
+    }, [dispatch, navigate]);
 
     const handleStartDemo = useCallback(() => {
         fetch(`${baseURL_API}/user/register-demo`, {
@@ -59,11 +53,17 @@ export default function Login() {
                     data: json.user
                 })
             }).then(() => {
-                navigate("/");
+                navigate("/clients");
             });
     }, [dispatch, navigate]);
 
-    return isLoading ? <Loader />
+    useEffect(() => {
+        if (store.isAuth && !store.selectedClient?._id && location.pathname === "/") {
+            navigate("/clients");
+        }
+    }, [store.isAuth, store.selectedClient, navigate]);
+
+    return store.appIsLoading ? <Loader />
         : store.isAuth ? (
             <Outlet />
         ) : (
