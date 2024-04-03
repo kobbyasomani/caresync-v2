@@ -43,8 +43,10 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
                 ...response,
             }
         });
-        setEditMode(false);
-    }, [dispatch, setEditMode,])
+        if (editMode) {
+            setEditMode(false);
+        }
+    }, [dispatch, editMode, setEditMode,])
 
     return isLoading ? <Loader /> : (
         <Form form={form}

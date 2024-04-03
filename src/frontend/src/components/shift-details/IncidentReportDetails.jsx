@@ -157,6 +157,7 @@ const IncidentReportDetails = () => {
     return (
         <>
             <Fade in={true}>
+                {/* // TODO: Add breadcrumbs in sub-views (e.g., Shift Overview / Incident Reports) */}
                 <Stack direction="row" alignItems="flex-end">
                     <Typography variant="h3">Incident Report {incidentReportIndex}</Typography>
                     {Object.keys(incidentReport).length > 0 ? (

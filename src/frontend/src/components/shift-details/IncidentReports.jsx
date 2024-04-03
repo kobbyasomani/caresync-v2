@@ -9,7 +9,7 @@ import { Typography, Stack, Box, Fade, Grow } from "@mui/material";
 import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
 
 const IncidentReports = () => {
-    const { store } = useGlobalContext();
+    const { store, dispatch } = useGlobalContext();
     const { shiftUtils } = store;
     const [incidentReports, setIncidentReports] = useState(store.selectedShift.incidentReports);
 
@@ -60,7 +60,10 @@ const IncidentReports = () => {
 
     useEffect(() => {
         setIncidentReports(store.selectedShift.incidentReports);
-    }, [store.selectedShift]);
+        dispatch({
+            type: "clearSelectedIncidentReport"
+        });
+    }, [store.selectedShift, dispatch]);
 
     return (
         <>

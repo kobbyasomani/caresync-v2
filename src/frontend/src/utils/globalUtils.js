@@ -166,6 +166,11 @@ const globalReducer = (state, action) => {
                 ...state,
                 selectedIncidentReport: action.data
             }
+        case "clearSelectedIncidentReport":
+            return {
+                ...state,
+                selectedIncidentReport: {}
+            }
         case "refreshCalendar":
             return {
                 ...state,

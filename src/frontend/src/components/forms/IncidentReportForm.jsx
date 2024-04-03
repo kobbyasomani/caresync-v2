@@ -15,7 +15,6 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // TODO: Make sure previously submitted reports do not persist when opening note creation forms
     const initialFormState = {
         inputs: {
             incidentReport: editMode ? store.selectedIncidentReport.incidentReportText : "",
