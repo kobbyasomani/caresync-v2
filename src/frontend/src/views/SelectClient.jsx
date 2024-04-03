@@ -57,7 +57,6 @@ const SelectClient = () => {
     }, [dispatch]);
 
     // Fetch the list of clients for the logged-in user
-    // TODO: Don't attempt to fetch from protected routes if the user is not authenticated.
     useEffect(() => {
         fetch(`${baseURL_API}/user`, {
             credentials: "include",

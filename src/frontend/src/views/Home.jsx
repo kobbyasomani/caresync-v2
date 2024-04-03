@@ -58,10 +58,14 @@ export default function Login() {
     }, [dispatch, navigate]);
 
     useEffect(() => {
-        if (store.isAuth && !store.selectedClient?._id && location.pathname === "/") {
-            navigate("/clients");
+        if (store.isAuth && location.pathname === "/") {
+            if (!store.selectedClient?._id) {
+                navigate("/clients");
+            } else {
+                navigate("/calendar");
+            }
         }
-    }, [store.isAuth, store.selectedClient, navigate]);
+    }, [store.isAuth, store.selectedClient._id, navigate, location.pathname]);
 
     return store.appIsLoading ? <Loader />
         : store.isAuth ? (

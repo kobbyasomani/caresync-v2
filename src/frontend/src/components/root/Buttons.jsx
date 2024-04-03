@@ -160,7 +160,7 @@ export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...r
 }
 
 // Add Shift button (opens modal)
-export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
+export const SidebarButtonAddShift = ({ variant, calendarApi, setAddShiftFormTrigger }) => {
     const { store } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [breakpoint, setBreakpoint] = useState('xs');
@@ -180,13 +180,13 @@ export const SidebarButtonAddShift = ({ variant, calendarApi }) => {
         const currentDateStart = new Date(new Date().setHours(0, 0, 0, 0));
         const currentDateEnd = plusHours(new Date(new Date().setHours(0, 0, 0, 0)), 24);
         calendarApi().select(currentDateStart, currentDateEnd);
-
+        setAddShiftFormTrigger("sidebar");
         modalDispatch({
             type: "open",
             data: "modal",
             id: "add-shift"
         });
-    }, [calendarApi, modalDispatch]);
+    }, [calendarApi, modalDispatch, setAddShiftFormTrigger]);
 
     // Get the current breakpoint token key
     function getBreakpoint() {

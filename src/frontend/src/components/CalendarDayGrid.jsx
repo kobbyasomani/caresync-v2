@@ -25,7 +25,8 @@ const StyleWrapper = styled('div')(({ theme }) => ({
     }
 }));
 
-const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarView }, ref) => {
+const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarView,
+    setAddShiftFormTrigger }, ref) => {
     // Selected date information state manager
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
@@ -38,20 +39,20 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
             type: "setSelectedDate",
             data: info
         });
+        setAddShiftFormTrigger("calendar");
         // Open the modal
         modalDispatch({
             type: "open",
             data: "modal",
             id: "select-shift-by-date"
         });
-    }, [dispatch, modalDispatch]);
+    }, [dispatch, modalDispatch, setAddShiftFormTrigger]);
 
     // Handle clicking a on a calendar event
     const handleEventClick = useCallback((eventClickInfo) => {
         eventClickInfo.jsEvent.preventDefault();
         // Get the full shift data stored in the event
         const shift = eventClickInfo.event.extendedProps.fullShift;
-
         dispatch({
             type: "setSelectedShift",
             data: shift

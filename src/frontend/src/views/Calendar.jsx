@@ -67,6 +67,7 @@ export const Calendar = () => {
     const [client, setClient] = useState(store.selectedClient);
     const [inProgressShift, setInProgressShift] = useState({});
     const [newShiftCreated, setNewShiftCreated] = useState(false);
+    const [addShiftFormTrigger, setAddShiftFormTrigger] = useState(null);
     const theme = useTheme();
     const navigate = useNavigate();
     const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -340,14 +341,17 @@ export const Calendar = () => {
                                     Upcoming Shift
                                 </Typography>
                                 <Shift featured shift={store.featuredShift} />
-                                <SidebarButtonAddShift variant={{ xs: "full", xl: "icon-only" }} calendarApi={calendarApi} />
+                                <SidebarButtonAddShift variant={{ xs: "full", xl: "icon-only" }}
+                                    calendarApi={calendarApi}
+                                    setAddShiftFormTrigger={setAddShiftFormTrigger} />
                             </section>
                         ) : (
                             <section>
                                 <Typography variant="h3" component="h2">
                                     No upcoming shift
                                 </Typography>
-                                <SidebarButtonAddShift variant={{ xl: "full" }} calendarApi={calendarApi} />
+                                <SidebarButtonAddShift variant={{ xl: "full" }} calendarApi={calendarApi}
+                                    setAddShiftFormTrigger={setAddShiftFormTrigger} />
                             </section>
                         )}
                     </Box>
@@ -388,6 +392,7 @@ export const Calendar = () => {
                                 calendarView={calendarView}
                                 setCalendarView={setCalendarView}
                                 toggleCalendarView={toggleCalendarView}
+                                setAddShiftFormTrigger={setAddShiftFormTrigger}
                             />
                         </Box>
                     </Box>
@@ -397,7 +402,8 @@ export const Calendar = () => {
                 <CareTeamList />
                 <InviteCarerForm />
                 <SelectShiftByDate />
-                <AddShiftForm newShiftCreated={newShiftCreated} setNewShiftCreated={setNewShiftCreated} />
+                <AddShiftForm newShiftCreated={newShiftCreated} setNewShiftCreated={setNewShiftCreated}
+                    trigger={addShiftFormTrigger} />
             </>
         ) : <Navigate to="/" />
 }

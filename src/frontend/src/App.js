@@ -191,7 +191,7 @@ function App() {
       if (!encryptionKey) {
         generateKey();
       }
-    }, []);
+    }, [encryptionKey]);
 
     useEffect(() => {
       if (!store.isAuth && encryptionKey) {

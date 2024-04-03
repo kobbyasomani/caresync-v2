@@ -22,11 +22,12 @@ import {
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 
-export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
+export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [modalData, setModalData] = useState({});
     const modalId = "add-shift";
+    const [alert, setAlert] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -77,9 +78,8 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
                 defaultEnd = plusHours(defaultEnd, 1);
             }
         }
-        // TODO: Add warning alert if only available date is after selected date.
         return { start: dayjs(defaultStart).$d, end: dayjs(defaultEnd).$d }
-    }, [store.shifts, store.selectedDate, shiftsOverlap])
+    }, [store.shifts, store.selectedDate, shiftsOverlap]);
 
     // Set the initial form and alert state
     const [defaultShiftTime, setDefaultShiftTime] = useState(getShiftTimeDefaults());
@@ -93,7 +93,6 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
         errors: []
     });
     const [form, setForm] = useHandleForm(initialState);
-    const [alert, setAlert] = useState({});
     const clearAlert = useCallback(() => {
         setAlert({});
     }, []);
@@ -276,7 +275,18 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated }) => {
         });
         setShiftTime("Start", dayjs(newDefaultTime.start));
         setShiftTime("End", dayjs(newDefaultTime.end));
-    }, [getShiftTimeDefaults, setShiftTime]);
+
+        if (!newShiftCreated && trigger === "calendar") {
+            if (!isSameDate(new Date(store.selectedDate.start), newDefaultTime.start)) {
+                setAlert({
+                    severity: "warning",
+                    message: `No space was found for a new shift on the selected date 
+                (${new Date(store.selectedDate.start).toLocaleDateString("en-AU", { dateStyle: "long" })}). 
+                The next available date and eight-hour timeslot has been selected.`
+                });
+            };
+        }
+    }, [getShiftTimeDefaults, setShiftTime, store.selectedDate, newShiftCreated, trigger]);
 
     return <Modal modalId={modalId}
         title={modalData.title}
