@@ -23,7 +23,7 @@ module.exports = {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: `Hello ${name}, please verify your email by clicking the link`,
-                html: process.env.BASE_URL + "/emailVerification/" + `${token}`
+                html: process.env.ORIGIN_URL + "/emailVerification/" + `${token}`
             })
         } catch (error) {
             console.log(error)
@@ -36,7 +36,7 @@ module.exports = {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: `Hello ${name}, you have been invited to be a carer for ${clientName}`,
-                html: process.env.BASE_URL + `/addCarer/${token}`
+                html: process.env.ORIGIN_URL + `/addCarer/${token}`
             })
         } catch (error) {
             console.log(error)
