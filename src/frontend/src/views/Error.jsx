@@ -37,8 +37,8 @@ prevent them being already-open when navigating to another view */
                     {process.env.NODE_ENV === "production" ? "We've run into an unexpected problem." : error.message}
                 </Typography>
                 <Typography variant="body1">
-                    Oops! It looks like CareSync encounterd a problem while trying to perform an action.
-                    <br />Try refreshing your browser window, or return home using the button below to see if the issue resolves.
+                    Oops! It looks like CareSync encounterd an error while trying to perform an action.
+                    <br />Try refreshing your browser window, or return Home using button below to see if the issue resolves.
                 </Typography>
                 <Link to="/" className="button-link">
                     <ButtonPrimary>
