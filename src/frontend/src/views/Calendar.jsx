@@ -300,9 +300,11 @@ export const Calendar = () => {
                                         </Typography>
                                         <Stack gap={1}>
                                             <CareTeamMember carer={client.coordinator} id={client.coordinator._id} />
-                                            {client.carers.filter(carer => carer._id !== client.coordinator._id).map(carer => {
-                                                return <CareTeamMember carer={carer} id={carer._id} key={carer._id} />
-                                            })}
+                                            {client.carers?.length > 0 ?
+                                                client.carers.filter(carer => carer._id !== client.coordinator._id).map(carer => {
+                                                    return <CareTeamMember carer={carer} id={carer._id} key={carer._id} />
+                                                })
+                                                : null}
                                         </Stack>
                                     </CardContent>
                                 </CardActionArea>
