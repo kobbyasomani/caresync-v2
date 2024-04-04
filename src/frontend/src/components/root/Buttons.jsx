@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -66,7 +65,6 @@ export const ActionButtonGroup = ({ children }) => {
 // Add carer button (opens modal)
 export const ButtonAddCarer = () => {
     const { modalDispatch } = useModalContext();
-    const navigate = useNavigate();
 
     // Navigate to carer invitation dialog
     const addCarer = useCallback(() => {
@@ -75,8 +73,7 @@ export const ButtonAddCarer = () => {
             data: "modal",
             id: "invite-carer"
         });
-        navigate("/calendar/invite-carer");
-    }, [navigate, modalDispatch]);
+    }, [modalDispatch]);
 
     return (
         <ButtonPrimary onClick={addCarer}
