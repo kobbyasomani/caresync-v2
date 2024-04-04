@@ -28,12 +28,17 @@ prevent them being already-open when navigating to another view */
         }}>
             <NavBar />
             <Container component="main"
-                sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <Typography variant="h1">{error.statusText}</Typography>
-                <Typography variant="h2">{error.message}</Typography>
+                maxWidth="md"
+                sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
+                <Typography variant="h1">
+                    {process.env.NODE_ENV === "production" ? "Error" : error.statusText}
+                </Typography>
+                <Typography variant="h2">
+                    {process.env.NODE_ENV === "production" ? "We've run into an unexpected problem." : error.message}
+                </Typography>
                 <Typography variant="body1">
-                    Oops! It looks like the page you were trying to visit could not be found.
-                    <br />Check that you've entered the correct URL in the address bar.
+                    Oops! It looks like CareSync encounterd a problem while trying to perform an action.
+                    <br />Try refreshing your browser window, or return home using the button below to see if the issue resolves.
                 </Typography>
                 <Link to="/" className="button-link">
                     <ButtonPrimary>
