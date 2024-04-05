@@ -20,9 +20,8 @@ const CareTeamList = () => {
     const clearAlert = useCallback(() => {
         setAlert({});
     }, []);
-    const [client, setClient] = useState(store.selectedClient);
-    const [carers, setCarers] = useState(client.carers);
-    const [coordinator, setCoordinator] = useState(client.coordinator);
+    const client = store.selectedClient;
+    const { carers, coordinator } = store.selectedClient;
     const userIsCoordinator = store.selectedClient.isCoordinator;
 
     // Opens carer invitation dialog
@@ -81,11 +80,7 @@ const CareTeamList = () => {
         clearAlert();
     }, [clearAlert]);
 
-    // Update carers on component load
     useEffect(() => {
-        setClient(store.selectedClient)
-        setCoordinator(client.coordinator);
-        setCarers(client.carers);
         setIsLoading(false);
     }, [client, store.selectedClient]);
 

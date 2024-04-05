@@ -9,7 +9,6 @@ import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { plusHours, isSameDate } from "../../utils/dateUtils";
 import { baseURL_API } from "../../utils/baseURL";
-import { getCarers } from "../../utils/apiUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ButtonAddCarer } from "../root/Buttons";
 import Loader from "../logo/Loader";
@@ -96,7 +95,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
     const clearAlert = useCallback(() => {
         setAlert({});
     }, []);
-    const [carers, setCarers] = useState(store.selectedClient.carers || []);
+    const carers = store.selectedClient.carers;
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -106,6 +105,20 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
             value: event.target.value
         });
     }, [setForm]);
+
+    const setDefaultCarer = useCallback((carerId) => {
+        let carer = "";
+        if (carerId) {
+            carer = carerId
+        } else if (carers?.length > 0) {
+            carer = carers[0]._id;
+        }
+        setForm({
+            type: "setForm",
+            name: "carerID",
+            value: carer
+        });
+    }, [setForm, carers]);
 
     // Handle time selection
     const setShiftTime = useCallback((pos, newStartTime) => {
@@ -196,7 +209,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
     }, [modalDispatch, navigate, clearAlert, setNewShiftCreated]);
 
     // Add logged-in user to the care team if they are the coordinator
-    const addCoordinatorAsCarer = useCallback(() => {
+    const handleAddCoordinatorAsCarer = useCallback(() => {
         setIsLoading(true);
         axios.post("/carer/add-coordinator-as-carer", {
             "coordinatorID": store.user._id,
@@ -206,25 +219,16 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                 message: "You have been added to the care team.",
                 severity: "success"
             });
-            getCarers(store.selectedClient._id).then(carers => {
-                setCarers(carers);
-                dispatch({
-                    type: "setCarers",
-                    data: carers
-                });
-                setForm({
-                    type: "setForm",
-                    name: "carerID",
-                    value: store.user._id
-                });
-                setIsLoading(false);
+            setDefaultCarer(store.user._id);
+            dispatch({
+                type: "refreshCalendar",
             });
+            setIsLoading(false);
         }).catch(error => setAlert({
             message: error.response.data.message,
             severity: "error"
-        }
-        ));
-    }, [store.user._id, store.selectedClient._id, dispatch, setForm]);
+        }));
+    }, [store.user._id, store.selectedClient._id, dispatch, setDefaultCarer]);
 
     const populateModal = useCallback(() => {
         // Set shift creation modal text
@@ -241,8 +245,9 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                 text: newShiftCreated ? "Manage your new shift or create another."
                     : "Enter the details for a new shift on this date.",
             });
+            setDefaultCarer();
         }
-    }, [carers, defaultShiftTime.start, newShiftCreated]);
+    }, [carers, defaultShiftTime.start, newShiftCreated, setDefaultCarer]);
 
     const handleOnClose = useCallback(() => {
         clearAlert();
@@ -265,7 +270,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
 
     useEffect(() => {
         populateModal();
-    }, [store.selectedDate, populateModal]);
+    }, [store.selectedDate, populateModal, store.selectedClient.carers]);
 
     useEffect(() => {
         const newDefaultTime = getShiftTimeDefaults();
@@ -345,12 +350,11 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                                     onChange={selectCarer}
                                     inputProps={{ id: "carerID-input" }}
                                 >
-                                    {carers.map(carer => {
+                                    {store.selectedClient.carers.map(carer => {
                                         return (
                                             <MenuItem value={carer._id} key={carer._id}>
                                                 {`${carer.firstName} ${carer.lastName}`}
-                                            </MenuItem>
-                                        )
+                                            </MenuItem>)
                                     })}
                                 </Select>
                             </FormControl>
@@ -371,13 +375,13 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                 <Stack direction="row">
                     <ButtonAddCarer />
                     {store.selectedClient.coordinator._id === store.user._id
-                        // If there are carers, check that user is not already a carer for the client
+                        // If there are carers, check that the user is not already a carer for the client
                         && ((store.selectedClient.carers?.length > 0
                             && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id))
-                            // Or, if there are no carers
+                            // If there are no carers, provide an option for the coordinator to add themselves
                             || store.selectedClient.carers?.length === 0
                             || !store.selectedClient.carers) ? (
-                        <ButtonSecondary onClick={addCoordinatorAsCarer}>
+                        <ButtonSecondary onClick={handleAddCoordinatorAsCarer}>
                             Add yourself
                         </ButtonSecondary>
                     ) : null}
