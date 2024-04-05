@@ -37,6 +37,7 @@ const CareTeamList = () => {
 
     // Add logged-in user to the care team if they are the coordinator
     const handleAddCoordinatorAsCarer = useCallback(() => {
+        setIsLoading(true);
         axios.post("/carer/add-coordinator-as-carer", {
             "coordinatorID": store.user._id,
             "clientID": store.selectedClient._id
@@ -48,6 +49,7 @@ const CareTeamList = () => {
             dispatch({
                 type: "refreshCalendar",
             });
+            setIsLoading(false);
         }).catch(error => setAlert({
             message: error.response.data.message,
             severity: "error"
@@ -56,6 +58,7 @@ const CareTeamList = () => {
 
     // Remove a carer from the selected client
     const removeCarer = useCallback((carer) => {
+        setIsLoading(true);
         axios.delete(`carer/remove/${store.selectedClient._id}/${carer._id}`)
             .then(() => {
                 let message;
@@ -71,6 +74,7 @@ const CareTeamList = () => {
                 dispatch({
                     type: "refreshCalendar",
                 })
+                setIsLoading(false);
             }).catch(error => setAlert({
                 message: error.response.data.message,
                 severity: "error"
@@ -93,12 +97,13 @@ const CareTeamList = () => {
         actions={userIsCoordinator ?
             (<>
                 <ButtonPrimary onClick={handleInviteCarer}
-                    startIcon={<PersonAddIcon />}>
+                    startIcon={<PersonAddIcon />}
+                    disabled={isLoading}>
                     Add Carer
                 </ButtonPrimary>
                 {store.selectedClient.coordinator._id === store.user._id
                     && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
-                    <ButtonSecondary onClick={handleAddCoordinatorAsCarer}>
+                    <ButtonSecondary onClick={handleAddCoordinatorAsCarer} disabled={isLoading}>
                         Add yourself
                     </ButtonSecondary>
                 ) : (null)
