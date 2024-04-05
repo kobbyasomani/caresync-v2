@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCarers } from "../../utils/apiUtils";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
@@ -38,7 +37,7 @@ export const EditShiftForm = () => {
         setAlert({});
     }, []);
     const [shiftUpdated, setShiftUpdated] = useState(true);
-    const [carers, setCarers] = useState([]);
+    const carers = store.selectedClient.carers;
 
     // Handle carer selection
     const selectCarer = useCallback((event) => {
@@ -135,19 +134,13 @@ export const EditShiftForm = () => {
                     type: "setShifts",
                     data: shifts
                 });
-
                 // Set the updated shift as the selected shift
                 dispatch({
                     type: "setSelectedShift",
                     data: shift
                 });
-
                 setAlert({ severity: "success", message: "The shift was updated successfully." });
                 setShiftUpdated(true);
-
-                getCarers(store.selectedClient._id).then(carers => {
-                    setCarers(carers);
-                });
             });
     }, [dispatch, store.selectedClient]);
 
@@ -188,12 +181,6 @@ export const EditShiftForm = () => {
             value: store.selectedShift.coordinatorNotes
         });
     }, [store.selectedShift, setForm, setShiftTime]);
-
-    useEffect(() => {
-        getCarers(store.selectedClient._id).then((carers) => {
-            setCarers(carers);
-        });
-    }, [carers.length, store.selectedClient._id]);
 
     return <Modal modalId={modalId}
         title="Edit shift details"

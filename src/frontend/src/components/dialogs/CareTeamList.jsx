@@ -12,6 +12,7 @@ import { List, Stack } from "@mui/material"
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const CareTeamList = () => {
+    // TODO: Handle cases where a carer with pending/in-progress shift is removed from a care team
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
 
