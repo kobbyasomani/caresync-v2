@@ -196,10 +196,12 @@ const MyAccount = () => {
         handleGetUserData().then(() => setIsLoading(false));
     }, [setIsLoading, store.user, handleGetUserData]);
 
+    // TODO: Exit edit mode when closing the My Account modal
+
     return (
         <Modal modalId={"my-account"}
             title="My Account"
-            text="View and modify your account information including your name, email address, and password."
+            text="View and modify your account information including your name, email, and password."
             actions={
                 <>
                     {Object.keys(userData).length > 0 ?

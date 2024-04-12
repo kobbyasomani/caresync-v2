@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
+import { Theme as theme } from "../styles/Theme";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea, Tooltip } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import { Theme as theme } from "../styles/Theme";
 
 const SwitchClient = () => {
     const { store, dispatch } = useGlobalContext();
@@ -17,14 +17,8 @@ const SwitchClient = () => {
     const navigate = useNavigate();
 
     const handleSwitchClient = useCallback(() => {
-        // Unset selected client
-        dispatch({
-            type: "setSelectedClient",
-            data: {}
-        });
-        // Navigate to client selection
         navigate("/clients");
-    }, [dispatch, navigate])
+    }, [dispatch, store.selectedClient, navigate]);
 
     // Logout user if auth fails
     useEffect(() => {

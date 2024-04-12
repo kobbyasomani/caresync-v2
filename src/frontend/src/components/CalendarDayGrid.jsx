@@ -71,7 +71,6 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
                 data: { start: startDate }
             });
         }
-        console.log();
     }, [calendarApi, dispatch, store.selectedDate]);
 
     return (

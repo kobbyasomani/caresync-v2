@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
@@ -64,7 +64,7 @@ export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
-    const [client, setClient] = useState(store.selectedClient);
+    const client = useMemo(() => store.selectedClient, [store.selectedClient]);
     const [inProgressShift, setInProgressShift] = useState({});
     const [newShiftCreated, setNewShiftCreated] = useState(false);
     const [addShiftFormTrigger, setAddShiftFormTrigger] = useState(null);
@@ -85,18 +85,22 @@ export const Calendar = () => {
 
     const refreshCalendarTimeout = useCallback(() => {
         return setTimeout(() => {
-            if (!store.selectedClient._id) {
+            if (!client._id && store.prevSelectedClient._id) {
+                dispatch({
+                    type: "setSelectedClient",
+                    data: store.prevSelectedClient
+                });
+            } else if (!client._id && !store.prevSelectedClient._id) {
                 navigate("/");
             }
-        }, 1000);
-    }, [navigate, store.selectedClient._id]);
+        }, 100);
+    }, [navigate, dispatch, client._id, store.prevSelectedClient]);
 
     const handleRefreshCalendar = useCallback(() => {
-        if (store.selectedClient?._id) {
-            setClient(store.selectedClient);
-            getAllShifts(store.selectedClient._id)
+        if (client?._id) {
+            // console.log("Refreshing calendar...");
+            getAllShifts(client._id)
                 .then((shifts) => {
-                    // console.log(store.selectedClient);
                     // Set all shifts
                     dispatch({
                         type: "setShifts",
@@ -125,7 +129,7 @@ export const Calendar = () => {
                     setIsLoading(false);
                 });
         }
-    }, [dispatch, store.selectedClient, setClient]);
+    }, [dispatch, client]);
 
     const handleSelectInProgressShift = () => {
         dispatch({
@@ -237,24 +241,24 @@ export const Calendar = () => {
         return () => {
             clearTimeout(calendarTimeout)
         };
-    }, [handleRefreshCalendar, store.user, store.selectedClient, store.selectedShift, store.refreshCalendar,
-        refreshCalendarTimeout]);
+    }, [store.user, client, store.selectedShift, store.refreshCalendar,
+        handleRefreshCalendar, refreshCalendarTimeout]);
 
     // Logout user if auth fails
     useEffect(() => {
-        // console.log("authenticating: ", document.cookie.includes("authenticated=true"));
-        if (document.cookie.includes("authenticated=true") === false) {
-            dispatch({
-                type: "logout",
-            });
+        if (!document.cookie.includes("authenticated=true") || !store.isAuth) {
             modalDispatch({
                 type: "closeAllModals"
             });
+            navigate("/");
+            dispatch({
+                type: "logout",
+            });
         }
-    }, [dispatch, modalDispatch, store]);
+    }, [dispatch, modalDispatch, store, navigate]);
 
     return isLoading ? <Loader /> :
-        store.selectedClient?._id ? (
+        client?._id ? (
             <>
                 <Box display="grid"
                     gridTemplateColumns="repeat(12, 1fr)"

@@ -44,7 +44,7 @@ const SelectShiftByDate = () => {
             // Set the shift selection modal title and text
             setModalData({
                 title: `Shifts for ${new Date(store.selectedDate.start).toLocaleDateString()}`,
-                text: `Select a shift to view or edit its handover, shift notes, and incident reports.`
+                text: `Select a shift to view or edit its shift notes, handover, and incident reports.`
             });
         }
     }, [shifts.length, store.selectedDate, setModalData])

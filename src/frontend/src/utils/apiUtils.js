@@ -25,6 +25,11 @@ const getClient = async (clientId) => {
             "Content-Type": "application/json",
         },
     }).then((response) => response.json());
+    ["carers", "shifts"].forEach((property) => {
+        if (!(property in client)) {
+            client[property] = [];
+        }
+    })
     return client;
 };
 
@@ -219,7 +224,9 @@ const encryptSessionData = async (store, encryptionKey, iv) => {
         const encryptedSessionDataString = new Uint8Array(encryptedSessionData).toString();
         return (encryptedSessionDataString);
     } catch (error) {
-        console.log(error);
+        if (process.env.NODE_ENV !== "production") {
+            console.log(error);
+        }
         return null;
     }
 }
@@ -251,7 +258,9 @@ const decryptSessionData = async (encryptedSessionDataString, encryptionKey, iv)
         const sessionStore = JSON.parse(decodedSessionData);
         return sessionStore;
     } catch (error) {
-        console.log(error);
+        if (process.env.NODE_ENV !== "production") {
+            console.log(error);
+        }
         return null;
     }
 }

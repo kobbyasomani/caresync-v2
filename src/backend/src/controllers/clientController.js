@@ -128,7 +128,7 @@ const getClientInfo = asyncHandler(async (req, res) => {
     client["isCoordinator"] = false;
   }
 
-  // If there are carers, find there first and last name and stick them in the client object for display
+  // If there are carers, find their first and last name and stick them in the client object for display
   if (client.carers) {
     const carers = await User.find()
       .where("_id")

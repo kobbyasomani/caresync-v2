@@ -14,13 +14,18 @@ import {
     useMediaQuery, useTheme
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 const NavBar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const navigate = useNavigate();
     const theme = useTheme();
+    const smScreen = useMediaQuery(theme.breakpoints.down("md"));
     const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleOpenMyAccount = useCallback(() => {
@@ -36,23 +41,29 @@ const NavBar = () => {
             type: "setAppIsLoading",
             data: true
         });
-        navigate("/");
         logoutUser().then(() => {
             dispatch({
                 type: "logout",
             });
+            navigate("/");
         });
     }, [dispatch, navigate]);
 
     const navItems = [
         {
             name: store.isAuth ? "Clients" : "Home",
-            to: store.isAuth ? "/clients" : "/"
+            to: store.isAuth ? "/clients" : "/",
+            icon: store.isAuth ? <AssignmentIndRoundedIcon /> : <HomeRoundedIcon />
         },
-        // TODO: Add a nav link to the Calendar view
+        {
+            name: store.isAuth ? "Calendar" : "",
+            to: store.isAuth ? "/calendar" : "/",
+            icon: <CalendarMonthRoundedIcon />
+        },
         {
             name: "About",
-            to: "/about"
+            to: "/about",
+            icon: <HelpRoundedIcon />
         }
     ]
 
@@ -60,7 +71,7 @@ const NavBar = () => {
         <AppBar id="nav-main" position="static">
             <Container>
                 <Toolbar>
-                    <Button component={RouterLink}
+                    <Button component={RouterLink} sx={{ mr: 2 }}
                         to={store.isAuth && store.selectedClient?._id ? "/calendar"
                             : store.isAuth && !store.selectedClient?._id ? "/clients"
                                 : "/"} startIcon={<IconSmall />}>
@@ -75,29 +86,41 @@ const NavBar = () => {
                         </Typography>
                     </Button>
                     {navItems.filter(item => item.name && item.to).map((item, index) =>
-                        <Button
-                            component={RouterLink}
-                            to={item.to}
-                            key={index}
-                            color="inherit"
-                        >
-                            {item.name}
-                        </Button>
+                        xsScreen ?
+                            <IconButton component={RouterLink}
+                                to={item.to}
+                                key={index}
+                                color="inherit"
+                            >
+                                {item.icon}
+                            </IconButton>
+                            : <Button
+                                component={RouterLink}
+                                to={item.to}
+                                key={index}
+                                color="inherit"
+                                startIcon={item.icon}
+                                sx={{ textTransform: 'capitalize', mr: 1 }}
+                            >
+                                <Typography>
+                                    {xsScreen ? null : item.name}
+                                </Typography>
+                            </Button>
                     )}
                     {store.isAuth ? (
-                        <Stack direction="row" gap={1} sx={{ ml: "auto" }}>
+                        <Stack direction="row" gap={xsScreen ? 0 : 1} sx={{ ml: "auto" }}>
                             <Tooltip title="My Account">
-                                {xsScreen ? (
+                                {smScreen ? (
                                     <IconButton id="my-account"
                                         color="inherit"
                                         aria-label="my account"
                                         onClick={handleOpenMyAccount}
                                     >
-                                        <AccountBoxIcon />
+                                        <AccountCircleRoundedIcon />
                                     </IconButton>
                                 ) : (
                                     <Button id="my-account"
-                                        startIcon={<AccountBoxIcon />}
+                                        startIcon={<AccountCircleRoundedIcon />}
                                         color="inherit"
                                         aria-label="my account"
                                         onClick={handleOpenMyAccount}
@@ -109,7 +132,7 @@ const NavBar = () => {
                                 )}
                             </Tooltip>
                             <Tooltip position="bottom" title="Log out">
-                                {xsScreen ? (
+                                {smScreen ? (
                                     <IconButton id="log-out"
                                         color="inherit"
                                         aria-label="log out"

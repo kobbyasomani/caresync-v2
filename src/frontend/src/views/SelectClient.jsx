@@ -37,6 +37,7 @@ const TabPanel = (props) => {
 
 const SelectClient = () => {
     const { store, dispatch } = useGlobalContext();
+    const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [tabValue, setTabValue] = useState(0);
     const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -45,16 +46,13 @@ const SelectClient = () => {
         setTabValue(newValue);
     }, []);
 
-    // Unset selected client and shifts
-    useEffect(() => {
-        dispatch({
-            type: "setSelectedClient",
-            data: {}
+    const handleAddClient = () => {
+        modalDispatch({
+            type: "open",
+            data: "modal",
+            id: "add-client"
         });
-        dispatch({
-            type: "clearShifts"
-        });
-    }, [dispatch]);
+    }
 
     // Fetch the list of clients for the logged-in user
     useEffect(() => {
@@ -73,15 +71,17 @@ const SelectClient = () => {
             }).catch(error => console.error(error.message));
     }, [dispatch, store.selectedClient]);
 
-    // Modal state manager
-    const { modalDispatch } = useModalContext();
-    const handleAddClient = () => {
-        modalDispatch({
-            type: "open",
-            data: "modal",
-            id: "add-client"
-        });
-    }
+    useEffect(() => {
+        if (store.selectedClient?._id) {
+            dispatch({
+                type: "updateStore",
+                data: {
+                    selectedClient: {},
+                    prevSelectedClient: store.selectedClient
+                }
+            });
+        }
+    }, [dispatch, store.selectedClient]);
 
     return isLoading ? (
         <Container maxWidth="md" sx={{ mt: 4 }}>

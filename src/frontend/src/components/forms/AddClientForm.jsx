@@ -41,17 +41,13 @@ export const AddClient = () => {
         });
     }, [dispatch]);
 
-    const handleSwitchClient = useCallback(() => {
-        dispatch({
-            type: "setSelectedClient",
-            data: {}
-        });
+    const handleBackToClients = useCallback(() => {
         modalDispatch({
             type: "close",
             data: "modal"
         });
-        navigate("/");
-    }, [dispatch, navigate, modalDispatch]);
+        navigate("/clients");
+    }, [navigate, modalDispatch]);
 
     // Close the modal when navigating to the calendar
     const handleCloseModal = useCallback(() => {
@@ -100,7 +96,7 @@ export const AddClient = () => {
                     < br />
                     <div className="journey-options">
                         <ActionButtonGroup>
-                            <Link to="/" onClick={handleSwitchClient} className="button-link">
+                            <Link to="/clients" onClick={handleBackToClients} className="button-link">
                                 <ButtonSecondary>
                                     Back to clients
                                 </ButtonSecondary>

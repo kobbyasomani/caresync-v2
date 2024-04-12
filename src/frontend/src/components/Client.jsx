@@ -43,6 +43,8 @@ const Client = ({ client }) => {
         getNextShiftDate();
     }, [getNextShiftDate]);
 
+    // TODO: Add functionality to remove a client
+
     return (
         <Card variant="outlined" id={client._id} className="client">
             <CardActionArea sx={{

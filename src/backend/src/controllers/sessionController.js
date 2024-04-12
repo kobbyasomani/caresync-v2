@@ -7,21 +7,25 @@ const { encryptionKey } = require("../utils/crypto.utils");
 // @route POST /session
 // @access private
 const updateSession = asyncHandler(async (req, res) => {
-    const session = req.session;
-    const user = User.findById(req.user.id);
+    try {
+        sessionUpdateInProgress = true;
+        const session = req.session;
+        const user = User.findById(req.user.id);
+        console.log(req.sessionID);
 
-    if (!user) {
-        res.status(404);
-        throw new Error("User not found.");
-    }
+        if (!user) {
+            res.status(404);
+            throw new Error("User not found.");
+        }
 
-    if (session) {
-        session.clientStore = req.body.sessionData;
-        session.userID = req.user.id;
-        res.status(200)
-            .json({ message: "The user's session was updated." });
-    } else {
-        res.status(500);
+        if (session) {
+            session.clientStore = req.body.sessionData;
+            session.userID = req.user.id;
+            res.status(200)
+                .json({ message: `The user's session was updated (${req.sessionID}).` });
+        }
+    } catch (error) {
+        res.status(error.status || 500);
         throw new Error("The user's session could not be updated at this time.");
     }
 });

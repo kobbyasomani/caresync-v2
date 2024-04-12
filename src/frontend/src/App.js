@@ -50,7 +50,7 @@ const router = createBrowserRouter([
                 path: "/clients",
                 element: <>
                   <MyAccount />
-                  <SelectClient readSession={readSession} />
+                  <SelectClient />
                 </>
               },
               {
@@ -172,15 +172,15 @@ function App() {
     /**
      * Encrypt the current global context store state and post it to the server.
      */
-    const saveSession = useCallback(() => {
+    const saveSession = useCallback(async () => {
       const encryptSession = async () => {
         const encryptedSession = await encryptSessionData(store, encryptionKey, iv);
         return encryptedSession;
       }
-      encryptSession()
+      return encryptSession()
         .then(session => {
           return uploadSession(session);
-        });
+        }).then(response => response);
     }, [encryptionKey, iv, store]);
 
     useEffect(() => {
@@ -200,10 +200,17 @@ function App() {
     }, [store.isAuth, encryptionKey, loadSession, dispatch]);
 
     useEffect(() => {
-      if (store.isAuth && encryptionKey) {
-        saveSession();
+      let batchSessionUpdate;
+      clearTimeout(batchSessionUpdate);
+      if (!store.appIsLoading && store.isAuth && encryptionKey) {
+        batchSessionUpdate = (setTimeout(() => {
+          saveSession();
+        }, 150));
       }
-    }, [store, encryptionKey, saveSession, store.isAuth]);
+      // Cleanup
+      return () => clearTimeout(batchSessionUpdate);
+
+    }, [store, encryptionKey, saveSession]);
 
     return (
       <GlobalStateContext.Provider value={{

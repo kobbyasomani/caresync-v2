@@ -1,6 +1,6 @@
 /**
  * Takes an array of shift objects and returns all shifts that are before the current time.
- * @param {Array<object>} shiftList An array of shift objects to search for previous shifts.
+ * @param {Array<object>} shifts An array of shift objects to search for previous shifts.
  * The shifts must have a `shiftStartTime` property in a format that can be converted into
  * a JavaScript `Date` object. 
  * @returns {Array<object>}

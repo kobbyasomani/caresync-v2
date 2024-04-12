@@ -44,7 +44,7 @@ app.use(session({
   },
   store: store,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: true
 }));
 
 cloudinary.config({

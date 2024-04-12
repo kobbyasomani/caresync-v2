@@ -14,6 +14,7 @@ const emptyStore = {
     user: {},
     clients: {},
     selectedClient: {},
+    prevSelectedClient: {},
     shifts: [],
     featuredShift: {},
     previousShifts: [],
