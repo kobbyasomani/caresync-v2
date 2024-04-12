@@ -192,16 +192,19 @@ const MyAccount = () => {
         formRef.current.click();
     }, [formRef]);
 
+    const handleOnClose = useCallback(() => {
+        setEditMode(false);
+    }, [setEditMode]);
+
     useEffect(() => {
         handleGetUserData().then(() => setIsLoading(false));
     }, [setIsLoading, store.user, handleGetUserData]);
-
-    // TODO: Exit edit mode when closing the My Account modal
 
     return (
         <Modal modalId={"my-account"}
             title="My Account"
             text="View and modify your account information including your name, email, and password."
+            onClose={handleOnClose}
             actions={
                 <>
                     {Object.keys(userData).length > 0 ?
