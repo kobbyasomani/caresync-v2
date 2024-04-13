@@ -12,6 +12,27 @@ const logoutUser = async () => {
 }
 
 /**
+ * Fetch the client list for the logged-in user and return it as an `Object`.
+ * 
+ * The `userId` is extracted from the `access_token` set in a HttpOnly cookie, so
+ * no params are required.
+ * @returns {Object}
+ */
+const getClientList = async () => {
+    const clientList = await fetch(`${baseURL_API}/user`, {
+        credentials: "include"
+    }).then(response => response.json())
+        .catch(error => {
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(error.message);
+            } else {
+                throw new Error("The client list could not be fetched. Please try reloading the page.");
+            }
+        });
+    return clientList;
+}
+
+/**
  * Returns a client object using a given client id. Includes the client's
  * `_id`, `firstName`, `lastName`, `isCoordinator` (boolean), coordinator: { _id, firstName, lastName }` and
  * `carers: [{ _id, firstName, lastName }]`.
@@ -29,8 +50,37 @@ const getClient = async (clientId) => {
         if (!(property in client)) {
             client[property] = [];
         }
-    })
+    });
     return client;
+};
+
+/**
+ * Deletes the client with the given id and returns a success response message or throws an error,
+ * which must be handled by the caller.
+ * @param {String} clientId 
+ * @returns {Promise<String>}
+ */
+const deleteClient = async (clientId) => {
+    try {
+        const response = await fetch(`${baseURL_API}/client/${clientId}`, {
+            method: "DELETE",
+            credentials: "include"
+        }).then(async (response) => {
+            const message = await response.json().message;
+            if (response.status !== 200) {
+                throw new Error(message);
+            } else {
+                return message;
+            }
+        });
+        return response;
+    } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+            throw new Error(error);
+        } else {
+            throw new Error("The client could not be removed at this time.");
+        }
+    }
 };
 
 /**
@@ -133,6 +183,18 @@ const updateShift = async (shiftID, body) => {
     }).then(response => response.json());
     return updatedShift;
 };
+
+/**
+ * Cancel the shift with the given id (delete it from the database) and return the reponse object.
+ * @param {String} shiftId 
+ * @returns {Response}
+ */
+const cancelShift = async (shiftId) => {
+    fetch(`${baseURL_API}/shift/${shiftId}`, {
+        credentials: "include",
+        method: "DELETE"
+    }).then(response => response);
+}
 
 /**
  * Deletes the given incident report from the given shift.
@@ -307,13 +369,16 @@ const uploadSession = async (encryptedSessionDataString) => {
 
 export {
     logoutUser,
+    getClientList,
     getClient,
+    deleteClient,
     getCarers,
     getAllShifts,
     getUserName,
     getUser,
     updateUser,
     updateShift,
+    cancelShift,
     deleteIncidentReport,
     readSession,
     uploadSession,

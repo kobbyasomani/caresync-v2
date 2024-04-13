@@ -7,10 +7,10 @@ import { plusHours } from "../../utils/dateUtils";
 import { Theme as theme } from "../../styles/Theme";
 
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import MoreTimeIcon from '@mui/icons-material/MoreTime';
+import MoreTimeRoundedIcon from '@mui/icons-material/MoreTimeRounded';
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -77,7 +77,7 @@ export const ButtonAddCarer = () => {
 
     return (
         <ButtonPrimary onClick={addCarer}
-            startIcon={<PersonAddIcon />}>
+            startIcon={<PersonAddAltRoundedIcon />}>
             Add Carer
         </ButtonPrimary>
     );
@@ -225,11 +225,11 @@ export const SidebarButtonAddShift = ({ variant, calendarApi, setAddShiftFormTri
                     },
                     position: "absolute", top: "0.5rem", right: "0.75rem",
                 }} onClick={handleAddShift}>
-                    <MoreTimeIcon fontSize="small" />
+                    <MoreTimeRoundedIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
         ) : buttonVariant === "full" ? (
-            <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift} size={breakpoint === "sm" ? "small" : "medium"}
+            <ButtonPrimary startIcon={<MoreTimeRoundedIcon />} onClick={handleAddShift} size={breakpoint === "sm" ? "small" : "medium"}
                 sx={{
                     position: { xs: "absolute", lg: "relative" },
                     top: { xs: "0.75rem", lg: "initial" },

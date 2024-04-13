@@ -4,17 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { getClientList } from "../../utils/apiUtils";
 import Form from "./Form";
 import { ButtonPrimary, ButtonSecondary, ActionButtonGroup } from "../root/Buttons";
 
-import { TextField, Alert } from "@mui/material";
+import { TextField, Alert, useTheme, useMediaQuery } from "@mui/material";
+import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 
 export const AddClient = () => {
-    // console.log("rendering AddClient");
-    const navigate = useNavigate();
-
     const { dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     // Set the inital form state
     const initialState = {
@@ -29,15 +33,21 @@ export const AddClient = () => {
     // Alert state
     const [alerts, setAlerts] = useState([]);
 
-    const setNewClient = useCallback((client) => {
-        // Show success alert
-        setAlerts(prev => [...prev, `Client ${client.firstName} ${client.lastName} 
-    was added. You can now coordinate their care using the calendar.`]);
+    const handleSetNewClient = useCallback((client) => {
+        setAlerts(prev => [...prev, `${client.firstName} ${client.lastName} 
+    was added to your client list. You can now coordinate their care using the calendar.`]);
 
-        // Set the selectedClient to newly created client
+        const newClient = Object.assign({ carers: [], shifts: [] }, client);
         dispatch({
             type: "setSelectedClient",
-            data: client
+            data: newClient
+        });
+
+        getClientList().then(clientList => {
+            dispatch({
+                type: "setClients",
+                data: clientList
+            });
         });
     }, [dispatch]);
 
@@ -64,7 +74,8 @@ export const AddClient = () => {
                 legend="New client"
                 submitButtonText="Add client"
                 postURL="/client"
-                callback={setNewClient}
+                callback={handleSetNewClient}
+                buttonStartIcon={<PersonAddAltRoundedIcon />}
             >
                 <TextField
                     label="First name"
@@ -97,13 +108,13 @@ export const AddClient = () => {
                     <div className="journey-options">
                         <ActionButtonGroup>
                             <Link to="/clients" onClick={handleBackToClients} className="button-link">
-                                <ButtonSecondary>
-                                    Back to clients
+                                <ButtonSecondary startIcon={<AssignmentIndRoundedIcon />}>
+                                    Client List
                                 </ButtonSecondary>
                             </Link>
                             <Link to="/calendar" onClick={handleCloseModal} className="button-link">
-                                <ButtonPrimary>
-                                    View calendar
+                                <ButtonPrimary startIcon={<CalendarMonthRoundedIcon />}>
+                                    {xsScreen ? "Calendar" : "View calendar"}
                                 </ButtonPrimary>
                             </Link>
                         </ActionButtonGroup>

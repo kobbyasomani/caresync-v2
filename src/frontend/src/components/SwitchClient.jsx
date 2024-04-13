@@ -18,7 +18,7 @@ const SwitchClient = () => {
 
     const handleSwitchClient = useCallback(() => {
         navigate("/clients");
-    }, [dispatch, store.selectedClient, navigate]);
+    }, [navigate]);
 
     // Logout user if auth fails
     useEffect(() => {

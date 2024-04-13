@@ -8,7 +8,7 @@ import Modal from "../Modal";
 import Shift from "../Shift";
 
 import { Stack } from "@mui/material";
-import MoreTimeIcon from '@mui/icons-material/MoreTime';
+import MoreTimeRoundedIcon from '@mui/icons-material/MoreTimeRounded';
 
 const SelectShiftByDate = () => {
     // Get all shifts that fall on a given date from the store
@@ -78,7 +78,7 @@ const SelectShiftByDate = () => {
             )}
             {store.selectedClient.isCoordinator
                 && dateAsObj(store.selectedDate.start) >= new Date(new Date().setHours(0, 0, 0, 0)) ? (
-                <ButtonPrimary startIcon={<MoreTimeIcon />} onClick={handleAddShift}>
+                <ButtonPrimary startIcon={<MoreTimeRoundedIcon />} onClick={handleAddShift}>
                     Add Shift
                 </ButtonPrimary>
             ) : null}

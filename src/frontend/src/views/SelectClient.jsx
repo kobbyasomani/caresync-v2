@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import { baseURL_API } from "../utils/baseURL";
+import { getClientList } from "../utils/apiUtils";
 import Client from "../components/Client";
 import Modal from "../components/Modal";
 import AddClientForm from "../components/forms/AddClientForm";
@@ -12,6 +12,7 @@ import Loader from "../components/logo/Loader";
 import { Stack, Typography, Tabs, Tab, Box, Container, useMediaQuery } from "@mui/material";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 
 import { Theme as theme } from "../styles/Theme";
 
@@ -46,30 +47,28 @@ const SelectClient = () => {
         setTabValue(newValue);
     }, []);
 
-    const handleAddClient = () => {
+    const handleAddClient = useCallback(() => {
         modalDispatch({
             type: "open",
             data: "modal",
             id: "add-client"
         });
-    }
+    }, [modalDispatch]);
 
     // Fetch the list of clients for the logged-in user
     useEffect(() => {
-        fetch(`${baseURL_API}/user`, {
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then(response => response.json())
-            .then(clients => {
-                dispatch({
-                    type: "setClients",
-                    data: clients
-                });
-                setIsLoading(false);
-            }).catch(error => console.error(error.message));
-    }, [dispatch, store.selectedClient]);
+        getClientList().then(clients => {
+            dispatch({
+                type: "setClients",
+                data: clients
+            });
+            setIsLoading(false);
+        }).catch(error => {
+            if (process.env.NODE_ENV !== "production") {
+                console.error(error.message);
+            }
+        });
+    }, [dispatch, setIsLoading]);
 
     useEffect(() => {
         if (store.selectedClient?._id) {
@@ -163,7 +162,7 @@ const SelectClient = () => {
                     </Stack>
                 )}
             </TabPanel>
-            <ButtonPrimary onClick={handleAddClient}>
+            <ButtonPrimary onClick={handleAddClient} startIcon={<PersonAddAltRoundedIcon />}>
                 Add client
             </ButtonPrimary>
 

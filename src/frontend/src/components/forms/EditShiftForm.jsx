@@ -1,9 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import TimePicker from "../DateTimePicker";
+import dayjs from "dayjs";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useHandleForm } from "../../utils/formUtils";
 import { useModalContext } from "../../utils/modalUtils";
+import { baseURL_API } from "../../utils/baseURL";
 import Form from "./Form";
 import { ButtonSecondary } from "../root/Buttons";
 import Modal from "../Modal";
@@ -11,9 +14,7 @@ import Modal from "../Modal";
 import {
     TextField, Stack, FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
-import TimePicker from "../DateTimePicker";
-import dayjs from "dayjs";
-import { baseURL_API } from "../../utils/baseURL";
+import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 
 export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
@@ -194,6 +195,7 @@ export const EditShiftForm = () => {
             setForm={setForm}
             legend="Update shift details"
             submitButtonText="Update shift"
+            buttonStartIcon={<EventAvailableRoundedIcon />}
             buttonSecondary={shiftUpdated ?
                 <ButtonSecondary onClick={handleManageShift}>
                     Manage shift

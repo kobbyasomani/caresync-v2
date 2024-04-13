@@ -19,7 +19,7 @@ import {
     FormControl, Select, InputLabel, MenuItem
 } from "@mui/material";
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
-import MoreTimeIcon from '@mui/icons-material/MoreTime';
+import MoreTimeRoundedIcon from '@mui/icons-material/MoreTimeRounded';
 
 export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) => {
     const { store, dispatch } = useGlobalContext();
@@ -259,7 +259,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
             <ButtonPrimary startIcon={<EditCalendarRoundedIcon />} onClick={handleManageShift}>
                 Manage shift
             </ButtonPrimary >
-            <ButtonSecondary startIcon={<MoreTimeIcon />} onClick={() => {
+            <ButtonSecondary startIcon={<MoreTimeRoundedIcon />} onClick={() => {
                 setNewShiftCreated(false);
                 clearAlert();
             }}>
@@ -315,6 +315,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                             setForm={setForm}
                             legend="New shift details"
                             submitButtonText="Create shift"
+                            buttonStartIcon={<MoreTimeRoundedIcon />}
                             postURL={`/shift/${store.selectedClient._id}`}
                             validation={validation}
                             callback={handleUpdateShifts}

@@ -1,10 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { baseURL_API } from "../../utils/baseURL";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { getAllShifts } from "../../utils/apiUtils";
+import { getAllShifts, cancelShift } from "../../utils/apiUtils";
 
 import Confirmation from "./Confirmation";
 
@@ -32,11 +31,8 @@ export const ConfirmCancelShift = () => {
     }, [store.shifts, store.selectedShift]);
     const [isCancelled, setIsCancelled] = useState(!shiftExists());
 
-    const cancelShift = useCallback(() => {
-        fetch(`${baseURL_API}/shift/${store.selectedShift._id}`, {
-            credentials: "include",
-            method: "DELETE"
-        }).then((response) => {
+    const handleCancelShift = useCallback(() => {
+        cancelShift(store.selectedShift._id).then((response) => {
             if (response.status === 200) {
                 setAlert({ severity: "success", message: "The shift has been cancelled." });
                 setIsCancelled(true);
@@ -76,7 +72,7 @@ export const ConfirmCancelShift = () => {
         <Confirmation title={isCancelled ? "Shift cancelled" : "Confirm cancel shift"}
             text={isCancelled ? "The below shift has been cancelled." : `Are you sure you want to cancel this shift? It will be permanently removed from 
 ${store.selectedClient.firstName} ${store.selectedClient.lastName}'s calendar.`}
-            callback={cancelShift}
+            callback={handleCancelShift}
             modalId={`confirmCancelShift_${store.selectedShift._id}`}
             sx={{ ml: { sm: "2.5rem" } }}
             confirmText={<><EventBusyIcon />&nbsp;Cancel shift</>}

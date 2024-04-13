@@ -9,7 +9,7 @@ import Carer from "../Carer";
 import Loader from "../logo/Loader";
 
 import { List, Stack } from "@mui/material"
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 
 const CareTeamList = () => {
     // TODO: Handle cases where a carer with pending/in-progress shift is removed from a care team
@@ -97,7 +97,7 @@ const CareTeamList = () => {
         actions={userIsCoordinator ?
             (<>
                 <ButtonPrimary onClick={handleInviteCarer}
-                    startIcon={<PersonAddIcon />}
+                    startIcon={<PersonAddAltRoundedIcon />}
                     disabled={isLoading}>
                     Add Carer
                 </ButtonPrimary>

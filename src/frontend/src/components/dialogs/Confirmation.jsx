@@ -14,16 +14,17 @@ import CloseIcon from "@mui/icons-material/Close";
 
 /**
  * A resuable confirmation dialog that warns the user before taking a destructive action.
- * @param {function} title The title text to display in the confirmation
- * @param {function} text The body text to display in the confirmation
- * @param {function} callback The function to execute if the user confirms the action
- * @param {string} modalId The id of the modal to open or close
- * @param {string} cancelText The text to display on the cancel button
- * @param {string} confirmText The text to display on the confirm button
- * @param {string} successAlert The alert message to display on successful confirmation
- * @param {boolean} stayOpenOnConfirm If true, the dialog will stay open after confirmation
- * @param {boolean} hasEndpoint If true, the modal will navigate 'back' in history on close.
- * @param {function} afterConfirm A callback function to execute after confirmation
+ * @param {Function} title The title text to display in the confirmation
+ * @param {Function} text The body text to display in the confirmation
+ * @param {Function} callback The function to execute if the user confirms the action
+ * @param {String} modalId The id of the modal to open or close
+ * @param {String} cancelText The text to display on the cancel button
+ * @param {String} confirmText The text to display on the confirm button
+ * @param {String} successAlert The alert message to display on successful confirmation
+ * @param {Boolean} stayOpenOnConfirm If true, the dialog will stay open after confirmation
+ * @param {Boolean} hasEndpoint If true, the modal will navigate 'back' in history on close.
+ * @param {Function} afterConfirm A callback function to execute after confirmation
+ * @param {Boolean} noDismiss The close icon button will be removed from the confirmation
  * @returns 
  */
 const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText, successAlert,
@@ -42,15 +43,19 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
             id: modalId
         });
         if (isConfirmed) {
-            if (afterConfirm) {
-                afterConfirm();
-            }
-            setIsConfirmed(false);
+            setTimeout(() => {
+                if (afterConfirm) {
+                    afterConfirm();
+                }
+                setIsConfirmed(false);
+            }, 200);
         }
         if (hasEndpoint) {
             navigate(-1);
         }
-        setAlert({});
+        setTimeout(() => {
+            setAlert({});
+        }, 200);
     }, [modalDispatch, modalId, isConfirmed, afterConfirm, hasEndpoint, navigate]);
 
     const handleConfirm = useCallback(async () => {

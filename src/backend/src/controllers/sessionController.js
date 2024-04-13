@@ -11,7 +11,6 @@ const updateSession = asyncHandler(async (req, res) => {
         sessionUpdateInProgress = true;
         const session = req.session;
         const user = User.findById(req.user.id);
-        console.log(req.sessionID);
 
         if (!user) {
             res.status(404);

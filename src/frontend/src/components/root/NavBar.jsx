@@ -56,7 +56,7 @@ const NavBar = () => {
             icon: store.isAuth ? <AssignmentIndRoundedIcon /> : <HomeRoundedIcon />
         },
         {
-            name: store.isAuth ? "Calendar" : "",
+            name: store.isAuth && (store.selectedClient?._id || store.prevSelectedClient?._id) ? "Calendar" : "",
             to: store.isAuth ? "/calendar" : "/",
             icon: <CalendarMonthRoundedIcon />
         },

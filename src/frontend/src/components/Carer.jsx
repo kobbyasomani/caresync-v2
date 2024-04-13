@@ -8,7 +8,7 @@ import {
     Avatar, IconButton, Tooltip, useTheme
 } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import PersonRemoveRoundedIcon from '@mui/icons-material/PersonRemoveRounded';
 
 const Carer = (props) => {
     const theme = useTheme();
@@ -40,7 +40,7 @@ const Carer = (props) => {
                     <Tooltip title="Remove carer" placement="left">
                         <IconButton onClick={handleConfirmRemoveCarer} aria-label="Remove carer"
                             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}>
-                            <PersonRemoveIcon />
+                            <PersonRemoveRoundedIcon />
                         </IconButton>
                     </Tooltip>
                 ) : null
@@ -73,7 +73,7 @@ const Carer = (props) => {
                 modalId={modalId}
                 sx={{ ml: { sm: "2.5rem" } }}
                 cancelText="Keep carer"
-                confirmText="Remove"
+                confirmText={<><PersonRemoveRoundedIcon />&nbsp;Remove</>}
             />
         </div>
     )

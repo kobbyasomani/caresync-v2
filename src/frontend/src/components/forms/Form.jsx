@@ -22,7 +22,8 @@ import { Box, Stack } from "@mui/material";
  * @param {String} legend [optional] A legend to display at the top of the form fieldset.
  * @param {String} submitButtonText Text for the form submit button.
  * @param {Object} buttonSecondary An optional secondary button to render in the form.
- * @param {String} buttonVariant set the mui button variant.
+ * @param {String} buttonVariant The mui button variant.
+ * @param {Object} buttonStartIcon An optional icon to display at the start of the button.
  * One of 'text', 'contained', or 'outlined' (defaults to contained).
  * @param {Boolean} hideSubmitButton If true, the submit button will be hidden. This
  * is useful in instances where a higher-level component is managing the form submission.
@@ -46,6 +47,7 @@ const Form = forwardRef((
         submitButtonText,
         buttonSecondary,
         buttonVariant,
+        buttonStartIcon,
         postURL,
         method,
         validation,
@@ -198,7 +200,9 @@ const Form = forwardRef((
                     }
                     {!hideSubmitButton ? (
                         <Stack direction="row">
-                            <ButtonPrimary onClick={handleSubmit} variant={buttonVariant}>
+                            <ButtonPrimary onClick={handleSubmit}
+                                variant={buttonVariant}
+                                startIcon={buttonStartIcon}>
                                 {submitButtonText}
                             </ButtonPrimary>
                             {buttonSecondary}
