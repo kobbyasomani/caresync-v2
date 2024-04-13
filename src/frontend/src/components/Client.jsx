@@ -41,12 +41,12 @@ const Client = ({ client }) => {
     }, [client]);
 
     const handleSelectClient = useCallback(async (event) => {
+        navigate("/calendar");
         const clientData = await getClient(client._id);
         dispatch({
             type: "setSelectedClient",
             data: clientData
         });
-        navigate("/calendar");
     }, [client._id, dispatch, navigate]);
 
     const handleConfirmRemoveClient = useCallback(() => {
