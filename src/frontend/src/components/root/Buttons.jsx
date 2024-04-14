@@ -171,7 +171,7 @@ export const SidebarButtonAddShift = ({ variant, calendarApi, setAddShiftFormTri
             ...variant,
         }
     }, [variant]);
-    const [buttonVariant, setButtonVariant] = useState(buttonDefaults['xs']);
+    const [buttonVariant, setButtonVariant] = useState(buttonDefaults[getBreakpoint()]);
 
     const handleAddShift = useCallback(() => {
         const currentDateStart = new Date(new Date().setHours(0, 0, 0, 0));
@@ -229,7 +229,9 @@ export const SidebarButtonAddShift = ({ variant, calendarApi, setAddShiftFormTri
                 </IconButton>
             </Tooltip>
         ) : buttonVariant === "full" ? (
-            <ButtonPrimary startIcon={<MoreTimeRoundedIcon />} onClick={handleAddShift} size={breakpoint === "sm" ? "small" : "medium"}
+            <ButtonPrimary startIcon={<MoreTimeRoundedIcon />}
+                onClick={handleAddShift}
+                size={breakpoint === "sm" ? "small" : "medium"}
                 sx={{
                     position: { xs: "absolute", lg: "relative" },
                     top: { xs: "0.75rem", lg: "initial" },

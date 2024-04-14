@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Outlet, useNavigate, Navigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
@@ -64,7 +64,7 @@ export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
-    const client = useMemo(() => store.selectedClient, [store.selectedClient]);
+    const client = store.selectedClient;
     const [inProgressShift, setInProgressShift] = useState({});
     const [newShiftCreated, setNewShiftCreated] = useState(false);
     const [addShiftFormTrigger, setAddShiftFormTrigger] = useState(null);
@@ -72,13 +72,13 @@ export const Calendar = () => {
     const navigate = useNavigate();
     const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const handleRefreshClient = useCallback(() => {
-        if (client._id) {
+    const handleRefreshClient = useCallback(async () => {
+        if (client?._id) {
             getClient(client._id).then((client) => {
                 dispatch({
                     type: "setSelectedClient",
                     data: client
-                })
+                });
             });
         }
     }, [dispatch, client._id]);
@@ -96,40 +96,27 @@ export const Calendar = () => {
         }, 100);
     }, [navigate, dispatch, client._id, store.prevSelectedClient]);
 
-    const handleRefreshCalendar = useCallback(() => {
+    const handleRefreshCalendar = useCallback(async () => {
         if (client?._id) {
-            // console.log("Refreshing calendar...");
             getAllShifts(client._id)
                 .then((shifts) => {
-                    // Set all shifts
-                    dispatch({
-                        type: "setShifts",
-                        data: shifts
-                    });
-                    // Set previous shifts
                     const prevShifts = findPreviousShifts(shifts);
-                    dispatch({
-                        type: "setPreviousShifts",
-                        data: prevShifts
-                    });
-                    //Set in-progress shift
                     const inProgressShift = findInProgressShift(shifts);
                     setInProgressShift(inProgressShift);
-                    dispatch({
-                        type: "setInProgressShift",
-                        data: inProgressShift
-                    });
-                    // Set featured shift (next upcoming)
                     const featuredShift = findNextUpcomingShift(shifts);
                     dispatch({
-                        type: "setFeaturedShift",
-                        data: featuredShift
+                        type: "updateStore",
+                        data: {
+                            shifts,
+                            prevShifts,
+                            inProgressShift,
+                            featuredShift
+                        }
                     });
-                }).then(() => {
                     setIsLoading(false);
                 });
         }
-    }, [dispatch, client]);
+    }, [dispatch, client._id]);
 
     const handleSelectInProgressShift = () => {
         dispatch({
@@ -241,8 +228,8 @@ export const Calendar = () => {
         return () => {
             clearTimeout(calendarTimeout)
         };
-    }, [store.user, client, store.selectedShift, store.refreshCalendar,
-        handleRefreshCalendar, refreshCalendarTimeout]);
+    }, [refreshCalendarTimeout, handleRefreshCalendar,
+        store.user, store.selectedClient, store.refreshCalendar]);
 
     // Logout user if auth fails
     useEffect(() => {
