@@ -100,7 +100,7 @@ export const Calendar = () => {
         if (client?._id) {
             getAllShifts(client._id)
                 .then((shifts) => {
-                    const prevShifts = findPreviousShifts(shifts);
+                    const previousShifts = findPreviousShifts(shifts);
                     const inProgressShift = findInProgressShift(shifts);
                     setInProgressShift(inProgressShift);
                     const featuredShift = findNextUpcomingShift(shifts);
@@ -108,7 +108,7 @@ export const Calendar = () => {
                         type: "updateStore",
                         data: {
                             shifts,
-                            prevShifts,
+                            previousShifts,
                             inProgressShift,
                             featuredShift
                         }
