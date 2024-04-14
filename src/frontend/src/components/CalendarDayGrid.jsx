@@ -81,7 +81,7 @@ const CalendarDayGrid = forwardRef(({ calendarApi, calendarView, toggleCalendarV
                 selectable
                 select={handleSelect}
                 eventClick={handleEventClick}
-                selectLongPressDelay={300}
+                selectLongPressDelay={100}
                 aspectRatio={1}
                 // contentHeight="auto"
                 expandRows={true}

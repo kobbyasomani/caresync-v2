@@ -8,6 +8,8 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Modal from "../Modal";
 
 import { TextField, Alert } from "@mui/material";
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import Diversity3RoundedIcon from '@mui/icons-material/Diversity3Rounded';
 
 export const InviteCarerForm = () => {
     const { store } = useGlobalContext();
@@ -65,6 +67,7 @@ export const InviteCarerForm = () => {
                 setForm={setForm}
                 legend="Invite a carer"
                 submitButtonText="Send invitation"
+                buttonStartIcon={<EmailRoundedIcon />}
                 postURL={`/carer/invite/${store.selectedClient._id}`}
                 callback={invitationSent}
             >
@@ -77,7 +80,7 @@ export const InviteCarerForm = () => {
                     required
                     mui="TextField" />
             </Form>
-            <ButtonSecondary onClick={handleReturnToCareTeam}>
+            <ButtonSecondary onClick={handleReturnToCareTeam} startIcon={<Diversity3RoundedIcon />}>
                 Back to Care Team
             </ButtonSecondary>
             {/* Display alerts */}

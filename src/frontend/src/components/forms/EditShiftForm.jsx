@@ -12,15 +12,19 @@ import { ButtonSecondary } from "../root/Buttons";
 import Modal from "../Modal";
 
 import {
-    TextField, Stack, FormControl, Select, InputLabel, MenuItem
+    TextField, Stack, FormControl, Select, InputLabel, MenuItem,
+    useMediaQuery, useTheme
 } from "@mui/material";
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const EditShiftForm = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const modalId = "edit-shift";
     const navigate = useNavigate();
+    const theme = useTheme();
+    const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     // Set the initial form and alert state
     const initialState = {
@@ -194,11 +198,11 @@ export const EditShiftForm = () => {
         <Form form={form}
             setForm={setForm}
             legend="Update shift details"
-            submitButtonText="Update shift"
+            submitButtonText={xsScreen ? "Update" : "Update shift"}
             buttonStartIcon={<EventAvailableRoundedIcon />}
             buttonSecondary={shiftUpdated ?
-                <ButtonSecondary onClick={handleManageShift}>
-                    Manage shift
+                <ButtonSecondary onClick={handleManageShift} startIcon={<AssignmentIcon />}>
+                    {xsScreen ? "Manage" : "Manage shift"}
                 </ButtonSecondary>
                 : null}
             postURL={`/shift/${store.selectedShift._id}`}

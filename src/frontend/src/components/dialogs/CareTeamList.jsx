@@ -10,6 +10,7 @@ import Loader from "../logo/Loader";
 
 import { List, Stack } from "@mui/material"
 import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 const CareTeamList = () => {
     // TODO: Handle cases where a carer with pending/in-progress shift is removed from a care team
@@ -103,7 +104,9 @@ const CareTeamList = () => {
                 </ButtonPrimary>
                 {store.selectedClient.coordinator._id === store.user._id
                     && !store.selectedClient.carers.some(obj => obj["_id"] === store.user._id) ? (
-                    <ButtonSecondary onClick={handleAddCoordinatorAsCarer} disabled={isLoading}>
+                    <ButtonSecondary onClick={handleAddCoordinatorAsCarer}
+                        startIcon={<AccountCircleRoundedIcon />}
+                        disabled={isLoading}>
                         Add yourself
                     </ButtonSecondary>
                 ) : (null)

@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 import MoreTimeRoundedIcon from '@mui/icons-material/MoreTimeRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) => {
     const { store, dispatch } = useGlobalContext();
@@ -150,6 +151,8 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
         }
         // New shift should not everlap existing shifts
         shiftsOverlap(form.inputs.shiftStartTime, form.inputs.shiftEndTime, true);
+
+        // TODO: The same carer cannot be assigned to overlapping shifts with different clients
     }, [shiftsOverlap]);
 
     // Update shifts after successfully posting new shift
@@ -382,7 +385,8 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                             // If there are no carers, provide an option for the coordinator to add themselves
                             || store.selectedClient.carers?.length === 0
                             || !store.selectedClient.carers) ? (
-                        <ButtonSecondary onClick={handleAddCoordinatorAsCarer}>
+                        <ButtonSecondary onClick={handleAddCoordinatorAsCarer}
+                            startIcon={<AccountCircleRoundedIcon />}>
                             Add yourself
                         </ButtonSecondary>
                     ) : null}
