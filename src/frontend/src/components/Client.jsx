@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
-import { getClient, deleteClient, getClientList, getAllShifts, cancelShift } from "../utils/apiUtils";
+import { deleteClient, getClientList, getAllShifts, cancelShift } from "../utils/apiUtils";
 import { Theme as theme } from "../styles/Theme";
 import Confirmation from "./dialogs/Confirmation";
 
@@ -41,13 +41,12 @@ const Client = ({ client }) => {
     }, [client]);
 
     const handleSelectClient = useCallback(async (event) => {
-        navigate("/calendar");
-        const clientData = await getClient(client._id);
         dispatch({
             type: "setSelectedClient",
-            data: clientData
+            data: client
         });
-    }, [client._id, dispatch, navigate]);
+        navigate("/calendar");
+    }, [client, dispatch, navigate]);
 
     const handleConfirmRemoveClient = useCallback(() => {
         // Check if the client has shifts. If so, warn user that all client shifts will be deleted.
