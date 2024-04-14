@@ -356,7 +356,7 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                                 >
                                     {store.selectedClient.carers.map(carer => {
                                         return (
-                                            <MenuItem value={carer._id} key={carer._id}>
+                                            <MenuItem value={carer._id} key={`selectMenuItem_${carer._id}`}>
                                                 {`${carer.firstName} ${carer.lastName}`}
                                             </MenuItem>)
                                     })}
