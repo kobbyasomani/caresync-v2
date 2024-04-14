@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from "react"
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -8,7 +8,7 @@ import { ButtonPrimary, ButtonSecondary, ButtonDownload } from "../root/Buttons"
 import IncidentReportForm from "../forms/IncidentReportForm";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack, useTheme, Fade, Grow } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -157,17 +157,23 @@ const IncidentReportDetails = () => {
     return (
         <>
             <Fade in={true}>
-                {/* // TODO: Add breadcrumbs in sub-views (e.g., Shift Overview / Incident Reports) */}
-                <Stack direction="row" alignItems="flex-end">
-                    <Typography variant="h3">Incident Report {incidentReportIndex}</Typography>
-                    {Object.keys(incidentReport).length > 0 ? (
-                        <ButtonDownload
-                            tooltip="Download Incident Report"
-                            filename="Incident Report"
-                            resourceURL={incidentReport.incidentReportPDF}
-                        />
-                    ) : null}
-                </Stack>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Link to="/calendar/shift-details/incident-reports">Incidents</Link>
+                        <Typography>Incident {incidentReportIndex} details</Typography>
+                    </Breadcrumbs>
+                    <Stack direction="row" alignItems="center" mt={2}>
+                        <Typography variant="h3">Incident Report {incidentReportIndex}</Typography>
+                        {incidentReport?.incidentReportPDF ? (
+                            <ButtonDownload
+                                tooltip="Download Incident Report"
+                                filename="Incident Report"
+                                resourceURL={incidentReport.incidentReportPDF}
+                            />
+                        ) : null}
+                    </Stack>
+                </Box>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ pt: 1 }}>

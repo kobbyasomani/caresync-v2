@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -7,7 +8,7 @@ import HandoverNotesForm from "../forms/HandoverNotesForm";
 import Confirmation from "../dialogs/Confirmation";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
-import { Typography, Box, Stack, useTheme, Fade, Grow } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -133,7 +134,13 @@ const HandoverNotes = () => {
     return (
         <>
             <Fade in={true}>
-                <Typography variant="h3">Handover Notes</Typography>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Typography>Handover</Typography>
+                    </Breadcrumbs>
+                    <Typography variant="h3" mt={2}>Handover Notes</Typography>
+                </Box>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

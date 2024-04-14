@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -8,7 +8,7 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Carer from "../Carer";
 import Loader from "../logo/Loader";
 
-import { Typography, Box, Stack, useMediaQuery, useTheme, Fade, Grow } from "@mui/material";
+import { Typography, Box, Stack, useMediaQuery, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 
@@ -75,7 +75,13 @@ const CoordinatorNotes = () => {
     return isLoading ? <Loader /> : (
         <>
             <Fade in={true}>
-                <Typography variant="h3">Coordinator Notes</Typography>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Typography>Coordinator notes</Typography>
+                    </Breadcrumbs>
+                    <Typography variant="h3" mt={2}>Coordinator Notes</Typography>
+                </Box>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

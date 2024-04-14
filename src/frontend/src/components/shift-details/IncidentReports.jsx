@@ -1,11 +1,11 @@
 import { useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import Incident from "./Incident";
 
 import { ButtonPrimary } from "../root/Buttons";
-import { Typography, Stack, Box, Fade, Grow } from "@mui/material";
+import { Typography, Stack, Box, Fade, Grow, Breadcrumbs } from "@mui/material";
 import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
 
 const IncidentReports = () => {
@@ -68,7 +68,13 @@ const IncidentReports = () => {
     return (
         <>
             <Fade in={true}>
-                <Typography variant="h3">Incident Reports</Typography>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Typography>Incidents</Typography>
+                    </Breadcrumbs>
+                    <Typography variant="h3" mt={3}>Incident Reports</Typography>
+                </Box>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

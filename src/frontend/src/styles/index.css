@@ -97,4 +97,11 @@ fieldset legend {
   opacity: 100%;
 }
 
+.MuiBreadcrumbs-li a {
+  text-decoration: none;
+}
+.MuiBreadcrumbs-li a:hover {
+  text-decoration: underline;
+}
+
 /*# sourceMappingURL=index.css.map */

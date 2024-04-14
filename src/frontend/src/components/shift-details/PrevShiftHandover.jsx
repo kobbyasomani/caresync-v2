@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { ButtonPrimary } from "../root/Buttons";
 
-import { Typography, Box, useTheme, Fade, Grow } from "@mui/material";
+import { Typography, Box, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 
 const PrevShiftHandover = () => {
     const { store } = useGlobalContext();
@@ -58,7 +59,13 @@ const PrevShiftHandover = () => {
     return (
         <>
             <Fade in={true}>
-                <Typography variant="h3">Previous Shift Handover</Typography>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Typography>Previous shift handover</Typography>
+                    </Breadcrumbs>
+                    <Typography variant="h3" mt={2}>Previous Shift Handover</Typography>
+                </Box>
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

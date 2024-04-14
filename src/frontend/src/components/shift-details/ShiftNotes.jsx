@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -7,7 +8,7 @@ import ShiftNotesForm from "../forms/ShiftNotesForm";
 import { ButtonDownload, ButtonUpload, ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack, useTheme, Grow, Fade } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Grow, Fade, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TaskIcon from '@mui/icons-material/Task';
@@ -165,10 +166,17 @@ const ShiftNotes = () => {
     return (
         <>
             <Fade in={true}>
-                <Stack direction="row" alignItems="flex-end" sx={{ position: "relative" }}>
-                    <Typography variant="h3">Shift Notes</Typography>
-                    {renderHeaderButtons()}
-                </Stack>
+                <Box>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Link to="/calendar/shift-details/">Shift details</Link>
+                        <Typography>Shift notes</Typography>
+                    </Breadcrumbs>
+                    <Stack direction="row" alignItems="center" mt={2} sx={{ position: "relative" }}>
+                        <Typography variant="h3">Shift Notes</Typography>
+                        {renderHeaderButtons()}
+                    </Stack>
+                </Box>
+
             </Fade>
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>

@@ -101,7 +101,7 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
 
     return (
         <Tooltip title={tooltip} placement="left" >
-            <IconButton color="primary" size="large"
+            <IconButton color="primary" size="medium"
                 sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
                 variant="contained"
                 id="download-button"
@@ -143,7 +143,7 @@ export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...r
 
     return (
         <Tooltip title={tooltip} placement="left" >
-            <IconButton color="primary" size="large"
+            <IconButton color="primary" size="medium"
                 sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
                 variant="contained"
                 id="upload-button"
