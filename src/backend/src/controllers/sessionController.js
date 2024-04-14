@@ -21,7 +21,7 @@ const updateSession = asyncHandler(async (req, res) => {
             session.clientStore = req.body.sessionData;
             session.userID = req.user.id;
             res.status(200)
-                .json({ message: `The user's session was updated (${req.sessionID}).` });
+                .json({ message: `The user's session was updated.` });
         }
     } catch (error) {
         res.status(error.status || 500);
