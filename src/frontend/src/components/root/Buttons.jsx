@@ -231,10 +231,10 @@ export const SidebarButtonAddShift = ({ variant, calendarApi, setAddShiftFormTri
         ) : buttonVariant === "full" ? (
             <ButtonPrimary startIcon={<MoreTimeRoundedIcon />}
                 onClick={handleAddShift}
-                size={breakpoint === "sm" ? "small" : "medium"}
+                size={["xs", "sm", "md", "lg"].includes(breakpoint) ? "small" : "medium"}
                 sx={{
                     position: { xs: "absolute", lg: "relative" },
-                    top: { xs: "0.75rem", lg: "initial" },
+                    top: { xs: "0.6rem", lg: "initial" },
                     right: { xs: "0.75rem", lg: "initial" },
                     margin: { lg: "0.5rem auto" },
                     display: "flex"

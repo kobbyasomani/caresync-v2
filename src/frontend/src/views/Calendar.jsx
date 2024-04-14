@@ -333,7 +333,7 @@ export const Calendar = () => {
                                 <Typography variant="h3" component="h2" sx={{ mb: 1 }}>
                                     Upcoming Shift
                                 </Typography>
-                                <Shift featured shift={store.featuredShift} />
+                                <Shift featured shift={store.featuredShift} cardDirection="column"/>
                                 <SidebarButtonAddShift variant={{ xs: "full", xl: "icon-only" }}
                                     calendarApi={calendarApi}
                                     setAddShiftFormTrigger={setAddShiftFormTrigger} />
@@ -364,7 +364,7 @@ export const Calendar = () => {
                                     {[...store.previousShifts].reverse().slice(0, 3)
                                         .filter(shift => shift._id !== inProgressShift._id)
                                         .map(shift => {
-                                            return <Shift key={shift._id} shift={shift} />
+                                            return <Shift key={shift._id} shift={shift} cardDirection="column" />
                                         })}
                                 </Stack>
                             </section>

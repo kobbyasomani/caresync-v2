@@ -200,6 +200,7 @@ const deleteShift = asyncHandler(async (req, res) => {
 
   // Delete shift
   await shift.remove();
+  // TODO: Remove associated cloud files when a shift is deleted
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
 });
 

@@ -187,10 +187,9 @@ const updateShift = async (shiftID, body) => {
 /**
  * Cancel the shift with the given id (delete it from the database) and return the reponse object.
  * @param {String} shiftId 
- * @returns {Response}
  */
 const cancelShift = async (shiftId) => {
-    fetch(`${baseURL_API}/shift/${shiftId}`, {
+    return fetch(`${baseURL_API}/shift/${shiftId}`, {
         credentials: "include",
         method: "DELETE"
     }).then(response => response);

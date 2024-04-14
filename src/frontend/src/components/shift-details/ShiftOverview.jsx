@@ -274,11 +274,11 @@ const ShiftOverview = () => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={6} display={"flex"}>
-                    <Card variant="outlined" id="incidents-card" sx={{ flexGrow: 1 }}>
+                <Grid item xs={12} md={6}>
+                    <Card variant="outlined" id="incidents-card" sx={{ height: "100%" }}>
                         <Tooltip title="View all incidents" placement="top" arrow>
-                            <CardActionArea onClick={() => handleViewPanel("incident-reports")} sx={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
-                                <CardContent sx={{ flexGrow: 1 }}>
+                            <CardActionArea onClick={() => handleViewPanel("incident-reports")}>
+                                <CardContent>
                                     <ReportRoundedIcon sx={{
                                         position: "absolute", right: "0.5rem", top: "0.5rem",
                                         color: store.selectedShift.incidentReports.length > 0 ?
@@ -305,10 +305,10 @@ const ShiftOverview = () => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={6} display={"flex"}>
-                    <Card variant="outlined" id="handover-card" sx={{ flexGrow: 1 }}>
-                        <CardActionArea onClick={() => handleViewPanel("handover-notes")} sx={{ height: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
-                            <CardContent sx={{ flexGrow: 1 }}>
+                <Grid item xs={12} md={6}>
+                    <Card variant="outlined" id="handover-card" sx={{ height: "100%" }}>
+                        <CardActionArea onClick={() => handleViewPanel("handover-notes")}>
+                            <CardContent>
                                 <ForumRoundedIcon sx={{
                                     position: "absolute", right: "0.5rem", top: "0.5rem",
                                     color: store.selectedShift.handoverNotes ?

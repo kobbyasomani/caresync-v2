@@ -34,6 +34,7 @@ export const ConfirmCancelShift = () => {
     const handleCancelShift = useCallback(() => {
         cancelShift(store.selectedShift._id).then((response) => {
             if (response.status === 200) {
+                console.log("Success!");
                 setAlert({ severity: "success", message: "The shift has been cancelled." });
                 setIsCancelled(true);
             } else {
@@ -46,12 +47,10 @@ export const ConfirmCancelShift = () => {
                 type: "setShifts",
                 data: shifts
             });
-        }).catch((error) => { setAlert({ error: error.message }) });
+        }).catch((error) => { setAlert({ severity: "error", message: error.message }) });
     }, [dispatch, store.selectedClient._id, store.selectedShift._id]);
 
     const afterConfirm = useCallback(() => {
-        // setAlert({});
-        // setIsCancelled(false);
         modalDispatch({
             type: "close",
             data: "drawer"
