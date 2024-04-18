@@ -127,7 +127,7 @@ export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...r
     const uploadResource = useCallback(async () => {
         const response = await fetch(destinationURL, {
             method: "POST",
-            date: resource
+            data: resource
         }).then(response => response.json())
             .then((json) => {
                 if (callback) {

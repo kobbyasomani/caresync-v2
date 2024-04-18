@@ -100,15 +100,75 @@ const registerDemoUser = asyncHandler(async (req, res) => {
   }
 
   try {
-    const id = user.id;
+    const userId = user.id;
 
     // Create a login JWT token
-    const loginToken = jwt.sign({ id }, process.env.JWT_SECRET, {
+    const loginToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
       expiresIn: "30d",
     });
 
-    // Compare entered password with stored password and return a cookie
+    // Compare entered password with stored password and
     if (user && (await bcrypt.compare(password, user.password))) {
+      // Create sample client
+      const sampleClient = await Client.create({
+        firstName: "Alex",
+        lastName: "Doe",
+        coordinator: userId,
+        carers: [userId]
+      });
+
+      // Create sample shift
+      shiftStartTime = new Date(new Date().setMinutes(0, 0, 0));
+      shiftEndTime = new Date(shiftStartTime);
+      shiftEndTime.setHours(shiftStartTime.getHours() + 8);
+      const sampleShift = await Shift.create({
+        client: sampleClient.id,
+        coordinator: userId,
+        coordinatorNotes: "These are some sample coordinator notes.\n\n\
+As a client's coordinator, you can use these notes to provide tips, \
+reminders, or any other useful information that the carer should know \
+or keep in mind during the shift.\n\n\
+Example: Please ensure that Alex's room is kept tidy and organised, and that all their \
+personal belongings are in their designated places when you finish up your shift.",
+        carer: userId,
+        shiftStartTime,
+        shiftEndTime,
+        shiftNotes: {
+          shiftNotesText: "These are some sample shift notes.\n\n\
+Use shift notes to give an overview of the main events of the care shift \
+for later reference. Shift notes can be uploaded to the cloud and \
+downloaded as PDF.\n\n\
+Example: Today's shift with Alex, was a pleasant experience. \
+I arrived at the scheduled time and was warmly greeted by Alex. We spent some \
+time chatting about their day and any concerns they had. I helped them tidy up \
+their living room and kitchen, and we prepared a light evening meal together."
+        },
+        incidentReports: [
+          {
+            incidentReportText: "This is a sample incident report.\n\n\
+Create incident reports to document events furing the shift that impact \
+a client's health, safety, and wellbeing.\n\n\
+These reports might include documentation of accidents or injuries, observed behaviour and \
+emotional state, environmental factors, or general daily living and quality of life issues.\n\n\
+Example: During mealtime, Alex spilled some hot soup on their shirt. \
+I quickly helped clean it up, checked that they weren't burned, and helped changed them into a fresh \
+shirt. They were a bit flustered, but otherwise ok."
+          }
+        ],
+        handoverNotes: "These are some sample handover notes.\n\n\Use handover notes to \
+provide information that will be useful for the client's next care shift. This might \
+include things to follow up on during the next shift, or tips to improve the quality of care.\n\n\
+Example: For the next shift, please make sure to remind Alex of their scheduled appointments for \
+the day and assist them in preparing for them. They are also enjoying reading a couple of \
+new books, so if they ask for any, you can find them on the shelf next to their bed."
+      });
+
+      // Add sample shift to sample client shifts
+      const updatedClient = await User.findByIdAndUpdate(sampleClient.id,
+        { $push: { shifts: sampleShift } },
+        { new: true });
+
+      // Return cookies
       res
         .cookie("access_token", loginToken, {
           httpOnly: true,
@@ -134,7 +194,8 @@ const registerDemoUser = asyncHandler(async (req, res) => {
     }
   }
   catch (error) {
-    res.status(error.status).json({ message: error.message });
+    res.status(error.status);
+    throw new Error(error.message);
   }
 });
 
@@ -495,4 +556,5 @@ module.exports = {
   getUserName,
   getUser,
   updateUser
+  // TODO: Add route to delete user account
 };

@@ -88,6 +88,8 @@ const createShift = asyncHandler(async (req, res) => {
     shiftEndTime: shiftEndTime,
   });
 
+  // TODO: Add shift to the client's shifts array
+
   const updatedShift = await Shift.findById(shift._id)
     .populate("carer", "firstName lastName");
 
@@ -200,6 +202,7 @@ const deleteShift = asyncHandler(async (req, res) => {
 
   // Delete shift
   await shift.remove();
+  // TODO: Delete shift from the client's shifts array
   // TODO: Remove associated cloud files when a shift is deleted
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
 });

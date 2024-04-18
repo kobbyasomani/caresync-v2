@@ -7,9 +7,11 @@ import { baseURL_API } from "../utils/baseURL";
 import Form from "../components/forms/Form";
 import LogoLarge from '../components/logo/LogoLarge';
 import Loader from "../components/logo/Loader";
+import { ButtonPrimary } from "../components/root/Buttons";
 
 import { TextField, Typography, Container, useTheme, Box } from "@mui/material";
-import { ButtonPrimary } from "../components/root/Buttons";
+import LockOpenRoundedIcon from '@mui/icons-material/LockOpenRounded';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 
 export default function Login() {
     // Get the global state and set form state
@@ -77,7 +79,7 @@ export default function Login() {
         : store.isAuth ? (
             <Outlet />
         ) : (
-            <Container maxWidth="md">
+            <Container maxWidth="md" sx={{ mt: 3 }}>
                 <Typography sx={{
                     textAlign: "center", margin: "0 auto", mt: 2,
                     [xsUp]: {
@@ -97,6 +99,7 @@ export default function Login() {
                     legend="Sign in"
                     submitButtonText="Log in"
                     buttonVariant="outlined"
+                    buttonStartIcon={<LockOpenRoundedIcon />}
                     postURL="/user/login"
                     callback={handleLoginUser}
                 >
@@ -120,14 +123,14 @@ export default function Login() {
                         mui="TextField" />
                 </Form>
                 {isDemo ?
-                    <Box maxWidth="sm" sx={{ mx: "auto" }}>
+                    <Box maxWidth="sm" sx={{ mx: "auto", mt: 3 }}>
                         <Typography variant="h2" style={{ textAlign: "center" }}>
                             Create a demo account
                         </Typography>
                         <Typography variant="body1" sx={{ maxWidth: "50ch", mx: "auto", textAlign: "center" }}>
                             Demo accounts use auto-generated credentials and are
-                            deleted after 30 days. Take note of your login details after
-                            starting the demo if you want to revisit the account again!
+                            deleted after 30 days. Update your account details after
+                            starting the demo if you want to visit the same demo account.
                         </Typography>
                     </Box>
                     : <Typography variant="h2" style={{ textAlign: "center" }}>
@@ -135,7 +138,7 @@ export default function Login() {
                     </Typography>}
 
                 {isDemo ? (
-                    <ButtonPrimary onClick={handleStartDemo}>
+                    <ButtonPrimary onClick={handleStartDemo} startIcon={<LoginRoundedIcon />}>
                         Start app demo
                     </ButtonPrimary>
                 ) : (

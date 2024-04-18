@@ -12,7 +12,7 @@ const emptyStore = {
     appIsLoading: true,
     isAuth: false,
     user: {},
-    clients: [],
+    clients: {},
     selectedClient: {},
     prevSelectedClient: {},
     shifts: [],

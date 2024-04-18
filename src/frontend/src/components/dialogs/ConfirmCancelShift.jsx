@@ -34,7 +34,6 @@ export const ConfirmCancelShift = () => {
     const handleCancelShift = useCallback(() => {
         cancelShift(store.selectedShift._id).then((response) => {
             if (response.status === 200) {
-                console.log("Success!");
                 setAlert({ severity: "success", message: "The shift has been cancelled." });
                 setIsCancelled(true);
             } else {

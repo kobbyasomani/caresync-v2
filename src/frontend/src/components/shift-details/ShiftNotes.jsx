@@ -151,6 +151,7 @@ const ShiftNotes = () => {
             );
         } else if (store.selectedShift.shiftNotes?.shiftNotesText) {
             return (
+                // TODO: Enable uploading shift notes and incident reports to the cloud
                 <ButtonUpload
                     tooltip="Upload Shift Notes to the cloud. You will be able to download them as a PDF file afterwards."
                     resource=""

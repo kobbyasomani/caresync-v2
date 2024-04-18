@@ -220,7 +220,13 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
 
     const renderContent = useCallback(() => {
         return <Box
-            sx={{ width: drawerContentWidth, p: { xs: 2, lg: 3 }, pt: { xs: 7, lg: 7.5 }, mt: 1 }}
+            sx={{
+                width: drawerContentWidth,
+                p: { xs: 2, lg: 3 },
+                pt: { xs: 7, lg: 7.5 },
+                pb: { xs: 3, lg: 4 },
+                mt: 1
+            }}
             role="presentation"
             onKeyDown={handleCloseDrawer}>
             <Grid container rowSpacing={2} columnSpacing={2} alignItems="center" sx={{ mb: 2 }}>

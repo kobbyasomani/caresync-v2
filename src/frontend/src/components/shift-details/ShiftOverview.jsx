@@ -214,7 +214,7 @@ const ShiftOverview = () => {
                                     <Typography variant="h6" component="h3" color={theme.palette.primary.dark}>
                                         Notes from Coordinator
                                     </Typography>
-                                    <Typography variant="body1">
+                                    <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
                                         {store.selectedShift.coordinatorNotes.length <= 300 ?
                                             store.selectedShift.coordinatorNotes
                                             : <>
@@ -382,13 +382,13 @@ const ShiftOverview = () => {
                         {shiftUtils.isPending || shiftUtils.isInProgress ?
                             <ButtonPrimary onClick={handleEditShift} sx={{ margin: "0" }}
                                 startIcon={<EditCalendarRoundedIcon />}>
-                                {smScreen ? "Edit" : "Edit shift"}
+                                Edit Shift
                             </ButtonPrimary>
                             : null}
                         {shiftUtils.isPending ?
                             <ButtonSecondary onClick={handleConfirmCancelShift}
                                 sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
-                                {smScreen ? "Cancel" : "Cancel shift"}
+                                Cancel shift
                             </ButtonSecondary>
                             : null}
                     </Stack>

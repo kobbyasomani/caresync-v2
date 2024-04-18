@@ -333,7 +333,7 @@ export const Calendar = () => {
                                 <Typography variant="h3" component="h2" sx={{ mb: 1 }}>
                                     Upcoming Shift
                                 </Typography>
-                                <Shift featured shift={store.featuredShift} cardDirection="column"/>
+                                <Shift featured shift={store.featuredShift} cardDirection="column" />
                                 <SidebarButtonAddShift variant={{ xs: "full", xl: "icon-only" }}
                                     calendarApi={calendarApi}
                                     setAddShiftFormTrigger={setAddShiftFormTrigger} />
@@ -372,6 +372,7 @@ export const Calendar = () => {
                             <Typography variant="h3">No Recent Shifts</Typography>
                         )}
                     </Box>
+                    {/* //TODO: Add a button to clear sample shifts if they exist*/}
 
                     <Box gridArea={{
                         xs: "2 / 1 / span 1 / span 12",
