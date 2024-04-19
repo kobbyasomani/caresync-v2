@@ -168,9 +168,8 @@ new books, so if they ask for any, you can find them on the shelf next to their 
       });
 
       // Add sample shift to sample client shifts
-      const updatedClient = await User.findByIdAndUpdate(sampleClient.id,
-        { $push: { shifts: sampleShift } },
-        { new: true });
+      await Client.findByIdAndUpdate(sampleClient.id,
+        { $push: { shifts: sampleShift._id } });
 
       // Return cookies
       res
