@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../utils/globalUtils";
 
 const ProtectedRoute = () => {
     const { store, dispatch } = useGlobalContext();
-    const navigate = useNavigate();
+    const { handleLogout } = store.functions;
 
     // Check if the user is authenticated when attempting to access protected routes.
     useEffect(() => {
@@ -16,12 +16,9 @@ const ProtectedRoute = () => {
             data: auth
         });
         if (!auth) {
-            dispatch({
-                type: "logout",
-            });
-            navigate("/");
+            handleLogout();
         }
-    }, [dispatch, store.isAuth, navigate]);
+    }, [dispatch, handleLogout]);
 
     return store.isAuth ? <Outlet />
         : null

@@ -135,7 +135,7 @@ function App() {
     /**
      * Attempts to read session data for the logged-in user from the server. If a session is found,
      * decrypts it, sets it in the global context store, and returns an `Object` with a `loaded` value
-     * of `true`. If no session is found, the truened `Object` will have a `loaded` value of `false`.
+     * of `true`. If no session is found, the returned `Object` will have a `loaded` value of `false`.
      * @returns {Promise<Object>}
      */
     const loadSession = useCallback(() => {

@@ -124,19 +124,19 @@ const registerDemoUser = asyncHandler(async (req, res) => {
       const sampleShift = await Shift.create({
         client: sampleClient.id,
         coordinator: userId,
-        coordinatorNotes: "These are some sample coordinator notes.\n\n\
+        coordinatorNotes: "These are some sample Coordinator Notes.\n\n\
 As a client's coordinator, you can use these notes to provide tips, \
 reminders, or any other useful information that the carer should know \
-or keep in mind during the shift.\n\n\
-Example: Please ensure that Alex's room is kept tidy and organised, and that all their \
+during the shift.\n\n\
+Example: Please ensure that Alex's room is kept tidy and organised, and that all of their \
 personal belongings are in their designated places when you finish up your shift.",
         carer: userId,
         shiftStartTime,
         shiftEndTime,
         shiftNotes: {
-          shiftNotesText: "These are some sample shift notes.\n\n\
-Use shift notes to give an overview of the main events of the care shift \
-for later reference. Shift notes can be uploaded to the cloud and \
+          shiftNotesText: "These are some sample Shift Notes.\n\n\
+Use Shift Notes to give an overview of the main events of the care shift \
+for later reference. Shift Notes can be uploaded to the cloud and \
 downloaded as PDF.\n\n\
 Example: Today's shift with Alex, was a pleasant experience. \
 I arrived at the scheduled time and was warmly greeted by Alex. We spent some \
@@ -145,19 +145,23 @@ their living room and kitchen, and we prepared a light evening meal together."
         },
         incidentReports: [
           {
-            incidentReportText: "This is a sample incident report.\n\n\
-Create incident reports to document events furing the shift that impact \
-a client's health, safety, and wellbeing.\n\n\
-These reports might include documentation of accidents or injuries, observed behaviour and \
-emotional state, environmental factors, or general daily living and quality of life issues.\n\n\
-Example: During mealtime, Alex spilled some hot soup on their shirt. \
+            incidentReportText: "This is a sample Incident Report.\n\n\
+Create Incident Reports to document events during the shift that impact \
+a client's health, safety, or general wellbeing. Incident reports can be \
+uploaded to the cloud and downloaded as a PDF.\n\n\
+Incident Reports might include documentation of accidents or injuries, observed behaviour and \
+emotional state, environmental factors, or any other daily living or quality of life issues \
+that need to be recorded for later reference.\n\n\
+Example: During mealtime, Alex spilled some hot soup on themselves. \
 I quickly helped clean it up, checked that they weren't burned, and helped changed them into a fresh \
 shirt. They were a bit flustered, but otherwise ok."
           }
         ],
-        handoverNotes: "These are some sample handover notes.\n\n\Use handover notes to \
+        handoverNotes: "These are some sample Handover Notes.\n\n\Use Handover Notes to \
 provide information that will be useful for the client's next care shift. This might \
 include things to follow up on during the next shift, or tips to improve the quality of care.\n\n\
+Handover Notes from a shift will appear in a card at the top of the subsequent shift's Shift Details Panel, \
+below the Coordinator Notes if any are present.\n\n\
 Example: For the next shift, please make sure to remind Alex of their scheduled appointments for \
 the day and assist them in preparing for them. They are also enjoying reading a couple of \
 new books, so if they ask for any, you can find them on the shelf next to their bed."
@@ -545,6 +549,27 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+//----NEW ROUTE----//
+// @desc Delete the given user
+// @route DELETE /user/my-account
+// @access private
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    res.status(404);
+    throw new Error("The user could not be found.");
+  }
+
+  try {
+    await User.findByIdAndDelete(user.id);
+    res.status(200)
+      .json({ message: "The user account has been deleted." });
+  } catch (error) {
+    res.status(500);
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   registerUser,
   registerDemoUser,
@@ -555,6 +580,6 @@ module.exports = {
   resendVerification,
   getUserName,
   getUser,
-  updateUser
-  // TODO: Add route to delete user account
+  updateUser,
+  deleteUser
 };

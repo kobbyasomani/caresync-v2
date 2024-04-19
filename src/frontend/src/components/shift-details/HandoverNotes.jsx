@@ -10,7 +10,7 @@ import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 
 import { Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -77,7 +77,7 @@ const HandoverNotes = () => {
                                         Edit
                                     </ButtonPrimary>
                                     <ButtonSecondary onClick={confirmClearHandoverNotes}
-                                        sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
+                                        sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}>
                                         Clear
                                     </ButtonSecondary>
                                 </Stack>
@@ -154,7 +154,7 @@ const HandoverNotes = () => {
                 callback={clearHandoverNotes}
                 modalId={modalId}
                 cancelText="Keep handover"
-                confirmText={<><DeleteForeverIcon /> Clear</>}
+                confirmText={<><DeleteForeverRoundedIcon /> Clear</>}
             >
                 {store.selectedShift.handoverNotes ?
                     <Typography variant="body1" sx={{ mt: 2 }}>

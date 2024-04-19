@@ -10,7 +10,7 @@ import Confirmation from "../dialogs/Confirmation";
 
 import { Typography, Box, Stack, useTheme, Grow, Fade, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -92,7 +92,7 @@ const ShiftNotes = () => {
                                     Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={confirmClearShiftNotes}
-                                    sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
+                                    sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}>
                                     Clear
                                 </ButtonSecondary>
                             </Stack>
@@ -107,7 +107,7 @@ const ShiftNotes = () => {
                         callback={clearShiftNotes}
                         modalId={modalId}
                         cancelText="Keep shift notes"
-                        confirmText={<><DeleteForeverIcon /> Clear</>}
+                        confirmText={<><DeleteForeverRoundedIcon /> Clear</>}
                     >
                         <Typography variant="body1" sx={{ mt: 2 }}>
                             <span style={{ fontSize: "1.7rem", lineHeight: "100%", verticalAlign: "sub", color: theme.palette.primary.main }}>&ldquo; </span>

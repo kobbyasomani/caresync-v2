@@ -2,21 +2,25 @@ import React, { useState, useCallback, useEffect, useRef, forwardRef } from "rea
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
-import { getUser } from "../../utils/apiUtils";
+import { getUser, getAllShifts, cancelShift, deleteClient, deleteUser } from "../../utils/apiUtils";
 import Modal from "../Modal";
 import { ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Loader from "../logo/Loader";
 import Form from "../forms/Form";
 import { useHandleForm } from "../../utils/formUtils";
 import { baseURL_API } from "../../utils/baseURL";
+import Confirmation from "../dialogs/Confirmation";
 
 import {
     Typography, useTheme, Alert, TextField,
-    Table, TableBody, TableRow, TableCell
+    Table, TableBody, TableRow, TableCell,
+    useMediaQuery
 } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import TaskIcon from '@mui/icons-material/Task';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 
 const EditAccountForm = forwardRef((
     { setParentIsLoading,
@@ -157,8 +161,13 @@ const MyAccount = () => {
     const [userData, setUserData] = useState({});
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef(null);
+    const modalId = "my-account";
+    const confirmDeleteAccountModalId = `confirmDeleteUserAccount_${store.user._id}`;
+    const [deleteUserIsConfirmed, setDeleteUserIsConfirmed] = useState(false);
+    const { handleLogout } = store.functions;
 
     const theme = useTheme();
+    const xsScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleCloseMyAccountModal = useCallback(() => {
         modalDispatch({
@@ -196,151 +205,210 @@ const MyAccount = () => {
         setEditMode(false);
     }, [setEditMode]);
 
+    const handleConfirmDeleteUserAccount = useCallback(() => {
+        modalDispatch({
+            type: "open",
+            data: "confirmation",
+            id: confirmDeleteAccountModalId
+        });
+    }, [modalDispatch, confirmDeleteAccountModalId]);
+
+    const handleDeleteUserAccount = useCallback(async () => {
+        // Delete all clients and shifts for which the user is the coordinator
+        const clientIds = store.clients.coordinator.map(client => client._id);
+        const deleteClientsAndShifts = async () => {
+            await Promise.all(clientIds.map(async (clientId) => {
+                const shifts = await getAllShifts(clientId);
+                await Promise.all(shifts.map(shift => cancelShift(shift._id)));
+                await deleteClient(clientId);
+            }));
+        };
+        deleteClientsAndShifts().then(() => {
+            deleteUser().then(() => {
+                setDeleteUserIsConfirmed(true);
+            });
+        });
+    }, [store.clients]);
+
+    const handleAfterDeleteUserAccount = useCallback(() => {
+        // Logout user and return to Home view
+        handleLogout().then(() => {
+            setDeleteUserIsConfirmed(false);
+        });
+    }, [handleLogout]);
+
     useEffect(() => {
-        handleGetUserData().then(() => setIsLoading(false));
-    }, [setIsLoading, store.user, handleGetUserData]);
+        if (!deleteUserIsConfirmed) {
+            handleGetUserData().then(() => setIsLoading(false));
+        }
+    }, [setIsLoading, store.user, handleGetUserData, deleteUserIsConfirmed]);
 
     return (
-        <Modal modalId={"my-account"}
-            title="My Account"
-            text="View and modify your account information including your name, email, and password."
-            onClose={handleOnClose}
-            actions={
-                <>
-                    {Object.keys(userData).length > 0 ?
-                        editMode ? (
-                            <>
-                                <ButtonPrimary startIcon={<TaskIcon />}
-                                    onClick={handleUpdateAccount}
-                                    disabled={isLoading}>
-                                    Save account details
-                                </ButtonPrimary>
-                                <ButtonSecondary onClick={() => handleToggleEditMode(false)}
-                                    disabled={isLoading}>
-                                    Cancel
-                                </ButtonSecondary>
-                            </>
-                        ) : (<>
-                            <ButtonPrimary startIcon={<EditRoundedIcon />}
-                                onClick={() => handleToggleEditMode(true)}
-                            >
-                                Edit account details
-                            </ButtonPrimary>
-                            <ButtonSecondary onClick={handleCloseMyAccountModal}>Close</ButtonSecondary>
-                        </>)
-                        : null}
-                </>}
-        >
-            {isLoading ? <Loader />
-                : error ?
+        <>
+            <Modal modalId={modalId}
+                title="My Account"
+                text="View and modify your account information including your name, email, and password."
+                onClose={handleOnClose}
+                actions={
                     <>
-                        <Alert severity="error">
-                            {error ? error : "The user could not be fetched a this time."}
-                        </Alert>
-                        <ButtonPrimary startIcon={<RefreshIcon />} onClick={handleGetUserData}>
-                            Try again
-                        </ButtonPrimary>
-                    </>
-                    : editMode ?
+                        {Object.keys(userData).length > 0 ?
+                            editMode ? (
+                                <>
+                                    <ButtonPrimary startIcon={<TaskIcon />}
+                                        onClick={handleUpdateAccount}
+                                        disabled={isLoading}>
+                                        Save account details
+                                    </ButtonPrimary>
+                                    <ButtonSecondary onClick={() => handleToggleEditMode(false)}
+                                        disabled={isLoading}>
+                                        Cancel
+                                    </ButtonSecondary>
+                                </>
+                            ) : (<>
+                                <ButtonPrimary startIcon={<EditRoundedIcon />}
+                                    onClick={() => handleToggleEditMode(true)}
+                                >
+                                    Edit account details
+                                </ButtonPrimary>
+                                <ButtonSecondary onClick={handleCloseMyAccountModal}>Close</ButtonSecondary>
+                            </>)
+                            : null}
+                    </>}
+            >
+                {isLoading ? <Loader />
+                    : error ?
                         <>
-                            <EditAccountForm
-                                setParentIsLoading={setIsLoading}
-                                userData={userData}
-                                setUserData={setUserData}
-                                setEditMode={(...args) => handleToggleEditMode(...args)}
-                                handleGetUserData={handleGetUserData}
-                                ref={formRef}
-                                setParentErrors={setFormErrors}
-                                setParentAlert={setAlert}
-                            >
-                                {formErrors?.length > 0 ? (
-                                    <div className="form-errors">
-                                        <ul>
-                                            {formErrors.map((error, index) => {
-                                                return <li key={index}>{error}</li>
-                                            })}
-                                        </ul>
-                                    </div>) : null
-                                }
-                            </EditAccountForm>
+                            <Alert severity="error">
+                                {error ? error : "The user could not be fetched a this time."}
+                            </Alert>
+                            <ButtonPrimary startIcon={<RefreshIcon />} onClick={handleGetUserData}>
+                                Try again
+                            </ButtonPrimary>
                         </>
-                        : <>
-                            <Table>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body1" >
-                                                <span style={{ color: theme.palette.primary.main }}>First name</span>
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1" >
-                                                {userData.firstName}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
-                                                Last name
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">
-                                                {userData.lastName}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
-                                                Email
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">
-                                                {userData.email}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
-                                                Password
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">
-                                                ************
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
-                                                Signup date
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body1">
-                                                {new Date(userData.createdAt).toLocaleDateString("en-AU", { dateStyle: "long" })}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <Typography variant="body2" sx={{ mt: 2 }}>
-                                Update your password if you want to access this demo account again after this session.
-                                <strong> Demo accounts will be deleted automatically after 30 days.</strong>
-                            </Typography>
-                            {alert?.message ?
-                                <Alert severity={alert.severity} sx={{ mt: 2 }}>
-                                    {alert.message}
-                                </Alert>
-                                : null}
-                        </>
-            }
-        </Modal>
+                        : editMode ?
+                            <>
+                                <EditAccountForm
+                                    setParentIsLoading={setIsLoading}
+                                    userData={userData}
+                                    setUserData={setUserData}
+                                    setEditMode={(...args) => handleToggleEditMode(...args)}
+                                    handleGetUserData={handleGetUserData}
+                                    ref={formRef}
+                                    setParentErrors={setFormErrors}
+                                    setParentAlert={setAlert}
+                                >
+                                    {formErrors?.length > 0 ? (
+                                        <div className="form-errors">
+                                            <ul>
+                                                {formErrors.map((error, index) => {
+                                                    return <li key={index}>{error}</li>
+                                                })}
+                                            </ul>
+                                        </div>) : null
+                                    }
+                                </EditAccountForm>
+                            </>
+                            : <>
+                                <Table>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body1" >
+                                                    <span style={{ color: theme.palette.primary.main }}>First name</span>
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body1" >
+                                                    {userData.firstName}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                                    Last name
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body1">
+                                                    {userData.lastName}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                                    Email
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body1">
+                                                    {userData.email}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                                    Password
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body1">
+                                                    ************
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="body1" sx={{ color: theme.palette.primary.main }}>
+                                                    Signup date
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body1">
+                                                    {new Date(userData.createdAt).toLocaleDateString("en-AU", { dateStyle: "long" })}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                                <Typography variant="body2" sx={{ mt: 2 }}>
+                                    Update your password if you want to access this demo account again after this session.
+                                    <strong> Demo accounts will be deleted automatically after 30 days.</strong>
+                                </Typography>
+                                <ButtonSecondary onClick={handleConfirmDeleteUserAccount}
+                                    size="small" color="error" startIcon={<DeleteForeverRoundedIcon />}>
+                                    Delete my account
+                                </ButtonSecondary>
+                                {alert?.message ?
+                                    <Alert severity={alert.severity} sx={{ mt: 2 }}>
+                                        {alert.message}
+                                    </Alert>
+                                    : null}
+                            </>
+                }
+            </Modal>
+
+            <Confirmation modalId={confirmDeleteAccountModalId}
+                title={deleteUserIsConfirmed ? "Account deleted 👋" : "Confirm delete account"}
+                text={deleteUserIsConfirmed ? `Thanks for testing out the CareSync demo! Feel free to create another
+demo account if you want to try it out again in future.` : `Are you sure you want to delete this account?
+All clients you are the coordinator for, and their associated shifts, will be permanently removed.`}
+                callback={handleDeleteUserAccount}
+                cancelText={xsScreen ? "Cancel" : "Keep account"}
+                confirmText="Delete account"
+                secondaryButtonStartIcon={<DeleteForeverRoundedIcon />}
+                successAlert="This demo account has been successfully deleted."
+                afterConfirm={handleAfterDeleteUserAccount}
+                stayOpenOnConfirm
+                closeText="Return Home"
+                closeButtonStartIcon={<HomeRoundedIcon />}
+                noDismiss
+                noRefresh
+                sx={{ left: !xsScreen ? "2rem" : null }}
+            />
+        </>
     )
 }
 

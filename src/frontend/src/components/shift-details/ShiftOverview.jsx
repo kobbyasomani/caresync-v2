@@ -9,7 +9,6 @@ import {
     useTheme, Grid, Box, Typography, Stack, Divider, Tooltip,
     Avatar, Card, CardContent, CardActionArea, CardActions,
     List, ListItem, ListItemAvatar, ListItemText, ListItemButton,
-    useMediaQuery,
 } from "@mui/material"
 import DescriptionIcon from '@mui/icons-material/Description';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
@@ -27,7 +26,6 @@ const ShiftOverview = () => {
 
     const theme = useTheme();
     const navigate = useNavigate();
-    const smScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     const handleViewPanel = useCallback((panel) => {
         navigate(`/calendar/shift-details/${panel}`)

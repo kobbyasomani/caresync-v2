@@ -10,7 +10,7 @@ import Confirmation from "../dialogs/Confirmation";
 
 import { Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import TaskIcon from '@mui/icons-material/Task';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -110,7 +110,7 @@ const IncidentReportDetails = () => {
                                     Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={handleConfirmDeleteIncident}
-                                    sx={{ margin: "0" }} startIcon={<DeleteForeverIcon />}>
+                                    sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}>
                                     Delete
                                 </ButtonSecondary>
                             </Stack>
@@ -186,7 +186,7 @@ const IncidentReportDetails = () => {
                 text="Are you sure you want to delete this incident report? It will be permanently removed from the shift."
                 callback={handleDeleteIncident}
                 cancelText="Keep incident"
-                confirmText={<><DeleteForeverIcon />Delete</>}
+                confirmText={<><DeleteForeverRoundedIcon />Delete</>}
                 successAlert="The incident report was successfully deleted."
                 stayOpenOnConfirm
                 afterConfirm={handleAfterConfirmDeleteIncident}

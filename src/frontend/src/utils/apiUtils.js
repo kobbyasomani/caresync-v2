@@ -97,16 +97,15 @@ const getCarers = async (clientId) => {
 /**
  * Gets all shifts for a given client by client id
  * @param {String}clientId The id of the client whose shifts are being retrieved.
- * @returns {Array<Object>} An array of shift objects.
+ * @returns {Promise<Array<Object>>} An array of shift objects for the given client.
  */
 const getAllShifts = async (clientId) => {
-    const shifts = await fetch(`${baseURL_API}/shift/${clientId}`, {
+    return fetch(`${baseURL_API}/shift/${clientId}`, {
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
     }).then(response => response.json())
-    return shifts
 };
 
 /**
@@ -165,6 +164,24 @@ const updateUser = async (fields) => {
         }
     });
     return user;
+};
+
+/**
+ * Deleted the logged-in user from the database and returns a reponse message if successful.
+ * @returns {Promise<String>} The response message if successful.
+ */
+const deleteUser = async () => {
+    const deletedUser = await fetch(`${baseURL_API}/user/my-account`, {
+        credentials: "include",
+        method: "DELETE",
+    }).then(response => {
+        if (response.status !== 200) {
+            throw new Error("The account could not be deleted at this time.");
+        } else {
+            return response.json().message;
+        }
+    });
+    return deletedUser;
 };
 
 /**
@@ -376,6 +393,7 @@ export {
     getUserName,
     getUser,
     updateUser,
+    deleteUser,
     updateShift,
     cancelShift,
     deleteIncidentReport,

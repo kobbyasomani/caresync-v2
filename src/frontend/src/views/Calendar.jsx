@@ -62,6 +62,7 @@ const CareTeamMember = ({ carer }) => {
 
 export const Calendar = () => {
     const { store, dispatch } = useGlobalContext();
+    const { handleLogout } = store.functions;
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const client = store.selectedClient;
@@ -176,6 +177,13 @@ export const Calendar = () => {
         });
     }, [setCalendarView]);
 
+    // Logout user if auth fails
+    useEffect(() => {
+        if (!store.isAuth) {
+            handleLogout();
+        }
+    }, [store.isAuth, handleLogout]);
+
     useEffect(() => {
         const handleResize = () => {
             setScreenSize(getScreenSize());
@@ -230,19 +238,6 @@ export const Calendar = () => {
         };
     }, [refreshCalendarTimeout, handleRefreshCalendar,
         store.user, store.selectedClient, store.refreshCalendar]);
-
-    // Logout user if auth fails
-    useEffect(() => {
-        if (!document.cookie.includes("authenticated=true") || !store.isAuth) {
-            modalDispatch({
-                type: "closeAllModals"
-            });
-            navigate("/");
-            dispatch({
-                type: "logout",
-            });
-        }
-    }, [dispatch, modalDispatch, store, navigate]);
 
     return isLoading ? <Loader /> :
         client?._id ? (
@@ -372,7 +367,6 @@ export const Calendar = () => {
                             <Typography variant="h3">No Recent Shifts</Typography>
                         )}
                     </Box>
-                    {/* //TODO: Add a button to clear sample shifts if they exist*/}
 
                     <Box gridArea={{
                         xs: "2 / 1 / span 1 / span 12",

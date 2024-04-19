@@ -25,6 +25,7 @@ const emptyStore = {
     selectedShiftIsInProgress: false,
     selectedIncidentReport: {},
     refreshCalendar: "",
+    functions: {}
 }
 
 /**
@@ -193,6 +194,14 @@ const globalReducer = (state, action) => {
             return {
                 ...state,
                 ...action.data
+            }
+        case "addFunction":
+            return {
+                ...state,
+                functions: {
+                    ...state.functions,
+                    [action.name]: action.data
+                }
             }
         default: return state;
     }

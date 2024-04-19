@@ -38,6 +38,7 @@ const TabPanel = (props) => {
 
 const SelectClient = () => {
     const { store, dispatch } = useGlobalContext();
+    const { handleLogout } = store.functions;
     const { modalDispatch } = useModalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [tabValue, setTabValue] = useState(0);
@@ -54,6 +55,12 @@ const SelectClient = () => {
             id: "add-client"
         });
     }, [modalDispatch]);
+
+    useEffect(() => {
+        if (!store.isAuth) {
+            handleLogout();
+        }
+    }, [store.isAuth, handleLogout]);
 
     // Fetch the list of clients for the logged-in user
     useEffect(() => {

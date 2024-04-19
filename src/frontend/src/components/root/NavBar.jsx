@@ -1,4 +1,4 @@
-import { useCallback, React } from "react";
+import { React, useCallback, useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -36,18 +36,32 @@ const NavBar = () => {
         });
     }, [modalDispatch]);
 
-    const handleLogout = useCallback(() => {
+    /**
+     * Logs out the user and navigates them back to the Home (`/`) route.
+     */
+    const handleLogout = useCallback(async () => {
         dispatch({
             type: "setAppIsLoading",
             data: true
         });
-        logoutUser().then(() => {
+        return logoutUser().then(() => {
+            modalDispatch({
+                type: "closeAllModals"
+            });
             dispatch({
                 type: "logout",
             });
             navigate("/");
         });
-    }, [dispatch, navigate]);
+    }, [dispatch, modalDispatch, navigate]);
+
+    useEffect(() => {
+        dispatch({
+            type: "addFunction",
+            name: "handleLogout",
+            data: handleLogout
+        });
+    }, [dispatch, handleLogout]);
 
     const navItems = [
         {

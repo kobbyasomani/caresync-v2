@@ -11,7 +11,7 @@ import {
     Typography, Box, useTheme, Tooltip
 } from "@mui/material"
 import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 
 const Incident = ({ incident, index, shiftUtils }) => {
     const { store, dispatch } = useGlobalContext();
@@ -112,7 +112,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
                                 color: theme.palette.error.light,
                                 position: "absolute", top: 5, right: 5
                             }}>
-                            <DeleteForeverIcon />
+                            <DeleteForeverRoundedIcon />
                         </IconButton>
                     </Tooltip>
                     : null
@@ -125,7 +125,7 @@ const Incident = ({ incident, index, shiftUtils }) => {
                 text="Are you sure you want to delete this incident report? It will be permanently removed from the shift."
                 callback={handleDeleteIncident}
                 cancelText="Keep incident"
-                confirmText={<><DeleteForeverIcon />Delete</>}
+                confirmText={<><DeleteForeverRoundedIcon />Delete</>}
                 successAlert="The incident report was successfully deleted."
                 stayOpenOnConfirm
                 afterConfirm={handleAfterConfirmDeleteIncident}
