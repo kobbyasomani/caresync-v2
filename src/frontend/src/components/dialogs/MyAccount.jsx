@@ -223,11 +223,9 @@ const MyAccount = () => {
                 await deleteClient(clientId);
             }));
         };
-        deleteClientsAndShifts().then(() => {
-            deleteUser().then(() => {
-                setDeleteUserIsConfirmed(true);
-            });
-        });
+        await deleteClientsAndShifts()
+        await deleteUser();
+        setDeleteUserIsConfirmed(true);
     }, [store.clients]);
 
     const handleAfterDeleteUserAccount = useCallback(() => {

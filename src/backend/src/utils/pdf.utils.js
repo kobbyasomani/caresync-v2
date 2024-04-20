@@ -53,14 +53,13 @@ const cloudinaryUpload = (buffer, folder, clientID) => {
 
 /**
  * Deletes a list of given resource from Cloudinary by public_id
- * @param {string[]} public_ids An array of public_id strings for resources to delete
- * @param {object} options `{ resource_type: "image" (default) | "raw" | "video" }`
+ * @param {Array<String>} public_ids An array of public_id strings for resources to delete
+ * @param {Object} options `{ resource_type: "image" (default) | "raw" | "video" }`
+ * @returns {Promise<Response>}
  */
-const cloudinaryDelete = (public_ids, delete_options) => {
+const cloudinaryDelete = async (public_ids, delete_options) => {
   const options = delete_options || { resource_type: "image" };
-  cloudinary.api.delete_resources(public_ids, options).then((response) => {
-    // console.log(response);
-  });
+  return cloudinary.api.delete_resources(public_ids, options).then((response) => response);
 };
 
 module.exports = { createPDF, cloudinaryUpload, cloudinaryDelete };

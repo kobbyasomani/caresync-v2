@@ -88,7 +88,8 @@ const createShift = asyncHandler(async (req, res) => {
     shiftEndTime: shiftEndTime,
   });
 
-  // TODO: Add shift to the client's shifts array
+  await Client.findByIdAndUpdate(client._id,
+    { $push: { shifts: shift.id } });
 
   const updatedShift = await Shift.findById(shift._id)
     .populate("carer", "firstName lastName");
@@ -201,9 +202,20 @@ const deleteShift = asyncHandler(async (req, res) => {
   }
 
   // Delete shift
+  await Client.findByIdAndUpdate(shift.client,
+    { $pull: { shifts: shift.id } });
+
+  const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
+    /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+  if (shiftNotesPDF_public_id) {
+    try {
+      cloudinaryDelete([shiftNotesPDF_public_id]);
+    } catch (error) {
+      console.log(error.message || `Cloudinary: The shift notes PDF could not be deleted (${shift.id}).`);
+    }
+  };
+
   await shift.remove();
-  // TODO: Delete shift from the client's shifts array
-  // TODO: Remove associated cloud files when a shift is deleted
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
 });
 
@@ -469,7 +481,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
         cloudinaryDelete([incidentReportPDF_public_id]);
       }
       catch (error) {
-        console.log(error.message || "This incident report PDF could not be deleted.");
+        console.log(error.message || `The incident report PDF could not be deleted (${incidentId}).`);
       }
     } else {
       console.log("Incident report PDF could not be found.");
