@@ -4,11 +4,15 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { deleteIncidentReport, getAllShifts } from "../../utils/apiUtils";
-import { ButtonPrimary, ButtonSecondary, ButtonDownload } from "../root/Buttons"
+import { baseURL_API } from "../../utils/baseURL";
+import { ButtonPrimary, ButtonSecondary, ButtonDownload, ButtonUpload } from "../root/Buttons"
 import IncidentReportForm from "../forms/IncidentReportForm";
 import Confirmation from "../dialogs/Confirmation";
 
-import { Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs } from "@mui/material";
+import {
+    Typography, Box, Stack, useTheme, Fade, Grow, Breadcrumbs,
+    Snackbar, Alert
+} from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import TaskIcon from '@mui/icons-material/Task';
@@ -31,6 +35,13 @@ const IncidentReportDetails = () => {
     const modalId = `confirmDeleteIncident_${incidentReport._id}`;
     const formRef = useRef(null);
     const navigate = useNavigate();
+
+    const [isUploading, setIsUploading] = useState(false);
+    const [snackbarIsOpen, setSnackBarIsOpen] = useState(false);
+    const [alert, setAlert] = useState({
+        severity: "success",
+        message: "This is a snackbar message"
+    });
 
     const incidentReportIndex = useMemo(() => {
         return store.selectedShift.incidentReports.indexOf(
@@ -106,11 +117,13 @@ const IncidentReportDetails = () => {
                         {isEditable ?
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={toggleEditMode}
-                                    sx={{ margin: "0" }} startIcon={<EditRoundedIcon />}>
+                                    sx={{ margin: "0" }} startIcon={<EditRoundedIcon />}
+                                    disabled={isUploading}>
                                     Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={handleConfirmDeleteIncident}
-                                    sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}>
+                                    sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}
+                                    disabled={isUploading}>
                                     Delete
                                 </ButtonSecondary>
                             </Stack>
@@ -142,8 +155,27 @@ const IncidentReportDetails = () => {
                 )
             }
         }
-    }, [incidentReport, editMode, toggleEditMode, isEditable, isLoading,
+    }, [incidentReport, editMode, toggleEditMode, isEditable, isLoading, isUploading,
         handleChildLoadState, handleConfirmDeleteIncident, handleUpdateIncident]);
+
+    const handleUploadReportResponse = useCallback((response, updatedShift) => {
+        if (updatedShift) {
+            dispatch({
+                type: "updateStore",
+                data: {
+                    selectedShift: updatedShift,
+                    selectedIncidentReport: updatedShift.incidentReports.filter(
+                        report => report._id === incidentReport._id)[0]
+                }
+            });
+        }
+        setAlert(response);
+        setSnackBarIsOpen(true);
+    }, [dispatch, incidentReport._id]);
+
+    const handleCloseSnackbar = useCallback(() => {
+        setSnackBarIsOpen(false);
+    }, []);
 
     useEffect(() => {
         setIncidentReport(store.selectedIncidentReport);
@@ -171,15 +203,31 @@ const IncidentReportDetails = () => {
                                 filename="Incident Report"
                                 resourceURL={incidentReport.incidentReportPDF}
                             />
-                        ) : null}
+                        ) : (
+                            // TODO: Enable uploading incident reports to the cloud
+                            <ButtonUpload
+                                tooltip="Upload Incident Report to the cloud. You will be able to download it as a PDF file afterwards."
+                                resource={{
+                                    incidentId: incidentReport._id,
+                                    incidentReport: incidentReport.incidentReportText
+                                }}
+                                resourceName="incident report"
+                                destinationURL={`${baseURL_API}/shift/reports/${store.selectedShift._id}`}
+                                callback={handleUploadReportResponse}
+                                returnResource
+                                setParentIsLoading={setIsUploading}
+                            />
+                        )}
                     </Stack>
                 </Box>
             </Fade>
+
             <Grow in={true}>
                 <Box sx={{ pt: 1 }}>
                     {renderContent()}
                 </Box>
             </Grow>
+
             <Confirmation
                 modalId={modalId}
                 title="Confirm delete incident"
@@ -202,6 +250,19 @@ const IncidentReportDetails = () => {
                     </Typography>
                     : null}
             </Confirmation>
+
+            <Snackbar
+                open={snackbarIsOpen}
+                autoHideDuration={10000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert severity={alert.severity}
+                    onClose={handleCloseSnackbar}
+                >
+                    {alert.message}
+                </Alert>
+            </Snackbar >
         </>
     )
 }

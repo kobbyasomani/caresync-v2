@@ -152,17 +152,6 @@ const ShiftNotes = () => {
 
     };
 
-    const handleUploadNotesResponse = useCallback((response, updatedShift) => {
-        if (updatedShift) {
-            dispatch({
-                type: "setSelectedShift",
-                data: updatedShift
-            });
-        }
-        setAlert(response);
-        setSnackBarIsOpen(true);
-    }, [dispatch]);
-
     const renderHeaderButtons = () => {
         if (store.selectedShift.shiftNotes?.shiftNotesPDF) {
             return (
@@ -175,7 +164,6 @@ const ShiftNotes = () => {
             );
         } else if (store.selectedShift.shiftNotes?.shiftNotesText) {
             return (
-                // TODO: Enable uploading shift notes and incident reports to the cloud
                 <ButtonUpload
                     tooltip="Upload Shift Notes to the cloud. You will be able to download them as a PDF file afterwards."
                     resource={{ shiftNotes: store.selectedShift.shiftNotes.shiftNotesText }}
@@ -190,6 +178,17 @@ const ShiftNotes = () => {
             return null;
         }
     }
+
+    const handleUploadNotesResponse = useCallback((response, updatedShift) => {
+        if (updatedShift) {
+            dispatch({
+                type: "setSelectedShift",
+                data: updatedShift
+            });
+        }
+        setAlert(response);
+        setSnackBarIsOpen(true);
+    }, [dispatch]);
 
     const handleCloseSnackbar = useCallback(() => {
         setSnackBarIsOpen(false);
