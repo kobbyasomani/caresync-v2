@@ -383,6 +383,37 @@ const uploadSession = async (encryptedSessionDataString) => {
     }
 }
 
+/**
+ * Uploads the given resource to the provided destination URL.
+ * 
+ * If the file is successfully uploaded, an object with the properties `message` (the success message)
+ * and `json` (an `Object` parsed from the response body) is returned. Otherwise, the function will throw
+ * an error which must be handled by the caller.
+ * @param {Object} resource The resource to upload.
+ * @param {String} resourceName The name of the resource to display in the response message.
+ * @param {String} destinationURL The URL to upload the resource to using the POST method.
+ */
+const uploadResource = async (resource, resourceName, destinationURL) => {
+    const response = await fetch(destinationURL, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(resource)
+    }).then(async (response) => {
+        if (response.status === 200) {
+            const json = await response.json();
+            return { message: `The ${resourceName} document was successfully uploaded.`, json };
+        } else {
+            throw new Error(`The ${resourceName} document could not be uploaded at this time.`);
+        }
+    }).catch(error => {
+        throw new Error(error.message);
+    });
+    return response;
+};
+
 export {
     logoutUser,
     getClientList,
@@ -401,5 +432,6 @@ export {
     uploadSession,
     generateEncryptionKey,
     encryptSessionData,
-    decryptSessionData
+    decryptSessionData,
+    uploadResource
 }

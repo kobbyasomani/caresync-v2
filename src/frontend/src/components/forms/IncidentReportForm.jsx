@@ -65,7 +65,7 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
     }
 
     return isLoading ? <Loader /> : (
-        <Form form={form}
+        <Form form={form} formId="incident-report-form"
             ref={formRef}
             setForm={setForm}
             legend={editMode ? "Edit your incident report" : "Create a new incident report"}
@@ -74,6 +74,7 @@ const IncidentReportForm = forwardRef(({ setParentIsLoading, editMode, setEditMo
             callback={handleCreateIncidentReport}
             setParentIsLoading={handleChildLoadState}
             validation={checkForChanges}
+            scrollIntoView
             {...rest}
         >
             <TextField multiline

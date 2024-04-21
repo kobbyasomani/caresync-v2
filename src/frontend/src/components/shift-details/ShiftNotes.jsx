@@ -7,8 +7,9 @@ import { updateShift } from "../../utils/apiUtils";
 import ShiftNotesForm from "../forms/ShiftNotesForm";
 import { ButtonDownload, ButtonUpload, ButtonPrimary, ButtonSecondary } from "../root/Buttons";
 import Confirmation from "../dialogs/Confirmation";
+import { baseURL_API } from "../../utils/baseURL";
 
-import { Typography, Box, Stack, useTheme, Grow, Fade, Breadcrumbs } from "@mui/material";
+import { Typography, Box, Stack, useTheme, Grow, Fade, Breadcrumbs, Snackbar, Alert } from "@mui/material";
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import TaskIcon from '@mui/icons-material/Task';
@@ -24,6 +25,13 @@ const ShiftNotes = () => {
 
     const { shiftUtils } = store;
     const modalId = `confirmClearShiftNotes_${store.selectedShift._id}`;
+
+    const [isUploading, setIsUploading] = useState(false);
+    const [snackbarIsOpen, setSnackBarIsOpen] = useState(false);
+    const [alert, setAlert] = useState({
+        severity: "success",
+        message: "This is a snackbar message"
+    });
 
     const toggleEditMode = useCallback((override) => {
         setEditMode(override || !editMode);
@@ -56,7 +64,7 @@ const ShiftNotes = () => {
     }, [store.selectedShift._id, dispatch]);
 
     const renderContent = () => {
-        if (store.selectedShift?.shiftNotes) {
+        if (store.selectedShift?.shiftNotes?.shiftNotesText) {
             return (
                 <>
                     {!editMode ? (
@@ -88,11 +96,15 @@ const ShiftNotes = () => {
                         ) : (
                             <Stack direction="row" justifyContent="center" mt={4} gap={2}>
                                 <ButtonPrimary onClick={toggleEditMode}
-                                    sx={{ margin: "0" }} startIcon={<EditRoundedIcon />}>
+                                    sx={{ margin: "0" }}
+                                    startIcon={<EditRoundedIcon />}
+                                    disabled={isUploading}>
                                     Edit
                                 </ButtonPrimary>
                                 <ButtonSecondary onClick={confirmClearShiftNotes}
-                                    sx={{ margin: "0" }} startIcon={<DeleteForeverRoundedIcon />}>
+                                    sx={{ margin: "0" }}
+                                    startIcon={<DeleteForeverRoundedIcon />}
+                                    disabled={isUploading}>
                                     Clear
                                 </ButtonSecondary>
                             </Stack>
@@ -124,7 +136,7 @@ const ShiftNotes = () => {
         if (shiftUtils.userIsShiftCarer) {
             switch (true) {
                 case shiftUtils.isInProgress || shiftUtils.isInEditWindow:
-                    return <ShiftNotesForm />;
+                    return <ShiftNotesForm/>;
                 case shiftUtils.isPending:
                     return (
                         <Typography variant="body1">
@@ -140,6 +152,17 @@ const ShiftNotes = () => {
 
     };
 
+    const handleUploadNotesResponse = useCallback((response, updatedShift) => {
+        if (updatedShift) {
+            dispatch({
+                type: "setSelectedShift",
+                data: updatedShift
+            });
+        }
+        setAlert(response);
+        setSnackBarIsOpen(true);
+    }, [dispatch]);
+
     const renderHeaderButtons = () => {
         if (store.selectedShift.shiftNotes?.shiftNotesPDF) {
             return (
@@ -147,6 +170,7 @@ const ShiftNotes = () => {
                     tooltip="Download Shift Notes"
                     filename="Shift Notes"
                     resourceURL={store.selectedShift.shiftNotes.shiftNotesPDF}
+                    disabled={isLoading}
                 />
             );
         } else if (store.selectedShift.shiftNotes?.shiftNotesText) {
@@ -154,15 +178,22 @@ const ShiftNotes = () => {
                 // TODO: Enable uploading shift notes and incident reports to the cloud
                 <ButtonUpload
                     tooltip="Upload Shift Notes to the cloud. You will be able to download them as a PDF file afterwards."
-                    resource=""
-                    destinationURL="/"
-                    callback=""
+                    resource={{ shiftNotes: store.selectedShift.shiftNotes.shiftNotesText }}
+                    resourceName="shift notes"
+                    destinationURL={`${baseURL_API}/shift/notes/${store.selectedShift._id}`}
+                    callback={handleUploadNotesResponse}
+                    returnResource
+                    setParentIsLoading={setIsUploading}
                 />
             )
         } else {
             return null;
         }
     }
+
+    const handleCloseSnackbar = useCallback(() => {
+        setSnackBarIsOpen(false);
+    }, []);
 
     return (
         <>
@@ -177,14 +208,26 @@ const ShiftNotes = () => {
                         {renderHeaderButtons()}
                     </Stack>
                 </Box>
-
             </Fade>
+
             <Grow in={true}>
                 <Box sx={{ mt: 1 }}>
                     {renderContent()}
                 </Box>
             </Grow>
 
+            <Snackbar
+                open={snackbarIsOpen}
+                autoHideDuration={10000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            >
+                <Alert severity={alert.severity}
+                    onClose={handleCloseSnackbar}
+                >
+                    {alert.message}
+                </Alert>
+            </Snackbar >
         </>
     )
 }

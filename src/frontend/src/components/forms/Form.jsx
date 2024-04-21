@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, cloneElement, Children, useState, } from "react";
+import React, { forwardRef, useCallback, cloneElement, Children, useState, useEffect } from "react";
 import axios from "axios";
 
 import { useHandleFormInput, useHandleFormErrors } from "../../utils/formUtils";
@@ -14,6 +14,7 @@ import { Box, Stack } from "@mui/material";
  * If the component receives a `ref`, this `ref` will be passed to the sumbmit button so that it can be
  * triggered by a higher level component using the `ref.current.click()` method.
  * @param {Object} form The local form state object.
+ * @param {String} formId An id attribute given to the rendered `form` element.
  * @param {Object} initialState The inital state of the form.
  * @param {Function} setForm The form reducer update function.
  *  Pass as an object with two props: `inputs` and `errors`. 
@@ -37,10 +38,12 @@ import { Box, Stack } from "@mui/material";
  * @param {*} children The child elements of the form (e.g., labels and inputs)
  * @param {Function} setParentIsLoading A function to update the load state of the parent.
  * @param {Boolean} dontClear If true, will not clear the form on submission.
+ * @param {Boolean} scrollIntoView If true, the form will be scrolled into view when rendered.
+ * The `Form` component must receive the `formId` prop for this to trigger.
  * @returns {Object} The JSON data returned by the API call if successfull.
  */
 const Form = forwardRef((
-    { form,
+    { form, formId,
         initialState,
         setForm,
         legend,
@@ -55,7 +58,8 @@ const Form = forwardRef((
         hideSubmitButton,
         children,
         setParentIsLoading,
-        dontClear
+        dontClear,
+        scrollIntoView
     }, formRef) => {
     const { dispatch } = useGlobalContext();
 
@@ -152,9 +156,18 @@ const Form = forwardRef((
         submitForm();
     }, [form, handleErrors, validation, submitForm]);
 
+    useEffect(() => {
+        const form = document.getElementById(formId);
+        if (form && scrollIntoView) {
+            setTimeout(() => {
+                form.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 200);
+        }
+    });
+
     return isLoading ? <Loader /> : (
         <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
-            <form>
+            <form id={formId}>
                 <fieldset>
                     {legend ? <legend>{legend}</legend> : null}
                     {/* Pass the input handler and state value to form input elements */}

@@ -9,7 +9,7 @@ import Loader from "../logo/Loader";
 import { TextField } from "@mui/material";
 import PublishRoundedIcon from '@mui/icons-material/PublishRounded';
 
-const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading }, formRef) => {
+const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, setParentIsLoading, scrollIntoView }, formRef) => {
     const { store, dispatch } = useGlobalContext();
     const initialFormState = {
         inputs: {
@@ -46,7 +46,7 @@ const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, se
     }, [dispatch, editMode, setEditMode]);
 
     return isLoading ? <Loader /> : (
-        <Form form={form}
+        <Form form={form} formId="shift-notes-form"
             setForm={setForm}
             legend={editMode ? "Edit your shift notes" : "Add and submit your shift notes"}
             submitButtonText={<><PublishRoundedIcon />Submit shift notes</>}
@@ -56,6 +56,7 @@ const ShiftNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton, se
             hideSubmitButton={hideSubmitButton}
             ref={formRef}
             setParentIsLoading={handleChildLoadState}
+            scrollIntoView
         >
             <TextField multiline
                 minRows={10}

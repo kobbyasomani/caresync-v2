@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
@@ -29,6 +29,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const drawerRef = useRef(null);
 
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [transition, setTransition] = useState({
@@ -334,12 +335,14 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
             id="shift-details-drawer"
             anchor="right"
             open={modalStore.drawerIsOpen}
-            onClose={handleCloseDrawer}>
+            onClose={handleCloseDrawer}
+            PaperProps={{ ref: drawerRef }}
+        >
             {renderShiftNav()}
-            <Fade in={!isTransitioning}>
+            < Fade in={!isTransitioning}>
                 {renderContent()}
-            </Fade>
-        </Drawer>
+            </Fade >
+        </Drawer >
     )
 }
 

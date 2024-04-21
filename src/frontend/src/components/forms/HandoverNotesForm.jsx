@@ -49,7 +49,7 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
     }, [dispatch, editMode, setEditMode,])
 
     return isLoading ? <Loader /> : (
-        <Form form={form}
+        <Form form={form} formId="handover-notes-form"
             setForm={setForm}
             legend={editMode ? "Edit your handover notes" : `Add handover notes for ${store.selectedClient.firstName}'s next care shift`}
             submitButtonText={<><PublishRoundedIcon /> {
@@ -62,6 +62,7 @@ const HandoverNotesForm = forwardRef(({ editMode, setEditMode, hideSubmitButton,
             hideSubmitButton={hideSubmitButton}
             ref={formRef}
             setParentIsLoading={handleChildLoadState}
+            scrollIntoView
         >
             <TextField multiline
                 minRows={10}

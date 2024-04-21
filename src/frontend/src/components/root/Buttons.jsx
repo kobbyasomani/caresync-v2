@@ -4,6 +4,7 @@ import React from "react";
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
 import { plusHours } from "../../utils/dateUtils";
+import { uploadResource } from "../../utils/apiUtils";
 import { Theme as theme } from "../../styles/Theme";
 
 import { Button, styled, ButtonGroup, IconButton, Tooltip } from "@mui/material";
@@ -11,6 +12,7 @@ import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreTimeRoundedIcon from '@mui/icons-material/MoreTimeRounded';
+import SyncIcon from '@mui/icons-material/Sync';
 
 // mui Button style override
 const StyledButton = styled(Button)({
@@ -116,41 +118,66 @@ export const ButtonDownload = ({ resourceURL, tooltip, filename, ...rest }) => {
 
 // Upload resource icon button
 /**
- * A button that uploads the specified resource to the provided URL on click.
- * @param {string} resource The resource to upload.
- * @param {string} destinationURL The URL to upload the resource to.
- * @param {string} callback A callback function to execute with the response data as its argument.
- * @param {string} tooltip The tooltip to display when hovering over the button
- * @returns 
+ * A button that uploads the specified resource to the provided URL on click,
+ * and passes a response alert object and an updated resource (if applicable)
+ * to the provided callback function.
+ * 
+ * If successful, the response alert object severity will be "success",
+ * otherwise it will be "error", with the error message as the alert message.
+ * @param {Object} resource The resource to upload.
+ * @param {String} resourceName The name of the resource to be displayed in response messages.
+ * @param {String} destinationURL The URL to upload the resource to.
+ * @param {Function} callback A callback function that receives the response alert object as an argument.
+ * @param {Boolean} returnResource If true, will pass the updated resource object (parsed from JSON) to the
+ * callback, as the second argument after the response alert.
+ * @param {Function} setParentIsLoading An optional function to set a loading state in the parent component.
+ * If supplied, the given loading state will reflect the `isUploading` state of the upload button.
+ * @param {String} tooltip The tooltip to display when hovering over the button.
  */
-export const ButtonUpload = ({ resource, destinationURL, callback, tooltip, ...rest }) => {
-    const uploadResource = useCallback(async () => {
-        const response = await fetch(destinationURL, {
-            method: "POST",
-            data: resource
-        }).then(response => response.json())
-            .then((json) => {
-                if (callback) {
-                    callback(json);
-                }
-                return JSON.stringify({ message: "The file was successfully uploaded." });
-            }).catch((error) => {
-                return JSON.stringify({ message: error.message });
-            });
+export const ButtonUpload = ({ resource, resourceName, destinationURL, callback, returnResource,
+    setParentIsLoading, tooltip, ...rest }) => {
+    const [isUploading, setIsUploading] = useState(false);
 
-        return response;
-    }, [resource, destinationURL, callback]);
+    const handleUploadResource = useCallback(async () => {
+        if (callback) {
+            setIsUploading(true);
+            if (setParentIsLoading) {
+                setParentIsLoading(true);
+            }
+            uploadResource(resource, resourceName, destinationURL)
+                .then(async (response) => {
+                    let updatedResource;
+                    if (returnResource) {
+                        updatedResource = response.json;
+                    }
+                    setIsUploading(false);
+                    if (setParentIsLoading) {
+                        setParentIsLoading(false);
+                    }
+                    callback({ severity: "success", "message": response.message }, updatedResource);
+                }).catch(error => {
+                    callback({ severity: "error", "message": error.message });
+                });
+        } else {
+            console.log("Oops! It looks like this action is not possible at the moment.");
+        }
+    }, [resource, resourceName, destinationURL, callback, returnResource, setParentIsLoading]);
 
     return (
         <Tooltip title={tooltip} placement="left" >
             <IconButton color="primary" size="medium"
-                sx={{ ml: "auto", backgroundColor: "#eef1f6ff" }}
+                sx={{
+                    ml: "auto",
+                    backgroundColor: "#eef1f6ff",
+                }}
                 variant="contained"
                 id="upload-button"
-                onClick={uploadResource}
+                onClick={handleUploadResource}
+                disabled={isUploading}
                 {...rest}
             >
-                <CloudUploadIcon />
+                {!isUploading ? <CloudUploadIcon />
+                    : <SyncIcon sx={{ animation: `uploadingSpin 1s linear infinite` }} />}
             </IconButton>
         </Tooltip>
     );

@@ -104,4 +104,13 @@ fieldset legend {
   text-decoration: underline;
 }
 
+@keyframes uploadingSpin {
+  from {
+    transform: rotate(0deg) scaleX(-1);
+  }
+  to {
+    transform: rotate(360deg) scaleX(-1);
+  }
+}
+
 /*# sourceMappingURL=index.css.map */
