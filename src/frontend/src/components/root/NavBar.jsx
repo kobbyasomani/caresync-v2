@@ -140,7 +140,7 @@ const NavBar = () => {
                                         onClick={handleOpenMyAccount}
                                     >
                                         <Typography textTransform="capitalize">
-                                            {store.user.firstName} {store.user.lastName[0]}
+                                            {store.user?.firstName} {store.user?.lastName?.[0]}
                                         </Typography>
                                     </Button>
                                 )}
