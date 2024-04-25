@@ -190,6 +190,7 @@ new books, so if they ask for any, you can find them on the shelf next to their 
           message: "Logged in Successfully",
           user: {
             firstName: user.firstName,
+            lastName: user.lastName,
             _id: user._id,
             isNewUser: user.isNewUser
           },
@@ -328,7 +329,9 @@ const loginUser = asyncHandler(async (req, res) => {
     message: "Logged in Successfully",
     user: {
       firstName: user.firstName,
+      lastName: user.lastName,
       _id: user._id,
+      isNewUser: user.isNewUser
     },
   });
 });
