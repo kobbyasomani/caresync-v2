@@ -383,7 +383,7 @@ const ShiftOverview = () => {
                                 Edit Shift
                             </ButtonPrimary>
                             : null}
-                        {shiftUtils.isPending ?
+                        {shiftUtils.isPending || store.sampleShiftId === shiftUtils._id ?
                             <ButtonSecondary onClick={handleConfirmCancelShift}
                                 sx={{ margin: "0" }} startIcon={<EventBusyIcon />}>
                                 Cancel shift

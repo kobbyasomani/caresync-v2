@@ -25,7 +25,8 @@ const emptyStore = {
     selectedShiftIsInProgress: false,
     selectedIncidentReport: {},
     refreshCalendar: "",
-    functions: {}
+    functions: {},
+    sampleShiftId: ""
 }
 
 /**

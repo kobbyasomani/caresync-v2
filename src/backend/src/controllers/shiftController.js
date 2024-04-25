@@ -215,6 +215,8 @@ const deleteShift = asyncHandler(async (req, res) => {
     }
   };
 
+  // TODO: Delete associated incident reports from the cloud when deleting a shift
+
   await shift.remove();
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
 });

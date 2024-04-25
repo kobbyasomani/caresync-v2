@@ -204,7 +204,6 @@ const IncidentReportDetails = () => {
                                 resourceURL={incidentReport.incidentReportPDF}
                             />
                         ) : (
-                            // TODO: Enable uploading incident reports to the cloud
                             <ButtonUpload
                                 tooltip="Upload Incident Report to the cloud. You will be able to download it as a PDF file afterwards."
                                 resource={{
