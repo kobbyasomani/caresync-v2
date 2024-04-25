@@ -50,7 +50,7 @@ const Verification = () => {
     return isLoading ? <Loader /> : (
         previouslyVerified ? (
             location.pathname.includes("/addCarer/") ? (
-                <Container maxWidth="md">
+                <Container maxWidth="md" mt={4}>
                     <Stack spacing={2}>
                         <Typography variant="h1">Care Team Verification</Typography>
                         <Alert severity="success" sx={{ alignItems: "center" }}>
@@ -66,7 +66,7 @@ const Verification = () => {
             ) : <Navigate to="/" />
         ) : isVerified ? (
             location.pathname.includes("/emailVerification/") ? (
-                <Container maxWidth="md">
+                <Container maxWidth="md" mt={4}>
                     <Stack spacing={2}>
                         <Typography variant="h1">Email Verification</Typography>
                         <Alert severity="success" sx={{ alignItems: "center" }}>
@@ -80,7 +80,7 @@ const Verification = () => {
                     </Stack>
                 </Container>
             ) : location.pathname.includes("/addCarer/") ? (
-                <Container maxWidth="md">
+                <Container maxWidth="md" mt={4}>
                     <Stack spacing={2}>
                         <Typography variant="h1">Care Team Verification</Typography>
                         <Alert severity="success" sx={{ alignItems: "center" }}>
@@ -96,7 +96,7 @@ const Verification = () => {
             ) : null
         ) : (
             location.pathname.includes("/emailVerification/") ? (
-                <Container maxWidth="md">
+                <Container maxWidth="md" mt={4}>
                     <Stack spacing={2}>
                         <Typography variant="h1">Email Verification</Typography>
                         <Alert severity="error" sx={{ alignItems: "center" }}>
@@ -115,9 +115,8 @@ const Verification = () => {
                         </Link>
                     </Stack>
                 </Container>
-
             ) : location.pathname.includes("/addCarer/") ? (
-                <Container maxWidth="md">
+                <Container maxWidth="md" mt={4}>
                     <Stack spacing={2}>
                         <Typography variant="h1">Care Team Verification</Typography>
                         <Alert severity="error" sx={{ alignItems: "center" }}>

@@ -114,7 +114,7 @@ const registerDemoUser = asyncHandler(async (req, res) => {
         firstName: "Alex",
         lastName: "Doe",
         coordinator: userId,
-        carers: [userId],
+        carers: [userId, ...process.env.SAMPLE_CARERS.split(", ")],
         isSample: true
       });
 

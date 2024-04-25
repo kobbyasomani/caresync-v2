@@ -54,13 +54,20 @@ const Carer = (props) => {
                 <ListItemText
                     primaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
                     secondaryTypographyProps={{ fontSize: theme.typography.body1.fontSize }}
-                    primary={<>{carer.firstName} {carer.lastName} {carer._id === store.selectedClient.coordinator._id ?
-                        <small style={{
+                    primary={<>{carer.firstName} {carer.lastName}
+                        {carer.isSample ? <small style={{
                             position: "absolute",
                             top: "0.25rem", left: "0.5rem",
-                            color: theme.palette.primary.main,
-                            fontWeight: "bold"
-                        }}>Coordinator</small> : ""}</>}
+                            color: theme.palette.grey[700],
+                        }}>(Sample Carer)
+                        </small> : null}
+                        {carer._id === store.selectedClient.coordinator._id ?
+                            <small style={{
+                                position: "absolute",
+                                top: "0.25rem", left: "0.5rem",
+                                color: theme.palette.primary.main,
+                                fontWeight: "bold"
+                            }}>Coordinator</small> : ""}</>}
                     secondary="(+61) 123 456 789"
                 />
             </ListItem >

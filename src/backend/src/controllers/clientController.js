@@ -133,8 +133,7 @@ const getClientInfo = asyncHandler(async (req, res) => {
     const carers = await User.find()
       .where("_id")
       .in(client.carers)
-      .select("firstName")
-      .select("lastName");
+      .select("firstName lastName isSample")
     client.carers = carers;
   }
   // Find coordinator first and last name and stick them in the client object for display

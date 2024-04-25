@@ -247,6 +247,9 @@ export const EditShiftForm = () => {
                         return (
                             <MenuItem value={carer._id} key={carer._id}>
                                 {`${carer.firstName} ${carer.lastName}`}
+                                {carer.isSample ? <small style={{ color: theme.palette.grey[700] }}>
+                                    &nbsp;(sample carer)
+                                </small> : ""}
                             </MenuItem>
                         )
                     })}

@@ -34,8 +34,9 @@ const CareTeamMember = ({ carer }) => {
     const userIsCoordinator = (userId) => {
         return userId === store.selectedClient.coordinator._id;
     };
+
     return (
-        <Stack direction="row" gap={1} alignItems="center">
+        <Stack direction="row" gap={1.5} alignItems="center">
             <Avatar sx={{
                 width: "1.5rem", height: "1.5rem",
                 backgroundColor: theme.palette.primary.main
@@ -47,10 +48,15 @@ const CareTeamMember = ({ carer }) => {
                     <small style={{
                         color: theme.palette.primary.main,
                         left: 0,
-                        top: "-1rem",
                         fontWeight: "bold",
                         fontSize: "100%"
                     }}>Coordinator</small>
+                    : null}
+                {carer.isSample ? <small style={{
+                    color: theme.palette.grey[700],
+                    left: 0,
+                    fontSize: "100%"
+                }}>(Sample)</small>
                     : null}
                 <Typography variant="body1" position="relative">
                     {carer.firstName} {carer.lastName}
