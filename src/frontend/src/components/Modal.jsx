@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import { useGlobalContext } from "../utils/globalUtils";
 import { useModalContext } from "../utils/modalUtils";
 
 import {
@@ -28,6 +29,7 @@ const Modal = ({ modalId, title, text, alert, alertPosition, actions,
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
+    const { store } = useGlobalContext();
     const { modalStore, modalDispatch } = useModalContext();
     const [modalAlert, setModalAlert] = useState(alert || {});
     const isOpen = modalStore.modalIsOpen;
@@ -68,10 +70,10 @@ const Modal = ({ modalId, title, text, alert, alertPosition, actions,
     }, [alert]);
 
     useEffect(() => {
-        if (!isOpen) {
+        if (!isOpen && !store.user.isNewUser) {
             handleCloseModal();
         }
-    }, [isOpen, handleCloseModal]);
+    }, [isOpen, handleCloseModal, store.user.isNewUser]);
 
     return (
         <Dialog id={`dialog_${modalStore.modalId}`}

@@ -15,10 +15,11 @@ import Verification from "./views/Verification";
 import About from "./views/About";
 import Help from "./views/Help";
 import Error from "./views/Error";
-import SelectClient from "./views/SelectClient";
-import Calendar from "./views/Calendar";
+import Welcome from "./components/dialogs/Welcome";
 import MyAccount from "./components/dialogs/MyAccount";
+import SelectClient from "./views/SelectClient";
 
+import Calendar from "./views/Calendar";
 import ShiftDetailsDrawer from "./components/shift-details/ShiftDetailsDrawer";
 import ShiftOverview from "./components/shift-details/ShiftOverview";
 import CoordinatorNotes from "./components/shift-details/CoordinatorNotes";
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
                 element: <>
                   <MyAccount />
                   <SelectClient />
+                  <Welcome />
                 </>
               },
               {

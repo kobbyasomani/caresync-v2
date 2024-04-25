@@ -48,9 +48,9 @@ const Confirmation = ({ title, text, callback, modalId, cancelText, confirmText,
             id: modalId
         });
         if (isConfirmed) {
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (afterConfirm) {
-                    afterConfirm();
+                    await Promise.resolve(afterConfirm());
                 }
                 setIsConfirmed(false);
             }, 200);

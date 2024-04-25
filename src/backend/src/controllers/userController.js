@@ -189,6 +189,7 @@ new books, so if they ask for any, you can find them on the shelf next to their 
           user: {
             firstName: user.firstName,
             _id: user._id,
+            isNewUser: user.isNewUser
           },
         });
     } else {
@@ -510,7 +511,7 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   // Check that fields are valid for update, exist, and prevent them from being left blank/nullified
-  const validFields = ["firstName", "lastName", "email", "password"];
+  const validFields = ["firstName", "lastName", "email", "password", "isNewUser"];
   const updateFields = {};
   for (const field in formFields) {
     if (validFields.includes(field) && formFields[field] !== "") {
@@ -538,7 +539,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
   const updatedUser = await User.findByIdAndUpdate(user.id,
     { $set: updateFields },
-    { new: true }).select("_id firstName lastName email isConfirmed createdAt").lean();
+    { new: true }).select("_id firstName lastName email isConfirmed isNewUser createdAt").lean();
 
   if (updatedUser) {
     res.status(200).json(updatedUser);

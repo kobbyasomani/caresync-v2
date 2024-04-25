@@ -228,7 +228,7 @@ const MyAccount = () => {
         setDeleteUserIsConfirmed(true);
     }, [store.clients]);
 
-    const handleAfterDeleteUserAccount = useCallback(() => {
+    const handleAfterDeleteUserAccount = useCallback(async () => {
         // Logout user and return to Home view
         handleLogout().then(() => {
             setDeleteUserIsConfirmed(false);
