@@ -114,7 +114,8 @@ const registerDemoUser = asyncHandler(async (req, res) => {
         firstName: "Alex",
         lastName: "Doe",
         coordinator: userId,
-        carers: [userId]
+        carers: [userId],
+        isSample: true
       });
 
       // Create sample shift
@@ -122,6 +123,7 @@ const registerDemoUser = asyncHandler(async (req, res) => {
       shiftEndTime = new Date(shiftStartTime);
       shiftEndTime.setHours(shiftStartTime.getHours() + 8);
       const sampleShift = await Shift.create({
+        isSample: true,
         client: sampleClient.id,
         coordinator: userId,
         coordinatorNotes: "These are some sample Coordinator Notes.\n\n\

@@ -112,13 +112,12 @@ export const Calendar = () => {
                             previousShifts,
                             inProgressShift,
                             featuredShift,
-                            sampleShiftId: !store.sampleShiftId ? shifts[0]._id : store.sampleShiftId
                         }
                     });
                     setIsLoading(false);
                 });
         }
-    }, [dispatch, client._id, store.sampleShiftId]);
+    }, [dispatch, client._id]);
 
     const handleSelectInProgressShift = () => {
         dispatch({

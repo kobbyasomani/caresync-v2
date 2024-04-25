@@ -72,6 +72,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
         shiftUtils.editWindowEndTime = shiftUtils.isLastShift ? shiftEndTimePlusEditWindow.toLocaleString("en-AU", { dateStyle: "long", timeStyle: "short" })
             : shiftEndTimePlusEditWindow < nextShiftStartPlusTwoHours ?
                 shiftEndTimePlusEditWindow : nextShiftStartPlusTwoHours;
+        shiftUtils.isSample = shift.isSample;
 
         dispatch({
             type: "SetShiftUtils",

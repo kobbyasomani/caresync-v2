@@ -93,9 +93,8 @@ const SelectClient = () => {
         <Container maxWidth="md" sx={{ mt: 4 }}>
             <Typography variant="h1" sx={{ fontSize: xsScreen ? theme.typography.h2 : theme.typography.h1 }}>
                 Hi, {store.user.firstName}</Typography>
-            <Typography variant="h2" sx={{
-                fontSize: xsScreen ? theme.typography.h3 : theme.typography.h2
-            }}> Fetching clients...</Typography>
+            <Typography variant="h2" sx={{ fontSize: xsScreen ? theme.typography.h3 : theme.typography.h2 }}>
+                Fetching clients...</Typography>
             <Loader />
         </Container>
     ) : (

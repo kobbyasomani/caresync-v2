@@ -31,6 +31,9 @@ const userSchema = mongoose.Schema(
       default: true,
       required: true,
     },
+    isSample: {
+      type: Boolean,
+    }
   },
   {
     timestamps: true,

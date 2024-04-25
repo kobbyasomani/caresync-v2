@@ -26,7 +26,6 @@ const emptyStore = {
     selectedIncidentReport: {},
     refreshCalendar: "",
     functions: {},
-    sampleShiftId: ""
 }
 
 /**

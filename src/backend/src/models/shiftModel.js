@@ -48,6 +48,9 @@ const shiftSchema = mongoose.Schema(
       type: String,
     },
     incidentReports: [incidentReportSchema],
+    isSample: {
+      type: Boolean
+    }
   },
   {
     timestamps: true,

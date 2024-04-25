@@ -14,16 +14,19 @@ const clientSchema = mongoose.Schema({
     required: true,
     ref: "User",
   },
-  carers: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
+  carers: [{
+    type: mongoose.Schema.Types.ObjectId,
     default: null,
-    ref: "User" 
-}],
-  shifts: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User"
+  }],
+  shifts: [{
+    type: mongoose.Schema.Types.ObjectId,
     default: null,
-    ref: "Shifts", 
-}]
+    ref: "Shifts",
+  }],
+  isSample: {
+    type: Boolean
+  }
 });
 
 module.exports = mongoose.model("Client", clientSchema);
