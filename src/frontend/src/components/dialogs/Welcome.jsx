@@ -73,7 +73,7 @@ const Welcome = () => {
                     edit your account and set your own password and other account details.
                     <br></br>
                     <br></br>
-                    For more help getting started, visit the <Link href="/about/#quick-start-guide" onClick={handleDismissWelcome}>
+                    For more help getting started, visit the <Link href="/about#quick-start-guide" onClick={handleDismissWelcome}>
                         Quick Start Guide</Link> by selecting <HelpRoundedIcon fontSize="small" sx={{ transform: "translateY(0.2rem)" }} /> About
                     in the top menu.
                 </Typography>
@@ -104,7 +104,7 @@ const Welcome = () => {
         });
     }, [modalDispatch]);
 
-    return store.user.isNewUser ? (
+    return store.user?.isNewUser ? (
         <Modal modalId="welcome"
             title="Welcome to CareSync"
             text={stepperContent[activeStep].intro}
