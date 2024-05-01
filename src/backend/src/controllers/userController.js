@@ -110,11 +110,15 @@ const registerDemoUser = asyncHandler(async (req, res) => {
     // Compare entered password with stored password and
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create sample client
+      let carers = null;
+      if (process.env.SAMPLE_CARERS) {
+        carers = [...process.env.SAMPLE_CARERS?.split(", ")];
+      }
       const sampleClient = await Client.create({
         firstName: "Alex",
         lastName: "Doe",
         coordinator: userId,
-        carers: [userId, ...process.env.SAMPLE_CARERS.split(", ")],
+        carers: carers?.length > 0 ? [userId, ...carers] : [userId],
         isSample: true
       });
 
