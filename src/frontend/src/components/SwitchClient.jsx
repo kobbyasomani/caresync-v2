@@ -8,7 +8,7 @@ import { Theme as theme } from "../styles/Theme";
 
 import { Card, CardContent, Avatar, CardMedia, Typography, CardActionArea, Tooltip } from "@mui/material"
 import PersonIcon from '@mui/icons-material/Person';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import SwapHorizRoundedIcon from '@mui/icons-material/SwapHorizRounded';
 
 const SwitchClient = () => {
     const { store, dispatch } = useGlobalContext();
@@ -55,7 +55,7 @@ const SwitchClient = () => {
                         <Typography variant="body1" className="name" sx={{ fontWeight: "600" }}>
                             {firstName} {lastName}
                         </Typography>
-                        <SwapHorizIcon sx={{ ml: "auto" }} />
+                        <SwapHorizRoundedIcon sx={{ ml: "auto" }} />
                     </CardContent>
                 </CardActionArea>
             </Card>

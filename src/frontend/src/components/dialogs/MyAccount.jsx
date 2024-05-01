@@ -242,6 +242,7 @@ const MyAccount = () => {
     }, [setIsLoading, store.user, handleGetUserData, deleteUserIsConfirmed]);
 
     return (
+        // TODO: Only return my account if user is authenticated (About Page)
         <>
             <Modal modalId={modalId}
                 title="My Account"

@@ -1,4 +1,5 @@
 $outline: #999;
+$outline-light: #ddd;
 $highlight: powderblue;
 $raisin-black: #201a23ff;
 $royal-purple: #79589fff;
@@ -16,6 +17,7 @@ $asparagus: #77ad78ff;
 html,
 body {
     height: 100%;
+    scroll-behavior: smooth;
 }
 
 #root {
@@ -150,5 +152,47 @@ fieldset {
 
     to {
         transform: rotate(360deg) scaleX(-1);
+    }
+}
+
+#quick-start-guide {
+
+    .MuiAccordion-root::before {
+        background-color: transparent;
+    }
+
+    h1[id],
+    h2[id],
+    h3[id],
+    h4[id],
+    h5[id] {
+        padding-top: 1rem;
+    }
+
+    p {
+        max-width: 70ch;
+    }
+
+    .MuiSvgIcon-root {
+        vertical-align: bottom;
+    }
+
+    img {
+        border: 1.5px solid $outline-light;
+        border-radius: 0.5rem;
+        margin: 1rem auto;
+        max-width: min(70ch, 100%);
+        box-shadow: 0.25rem 0.25rem 0.75rem 0 #f3f3f3;
+    }
+
+    img+img,
+    br+img {
+        margin-top: 0;
+    }
+
+    @media screen and (min-width: 768px) {
+        img:not(.full-width) {
+            max-width: max(400px, 50%);
+        }
     }
 }

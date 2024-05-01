@@ -13,7 +13,7 @@ import {
     Typography, Tooltip,
     useMediaQuery, useTheme
 } from "@mui/material";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
@@ -39,6 +39,7 @@ const NavBar = () => {
     /**
      * Logs out the user and navigates them back to the Home (`/`) route.
      */
+    // TODO: Make sure handleLogout is always available (on page refresh)
     const handleLogout = useCallback(async () => {
         dispatch({
             type: "setAppIsLoading",
@@ -101,13 +102,14 @@ const NavBar = () => {
                     </Button>
                     {navItems.filter(item => item.name && item.to).map((item, index) =>
                         xsScreen ?
-                            <IconButton component={RouterLink}
-                                to={item.to}
-                                key={index}
-                                color="inherit"
-                            >
-                                {item.icon}
-                            </IconButton>
+                            <Tooltip title={item.name} key={`nav_item_${index}`}>
+                                <IconButton component={RouterLink}
+                                    to={item.to}
+                                    color="inherit"
+                                >
+                                    {item.icon}
+                                </IconButton>
+                            </Tooltip>
                             : <Button
                                 component={RouterLink}
                                 to={item.to}
@@ -145,28 +147,28 @@ const NavBar = () => {
                                     </Button>
                                 )}
                             </Tooltip>
-                            <Tooltip position="bottom" title="Log out">
-                                {smScreen ? (
+                            {smScreen ? (
+                                <Tooltip position="bottom" title="Log out">
                                     <IconButton id="log-out"
                                         color="inherit"
                                         aria-label="log out"
                                         onClick={handleLogout}
                                     >
-                                        <LogoutIcon />
+                                        <LogoutRoundedIcon />
                                     </IconButton>
-                                ) : (
-                                    <Button id="log-out"
-                                        startIcon={<LogoutIcon />}
-                                        color="inherit"
-                                        aria-label="log out"
-                                        onClick={handleLogout}
-                                    >
-                                        <Typography textTransform="capitalize">
-                                            Log out
-                                        </Typography>
-                                    </Button>
-                                )}
-                            </Tooltip>
+                                </Tooltip>
+                            ) : (
+                                <Button id="log-out"
+                                    startIcon={<LogoutRoundedIcon />}
+                                    color="inherit"
+                                    aria-label="log out"
+                                    onClick={handleLogout}
+                                >
+                                    <Typography textTransform="capitalize">
+                                        Log out
+                                    </Typography>
+                                </Button>
+                            )}
                         </Stack>
                     ) : (
                         null

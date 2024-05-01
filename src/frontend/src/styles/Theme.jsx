@@ -48,7 +48,7 @@ let Theme = createTheme({
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    width: "min(70%, 75ch)",
+                    maxWidth: "min(70%, 75ch)",
                     borderTopLeftRadius: dtheme.shape.borderRadius,
                     borderBottomLeftRadius: dtheme.shape.borderRadius,
                     [dtheme.breakpoints.down("sm")]: {

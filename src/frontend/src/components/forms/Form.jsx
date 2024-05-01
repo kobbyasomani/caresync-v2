@@ -101,7 +101,9 @@ const Form = forwardRef((
             updateLoadState(false);
         }).catch(error => {
             // Render validation error messages
-            console.log(error);
+            if (process.env.NODE_ENV !== "production") {
+                console.log(error);
+            }
             handleErrors([`Error: ${error.response?.data?.message || error.message}`]);
             updateLoadState(false, [`Error: ${error.response?.data?.message || error.message}`]);
         });

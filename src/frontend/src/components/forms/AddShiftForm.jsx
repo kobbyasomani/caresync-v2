@@ -358,6 +358,9 @@ export const AddShiftForm = ({ newShiftCreated, setNewShiftCreated, trigger }) =
                                         return (
                                             <MenuItem value={carer._id} key={`selectMenuItem_${carer._id}`}>
                                                 {`${carer.firstName} ${carer.lastName}`}
+                                                {carer.isSample ? <small style={{ color: theme.palette.grey[700] }}>
+                                                    &nbsp;(sample carer)
+                                                </small> : ""}
                                             </MenuItem>)
                                     })}
                                 </Select>

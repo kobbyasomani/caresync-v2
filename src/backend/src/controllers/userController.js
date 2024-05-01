@@ -524,6 +524,8 @@ const updateUser = asyncHandler(async (req, res) => {
     }
   }
 
+  // TODO: If the email is being updated, make sure it does not already belong to a user
+
   // If the password has been updated, salt and hash the new password before setting it
   if ("password" in formFields && formFields.password) {
     const samePassword = await bcrypt.compare(formFields.password, user.password);

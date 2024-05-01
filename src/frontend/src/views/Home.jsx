@@ -91,7 +91,7 @@ export default function Login() {
                 </Typography>
                 <Typography variant="h2" textAlign="center"
                     sx={{ mb: 3 }}>
-                    Support work made easy.
+                    Support work notes made easy.
                 </Typography>
                 <Form
                     form={form}
@@ -130,7 +130,7 @@ export default function Login() {
                         <Typography variant="body1" sx={{ maxWidth: "50ch", mx: "auto", textAlign: "center" }}>
                             Demo accounts use auto-generated credentials and are
                             deleted after 30 days. Update your account details after
-                            starting the demo if you want to visit the same demo account.
+                            starting the demo if you want to revisit the account.
                         </Typography>
                     </Box>
                     : <Typography variant="h2" style={{ textAlign: "center" }}>

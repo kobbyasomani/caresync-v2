@@ -6,6 +6,7 @@
 html,
 body {
   height: 100%;
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -110,6 +111,38 @@ fieldset legend {
   }
   to {
     transform: rotate(360deg) scaleX(-1);
+  }
+}
+#quick-start-guide .MuiAccordion-root::before {
+  background-color: transparent;
+}
+#quick-start-guide h1[id],
+#quick-start-guide h2[id],
+#quick-start-guide h3[id],
+#quick-start-guide h4[id],
+#quick-start-guide h5[id] {
+  padding-top: 1rem;
+}
+#quick-start-guide p {
+  max-width: 70ch;
+}
+#quick-start-guide .MuiSvgIcon-root {
+  vertical-align: bottom;
+}
+#quick-start-guide img {
+  border: 1.5px solid #ddd;
+  border-radius: 0.5rem;
+  margin: 1rem auto;
+  max-width: min(70ch, 100%);
+  box-shadow: 0.25rem 0.25rem 0.75rem 0 #f3f3f3;
+}
+#quick-start-guide img + img,
+#quick-start-guide br + img {
+  margin-top: 0;
+}
+@media screen and (min-width: 768px) {
+  #quick-start-guide img:not(.full-width) {
+    max-width: max(400px, 50%);
   }
 }
 
