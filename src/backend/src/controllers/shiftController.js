@@ -201,10 +201,11 @@ const deleteShift = asyncHandler(async (req, res) => {
     throw new Error("User is not authorized");
   }
 
-  // Delete shift
+  // Delete the shift from client shift list
   await Client.findByIdAndUpdate(shift.client,
     { $pull: { shifts: shift.id } });
 
+  // Delete shift notes from Cloudinary
   const shiftNotesPDF_public_id = shift.shiftNotes.shiftNotesPDF?.match(
     /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
   if (shiftNotesPDF_public_id) {
@@ -214,8 +215,23 @@ const deleteShift = asyncHandler(async (req, res) => {
       console.log(error.message || `Cloudinary: The shift notes PDF could not be deleted (${shift.id}).`);
     }
   };
-
-  // TODO: Delete associated incident reports from the cloud when deleting a shift
+  // Delete incident reports from Cloudinary
+  if (shift.incidentReports.length > 0) {
+    for (const incidentReport of shift.incidentReports) {
+      const incidentReportPDF_public_id = incidentReport.incidentReportPDF?.match(
+        /http.+\/(?<public_id>CareSync.+).pdf/).groups.public_id;
+      if (incidentReportPDF_public_id) {
+        try {
+          cloudinaryDelete([incidentReportPDF_public_id]);
+        }
+        catch (error) {
+          console.log(error.message || `The incident report PDF could not be deleted (${incidentReport.id}).`);
+        }
+      } else {
+        console.log(`The incident report PDF could not be found (${incidentReport.id}).`);
+      };
+    }
+  }
 
   await shift.remove();
   res.status(200).json({ message: `Deleted shift ${req.params.shiftID}` });
@@ -464,7 +480,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
       throw new Error("The index of the incident report could not be found in the shift document.")
     }
 
-    // Delete the incident report from the shift in database
+    // Delete the incident report from the shift in the database
     const updatedShift = await Shift.findByIdAndUpdate(
       shift.id,
       { $pull: { incidentReports: { _id: incidentId } } },
@@ -482,7 +498,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
         console.log(error.message || `The incident report PDF could not be deleted (${incidentId}).`);
       }
     } else {
-      console.log("Incident report PDF could not be found.");
+      console.log(`The incident report PDF could not be found (${incidentReport.id}).`);
     };
 
     if (updatedShift) {
