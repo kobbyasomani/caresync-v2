@@ -498,6 +498,7 @@ const getUser = asyncHandler(async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       isConfirmed: user.isConfirmed,
+      isNewUser: user.isNewUser,
       createdAt: user.createdAt
     });
   } else {

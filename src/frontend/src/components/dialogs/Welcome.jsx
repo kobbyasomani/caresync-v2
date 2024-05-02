@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useGlobalContext } from "../../utils/globalUtils";
 import { useModalContext } from "../../utils/modalUtils";
@@ -16,6 +17,7 @@ const Welcome = () => {
     const { store, dispatch } = useGlobalContext();
     const { modalDispatch } = useModalContext();
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const handleDismissWelcome = useCallback(async () => {
         fetch(`${baseURL_API}/user/my-account`, {
@@ -38,6 +40,12 @@ const Welcome = () => {
                 });
             });
     }, [dispatch, store.user]);
+
+    const handleOpenQuickStartGuide = useCallback(async (event) => {
+        event.preventDefault();
+        await handleDismissWelcome();
+        navigate("/about#quick-start-guide");
+    }, [handleDismissWelcome, navigate]);
 
     const handleOpenMyAccount = useCallback(async () => {
         await handleDismissWelcome();
@@ -73,7 +81,7 @@ const Welcome = () => {
                     edit your account and set your own password and other account details.
                     <br></br>
                     <br></br>
-                    For more help getting started, visit the <Link href="/about#quick-start-guide" onClick={handleDismissWelcome}>
+                    For more help getting started, visit the <Link href="#" onClick={handleOpenQuickStartGuide}>
                         Quick Start Guide</Link> by selecting <HelpRoundedIcon fontSize="small" sx={{ transform: "translateY(0.2rem)" }} /> About
                     in the top menu.
                 </Typography>
