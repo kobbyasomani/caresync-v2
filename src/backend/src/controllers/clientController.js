@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Client = require("../models/clientModel");
+const { cloudinaryDeleteFolder } = require("../utils/pdf.utils");
 
 //----- New Route Function------//
 // @desc Create client
@@ -83,12 +84,26 @@ const deleteClient = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user.id);
 
-  // Make sure logged in user matches the coordinator user
+  // Make sure logged in user is the client's coordinator
   if (client.coordinator.toString() !== user.id) {
     res.status(401);
     throw new Error("User is not authorized");
   }
 
+  // Delete client folders from Cloudinary
+  try {
+    // TODO: Check if folders exist before attempting to delete them
+    await cloudinaryDeleteFolder(`CareSync/shiftNotes/${client.id}`)
+  } catch (error) {
+    console.log(`Error removing CareSync/shiftNotes/${client.id}:`, error.message);
+  }
+  try {
+    await cloudinaryDeleteFolder(`CareSync/incidentReports/${client.id}`)
+  } catch (error) {
+    console.log(`Error removing CareSync/incidentReports/${client.id}:`, error.message);
+  }
+
+  // Remove the client
   await client.remove();
   res.status(200).json({ message: `Deleted client ${req.params.id}` });
 });

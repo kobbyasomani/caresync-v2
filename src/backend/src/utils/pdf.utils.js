@@ -52,7 +52,7 @@ const cloudinaryUpload = (buffer, folder, clientID) => {
 };
 
 /**
- * Deletes a list of given resource from Cloudinary by public_id
+ * Deletes a list of given resources from Cloudinary by public_id
  * @param {Array<String>} public_ids An array of public_id strings for resources to delete
  * @param {Object} options `{ resource_type: "image" (default) | "raw" | "video" }`
  * @returns {Promise<Response>}
@@ -62,4 +62,15 @@ const cloudinaryDelete = async (public_ids, delete_options) => {
   return cloudinary.api.delete_resources(public_ids, options).then((response) => response);
 };
 
-module.exports = { createPDF, cloudinaryUpload, cloudinaryDelete };
+/**
+ * Deletes the folder at the given path.
+ * @param {String} path The directory path ending in the folder to be deleted. The top-level
+ * path segment provided must be a folder in the Cloudinary root (`Home`) directory. The folder
+ * to be deleted must be empty.
+ * @returns {Promise<Response>}
+ */
+const cloudinaryDeleteFolder = async (path) => {
+  return cloudinary.api.delete_folder(path).then((response) => response);
+}
+
+module.exports = { createPDF, cloudinaryUpload, cloudinaryDelete, cloudinaryDeleteFolder };

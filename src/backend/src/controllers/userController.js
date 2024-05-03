@@ -143,7 +143,7 @@ personal belongings are in their designated places when you finish up your shift
           shiftNotesText: "These are some sample Shift Notes.\n\n\
 Use Shift Notes to give an overview of the main events of the care shift \
 for later reference. Shift Notes can be uploaded to the cloud and \
-downloaded as PDF.\n\n\
+downloaded as a PDF.\n\n\
 Example: Today's shift with Alex, was a pleasant experience. \
 I arrived at the scheduled time and was warmly greeted by Alex. We spent some \
 time chatting about their day and any concerns they had. I helped them tidy up \
@@ -159,8 +159,8 @@ Incident Reports might include documentation of accidents or injuries, observed 
 emotional state, environmental factors, or any other daily living or quality of life issues \
 that need to be recorded for later reference.\n\n\
 Example: During mealtime, Alex spilled some hot soup on themselves. \
-I quickly helped clean it up, checked that they weren't burned, and helped changed them into a fresh \
-shirt. They were a bit flustered, but otherwise ok."
+I quickly helped clean it up, checked that they weren't burned, and helped change them into a fresh \
+shirt. They were a bit flustered but otherwise ok."
           }
         ],
         handoverNotes: "These are some sample Handover Notes.\n\n\Use Handover Notes to \

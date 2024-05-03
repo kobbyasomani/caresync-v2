@@ -228,7 +228,7 @@ const deleteShift = asyncHandler(async (req, res) => {
           console.log(error.message || `The incident report PDF could not be deleted (${incidentReport.id}).`);
         }
       } else {
-        console.log(`The incident report PDF could not be found (${incidentReport.id}).`);
+        console.log(`No incident report PDF was found (${incidentReport.id}).`);
       };
     }
   }
@@ -498,7 +498,7 @@ const deleteIncidentReport = asyncHandler(async (req, res) => {
         console.log(error.message || `The incident report PDF could not be deleted (${incidentId}).`);
       }
     } else {
-      console.log(`The incident report PDF could not be found (${incidentReport.id}).`);
+      console.log(`No incident report PDF was found (${incidentReport.id}).`);
     };
 
     if (updatedShift) {
