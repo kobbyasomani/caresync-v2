@@ -337,8 +337,7 @@ const ShiftDetailsDrawer = ({ isLoading }) => {
             anchor="right"
             open={modalStore.drawerIsOpen}
             onClose={handleCloseDrawer}
-            PaperProps={{ ref: drawerRef }}
-        >
+            PaperProps={{ ref: drawerRef, sx: { width: "min(70%, 75ch)" } }}>
             {renderShiftNav()}
             < Fade in={!isTransitioning}>
                 {renderContent()}
