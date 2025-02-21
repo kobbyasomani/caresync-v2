@@ -1,12 +1,9 @@
 # T3A2-B Full Stack App
 
 ## Project Links
-
-<br>
-
 ### Requirement 10:
 
-[Deployed Site](https://caresync-production.up.railway.app)
+[Deployed Site](https://caresync-v2-frontend-production.up.railway.app)
 
 <br>
 
