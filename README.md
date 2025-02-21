@@ -8,9 +8,9 @@
 <br>
 
 ### Requirement 3:
-[Github Repository](https://github.com/kobbyasomani/T3A2-B)
+[Github Repository](https://github.com/kobbyasomani/caresync-v2)
 
-[Network Graph (Git Branch History Visualizer)](https://github.com/kobbyasomani/T3A2-B/network) 
+[Network Graph (Git Branch History Visualizer)](https://github.com/kobbyasomani/caresync-v2/network) 
 
 <br>
 
