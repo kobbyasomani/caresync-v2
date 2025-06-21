@@ -37,12 +37,15 @@ const Verification = () => {
                     setIsLoading(false);
                 })
                 .catch(function (error) {
-                    // console.log(error);
-                    if (error.response.status === 400
+                    console.log("Carer invitation error:", error);
+                    if (error.response && error.response.status === 400
                         && error.response.data.message === "The carer has already been assigned to this client.") {
                         setPreviouslyVerified(true);
-                        setIsLoading(false);
+                    } else {
+                        // Handle all other errors (network, server, etc.)
+                        setIsVerified(false);
                     }
+                    setIsLoading(false);
                 });
         }
     }, [params.token, location]);
@@ -120,7 +123,7 @@ const Verification = () => {
                     <Stack spacing={2}>
                         <Typography variant="h1">Care Team Verification</Typography>
                         <Alert severity="error" sx={{ alignItems: "center" }}>
-                            <Typography cariant="h2">You could not be added to the care team.</Typography>
+                            <Typography variant="h2">You could not be added to the care team.</Typography>
                         </Alert>
                         <Typography variant="body1">Please make sure you have not modified the URL in the
                             invitation email &#40;for example if you copied and
