@@ -3,7 +3,7 @@
 ## Project Links
 ### Requirement 10:
 
-[Deployed Site](https://caresync-v2-frontend-production.up.railway.app)
+[Deployed Site](https://caresync-app.kobbya.dev/)
 
 <br>
 
